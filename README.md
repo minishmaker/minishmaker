@@ -15,3 +15,5 @@ Map Viewer | In development
 Tileset Viewer | Planned
 Map Editing | Planned
 Tileset Editing | Planned
+
+Please join our Discord server to discuss the project!
