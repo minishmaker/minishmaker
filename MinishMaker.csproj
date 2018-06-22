@@ -61,7 +61,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TMC\Constants.cs" />
-    <Compile Include="Utility\Utility.cs" />
+    <Compile Include="Utilities\Utility.cs" />
     <EmbeddedResource Include="MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </EmbeddedResource>
