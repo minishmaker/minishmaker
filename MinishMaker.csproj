@@ -88,5 +88,8 @@
   <ItemGroup>
     <Content Include="kinstone_green.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Utility\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

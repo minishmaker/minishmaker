@@ -35,11 +35,11 @@
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bottomStatusStrip = new System.Windows.Forms.StatusStrip();
+            this.statusText = new System.Windows.Forms.ToolStripStatusLabel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.label1 = new System.Windows.Forms.Label();
-            this.statusText = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStrip1.SuspendLayout();
             this.bottomStatusStrip.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -99,6 +99,11 @@
             this.bottomStatusStrip.TabIndex = 1;
             this.bottomStatusStrip.Text = "statusStrip1";
             // 
+            // statusText
+            // 
+            this.statusText.Name = "statusText";
+            this.statusText.Size = new System.Drawing.Size(0, 17);
+            // 
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 3;
@@ -139,11 +144,6 @@
             this.label1.Size = new System.Drawing.Size(31, 13);
             this.label1.TabIndex = 0;
             this.label1.Text = "Map:";
-            // 
-            // statusText
-            // 
-            this.statusText.Name = "statusText";
-            this.statusText.Size = new System.Drawing.Size(0, 17);
             // 
             // MainWindow
             // 
