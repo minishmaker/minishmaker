@@ -3,8 +3,8 @@
     public enum RegionVersion
     {
         EU,
-        US,
-        JP
+        JP,
+        US
     }
 
     public enum Constants : int
