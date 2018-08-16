@@ -10,7 +10,7 @@ However, prerelease binaries will be made available as each featureset is implem
 ### Upcoming Features
 Feature | Status
 ------- | ------
-Room list | In development
+Room List | In development
 Map Viewer | In development
 Tileset Viewer | Planned
 Map Editing | Planned
