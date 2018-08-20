@@ -37,9 +37,9 @@
             this.statusText = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.roomPanel = new System.Windows.Forms.Panel();
+            this.treeView1 = new System.Windows.Forms.TreeView();
             this.tilePanel = new System.Windows.Forms.Panel();
             this.mapPanel = new System.Windows.Forms.Panel();
-            this.treeView1 = new System.Windows.Forms.TreeView();
             this.menuStrip1.SuspendLayout();
             this.bottomStatusStrip.SuspendLayout();
             this.roomPanel.SuspendLayout();
@@ -68,7 +68,7 @@
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
             this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.OpenButtonClick);
             // 
@@ -76,7 +76,7 @@
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitButtonClick);
             // 
@@ -111,8 +111,16 @@
             this.roomPanel.Dock = System.Windows.Forms.DockStyle.Left;
             this.roomPanel.Location = new System.Drawing.Point(0, 49);
             this.roomPanel.Name = "roomPanel";
-            this.roomPanel.Size = new System.Drawing.Size(200, 379);
+            this.roomPanel.Size = new System.Drawing.Size(150, 379);
             this.roomPanel.TabIndex = 8;
+            // 
+            // treeView1
+            // 
+            this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeView1.Location = new System.Drawing.Point(0, 0);
+            this.treeView1.Name = "treeView1";
+            this.treeView1.Size = new System.Drawing.Size(150, 379);
+            this.treeView1.TabIndex = 0;
             // 
             // tilePanel
             // 
@@ -125,18 +133,10 @@
             // mapPanel
             // 
             this.mapPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.mapPanel.Location = new System.Drawing.Point(200, 49);
+            this.mapPanel.Location = new System.Drawing.Point(150, 49);
             this.mapPanel.Name = "mapPanel";
-            this.mapPanel.Size = new System.Drawing.Size(400, 379);
+            this.mapPanel.Size = new System.Drawing.Size(450, 379);
             this.mapPanel.TabIndex = 10;
-            // 
-            // treeView1
-            // 
-            this.treeView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.treeView1.Location = new System.Drawing.Point(0, 0);
-            this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(200, 379);
-            this.treeView1.TabIndex = 0;
             // 
             // MainWindow
             // 
