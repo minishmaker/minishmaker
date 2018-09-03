@@ -20,24 +20,21 @@ namespace MinishMaker
             InitializeComponent();
         }
 
+        // MenuBar Buttons
         private void OpenButtonClick(object sender, EventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog
-            {
-                Filter = "GBA ROMs|*.gba|All Files|*.*",
-                Title = "Select TMC EU ROM"
-            };
-
-            if (ofd.ShowDialog() != DialogResult.OK)
-            {
-                return;
-            }
-            LoadRom(ofd.FileName);
+            LoadRom();
         }
 
         private void ExitButtonClick(object sender, EventArgs e)
         {
             Close();
+        }
+
+        // ToolStrip Buttons
+        private void openToolStripButton_Click(object sender, EventArgs e)
+        {
+            LoadRom();
         }
 
         private bool IsValidRom()
@@ -66,17 +63,30 @@ namespace MinishMaker
             return false;
         }
 
-        private void LoadRom(string fileName)
+        private void LoadRom()
         {
-            BinaryReader br = new BinaryReader(File.OpenRead(fileName));
+            OpenFileDialog ofd = new OpenFileDialog
+            {
+                Filter = "GBA ROMs|*.gba|All Files|*.*",
+                Title = "Select TMC EU ROM"
+            };
+
+            if (ofd.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+
+            BinaryReader br = new BinaryReader(File.OpenRead(ofd.FileName));
             gba_ = new GBFile(br.ReadBytes((int)br.BaseStream.Length));
 
             if (!IsValidRom())
             {
                 MessageBox.Show("Invalid TMC ROM. Please Open a valid ROM.", "Incorrect ROM",MessageBoxButtons.OK);
+                return;
             }
-            fileName_ = fileName;
+            fileName_ = ofd.FileName;
             
         }
+
     }
 }
