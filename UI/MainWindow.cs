@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -13,7 +14,8 @@ namespace MinishMaker
         private GBFile gba_;
 
         private string fileName_ = "";
-        private RegionVersion version = RegionVersion.EU;
+        private RegionVersion version_ = RegionVersion.None;
+        private HeaderData headers_;
 
         public MainWindow()
         {
@@ -45,21 +47,29 @@ namespace MinishMaker
 
             if (region == "BZMP")
             {
-                version = RegionVersion.EU;
-                return true;
+                version_ = RegionVersion.EU;
             }
 
             if (region == "BZMJ")
             {
-                version = RegionVersion.JP;
-                return true;
+                version_ = RegionVersion.JP;
             }
 
             if (region == "BZME")
             {
-                version = RegionVersion.US;
-                return true;
+                version_ = RegionVersion.US;
             }
+
+            if (version_ != RegionVersion.None)
+            {
+                statusText.Text = "Region Determined: "+version_;
+                // Load correct headers for version.
+                headers_ = new Header().GetHeaderAddresses(version_);
+                return true;
+                
+            }
+
+            statusText.Text = "Unable to determine ROM.";
             return false;
         }
 
@@ -79,6 +89,8 @@ namespace MinishMaker
             BinaryReader br = new BinaryReader(File.OpenRead(ofd.FileName));
             gba_ = new GBFile(br.ReadBytes((int)br.BaseStream.Length));
 
+            // Reset region in case of second load.
+            version_ = RegionVersion.None;
             if (!IsValidRom())
             {
                 MessageBox.Show("Invalid TMC ROM. Please Open a valid ROM.", "Incorrect ROM",MessageBoxButtons.OK);

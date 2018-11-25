@@ -4,16 +4,32 @@
     {
         EU,
         JP,
-        US
+        US,
+        None
     }
 
-    public enum Constants : int
+    public struct HeaderData
     {
-        MapHeaderBase = 0x11D95C
+        public int MapHeaderBase;
+
+        public HeaderData(int map)
+        {
+            this.MapHeaderBase = map;
+        }
     }
 
-    enum USConstants : int
+    public class Header
     {
-        MapHeaderBase = 0x11E214
+        private HeaderData[] headerTable = new HeaderData[]
+        {   //             MAP     ,
+            new HeaderData(0x11D95C),
+            new HeaderData(0), 
+            new HeaderData(0x11E214)
+        };
+
+        public HeaderData GetHeaderAddresses(RegionVersion region)
+        {
+            return headerTable[(int)region];
+        }
     }
 }
