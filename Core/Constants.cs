@@ -1,4 +1,4 @@
-﻿namespace MinishMaker.TMC
+﻿namespace MinishMaker.Core
 {
     public enum RegionVersion
     {

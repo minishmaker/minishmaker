@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace MinishMaker.TMC
+namespace MinishMaker.Core
 {
     public class ROM
     {

@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using GBHL;
-using MinishMaker.TMC;
+using MinishMaker.Core;
 
 namespace MinishMaker
 {
