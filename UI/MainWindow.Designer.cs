@@ -1,4 +1,4 @@
-﻿namespace MinishMaker
+﻿namespace MinishMaker.UI
 {
     partial class MainWindow
     {

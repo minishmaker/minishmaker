@@ -7,7 +7,7 @@ using System.Windows.Forms;
 using GBHL;
 using MinishMaker.Core;
 
-namespace MinishMaker
+namespace MinishMaker.UI
 {
     public partial class MainWindow : Form
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 namespace MinishMaker.Utilities
 {
-    class Utility
+    class StringUtil
     {   
         // Convert values to hex strings
         private static string AsStringHex(int val, int spacing)
