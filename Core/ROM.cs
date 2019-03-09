@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using MinishMaker.Utilities;
+using System.IO;
 
 namespace MinishMaker.Core
 {
@@ -7,8 +9,7 @@ namespace MinishMaker.Core
         public static ROM Instance { get; private set; }
 
         public readonly byte[] romData;
-        public readonly BinaryReader reader;
-        public readonly BinaryWriter writer;
+        public readonly Reader reader;
 
         public RegionVersion version { get; private set;  } = RegionVersion.None;
         public HeaderData headers { get; private set; }
@@ -19,18 +20,17 @@ namespace MinishMaker.Core
             Instance = this;
             romData = File.ReadAllBytes(filePath);
             Stream stream = Stream.Synchronized(new MemoryStream(romData));
-            reader = new BinaryReader(stream);
-            writer = new BinaryWriter(stream);
+            reader = new Reader(stream);
 
             SetupRom();
         }
 
         private void SetupRom()
         {
-            // Determine Game region and if valid ROM (write your reader class already)
-            reader.BaseStream.Position = 0xAC;
-            byte[] regionBytes = reader.ReadBytes(4);
+            // Determine game region and if valid ROM
+            byte[] regionBytes = reader.ReadBytes(4, 0xAC);
             string region = System.Text.Encoding.UTF8.GetString(regionBytes);
+            Console.WriteLine(region);
 
             if (region == "BZMP")
             {
