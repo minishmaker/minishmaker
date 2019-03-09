@@ -20,6 +20,7 @@
 
     public class Header
     {
+        // Will fill out when relevant, only need EU for now
         private HeaderData[] headerTable = new HeaderData[]
         {   //             MAP     ,
             new HeaderData(0x11D95C),
