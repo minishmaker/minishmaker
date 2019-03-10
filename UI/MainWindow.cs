@@ -13,8 +13,6 @@ namespace MinishMaker.UI
     {
         private ROM ROM_;
 
-        private string fileName_ = "";
-
         public MainWindow()
         {
             InitializeComponent();
@@ -31,10 +29,22 @@ namespace MinishMaker.UI
             Close();
         }
 
+        private void AboutButtonClick(object sender, EventArgs e)
+        {
+            Form aboutWindow = new AboutWindow();
+            aboutWindow.Show();
+        }
+
         // ToolStrip Buttons
         private void openToolStripButton_Click(object sender, EventArgs e)
         {
             LoadRom();
+        }
+
+        // Other interactions
+        private void MainWindow_DragDrop(object sender, DragEventArgs e)
+        {
+
         }
 
         private void LoadRom()
@@ -42,7 +52,7 @@ namespace MinishMaker.UI
             OpenFileDialog ofd = new OpenFileDialog
             {
                 Filter = "GBA ROMs|*.gba|All Files|*.*",
-                Title = "Select TMC EU ROM"
+                Title = "Select TMC ROM"
             };
 
             if (ofd.ShowDialog() != DialogResult.OK)
@@ -62,12 +72,12 @@ namespace MinishMaker.UI
 
             if (ROM.Instance.version.Equals(RegionVersion.None))
             {
-                MessageBox.Show("Invalid TMC ROM. Please Open a valid ROM.", "Incorrect ROM",MessageBoxButtons.OK);
+                MessageBox.Show("Invalid TMC ROM. Please Open a valid ROM.", "Incorrect ROM", MessageBoxButtons.OK);
+                statusText.Text = "Unable to determine ROM.";
                 return;
             }
 
-            fileName_ = ofd.FileName;
+            statusText.Text = "Loaded: " + ROM.Instance.path;
         }
-
     }
 }

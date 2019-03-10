@@ -7,6 +7,7 @@ namespace MinishMaker.Core
     public class ROM
     {
         public static ROM Instance { get; private set; }
+        public readonly string path;
 
         public readonly byte[] romData;
         public readonly Reader reader;
@@ -18,6 +19,7 @@ namespace MinishMaker.Core
         public ROM(string filePath)
         {
             Instance = this;
+            path = filePath;
             romData = File.ReadAllBytes(filePath);
             Stream stream = Stream.Synchronized(new MemoryStream(romData));
             reader = new Reader(stream);
