@@ -6,12 +6,12 @@ namespace MinishMaker.Utilities
     {
         private readonly Stream stream_;
 
-        private readonly System.IO.BinaryReader reader;
+        private readonly BinaryReader reader;
 
         public Reader(Stream stream)
         {
             stream_ = stream;
-            reader = new System.IO.BinaryReader(stream);
+            reader = new BinaryReader(stream);
         }
 
         public byte PeekByte()
