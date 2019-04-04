@@ -107,5 +107,16 @@ namespace MinishMaker.Utilities
             stream_.Position = pos;
             return reader.ReadInt32(); ;
         }
+
+        public int ReadAddr()
+        {
+            return ReadInt() & 0xFFFFFF;
+        }
+
+        public int ReadAddr(long pos)
+        {
+            stream_.Position = pos;
+            return ReadAddr();
+        }
     }
 }
