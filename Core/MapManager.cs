@@ -1,6 +1,7 @@
 ﻿using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.Diagnostics;
 using MinishMaker.Utilities;
 
 namespace MinishMaker.Core
@@ -93,14 +94,14 @@ namespace MinishMaker.Core
             ROM.Instance.reader.ReadUInt16();
 
             // Debug prints
-            Console.WriteLine("Area: {0} Room: {1}", StringUtil.AsStringHex2(area), StringUtil.AsStringHex2(room));
-            Console.WriteLine("Area Data Address: {0}\nArea Data Header: {1}", StringUtil.AsStringGBAAddress(searchaddr), StringUtil.AsStringGBAAddress(addr));
-            Console.WriteLine("Room header: {0}", StringUtil.AsStringGBAAddress(addr + room * 0x0A));
-            Console.WriteLine("Header Value: {0}", StringUtil.AsStringHex4(roomaddr));
+            Debug.WriteLine("Area: {0} Room: {1}", StringUtil.AsStringHex2(area), StringUtil.AsStringHex2(room));
+            Debug.WriteLine("Area Data Address: {0}\nArea Data Header: {1}", StringUtil.AsStringGBAAddress(searchaddr), StringUtil.AsStringGBAAddress(addr));
+            Debug.WriteLine("Room header: {0}", StringUtil.AsStringGBAAddress(addr + room * 0x0A));
+            Debug.WriteLine("Header Value: {0}", StringUtil.AsStringHex4(roomaddr));
 
             int finalval = ROM.Instance.reader.ReadUInt16();
-            Console.WriteLine("Final checked Value: {0}", StringUtil.AsStringHex4(finalval));
-            Console.WriteLine("Comparison check: {0}", StringUtil.AsStringHex4(finalval & 0x8000));
+            Debug.WriteLine("Final checked Value: {0}", StringUtil.AsStringHex4(finalval));
+            Debug.WriteLine("Comparison check: {0}", StringUtil.AsStringHex4(finalval & 0x8000));
 
             // BUG This final check isn't perfect. Will think some rooms are valid and others not, particularly when the game would usually softlock. See room doc for more details.
             return (finalval & 0x8000) == 0;
