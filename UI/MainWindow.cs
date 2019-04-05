@@ -6,12 +6,14 @@ using System.Linq;
 using System.Windows.Forms;
 using GBHL;
 using MinishMaker.Core;
+using MinishMaker.Utilities;
 
 namespace MinishMaker.UI
 {
     public partial class MainWindow : Form
     {
         private ROM ROM_;
+        private MapManager mapManager_;
 
         public MainWindow()
         {
@@ -77,7 +79,33 @@ namespace MinishMaker.UI
                 return;
             }
 
+            LoadMaps();
+            
+
             statusText.Text = "Loaded: " + ROM.Instance.path;
+        }
+
+        private void LoadMaps()
+        {
+            mapManager_ = new MapManager();
+
+            roomTreeView.Nodes.Clear();
+            // Set up room list
+            roomTreeView.BeginUpdate();
+            int subsection = 0;
+
+            foreach (MapManager.Area area in mapManager_.MapAreas)
+            {
+                roomTreeView.Nodes.Add("Area " + StringUtil.AsStringHex2(area.Index));
+                
+                for(int room = 0; room < area.Rooms().Count(); room++)
+                {
+                    roomTreeView.Nodes[subsection].Nodes.Add("Room " + StringUtil.AsStringHex2(room));
+                }
+                subsection++;
+            }
+
+            roomTreeView.EndUpdate();
         }
     }
 }
