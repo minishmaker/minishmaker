@@ -61,7 +61,7 @@ namespace MinishMaker.Core
                     if (IsValidRoom(areaNum, roomNum))
                     {
                         // Setup new room data
-                        area.Add(new Room());
+                        area.Add(new Room(areaNum, roomNum));
                         roomNum++;
                     }
 
