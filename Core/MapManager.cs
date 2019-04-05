@@ -1,6 +1,7 @@
 ﻿using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using MinishMaker.Utilities;
 
 namespace MinishMaker.Core
 {
@@ -10,32 +11,27 @@ namespace MinishMaker.Core
         public struct Area
         {
             public int Index { get; private set; }
-            public List<Room> areaRooms { get; private set; }
+            private readonly List<Room> AreaRooms;
 
             public Area(int index)
             {
                 Index = index;
-                areaRooms = new List<Room>();
+                AreaRooms = new List<Room>();
             }
 
             public void Add(Room room)
             {
-                areaRooms.Add(room);
-            }
-
-            public void Clear()
-            {
-                areaRooms.Clear();
+                AreaRooms.Add(room);
             }
 
             public int Count()
             {
-                return areaRooms.Count;
+                return AreaRooms.Count;
             }
 
             public List<Room> Rooms()
             {
-                return areaRooms;
+                return AreaRooms;
             }
         }
 
@@ -53,6 +49,7 @@ namespace MinishMaker.Core
         private void RegenerateMapList()
         {
             List<Area> areas = new List<Area>();
+            // Loop through known map address table.
             for (int areaNum = 0; areaNum < 0x90; areaNum++)
             {
                 Area area = new Area(areaNum);
@@ -61,25 +58,19 @@ namespace MinishMaker.Core
                 {
                     if (IsValidRoom(areaNum, roomNum))
                     {
-                        if (roomNum == 0)
-                        {
-                            area.Clear();
-                        }
-
+                        // Setup new room data
                         area.Add(new Room());
                         roomNum++;
                     }
 
-                    // Obviously temp, remove once IsValidRoom complete. arbitrary number for testing.
-                    if (roomNum == 20) break;
-
                     else break;
                 } while (true);
 
-                // Rooms exist in this area, so add to list.
+                // At least one room in area, so add to list.
                 if (area.Count() > 0)
                 {
                     areas.Add(area);
+                    Console.WriteLine("-------------");
                 }
             }
             MapAreas = areas;
@@ -87,8 +78,32 @@ namespace MinishMaker.Core
 
         private bool IsValidRoom(int area, int room)
         {
-            // TODO Actually check the rooms
-            return true;
+            // Area addresses are 4 bytes long
+            int searchaddr = ROM.Instance.headers.MapHeaderBase + (area << 2);
+            int addr = (ROM.Instance.reader.ReadAddr(searchaddr));
+
+            // Not a valid data address as doesn't point to anywhere
+            if (addr == 0) return false;
+
+            
+            int roomaddr = ROM.Instance.reader.ReadUInt16(addr + room * 0x0A);
+            
+            if (roomaddr == 0xFFFF) return false;
+            ROM.Instance.reader.ReadUInt32();
+            ROM.Instance.reader.ReadUInt16();
+
+            // Debug prints
+            Console.WriteLine("Area: {0} Room: {1}", StringUtil.AsStringHex2(area), StringUtil.AsStringHex2(room));
+            Console.WriteLine("Area Data Address: {0}\nArea Data Header: {1}", StringUtil.AsStringGBAAddress(searchaddr), StringUtil.AsStringGBAAddress(addr));
+            Console.WriteLine("Room header: {0}", StringUtil.AsStringGBAAddress(addr + room * 0x0A));
+            Console.WriteLine("Header Value: {0}", StringUtil.AsStringHex4(roomaddr));
+
+            int finalval = ROM.Instance.reader.ReadUInt16();
+            Console.WriteLine("Final checked Value: {0}", StringUtil.AsStringHex4(finalval));
+            Console.WriteLine("Comparison check: {0}", StringUtil.AsStringHex4(finalval & 0x8000));
+
+            // BUG This final check isn't perfect. Will think some rooms are valid and others not, particularly when the game would usually softlock. See room doc for more details.
+            return (finalval & 0x8000) == 0;
         }
     }
 }

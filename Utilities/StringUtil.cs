@@ -6,7 +6,7 @@ namespace MinishMaker.Utilities
     class StringUtil
     {   
         // Convert values to hex strings
-        private static string AsStringHex(int val, int spacing)
+        public static string AsStringHex(int val, int spacing)
         {
             return val.ToString("X").PadLeft(spacing, '0');
         }
@@ -19,6 +19,11 @@ namespace MinishMaker.Utilities
         public static string AsStringHex4(int val)
         {
             return AsStringHex(val, 4);
+        }
+
+        public static string AsStringGBAAddress(int val)
+        {
+            return AsStringHex(val, 6);
         }
 
         public static string AsStringHex8(int val)

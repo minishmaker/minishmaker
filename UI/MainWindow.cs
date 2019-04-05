@@ -89,6 +89,7 @@ namespace MinishMaker.UI
         {
             mapManager_ = new MapManager();
 
+            roomTreeView.Nodes.Clear();
             // Set up room list
             roomTreeView.BeginUpdate();
             int subsection = 0;
