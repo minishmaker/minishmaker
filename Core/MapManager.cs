@@ -25,14 +25,15 @@ namespace MinishMaker.Core
                 AreaRooms.Add(room);
             }
 
-            public int Count()
+            public int Count
             {
-                return AreaRooms.Count;
+                get { return AreaRooms.Count; }
             }
 
-            public List<Room> Rooms()
+
+            public List<Room> Rooms
             {
-                return AreaRooms;
+                get { return AreaRooms; }
             }
         }
 
@@ -68,7 +69,7 @@ namespace MinishMaker.Core
                 } while (true);
 
                 // At least one room in area, so add to list.
-                if (area.Count() > 0)
+                if (area.Count > 0)
                 {
                     areas.Add(area);
                     Console.WriteLine("-------------");

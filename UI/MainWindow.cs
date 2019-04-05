@@ -98,7 +98,7 @@ namespace MinishMaker.UI
             {
                 roomTreeView.Nodes.Add("Area " + StringUtil.AsStringHex2(area.Index));
                 
-                for(int room = 0; room < area.Rooms().Count(); room++)
+                for(int room = 0; room < area.Rooms.Count; room++)
                 {
                     roomTreeView.Nodes[subsection].Nodes.Add("Room " + StringUtil.AsStringHex2(room));
                 }
