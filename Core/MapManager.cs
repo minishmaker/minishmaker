@@ -58,7 +58,7 @@ namespace MinishMaker.Core
                 {
                     if (IsValidRoom(areaNum, roomNum))
                     {
-                        if (IsRoomStable(areaNum, roomNum))
+                        if (IsStableRoom(areaNum, roomNum))
                         {
                             area.Add(new Room(roomNum));
                         }
@@ -97,7 +97,7 @@ namespace MinishMaker.Core
             return roomheader != 0xFFFF;
         }
 
-        private bool IsRoomStable(int area, int room)
+        private bool IsStableRoom(int area, int room)
         {
 
             int areasearchaddr = ROM.Instance.headers.AreaMetadataBase + (area << 2);
