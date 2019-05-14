@@ -11,6 +11,7 @@ namespace MinishMaker.Core
 
         public readonly byte[] romData;
         public readonly Reader reader;
+        public readonly Writer writer;
 
         public RegionVersion version { get; private set;  } = RegionVersion.None;
         public HeaderData headers { get; private set; }
@@ -23,6 +24,8 @@ namespace MinishMaker.Core
             romData = File.ReadAllBytes(filePath);
             Stream stream = Stream.Synchronized(new MemoryStream(romData));
             reader = new Reader(stream);
+            writer = new Writer(stream);
+
             Console.WriteLine("Read " + stream.Length + " bytes.");
 
             SetupRom();
