@@ -1,6 +1,7 @@
 ﻿using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.Diagnostics;
 using MinishMaker.Utilities;
 
 namespace MinishMaker.Core
@@ -24,14 +25,15 @@ namespace MinishMaker.Core
                 AreaRooms.Add(room);
             }
 
-            public int Count()
+            public int Count
             {
-                return AreaRooms.Count;
+                get { return AreaRooms.Count; }
             }
 
-            public List<Room> Rooms()
+
+            public List<Room> Rooms
             {
-                return AreaRooms;
+                get { return AreaRooms; }
             }
         }
 
@@ -53,21 +55,21 @@ namespace MinishMaker.Core
             for (int areaNum = 0; areaNum < 0x90; areaNum++)
             {
                 Area area = new Area(areaNum);
-
-                for (int roomNum = 0; roomNum < 0x40; roomNum++)
+                int roomNum = 0;
+                do
                 {
                     if (IsValidRoom(areaNum, roomNum))
                     {
-                        if (IsStableRoom(areaNum, roomNum))
-                        {
-                            area.Add(new Room(roomNum));
-                        }
+                        // Setup new room data
+                        area.Add(new Room(areaNum, roomNum));
+                        roomNum++;
                     }
+
                     else break;
-                }
+                } while (true);
 
                 // At least one room in area, so add to list.
-                if (area.Count() > 0)
+                if (area.Count > 0)
                 {
                     areas.Add(area);
                     Console.WriteLine("-------------");
@@ -85,32 +87,25 @@ namespace MinishMaker.Core
             // Not a valid data address as doesn't point to anywhere
             if (addr == 0) return false;
 
-            int roomaddr = addr + room * 0x0A;
-            int roomheader = ROM.Instance.reader.ReadUInt16(roomaddr);
+            
+            int roomaddr = ROM.Instance.reader.ReadUInt16(addr + room * 0x0A);
+            
+            if (roomaddr == 0xFFFF) return false;
+            ROM.Instance.reader.ReadUInt32();
+            ROM.Instance.reader.ReadUInt16();
 
             // Debug prints
-            Console.WriteLine("Area: {0} Room: {1}", StringUtil.AsStringHex2(area), StringUtil.AsStringHex2(room));
-            Console.WriteLine("Area Data Address: {0}\nArea Data Header: {1}", StringUtil.AsStringGBAAddress(searchaddr), StringUtil.AsStringGBAAddress(addr));
-            Console.WriteLine("Room header: {0}", StringUtil.AsStringGBAAddress(addr + room * 0x0A));
-            Console.WriteLine("Header Value: {0}", StringUtil.AsStringHex4(roomaddr));
+            Debug.WriteLine("Area: {0} Room: {1}", StringUtil.AsStringHex2(area), StringUtil.AsStringHex2(room));
+            Debug.WriteLine("Area Data Address: {0}\nArea Data Header: {1}", StringUtil.AsStringGBAAddress(searchaddr), StringUtil.AsStringGBAAddress(addr));
+            Debug.WriteLine("Room header: {0}", StringUtil.AsStringGBAAddress(addr + room * 0x0A));
+            Debug.WriteLine("Header Value: {0}", StringUtil.AsStringHex4(roomaddr));
 
-            return roomheader != 0xFFFF;
-        }
+            int finalval = ROM.Instance.reader.ReadUInt16();
+            Debug.WriteLine("Final checked Value: {0}", StringUtil.AsStringHex4(finalval));
+            Debug.WriteLine("Comparison check: {0}", StringUtil.AsStringHex4(finalval & 0x8000));
 
-        private bool IsStableRoom(int area, int room)
-        {
-
-            int areasearchaddr = ROM.Instance.headers.AreaMetadataBase + (area << 2);
-            int areaaddr = ROM.Instance.reader.ReadAddr(areasearchaddr);
-
-            // This used to happen sometimes for some reason, so I left the check in
-            if (areaaddr == 0x000000) return false;
-
-            int roomsearchaddr = areaaddr + (room << 2);
-            int roomaddr = ROM.Instance.reader.ReadAddr(roomsearchaddr);
-
-            // If the room is considered valid and has metadata, it's probably stable. BUG: Fortress of Winds 05 and 06, as well as Area 67 Room 04 are false positives
-            return roomaddr != 0x000000;
+            // BUG This final check isn't perfect. Will think some rooms are valid and others not, particularly when the game would usually softlock. See room doc for more details.
+            return (finalval & 0x8000) == 0;
         }
     }
 }

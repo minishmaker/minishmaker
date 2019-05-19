@@ -154,6 +154,7 @@
             this.roomTreeView.Name = "roomTreeView";
             this.roomTreeView.Size = new System.Drawing.Size(150, 379);
             this.roomTreeView.TabIndex = 0;
+            this.roomTreeView.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.roomTreeView_NodeMouseDoubleClick);
             // 
             // tilePanel
             // 

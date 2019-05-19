@@ -98,14 +98,22 @@ namespace MinishMaker.UI
             {
                 roomTreeView.Nodes.Add("Area " + StringUtil.AsStringHex2(area.Index));
                 
-                foreach(Room room in area.Rooms())
+                for(int room = 0; room < area.Rooms.Count; room++)
                 {
-                    roomTreeView.Nodes[subsection].Nodes.Add("Room " + StringUtil.AsStringHex2(room.Index));
+                    roomTreeView.Nodes[subsection].Nodes.Add("Room " + StringUtil.AsStringHex2(room));
                 }
                 subsection++;
             }
 
             roomTreeView.EndUpdate();
+        }
+
+        private void roomTreeView_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (e.Node.Parent != null)
+            {
+                Console.WriteLine(e.Node.Parent.Text.Split(' ')[1] + " " + e.Node.Text.Split(' ')[1]);
+            }
         }
     }
 }

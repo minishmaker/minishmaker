@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using MinishMaker.Utilities;
 using System.IO;
 
@@ -11,7 +12,6 @@ namespace MinishMaker.Core
 
         public readonly byte[] romData;
         public readonly Reader reader;
-        public readonly Writer writer;
 
         public RegionVersion version { get; private set;  } = RegionVersion.None;
         public HeaderData headers { get; private set; }
@@ -24,9 +24,7 @@ namespace MinishMaker.Core
             romData = File.ReadAllBytes(filePath);
             Stream stream = Stream.Synchronized(new MemoryStream(romData));
             reader = new Reader(stream);
-            writer = new Writer(stream);
-
-            Console.WriteLine("Read " + stream.Length + " bytes.");
+            Debug.WriteLine("Read " + stream.Length + " bytes.");
 
             SetupRom();
         }
@@ -36,7 +34,7 @@ namespace MinishMaker.Core
             // Determine game region and if valid ROM
             byte[] regionBytes = reader.ReadBytes(4, 0xAC);
             string region = System.Text.Encoding.UTF8.GetString(regionBytes);
-            Console.WriteLine("Region detected: "+region);
+            Debug.WriteLine("Region detected: "+region);
 
             if (region == "BZMP")
             {
