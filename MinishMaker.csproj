@@ -60,6 +60,7 @@
     <Compile Include="Core\MapManager.cs" />
     <Compile Include="Core\ROM.cs" />
     <Compile Include="Core\Room.cs" />
+    <Compile Include="ToBeMoved\FuncDump.cs" />
     <Compile Include="UI\AboutWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -77,6 +78,7 @@
     <Compile Include="Core\Constants.cs" />
     <Compile Include="Utilities\Reader.cs" />
     <Compile Include="Utilities\StringUtil.cs" />
+    <Compile Include="Utilities\Writer.cs" />
     <EmbeddedResource Include="UI\AboutWindow.resx">
       <DependentUpon>AboutWindow.cs</DependentUpon>
     </EmbeddedResource>
