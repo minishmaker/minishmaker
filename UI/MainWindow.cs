@@ -107,5 +107,13 @@ namespace MinishMaker.UI
 
             roomTreeView.EndUpdate();
         }
+
+        private void roomTreeView_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (e.Node.Parent != null)
+            {
+                Console.WriteLine(e.Node.Parent.Text.Split(' ')[1] + " " + e.Node.Text.Split(' ')[1]);
+            }
+        }
     }
 }
