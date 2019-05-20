@@ -97,11 +97,12 @@ namespace MinishMaker.UI
             foreach (MapManager.Area area in mapManager_.MapAreas)
             {
                 roomTreeView.Nodes.Add("Area " + StringUtil.AsStringHex2(area.Index));
-                
-                for(int room = 0; room < area.Rooms.Count; room++)
+
+                foreach (Room room in area.Rooms)
                 {
-                    roomTreeView.Nodes[subsection].Nodes.Add("Room " + StringUtil.AsStringHex2(room));
+                    roomTreeView.Nodes[subsection].Nodes.Add("Room " + StringUtil.AsStringHex2(room.Index));
                 }
+
                 subsection++;
             }
 
