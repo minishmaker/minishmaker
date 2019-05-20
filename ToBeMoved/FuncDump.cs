@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static MinishMaker.ToBeMoved.FuncDump.RoomMetaData;
 
 namespace MinishMaker.ToBeMoved
 {
@@ -21,10 +22,7 @@ namespace MinishMaker.ToBeMoved
 
 			public int Size
 			{
-				get
-				{
-					return tilesetData.Length / 0x20;
-				}
+				get{return tilesetData.Length / 0x20;}
 			}
 
 			public TileSet( byte[] data )
@@ -72,24 +70,23 @@ namespace MinishMaker.ToBeMoved
 					}
 				}
 			}
-
 		}
 
 		public class MetaTileSet
 		{
-
 			byte[] metaTileSetData;
 			bool isBg1;
+
 			public MetaTileSet( byte[] data, bool isBg1 )
 			{
 				metaTileSetData = data;
 				this.isBg1 = isBg1;
 			}
+
 			public void DrawMetaTile( ref Bitmap b, Point p, TileSet tset, PaletteSet pset, int tileId )
 			{
-
 				byte[] tileData = new byte[8];
-				//write 8 bytes from tileId *8 to 
+				//write 8 bytes from tileId *8 to tileData
 				Array.Copy( metaTileSetData, tileId << 3, tileData, 0, 8 );
 				try
 				{
@@ -104,9 +101,11 @@ namespace MinishMaker.ToBeMoved
 							data = (ushort)(tileData[i] | (tileData[i + 1] << 8));
 							i += 2;
 
-							int tnum = data & 0x3FF;
+							int tnum = data & 0x3FF; //bits 1-10
+
 							if( isBg1 )
 								tnum += 0x200;
+
 							bool hflip = ((data >> 10) & 1) == 1;//is bit 11 set?
 							bool vflip = ((data >> 11) & 1) == 1;//is bit 12 set?
 							int pnum = data >> 12;//last 4 bits
@@ -171,30 +170,258 @@ namespace MinishMaker.ToBeMoved
 			}
 		}
 
-		//looking at the size of this, would benefit from putting back that metadata class
 		public class RoomExtra
 		{
-			private int width, height, roomIndex, areaIndex;
+			private int roomIndex, areaIndex;
+			private string ROMFile;
+
+			private RoomMetaData metadata;
 			private TileSet tset;
 			private PaletteSet pset;
-			private int paletteSetID;
-			private List<AddrData> tileSetAddrs = new List<AddrData>();
-
 			private MetaTileSet bg2MetaTiles;
 			private MetaTileSet bg1MetaTiles;
-
-			private AddrData? bg2RoomDataAddr;
-			private AddrData bg2MetaTilesAddr;
-			private AddrData? bg1RoomDataAddr;
-			private AddrData bg1MetaTilesAddr;
-			private bool bg1Use20344B0 = false;
-
 			private byte[] bg2RoomData;
 			private byte[] bg1RoomData;
 			private bool bg2Exists = false;
 			private bool bg1Exists = false;
 
-			struct AddrData
+			private void DrawRoom( ref Bitmap b, MetaTileSet metaTiles, byte[] roomData )
+			{
+				int pos = 0; //position in roomData
+				ushort[] chunks = new ushort[3];
+				ushort[] oldchunks = new ushort[3];
+				chunks = new ushort[3] { 0x00FF, 0x00FF, 0x00FF };
+
+				for( int j = 0; j < metadata.TileHeight; j++ )
+				{
+					for( int i = 0; i < metadata.TileWidth; i++ )
+					{
+						//hardcoded because there is no easy way to determine which areas use tileswapping
+						if( this.roomIndex == 00 && this.areaIndex == 01 || this.areaIndex == 02 || this.areaIndex == 0x15 )
+						{
+							oldchunks = chunks;
+							chunks = getChunks( (ushort)(i * 16), (ushort)(j * 16) );
+
+							swapTiles( oldchunks, chunks, (ushort)(i * 16), (ushort)(j * 16) );
+						}
+						//which metatile to draw
+						int mt = roomData[pos] | (roomData[pos + 1] << 8);
+
+						pos += 2; //2 bytes per tile
+
+						try
+						{
+							if( mt != 0xFFFF ) //nonexistant room data does this, eg. area 0D room 10
+								metaTiles.DrawMetaTile( ref b, new Point( i * 16, j * 16 ), tset, pset, mt );
+						}
+						catch( Exception e )
+						{
+							throw new Exception( "Error drawing metatile. i:" + i.ToString() + ", j:" + j.ToString()
+												+ "\n" + e.Message, e );
+						}
+					}
+				}
+			}
+
+			private void LoadRoom()
+			{
+				metadata = new RoomMetaData(this.areaIndex,this.roomIndex);
+
+				//build tileset using tile addrs from room metadata
+				tset = metadata.GetTileSet();
+
+				//palettes
+				pset = metadata.GetPaletteSet();
+
+				//room data
+				bg2RoomData = new byte[0x2000]; //this seems to be the maximum size
+				bg1RoomData = new byte[0x2000]; //2000 isnt too much memory, so this is just easier
+
+				bg2Exists = metadata.GetBG2Data(ref bg2RoomData, ref bg2MetaTiles);//loads in the data and tiles
+				bg1Exists = metadata.GetBG1Data(ref bg1RoomData, ref bg1MetaTiles);//loads in the data, tiles and sets bg1Use20344B0
+			}
+			
+			private UInt16[] getChunks( UInt16 x, UInt16 y )
+			{
+				UInt16[] ret = new ushort[3];
+				var header = ROM.Instance.headers;
+
+				//chunk 00
+				int addr;
+				switch( this.areaIndex )
+				{
+					case 0x01:
+						addr = header.area1Chunk0TableLoc;
+						break;
+					case 0x15:
+						addr = header.chunk0TableLoc + 0x042; //area 0x15 (21) uses a different hardcoded ptr tbl
+						break;
+					default:
+						addr = header.chunk0TableLoc; //area 1 uses different hardcoded ptr tbl
+						break;
+				}
+
+				ret[0] = TestChunk( x, y, addr );
+
+
+				//chunk 01
+				if( areaIndex == 0x02 )
+				{ //no chunk 01 for area 15, only area 02
+					ret[1] = TestChunk( x, y, header.chunk1TableLoc );
+				}
+				else
+				{
+					ret[1] = 0x00FF;
+				}
+
+
+				//chunk 02
+				if( areaIndex == 0x02 || areaIndex == 0x15 )
+				{
+					addr = areaIndex != 0x15 ? header.chunk2TableLoc : header.chunk2TableLoc + 0x02E; //area 0x15 (21) uses different hardcoded ptr tbl
+					ret[2] = TestChunk( x, y, addr );
+				}
+				else
+				{
+					ret[2] = 0x00FF;
+				}
+
+				return ret;
+			}
+
+			private ushort TestChunk( UInt16 x, UInt16 y, long addr )
+			{
+				var r = ROM.Instance.reader;
+				r.SetPosition( addr );
+				UInt16 chnk; //note: this do block is essentially check_swap_inner in IDA
+				do
+				{
+					chnk = r.ReadUInt16();
+					if( chnk == 0x00FF )
+						break; //no change
+					UInt16 r0 = r.ReadUInt16();
+					UInt16 r1 = r.ReadUInt16();
+					UInt16 r2 = r.ReadUInt16();
+					UInt16 r3 = r.ReadUInt16();
+
+					UInt16 test_x, test_y;
+					unchecked
+					{
+						test_x = (UInt16)(x - r0); //from check_coords routine
+						test_y = (UInt16)(y - r1);
+					}
+					
+					if( test_x < r2 && test_y < r3 )
+						break; //chnk found, so return
+				} while( true );
+				return chnk;
+			}
+
+			private void swapTiles( ushort[] oldchunks, ushort[] newchunks, ushort x, ushort y )
+			{
+				var r = ROM.Instance.reader;
+				var header = ROM.Instance.headers;
+				int updatepal = -1;
+
+				for( int i = 0; i < 3; i++ )
+				{
+					if( newchunks[i] == oldchunks[i] )
+					{
+						continue;
+					}
+
+					if( newchunks[i] == 0x00FF )
+					{
+						continue;
+					}
+
+					int baseaddr, src, src2, dest, dest2;
+					byte[] newtiles = new byte[0x1000];
+
+					switch( areaIndex )
+					{
+						case 0x02:
+						case 0x15:
+							baseaddr = areaIndex != 0x15 ? header.swapBase : header.swapBase + 0x060;
+							r.SetPosition( baseaddr + (newchunks[i] << 4) );
+							src = (int)(header.tileOffset + r.ReadUInt32());	//source addrs are stored as offsets from 85A2E80
+							dest = (int)r.ReadUInt32() & 0xFFFFFF;				//mask off the 0x6000000 part
+							src2 = (int)(header.tileOffset + r.ReadUInt32());	//there are 2 sets of tiles for each chunk
+							dest2 = (int)r.ReadUInt32() & 0xFFFFFF;				//one for each bg
+																				
+							newtiles = r.ReadBytes( 0x1000, src );
+							tset.SetChunk( newtiles, dest );
+
+							newtiles = r.ReadBytes( 0x1000, src2 );
+							tset.SetChunk( newtiles, dest2 );
+
+							break;
+						case 0x01: //area 01 works differently, 8 chunks and palette update
+							for( int j = 0; j < 8; j++ )
+							{
+								if( j == 0 )
+								{//update palette
+									byte pnum = r.ReadByte( header.paletteChangeBase + newchunks[i] );
+									updatepal = (int)pnum;
+								}
+								baseaddr = header.area1SwapBase;
+								r.SetPosition( baseaddr + (newchunks[i] << 6) + (j << 3) );
+
+								src = (header.tileOffset + (int)r.ReadUInt32());
+								dest = (int)r.ReadUInt32() & 0xFFFFFF;
+
+								newtiles = r.ReadBytes( 0x1000, src );
+								tset.SetChunk( newtiles, dest );
+							}
+							break;
+					}
+				}
+				if( updatepal > 0 ) //if the palette number changed due to swapping, create new paletteset
+				{
+					pset = new PaletteSet( updatepal );
+				}
+			}
+		}
+
+		public class RoomMetaData
+		{
+			private int width, height;
+			public int PixelWidth 
+			{
+				get { return width *16;}
+			}
+
+			public int PixelHeight 
+			{
+				get { return height *16;}
+			}
+
+			public int TileWidth 
+			{
+				get { return width;}
+			}
+
+			public int TileHeight 
+			{
+				get { return height;}
+			}
+
+			private int paletteSetID;
+			private List<AddrData> tileSetAddrs = new List<AddrData>();
+
+			private AddrData? bg2RoomDataAddr;
+			private AddrData bg2MetaTilesAddr;
+
+			private AddrData? bg1RoomDataAddr;
+			private AddrData bg1MetaTilesAddr;
+
+			private bool bg1Use20344B0 = false;
+			public bool Bg1Use20344B0
+			{
+				get { return bg1Use20344B0;}
+			}
+
+			public struct AddrData
 			{
 				public int src;
 				public int dest;
@@ -210,21 +437,26 @@ namespace MinishMaker.ToBeMoved
 				}
 			}
 
-			public void LoadRoom()
+			public RoomMetaData(int areaIndex, int roomIndex)
+			{
+				LoadMetaData(areaIndex,roomIndex);
+			}
+
+			private void LoadMetaData( int areaIndex, int roomIndex )
 			{
 				var r = ROM.Instance.reader;
 				var header = ROM.Instance.headers;
 
-				int areaRMDTableLoc = r.ReadAddr( header.MapHeaderBase + (this.areaIndex << 2) );
-				int roomMetaDataTableLoc = areaRMDTableLoc + (this.roomIndex * 0x0A);
+				int areaRMDTableLoc = r.ReadAddr( header.MapHeaderBase + (areaIndex << 2) );
+				int roomMetaDataTableLoc = areaRMDTableLoc + (roomIndex * 0x0A);
 
 				this.width = r.ReadUInt16( roomMetaDataTableLoc + 4 ) >> 4; //bytes 5+6 pixels/16 = tiles
-				this.height = r.ReadUInt16() >> 4;  //bytes 7+8 pixels/16 = tiles
+				this.height = r.ReadUInt16() >> 4;							//bytes 7+8 pixels/16 = tiles
 
 				//get addr of TPA data
-				int tileSetOffset = r.ReadUInt16() << 2;//bytes 9+10
+				int tileSetOffset = r.ReadUInt16() << 2;					//bytes 9+10
 
-				int areaTileSetTableLoc = r.ReadAddr( header.globalTileSetTableLoc + (this.areaIndex << 2) );
+				int areaTileSetTableLoc = r.ReadAddr( header.globalTileSetTableLoc + (areaIndex << 2) );
 				int roomTileSetLoc = r.ReadAddr( areaTileSetTableLoc + tileSetOffset );
 
 				r.SetPosition( roomTileSetLoc );
@@ -232,21 +464,22 @@ namespace MinishMaker.ToBeMoved
 				ParseData( r, Set1 );
 
 				//metatiles
-				int metaTileSetsLoc = r.ReadAddr( header.globalMetaTileSetTableLoc + (this.areaIndex << 2) );
+				int metaTileSetsLoc = r.ReadAddr( header.globalMetaTileSetTableLoc + (areaIndex << 2) );
 
 				r.SetPosition( metaTileSetsLoc );
 
 				ParseData( r, Set2 );
 
 				//get addr of room data 
-				int areaTileDataTableLoc = r.ReadAddr( header.globalTileDataTableLoc + (this.areaIndex << 2) );
-				int tileDataLoc = r.ReadAddr( areaTileDataTableLoc + (this.roomIndex << 2) );
+				int areaTileDataTableLoc = r.ReadAddr( header.globalTileDataTableLoc + (areaIndex << 2) );
+				int tileDataLoc = r.ReadAddr( areaTileDataTableLoc + (roomIndex << 2) );
 				r.SetPosition( tileDataLoc );
 
 				ParseData( r, Set3 );
+			}
 
-
-				//build tileset using tile addrs from room metadata
+			public TileSet GetTileSet()
+			{
 				byte[] tilesetData = new byte[0x10000];
 				using( MemoryStream ms = new MemoryStream( tilesetData ) )
 				{
@@ -258,66 +491,48 @@ namespace MinishMaker.ToBeMoved
 							byte[] data = GetData( tileSetAddrs[i] );
 							bw.Write( data );
 						}
-						tset = new TileSet( tilesetData );
-						//Debug.WriteLine(tset.Size+"COUNTS");
+						return new TileSet( tilesetData );
 					}
 				}
+			}
 
-				//palettes
-				pset = new PaletteSet( paletteSetID );
+			public PaletteSet GetPaletteSet()
+			{
+				return new PaletteSet( paletteSetID );
+			}
 
-				//room data
-				//int size = (metadata.Width * metadata.Height) << 1;
-				//this size adjustment accounts for modifyRoomData
-				//bg2RoomData = new byte[size + ((metadata.Height-1) * 0x80) + ((metadata.Width<<1)-2)];
-				//bg1RoomData = new byte[size + ((metadata.Height-1) * 0x80) + ((metadata.Width<<1)-2)];
-				bg2RoomData = new byte[0x2000]; //this seems to be the maximum size
-				bg1RoomData = new byte[0x2000]; //2000 isnt too much memory, so this is just easier
-
+			public bool GetBG2Data(ref byte[] bg2RoomData, ref MetaTileSet bg2MetaTiles)
+			{
 				if( bg2RoomDataAddr != null )
 				{
 					var tileData = GetData( bg2MetaTilesAddr );
 					bg2MetaTiles = new MetaTileSet( tileData, false );
-					//Debug.WriteLine("BG2 Room Src: " + metadata.Bg2RoomDataAddr.Src.ToString("X"));
-					//Debug.WriteLine("Compressed: " + metadata.Bg2RoomDataAddr.Compressed.ToString());
+
 					var data = GetData( (AddrData)bg2RoomDataAddr );
 					data.CopyTo( bg2RoomData, 0 );
-					//modifyRoomData( ref bg2RoomData );
 
-					bg2Exists = true;
+					return true;
 				}
+				return false;
+			}
 
+			public bool GetBG1Data(ref byte[] bg1RoomData, ref MetaTileSet bg1MetaTiles)
+			{
 				if( bg1RoomDataAddr != null )
 				{
 					if( bg1Use20344B0 )
 					{
 						GetData( (AddrData)bg1RoomDataAddr ).CopyTo( bg1RoomData, 0 );
-						//bg1RoomData = modifyBg1RoomData20344B0(bg1RoomData);
 						bg1Use20344B0 = true;
 					}
 					else
 					{
 						bg1MetaTiles = new MetaTileSet( GetData( bg1MetaTilesAddr ), true );
 						GetData( (AddrData)bg1RoomDataAddr ).CopyTo( bg1RoomData, 0 );
-						//modifyRoomData( ref bg1RoomData );
 					}
-					bg1Exists = true;
+					return true;
 				}
-
-
-			}
-
-			//commented parts so the program will still build
-			private byte[] GetData( AddrData addrData )
-			{
-				if( addrData.compressed )
-				{
-					return new byte[1];//Lz77Uncomp( addrData.src );
-				}
-				else
-				{
-					return new byte[1];//DMA( addrData.src, addrData.size );
-				}
+				return false;
 			}
 
 			private void ParseData( Reader r, Func<AddrData, bool> postFunc )
@@ -349,12 +564,24 @@ namespace MinishMaker.ToBeMoved
 				}
 			}
 
+			//TODO:commented parts so the program will still build
+			private byte[] GetData( AddrData addrData )
+			{
+				if( addrData.compressed )
+				{
+					return new byte[1];//Lz77Uncomp( addrData.src );
+				}
+				else
+				{
+					return new byte[1];//DMA( addrData.src, addrData.size );
+				}
+			}
+
 			//dont have any good names for these 3
 			private bool Set1( AddrData data )
 			{
 				if( (data.dest & 0xF000000) != 0x6000000 )
 				{ //not valid tile data addr
-				  //throw new FormatException("Unhandled tile data destination address: " + dest.Hex() + " Source:" + source.Hex() + " Compressed:" + compressed + " Size:" + size.Hex());
 					Console.WriteLine( "Unhandled tile data destination address: " + data.dest.Hex() + " Source:" + data.src.Hex() + " Compressed:" + data.compressed + " Size:" + data.size.Hex() );
 					return false;
 				}
@@ -414,188 +641,9 @@ namespace MinishMaker.ToBeMoved
 				}
 				return true;
 			}
-
-			private void DrawRoom( ref Bitmap b, MetaTileSet metaTiles, byte[] roomData )
-			{
-				int pos = 0; //position in roomData
-				ushort[] chunks = new ushort[3];
-				ushort[] oldchunks = new ushort[3];
-				chunks = new ushort[3] { 0x00FF, 0x00FF, 0x00FF };
-
-				for( int j = 0; j < this.height; j++ )
-				{
-					pos = j * this.width * 2;
-					for( int i = 0; i < this.width; i++ )
-					{
-						//hardcoded because there is no easy way to determine which areas use tileswapping
-						if( this.roomIndex == 00 && this.areaIndex == 01 || this.areaIndex == 02 || this.areaIndex == 0x15 )
-						{
-							oldchunks = chunks;
-							chunks = getChunks( (ushort)(i * 16), (ushort)(j * 16) );
-
-							swapTiles( oldchunks, chunks, (ushort)(i * 16), (ushort)(j * 16) );
-						}
-						//which metatile to draw
-						int mt = roomData[pos] | (roomData[pos + 1] << 8);
-
-						pos += 2;
-
-						try
-						{
-							if( mt != 0xFFFF ) //nonexistant room data does this, eg. area 0D room 10
-								metaTiles.DrawMetaTile( ref b, new Point( i * 16, j * 16 ), tset, pset, mt );
-						}
-						catch( Exception e )
-						{
-							throw new Exception( "Error drawing metatile. i:" + i.ToString() + ", j:" + j.ToString()
-												+ "\n" + e.Message, e );
-						}
-					}
-				}
-			}
-
-			private UInt16[] getChunks( UInt16 x, UInt16 y )
-			{
-				UInt16[] ret = new ushort[3];
-				var header = ROM.Instance.headers;
-
-				//chunk 00
-				int addr;
-				switch( this.areaIndex )
-				{
-					case 0x01:
-						addr = header.area1Chunk0TableLoc;
-						break;
-					case 0x15:
-						addr = header.chunk0TableLoc + 0x042; //area 0x15 (21) uses a different hardcoded ptr tbl
-						break;
-					default:
-						addr = header.chunk0TableLoc; //area 1 uses different hardcoded ptr tbl
-						break;
-				}
-
-				ret[0] = TestChunk( x, y, addr );
-
-				//chunk 01
-				if( areaIndex == 0x02 )
-				{ //no chunk 01 for area 15, only area 02
-					ret[1] = TestChunk( x, y, header.chunk1TableLoc );
-				}
-				else
-				{
-					ret[1] = 0x00FF;
-				}
-
-				//chunk 02
-				if( areaIndex == 0x02 || areaIndex == 0x15 )
-				{
-					addr = areaIndex != 0x15 ? header.chunk2TableLoc : header.chunk2TableLoc + 0x02E; //area 15 uses different hardcoded ptr tbl
-					ret[2] = TestChunk( x, y, addr );
-				}
-				else
-				{
-					ret[2] = 0x00FF;
-				}
-
-				return ret;
-			}
-
-			private ushort TestChunk( UInt16 x, UInt16 y, long addr )
-			{
-				var r = ROM.Instance.reader;
-				r.SetPosition( addr );
-				UInt16 chnk; //note: this do block is essentially check_swap_inner in IDA
-				do
-				{
-					chnk = r.ReadUInt16();
-					if( chnk == 0x00FF )
-						break; //no change
-					UInt16 r0 = r.ReadUInt16();
-					UInt16 r1 = r.ReadUInt16();
-					UInt16 r2 = r.ReadUInt16();
-					UInt16 r3 = r.ReadUInt16();
-
-					UInt16 test_x, test_y;
-					unchecked
-					{
-						test_x = (UInt16)(x - r0); //from check_coords routine
-						test_y = (UInt16)(y - r1);
-					}
-					//if(y >= 0x230 && y < 0x240)
-					//Debug.WriteLine(Convert.ToString(test_y,16) + "<" + Convert.ToString(r3,16));
-					if( test_x < r2 && test_y < r3 )
-						break; //chnk found, so return
-				} while( true );
-				return chnk;
-			}
-
-			private void swapTiles( ushort[] oldchunks, ushort[] newchunks, ushort x, ushort y )
-			{
-				var r = ROM.Instance.reader;
-				var header = ROM.Instance.headers;
-				int updatepal = -1;
-
-				for( int i = 0; i < 3; i++ )
-				{
-					if( newchunks[i] == oldchunks[i] )
-					{
-						continue;
-					}
-
-					if( newchunks[i] == 0x00FF )
-					{
-						continue;
-					}
-
-					int baseaddr, src, src2, dest, dest2;
-					byte[] newtiles = new byte[0x1000];
-
-					switch( areaIndex )
-					{
-						case 0x02:
-						case 0x15:
-							baseaddr = areaIndex != 0x15 ? header.swapBase : header.swapBase + 0x060;
-							r.SetPosition( baseaddr + (newchunks[i] << 4) );
-							src = (int)(header.tileOffset + r.ReadUInt32()); //source addrs are stored as offsets from 85A2E80
-							dest = (int)r.ReadUInt32() & 0xFFFFFF; //mask off the 0x6000000 part
-							src2 = (int)(header.tileOffset + r.ReadUInt32()); //there are 2 sets of tiles for each chunk
-							dest2 = (int)r.ReadUInt32() & 0xFFFFFF; //one for each bg
-																	//Debug.WriteLine(Convert.ToString(src,16) + " -> " + Convert.ToString(dest,16));
-							newtiles = r.ReadBytes( 0x1000, src );
-							tset.SetChunk( newtiles, dest );
-
-							newtiles = r.ReadBytes( 0x1000, src2 );
-							tset.SetChunk( newtiles, dest2 );
-
-							break;
-						case 0x01: //area 01 works differently, 8 chunks and palette update
-							for( int j = 0; j < 8; j++ )
-							{
-								if( j == 0 )
-								{//update palette
-									byte pnum = r.ReadByte( header.paletteChangeBase + newchunks[i] );
-									updatepal = (int)pnum;
-								}
-								baseaddr = header.area1SwapBase;
-								r.SetPosition( baseaddr + (newchunks[i] << 6) + (j << 3) );
-
-								src = (header.tileOffset + (int)r.ReadUInt32());
-								dest = (int)r.ReadUInt32() & 0xFFFFFF;
-
-								newtiles = r.ReadBytes( 0x1000, src );
-								tset.SetChunk( newtiles, dest );
-							}
-							break;
-					}
-				}
-				if( updatepal > 0 )
-				{
-					pset = new PaletteSet( updatepal );
-				}
-			}
 		}
-
-		private static Bitmap MakeTilesetImage( MetaTileSet mset, PaletteSet pset, TileSet tset )
+		
+		public static Bitmap MakeTilesetImage( MetaTileSet mset, PaletteSet pset, TileSet tset )
 		{
 			var tilesPerRow = 32;//0x20
 			var tilesPerValue = 8;
@@ -637,6 +685,7 @@ namespace MinishMaker.ToBeMoved
 		}
 	}
 
+	//Because I just like extension methods
 	public static class Extensions
 	{
 		public static string Hex( this uint num )
