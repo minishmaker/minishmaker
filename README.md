@@ -12,8 +12,8 @@ However, prerelease binaries will be made available as each featureset is implem
 ### Upcoming Features
 Feature | Status
 ------- | ------
-Map Viewer | In development
-Tileset Viewer | Planned
+Map Viewer | Complete
+Tileset Viewer | Per map
 Map Editing | Planned
 Tileset Editing | Planned
 
