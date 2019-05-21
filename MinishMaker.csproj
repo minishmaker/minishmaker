@@ -58,10 +58,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Utilities\DataHelper.cs" />
     <Compile Include="Core\MapManager.cs" />
+    <Compile Include="Core\MetaTileSet.cs" />
+    <Compile Include="Core\PaletteSet.cs" />
     <Compile Include="Core\ROM.cs" />
     <Compile Include="Core\Room.cs" />
-    <Compile Include="ToBeMoved\FuncDump.cs" />
+    <Compile Include="Core\RoomMetaData.cs" />
+    <Compile Include="Core\TileSet.cs" />
     <Compile Include="UI\AboutWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -77,6 +81,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\Constants.cs" />
+    <Compile Include="Utilities\ExtensionMethods.cs" />
     <Compile Include="Utilities\Reader.cs" />
     <Compile Include="Utilities\StringUtil.cs" />
     <Compile Include="Utilities\Writer.cs" />

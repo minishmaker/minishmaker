@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using System.IO;
+using static MinishMaker.Core.RoomMetaData;
 
 namespace MinishMaker.Core
 {
@@ -16,9 +18,22 @@ namespace MinishMaker.Core
             get { return tilesetData.Length / 0x20; }
         }
 
-        public TileSet(byte[] data)
+        public TileSet(List<AddrData> tileSetAddrs)
         {
-            tilesetData = data;
+            byte[] tilesetData = new byte[0x10000];
+			using( MemoryStream ms = new MemoryStream( tilesetData ) )
+			{
+				using( BinaryWriter bw = new BinaryWriter( ms ) )
+				{
+					for( int i = 0; i < tileSetAddrs.Count; i++ )
+					{
+						ms.Seek( tileSetAddrs[i].dest, SeekOrigin.Begin );
+						byte[] data = DataHelper.GetData( tileSetAddrs[i] );
+						bw.Write( data );
+					}
+					this.tilesetData = tilesetData;
+				}
+			}
         }
 
         public void SetChunk(byte[] newdata, int dest)
