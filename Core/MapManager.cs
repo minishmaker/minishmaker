@@ -1,6 +1,7 @@
 ﻿using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.Diagnostics;
 using MinishMaker.Utilities;
 
 namespace MinishMaker.Core
@@ -24,14 +25,15 @@ namespace MinishMaker.Core
                 AreaRooms.Add(room);
             }
 
-            public int Count()
+            public int Count
             {
-                return AreaRooms.Count;
+                get { return AreaRooms.Count; }
             }
 
-            public List<Room> Rooms()
+
+            public List<Room> Rooms
             {
-                return AreaRooms;
+                get { return AreaRooms; }
             }
         }
 
@@ -53,24 +55,21 @@ namespace MinishMaker.Core
             for (int areaNum = 0; areaNum < 0x90; areaNum++)
             {
                 Area area = new Area(areaNum);
-
                 for (int roomNum = 0; roomNum < 0x40; roomNum++)
                 {
                     if (IsValidRoom(areaNum, roomNum))
                     {
-                        if (IsStableRoom(areaNum, roomNum))
-                        {
-                            area.Add(new Room(roomNum));
-                        }
+                        if(IsStableRoom(areaNum, roomNum))
+                        area.Add(new Room(roomNum));
                     }
+
                     else break;
                 }
 
                 // At least one room in area, so add to list.
-                if (area.Count() > 0)
+                if (area.Count > 0)
                 {
                     areas.Add(area);
-                    Console.WriteLine("-------------");
                 }
             }
             MapAreas = areas;
@@ -85,21 +84,15 @@ namespace MinishMaker.Core
             // Not a valid data address as doesn't point to anywhere
             if (addr == 0) return false;
 
+
             int roomaddr = addr + room * 0x0A;
             int roomheader = ROM.Instance.reader.ReadUInt16(roomaddr);
-
-            // Debug prints
-            Console.WriteLine("Area: {0} Room: {1}", StringUtil.AsStringHex2(area), StringUtil.AsStringHex2(room));
-            Console.WriteLine("Area Data Address: {0}\nArea Data Header: {1}", StringUtil.AsStringGBAAddress(searchaddr), StringUtil.AsStringGBAAddress(addr));
-            Console.WriteLine("Room header: {0}", StringUtil.AsStringGBAAddress(addr + room * 0x0A));
-            Console.WriteLine("Header Value: {0}", StringUtil.AsStringHex4(roomaddr));
-
+            
             return roomheader != 0xFFFF;
         }
 
         private bool IsStableRoom(int area, int room)
         {
-
             int areasearchaddr = ROM.Instance.headers.AreaMetadataBase + (area << 2);
             int areaaddr = ROM.Instance.reader.ReadAddr(areasearchaddr);
 

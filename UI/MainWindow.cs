@@ -7,105 +7,174 @@ using System.Windows.Forms;
 using GBHL;
 using MinishMaker.Core;
 using MinishMaker.Utilities;
+using System.Drawing;
 
 namespace MinishMaker.UI
 {
-    public partial class MainWindow : Form
-    {
-        private ROM ROM_;
-        private MapManager mapManager_;
+	public partial class MainWindow : Form
+	{
+		private ROM ROM_;
+		private MapManager mapManager_;
 
-        public MainWindow()
-        {
-            InitializeComponent();
-        }
+		private Bitmap[] mapLayers;
+		private Bitmap[] tileMaps;
 
-        // MenuBar Buttons
-        private void OpenButtonClick(object sender, EventArgs e)
-        {
-            LoadRom();
-        }
+		public MainWindow()
+		{
+			InitializeComponent();
+		}
 
-        private void ExitButtonClick(object sender, EventArgs e)
-        {
-            Close();
-        }
+		// MenuBar Buttons
+		private void OpenButtonClick( object sender, EventArgs e )
+		{
+			LoadRom();
+		}
 
-        private void AboutButtonClick(object sender, EventArgs e)
-        {
-            Form aboutWindow = new AboutWindow();
-            aboutWindow.Show();
-        }
+		private void ExitButtonClick( object sender, EventArgs e )
+		{
+			Close();
+		}
 
-        // ToolStrip Buttons
-        private void openToolStripButton_Click(object sender, EventArgs e)
-        {
-            LoadRom();
-        }
+		private void AboutButtonClick( object sender, EventArgs e )
+		{
+			Form aboutWindow = new AboutWindow();
+			aboutWindow.Show();
+		}
 
-        // Other interactions
-        private void MainWindow_DragDrop(object sender, DragEventArgs e)
-        {
+		// ToolStrip Buttons
+		private void openToolStripButton_Click( object sender, EventArgs e )
+		{
+			LoadRom();
+		}
 
-        }
+		// Other interactions
+		private void MainWindow_DragDrop( object sender, DragEventArgs e )
+		{
 
-        private void LoadRom()
-        {
-            OpenFileDialog ofd = new OpenFileDialog
-            {
-                Filter = "GBA ROMs|*.gba|All Files|*.*",
-                Title = "Select TMC ROM"
-            };
+		}
 
-            if (ofd.ShowDialog() != DialogResult.OK)
-            {
-                return;
-            }
+		private void LoadRom()
+		{
+			OpenFileDialog ofd = new OpenFileDialog
+			{
+				Filter = "GBA ROMs|*.gba|All Files|*.*",
+				Title = "Select TMC ROM"
+			};
 
-            try
-            {
-                ROM_ = new ROM(ofd.FileName);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+			if( ofd.ShowDialog() != DialogResult.OK )
+			{
+				return;
+			}
 
-            if (ROM.Instance.version.Equals(RegionVersion.None))
-            {
-                MessageBox.Show("Invalid TMC ROM. Please Open a valid ROM.", "Incorrect ROM", MessageBoxButtons.OK);
-                statusText.Text = "Unable to determine ROM.";
-                return;
-            }
+			try
+			{
+				ROM_ = new ROM( ofd.FileName );
+			}
+			catch( Exception e )
+			{
+				Console.WriteLine( e );
+				throw;
+			}
 
-            LoadMaps();
-            
+			if( ROM.Instance.version.Equals( RegionVersion.None ) )
+			{
+				MessageBox.Show( "Invalid TMC ROM. Please Open a valid ROM.", "Incorrect ROM", MessageBoxButtons.OK );
+				statusText.Text = "Unable to determine ROM.";
+				return;
+			}
 
-            statusText.Text = "Loaded: " + ROM.Instance.path;
-        }
+			LoadMaps();
 
-        private void LoadMaps()
-        {
-            mapManager_ = new MapManager();
 
-            roomTreeView.Nodes.Clear();
-            // Set up room list
-            roomTreeView.BeginUpdate();
-            int subsection = 0;
+			statusText.Text = "Loaded: " + ROM.Instance.path;
+		}
 
-            foreach (MapManager.Area area in mapManager_.MapAreas)
-            {
-                roomTreeView.Nodes.Add("Area " + StringUtil.AsStringHex2(area.Index));
-                
-                foreach(Room room in area.Rooms())
-                {
-                    roomTreeView.Nodes[subsection].Nodes.Add("Room " + StringUtil.AsStringHex2(room.Index));
-                }
-                subsection++;
-            }
+		private void LoadMaps()
+		{
+			mapManager_ = new MapManager();
 
-            roomTreeView.EndUpdate();
-        }
-    }
+			roomTreeView.Nodes.Clear();
+			// Set up room list
+			roomTreeView.BeginUpdate();
+			int subsection = 0;
+
+			foreach( MapManager.Area area in mapManager_.MapAreas )
+			{
+				roomTreeView.Nodes.Add( "Area " + StringUtil.AsStringHex2( area.Index ) );
+
+				foreach( Room room in area.Rooms )
+				{
+					roomTreeView.Nodes[subsection].Nodes.Add( "Room " + StringUtil.AsStringHex2( room.Index ) );
+				}
+
+				subsection++;
+			}
+
+			roomTreeView.EndUpdate();
+		}
+
+		private void roomTreeView_NodeMouseDoubleClick( object sender, TreeNodeMouseClickEventArgs e )
+		{
+			if( e.Node.Parent != null )
+			{
+				Console.WriteLine( e.Node.Parent.Text.Split( ' ' )[1] + " " + e.Node.Text.Split( ' ' )[1] );
+
+				int foundIndex = 0;
+				int areaIndex = Convert.ToInt32( e.Node.Parent.Text.Split( ' ' )[1],16 );
+				for( int i = 0; i < mapManager_.MapAreas.Count; i++ )
+				{
+					if( mapManager_.MapAreas[i].Index == areaIndex )
+					{
+						foundIndex = i;
+						break;
+					}
+					if( i == mapManager_.MapAreas.Count - 1 )
+					{
+						throw new Exception( "Could not find any area with index: " + areaIndex.Hex() );
+					}
+				}
+
+				var area = mapManager_.MapAreas[foundIndex];
+				int roomIndex = Convert.ToInt32( e.Node.Text.Split( ' ' )[1] ,16);
+				for( int j = 0; j < area.Rooms.Count(); j++ )
+				{
+					if( area.Rooms[j].Index == roomIndex )
+					{
+						foundIndex = j;
+						break;
+					}
+					if( j == area.Rooms.Count - 1 )
+					{
+						throw new Exception( "Could not find any room with index: " + roomIndex.Hex() + " in area: " + areaIndex.Hex() );
+					}
+				}
+				var room = area.Rooms[foundIndex];
+
+				mapLayers = room.DrawRoom( areaIndex, true, true );
+				
+				//0= bg1 (treetops and such)
+				//1= bg2 (flooring)
+				mapView.Image = OverlayImage(mapLayers[1],mapLayers[0]);
+				tileMaps = room.DrawTilesetImages(11);
+				tileView.Image = tileMaps[1];
+			}
+		}
+
+		public Bitmap OverlayImage(Bitmap baseImage, Bitmap overlay)
+		{
+			Bitmap finalImage = new Bitmap( baseImage.Width, baseImage.Height );
+
+			using( Graphics g = Graphics.FromImage( finalImage ) )
+			{
+				//set background color
+				g.Clear( Color.Black );
+
+				
+				g.DrawImage( baseImage, new Rectangle( 0, 0, baseImage.Width, baseImage.Height ) );
+				g.DrawImage( overlay, new Rectangle( 0, 0, baseImage.Width, baseImage.Height ) );
+			}
+			//Draw the final image in the pictureBox
+			return finalImage;
+		}
+	}
 }

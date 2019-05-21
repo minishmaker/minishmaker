@@ -14,6 +14,16 @@ namespace MinishMaker.Utilities
             reader = new BinaryReader(stream);
         }
 
+        public long Position
+        {
+            get { return stream_.Position; }
+        }
+
+        public void SetPosition(long pos)
+        {
+            stream_.Position = pos;
+        }
+
         public byte PeekByte()
         {
             long tempPos = stream_.Position;
