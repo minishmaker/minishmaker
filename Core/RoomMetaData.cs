@@ -193,7 +193,43 @@ namespace MinishMaker.Core
 			}
 		}
 
+		public void SaveBG1(byte[] bg1data)
+		{
+			var data = new byte[bg1data.Length];
+			long totalSize = 0;
+			MemoryStream ous = new MemoryStream( data );
+			totalSize = DataHelper.Compress(bg1data, ous, false);
 
+			var compressedData = new byte[totalSize];
+			Array.Copy(data,compressedData,totalSize);
+			//var sizeDifference = totalSize - bg1RoomDataAddr.Value.size;
+
+			using( MemoryStream s = new MemoryStream( ROM.Instance.romData ) )
+			{
+				var w = new Writer( s );
+				w.SetPosition(bg1RoomDataAddr.Value.src);
+				w.WriteBytes(compressedData);
+			}
+		}
+
+		public void SaveBG2(byte[] bg2data)
+		{
+			var data = new byte[bg2data.Length];
+			long totalSize = 0;
+			MemoryStream ous = new MemoryStream( data );
+			totalSize = DataHelper.Compress(bg2data, ous, false);
+			
+			var compressedData = new byte[totalSize];
+			Array.Copy(data,compressedData,totalSize);
+			//var sizeDifference = totalSize - bg2RoomDataAddr.Value.size;
+
+			using( MemoryStream s = new MemoryStream( ROM.Instance.romData ) )
+			{
+				var w = new Writer( s );
+				w.SetPosition( ((AddrData)bg2RoomDataAddr).src);
+				w.WriteBytes(compressedData);
+			}
+		}
 
 		//dont have any good names for these 3
 		private bool Set1( AddrData data )

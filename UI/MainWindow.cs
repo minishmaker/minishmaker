@@ -19,6 +19,12 @@ namespace MinishMaker.UI
 		private Bitmap[] mapLayers;
 		private Bitmap[] tileMaps;
 
+		private Bitmap selectorImage = new Bitmap(16,16);
+		private Room currentRoom=null;
+		private int currentArea = -1;
+		private int selectedTileData=-1;
+		private int selectedLayer = 2; //start with bg2
+
 		public MainWindow()
 		{
 			InitializeComponent();
@@ -121,6 +127,7 @@ namespace MinishMaker.UI
 
 				int foundIndex = 0;
 				int areaIndex = Convert.ToInt32( e.Node.Parent.Text.Split( ' ' )[1],16 );
+				currentArea= areaIndex;
 				for( int i = 0; i < mapManager_.MapAreas.Count; i++ )
 				{
 					if( mapManager_.MapAreas[i].Index == areaIndex )
@@ -150,12 +157,18 @@ namespace MinishMaker.UI
 				}
 				var room = area.Rooms[foundIndex];
 
+				currentRoom = room;
+
 				mapLayers = room.DrawRoom( areaIndex, true, true );
 				
+				tileSelectionBox.Visible=false;
+				mapSelectionBox.Visible=false;
+				selectedTileData=-1;
+
 				//0= bg1 (treetops and such)
 				//1= bg2 (flooring)
 				mapView.Image = OverlayImage(mapLayers[1],mapLayers[0]);
-				tileMaps = room.DrawTilesetImages(11);
+				tileMaps = room.DrawTilesetImages(11,currentArea);
 				tileView.Image = tileMaps[1];
 			}
 		}
@@ -169,12 +182,116 @@ namespace MinishMaker.UI
 				//set background color
 				g.Clear( Color.Black );
 
-				
 				g.DrawImage( baseImage, new Rectangle( 0, 0, baseImage.Width, baseImage.Height ) );
 				g.DrawImage( overlay, new Rectangle( 0, 0, baseImage.Width, baseImage.Height ) );
 			}
 			//Draw the final image in the pictureBox
 			return finalImage;
+		}
+
+		private void saveRoomChangesCtrlSToolStripMenuItem_Click( object sender, EventArgs e )
+		{
+			if(currentRoom==null)
+				return;
+
+			currentRoom.SaveRoom();
+			File.WriteAllBytes("testfile1.gba",ROM.Instance.romData);
+			MessageBox.Show("Room has been saved");
+		}
+
+		private void mapView_Click( object sender, EventArgs e )
+		{
+			if(currentRoom == null)
+				return;
+
+			if(mapSelectionBox.Image==null)
+			{
+				GenerateSelectorImage();
+				tileSelectionBox.BackColor=Color.Transparent;
+				mapSelectionBox.BackColor=Color.Transparent;
+				tileSelectionBox.Image = selectorImage;
+				mapSelectionBox.Image = selectorImage;
+			}
+			mapSelectionBox.Visible=true;
+			
+			var mTileWidth = mapLayers[0].Width/16;
+			var tsTileWidth = tileMaps[0].Width/16;
+
+			var me = (MouseEventArgs)e;
+
+			var partialX = me.X%16;
+			var partialY = me.Y%16;
+
+			int tileX = (me.X-partialX) /16;
+			int tileY = (me.Y-partialY) /16;
+
+			mapSelectionBox.Location= new Point(me.X-partialX, me.Y-partialY);
+			var pos = tileY *mTileWidth +tileX; //tilenumber if they were all in a line
+
+			if( me.Button==MouseButtons.Right)
+			{
+				selectedTileData = currentRoom.GetTileData(selectedLayer, pos*2);//*2 as each tile is 2 bytes
+				var newX = selectedTileData%tsTileWidth;
+				var newY = (selectedTileData-newX)/tsTileWidth;
+
+				tileSelectionBox.Location= new Point(newX*16, newY*16);
+				tileSelectionBox.Visible=true;
+			}
+			else if (me.Button == MouseButtons.Left)
+			{
+				if(selectedTileData ==-1) //no selected tile, nothing to paste
+					return;
+
+				if(selectedLayer==1)
+				{
+					currentRoom.DrawTile(ref mapLayers[0], new Point(tileX*16,tileY*16), currentArea, selectedLayer, selectedTileData);
+				}
+				else if(selectedLayer==2)
+				{
+					currentRoom.DrawTile(ref mapLayers[1], new Point(tileX*16,tileY*16), currentArea, selectedLayer, selectedTileData);
+				}
+
+				currentRoom.SetTileData(selectedLayer, pos*2, selectedTileData);
+				mapView.Image=OverlayImage(mapLayers[1],mapLayers[0]);
+			}
+		}
+
+		private void tileView_Click( object sender, EventArgs e )
+		{
+			if(currentRoom == null)
+				return;
+
+			if(tileSelectionBox.Image==null)
+			{
+				GenerateSelectorImage();
+				tileSelectionBox.Image = selectorImage;
+				mapSelectionBox.Image = selectorImage;
+			}
+			tileSelectionBox.Visible = true;
+
+			var mTileWidth = mapLayers[0].Width/16;
+			var tsTileWidth = tileMaps[0].Width/16;
+
+			var me = (MouseEventArgs)e;
+
+			var partialX = me.X%16;
+			var partialY = me.Y%16;
+
+			int tileX = (me.X-partialX) /16;
+			int tileY = (me.Y-partialY) /16;
+
+			tileSelectionBox.Location= new Point(me.X-partialX, me.Y-partialY);
+
+			selectedTileData = tileX + tileY*tsTileWidth;
+		}
+
+		private void GenerateSelectorImage()
+		{
+			using (Graphics g = Graphics.FromImage(selectorImage))
+			{
+				selectorImage.MakeTransparent();
+				g.DrawRectangle(new Pen(Color.Red,4),0,0,16,16);
+			}
 		}
 	}
 }
