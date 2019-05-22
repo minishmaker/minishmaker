@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MinishMaker.Utilities;
+using static MinishMaker.UI.MainWindow;
+
 namespace MinishMaker.Core
 {
 	public class RoomMetaData
@@ -193,42 +195,84 @@ namespace MinishMaker.Core
 			}
 		}
 
-		public void SaveBG1(byte[] bg1data)
+		public long CompressBG1(ref byte[] outdata, byte[] bg1data)
 		{
-			var data = new byte[bg1data.Length];
+			var compressed = new byte[bg1data.Length];
 			long totalSize = 0;
-			MemoryStream ous = new MemoryStream( data );
+			MemoryStream ous = new MemoryStream( compressed );
 			totalSize = DataHelper.Compress(bg1data, ous, false);
 
-			var compressedData = new byte[totalSize];
-			Array.Copy(data,compressedData,totalSize);
+			outdata = new byte[totalSize];
+			Array.Copy(compressed,outdata,totalSize);
 			//var sizeDifference = totalSize - bg1RoomDataAddr.Value.size;
 
-			using( MemoryStream s = new MemoryStream( ROM.Instance.romData ) )
-			{
-				var w = new Writer( s );
-				w.SetPosition(bg1RoomDataAddr.Value.src);
-				w.WriteBytes(compressedData);
-			}
+			return totalSize;
 		}
 
-		public void SaveBG2(byte[] bg2data)
+		public long CompressBG2(ref byte[] outdata,byte[] bg2data)
 		{
-			var data = new byte[bg2data.Length];
+			var compressed = new byte[bg2data.Length];
 			long totalSize = 0;
-			MemoryStream ous = new MemoryStream( data );
+			MemoryStream ous = new MemoryStream( compressed );
 			totalSize = DataHelper.Compress(bg2data, ous, false);
 			
-			var compressedData = new byte[totalSize];
-			Array.Copy(data,compressedData,totalSize);
+			outdata = new byte[totalSize];
+			Array.Copy(compressed,outdata,totalSize);
 			//var sizeDifference = totalSize - bg2RoomDataAddr.Value.size;
 
-			using( MemoryStream s = new MemoryStream( ROM.Instance.romData ) )
+			return totalSize;
+		}
+
+		//To be changed as actual data gets changed and tested
+		public int GetPointerLoc(DataType type, int areaIndex, int roomIndex)
+		{
+			var r = ROM.Instance.reader;
+			var header = ROM.Instance.headers;
+			int retAddr = 0;
+			int areaRMDTableLoc = r.ReadAddr( header.MapHeaderBase + (areaIndex << 2) );
+			int roomMetaDataTableLoc = areaRMDTableLoc + (roomIndex * 0x0A);
+
+			switch(type)
 			{
-				var w = new Writer( s );
-				w.SetPosition( ((AddrData)bg2RoomDataAddr).src);
-				w.WriteBytes(compressedData);
+				case DataType.roomMetaData:
+					retAddr = roomMetaDataTableLoc;
+					break;
+
+				case DataType.tileSet:
+					//get addr of TPA data
+					int tileSetOffset = r.ReadUInt16(roomMetaDataTableLoc+8) << 2;                    //bytes 9+10
+
+					int areaTileSetTableLoc = r.ReadAddr( header.globalTileSetTableLoc + (areaIndex << 2) );
+					int roomTileSetAddrLoc = areaTileSetTableLoc + tileSetOffset;
+					retAddr = roomTileSetAddrLoc;
+					break;
+
+				case DataType.metaTileSet:
+					int metaTileSetsAddrLoc = r.ReadAddr( header.globalMetaTileSetTableLoc + (areaIndex << 2) );
+					retAddr = metaTileSetsAddrLoc;
+					break;
+
+				case DataType.bg1Data:
+				case DataType.bg2Data:
+					int areaTileDataTableLoc = r.ReadAddr( header.globalTileDataTableLoc + (areaIndex << 2) );
+					int tileDataLoc = r.ReadAddr( areaTileDataTableLoc + (roomIndex << 2) );
+					r.SetPosition( tileDataLoc );
+
+					if(type == DataType.bg1Data)
+					{
+						ParseData(r,Bg1Check);
+					}
+					else //not bg1 so has to be bg2
+					{
+						ParseData(r,Bg2Check);
+					}
+					return (int)r.Position-12; //step back 12 bytes as the bg was found after reading
+
+				default:
+					break;
 			}
+
+			return retAddr;
 		}
 
 		//dont have any good names for these 3
@@ -291,6 +335,32 @@ namespace MinishMaker.Core
 					Debug.Write( "Unhandled room data addr: " );
 					Debug.Write( data.src.Hex() + "->" + data.dest.Hex() );
 					Debug.WriteLine( data.compressed ? " (compressed)" : "" );
+					break;
+			}
+			return true;
+		}
+		
+		private bool Bg1Check(AddrData data)
+		{
+			switch(data.dest)
+			{
+				case 0x0200B654:
+					return false;
+				case 0x2002F00:
+					return false;
+				default:
+					break;
+			}
+			return true;
+		}
+
+		private bool Bg2Check(AddrData data)
+		{
+			switch(data.dest)
+			{
+				case 0x02025EB4:
+					return false;
+				default:
 					break;
 			}
 			return true;

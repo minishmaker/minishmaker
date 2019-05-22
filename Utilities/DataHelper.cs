@@ -55,7 +55,7 @@ namespace MinishMaker.Core
 		/// Doesn't check input length (for ROM hacking projects)
 		/// </summary>
 		/// <param name="outstream">The output stream, where the decompressed data is written to.</param>
-		public static long Lz77Decompress( Stream outstream, Reader r2 =null )
+		public static long Lz77Decompress( Stream outstream)
 		{
 			#region format definition from GBATEK/NDSTEK
 			/*  Data header (32bit)
@@ -73,11 +73,8 @@ namespace MinishMaker.Core
 				  Bit 8-15  Disp LSBs
 			 */
 			#endregion
-			Reader r = null;
-			if(r2==null)
-				r = ROM.Instance.reader;
-			else
-				r=r2;
+			Reader r = ROM.Instance.reader;
+
 
 			var magicByte = 0x10;
 

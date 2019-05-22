@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
+using static MinishMaker.UI.MainWindow;
 
 namespace MinishMaker.Core
 {
@@ -318,11 +319,20 @@ namespace MinishMaker.Core
 			}
 		}
 
-		public void SaveRoom()
+		public long CompressRoomData(ref byte[] data, DataType type )
 		{
-			metadata.SaveBG1(bg1RoomData);
+			if(type == DataType.bg1Data)
+				return metadata.CompressBG1(ref data, bg1RoomData);
 
-			metadata.SaveBG2(bg2RoomData);
+			if(type == DataType.bg2Data)
+				return metadata.CompressBG2(ref data, bg2RoomData);
+
+			return 0;
+		}
+
+		public int GetPointerLoc( DataType type , int areaIndex)
+		{
+			return metadata.GetPointerLoc(type, areaIndex, Index);
 		}
 		//confusing myself over the bitmap size logic
 		/// <summary>

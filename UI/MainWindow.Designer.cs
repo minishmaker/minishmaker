@@ -101,11 +101,11 @@
 			// 
 			// saveRoomChangesCtrlSToolStripMenuItem
 			// 
-			this.saveRoomChangesCtrlSToolStripMenuItem.Name = "saveRoomChangesCtrlSToolStripMenuItem";
+			this.saveRoomChangesCtrlSToolStripMenuItem.Name = "saveAllChangesCtrlSToolStripMenuItem";
 			this.saveRoomChangesCtrlSToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
 			this.saveRoomChangesCtrlSToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
-			this.saveRoomChangesCtrlSToolStripMenuItem.Text = "Save Room Changes ";
-			this.saveRoomChangesCtrlSToolStripMenuItem.Click += new System.EventHandler(this.saveRoomChangesCtrlSToolStripMenuItem_Click);
+			this.saveRoomChangesCtrlSToolStripMenuItem.Text = "Save All Changes ";
+			this.saveRoomChangesCtrlSToolStripMenuItem.Click += new System.EventHandler(this.saveAllChangesCtrlSToolStripMenuItem_Click);
 			// 
 			// helpToolStripMenuItem
 			// 

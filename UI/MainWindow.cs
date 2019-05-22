@@ -24,6 +24,31 @@ namespace MinishMaker.UI
 		private int currentArea = -1;
 		private int selectedTileData=-1;
 		private int selectedLayer = 2; //start with bg2
+		private List<PendingData> unsavedChanges = new List<PendingData>();
+
+		struct PendingData
+		{
+			public int areaIndex;
+			public int roomIndex;
+			public DataType dataType;
+
+			public PendingData(int areaIndex, int roomIndex, DataType type)
+			{
+				this.areaIndex = areaIndex;
+				this.roomIndex = roomIndex;
+				this.dataType = type;
+			}
+		}
+
+		public enum DataType
+		{
+			bg1Data,
+			bg2Data,
+			roomMetaData,
+			tileSet,
+			metaTileSet,
+
+		}
 
 		public MainWindow()
 		{
@@ -124,38 +149,9 @@ namespace MinishMaker.UI
 			if( e.Node.Parent != null )
 			{
 				Console.WriteLine( e.Node.Parent.Text.Split( ' ' )[1] + " " + e.Node.Text.Split( ' ' )[1] );
-
-				int foundIndex = 0;
 				int areaIndex = Convert.ToInt32( e.Node.Parent.Text.Split( ' ' )[1],16 );
-				currentArea= areaIndex;
-				for( int i = 0; i < mapManager_.MapAreas.Count; i++ )
-				{
-					if( mapManager_.MapAreas[i].Index == areaIndex )
-					{
-						foundIndex = i;
-						break;
-					}
-					if( i == mapManager_.MapAreas.Count - 1 )
-					{
-						throw new Exception( "Could not find any area with index: " + areaIndex.Hex() );
-					}
-				}
-
-				var area = mapManager_.MapAreas[foundIndex];
 				int roomIndex = Convert.ToInt32( e.Node.Text.Split( ' ' )[1] ,16);
-				for( int j = 0; j < area.Rooms.Count(); j++ )
-				{
-					if( area.Rooms[j].Index == roomIndex )
-					{
-						foundIndex = j;
-						break;
-					}
-					if( j == area.Rooms.Count - 1 )
-					{
-						throw new Exception( "Could not find any room with index: " + roomIndex.Hex() + " in area: " + areaIndex.Hex() );
-					}
-				}
-				var room = area.Rooms[foundIndex];
+				var room = FindRoom(areaIndex, roomIndex);
 
 				currentRoom = room;
 
@@ -189,14 +185,137 @@ namespace MinishMaker.UI
 			return finalImage;
 		}
 
-		private void saveRoomChangesCtrlSToolStripMenuItem_Click( object sender, EventArgs e )
+		private Room FindRoom(int areaIndex, int roomIndex)
 		{
-			if(currentRoom==null)
-				return;
+			int foundIndex = 0;
+				
+				currentArea= areaIndex;
+				for( int i = 0; i < mapManager_.MapAreas.Count; i++ )
+				{
+					if( mapManager_.MapAreas[i].Index == areaIndex )
+					{
+						foundIndex = i;
+						break;
+					}
+					if( i == mapManager_.MapAreas.Count - 1 )
+					{
+						throw new Exception( "Could not find any area with index: " + areaIndex.Hex() );
+					}
+				}
 
-			currentRoom.SaveRoom();
+				var area = mapManager_.MapAreas[foundIndex];
+				for( int j = 0; j < area.Rooms.Count(); j++ )
+				{
+					if( area.Rooms[j].Index == roomIndex )
+					{
+						foundIndex = j;
+						break;
+					}
+					if( j == area.Rooms.Count - 1 )
+					{
+						throw new Exception( "Could not find any room with index: " + roomIndex.Hex() + " in area: " + areaIndex.Hex() );
+					}
+				}
+
+				return area.Rooms[foundIndex];
+		}
+
+		private void saveAllChangesCtrlSToolStripMenuItem_Click( object sender, EventArgs e )
+		{
+			if(unsavedChanges.Count==0)
+			{
+				return;
+			}
+			unsavedChanges = unsavedChanges.Distinct().ToList();
+			//foreach(PendingData pendingData in unsavedChanges)
+			while(unsavedChanges.Count>0)
+			{
+				var pendingData =unsavedChanges.ElementAt(0);
+				var room = FindRoom(pendingData.areaIndex,pendingData.roomIndex);
+				byte[] compressedData = null;
+				long size = room.CompressRoomData(ref compressedData, pendingData.dataType);
+				long pointerAddress = room.GetPointerLoc(pendingData.dataType ,pendingData.areaIndex);
+
+				//TODO: write data to open area and repoint
+				uint newSource = FindNewSource((uint)size);
+
+				if(newSource==0)
+				{
+					MessageBox.Show("Unable to allocate enough space for data in area:"+pendingData.areaIndex+" room:"+pendingData.roomIndex+" with size:"+size);
+					continue;
+				}
+
+				
+
+				size = size | 0x80000000; //sets the compression bit
+				using(MemoryStream m = new MemoryStream( ROM.Instance.romData )) {
+					Writer w = new Writer(m);
+					w.SetPosition(newSource);//actually write the compressed data somewhere
+					w.WriteBytes(compressedData);
+
+					newSource = (uint)(newSource - ROM.Instance.headers.gfxSourceBase);
+					w.SetPosition(pointerAddress);
+					w.WriteUInt32(newSource | 0x80000000);//byte 1-4 is source, high bit was removed before
+
+					w.SetPosition(w.Position+4);//byte 5-8 is dest, skip
+					w.WriteUInt32((uint)size);//byte 9-12 is size and compressed
+
+					
+				}
+
+				unsavedChanges.RemoveAt(0);//saved, remove from pending to avoid re-save
+			}
+			
+
 			File.WriteAllBytes("testfile1.gba",ROM.Instance.romData);
-			MessageBox.Show("Room has been saved");
+			MessageBox.Show("All changes have been saved");
+		}
+
+		private uint FindNewSource(uint size)
+		{
+			var r = ROM.Instance.reader;
+			var emptySpaces = Space.Spaces;
+
+			foreach(var space in emptySpaces)
+			{
+				if(space.size<size)
+					continue;
+
+				r.SetPosition(space.start);
+				bool foundSpot = true;
+				uint offset=0;
+
+				while(r.ReadByte()==0x10)//magicbyte from compression
+				{
+					//TODO:check the compressed data size, requires all addrdata to be loaded to check through to find this location
+					//compressed data itself only holds the uncompressed size
+
+					//compressedSize = data.size
+					//offset+=compressedSize;
+					//if(offset+size>space.size)
+					//{
+					//	foundSpot = false;
+					//	break; 
+					//}
+					//r.SetPosition(space.start+offset)
+					//
+					foundSpot = false;
+					break;
+				}
+
+				if(foundSpot)
+				{
+					return space.start+offset;
+				}
+
+			}
+
+			return 0;
+		}
+
+		private void discardRoomChangesToolStripMenuItem_Click( object sender, EventArgs e )
+		{
+			//TODO
 		}
 
 		private void mapView_Click( object sender, EventArgs e )
@@ -245,12 +364,14 @@ namespace MinishMaker.UI
 				if(selectedLayer==1)
 				{
 					currentRoom.DrawTile(ref mapLayers[0], new Point(tileX*16,tileY*16), currentArea, selectedLayer, selectedTileData);
+					unsavedChanges.Add(new PendingData(currentArea,currentRoom.Index,DataType.bg1Data));
 				}
 				else if(selectedLayer==2)
 				{
 					currentRoom.DrawTile(ref mapLayers[1], new Point(tileX*16,tileY*16), currentArea, selectedLayer, selectedTileData);
+					unsavedChanges.Add(new PendingData(currentArea,currentRoom.Index,DataType.bg2Data));
 				}
-
+				
 				currentRoom.SetTileData(selectedLayer, pos*2, selectedTileData);
 				mapView.Image=OverlayImage(mapLayers[1],mapLayers[0]);
 			}
