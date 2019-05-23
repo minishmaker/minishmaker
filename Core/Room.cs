@@ -332,6 +332,9 @@ namespace MinishMaker.Core
 
 		public int GetPointerLoc( DataType type , int areaIndex)
 		{
+			if(metadata==null)
+				LoadRoom(areaIndex);
+
 			return metadata.GetPointerLoc(type, areaIndex, Index);
 		}
 		//confusing myself over the bitmap size logic
