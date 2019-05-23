@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MinishMaker.Utilities;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -54,7 +55,7 @@ namespace MinishMaker.Core
 		/// Doesn't check input length (for ROM hacking projects)
 		/// </summary>
 		/// <param name="outstream">The output stream, where the decompressed data is written to.</param>
-		private static long Lz77Decompress( Stream outstream )
+		public static long Lz77Decompress( Stream outstream)
 		{
 			#region format definition from GBATEK/NDSTEK
 			/*  Data header (32bit)
@@ -72,7 +73,9 @@ namespace MinishMaker.Core
 				  Bit 8-15  Disp LSBs
 			 */
 			#endregion
-			var r = ROM.Instance.reader;
+			Reader r = ROM.Instance.reader;
+
+
 			var magicByte = 0x10;
 
 			long readBytes = 0;
@@ -182,10 +185,11 @@ namespace MinishMaker.Core
 		/// This algorithm should yield files that are the same as those found in the games.
 		/// (delegates to the optimized method if LookAhead is set)
 		/// </summary>
-		private static unsafe int Compress( int inLength, Stream outstream, bool lookAhead )
+		public static unsafe int Compress(byte[] indata, Stream outstream, bool lookAhead )
 		{
-			var r = ROM.Instance.reader;
 			byte magicByte = 0x10;
+			var inLength = indata.Length;
+
 			// make sure the decompressed size fits in 3 bytes.
 			// There should be room for four bytes, however I'm not 100% sure if that can be used
 			// in every game, as it may not be a built-in function.
@@ -198,17 +202,6 @@ namespace MinishMaker.Core
 				return CompressWithLA( inLength, outstream );
 			}
 
-			// save the input data in an array to prevent having to go back and forth in a file
-			byte[] indata = new byte[inLength];
-
-			try
-			{
-				indata = r.ReadBytes( (int)inLength );
-			}
-			catch
-			{
-				throw new Exception( "The end of the stream was reached before the given amout of data was read." );
-			}
 
 			// write the compression header first
 			outstream.WriteByte( magicByte );

@@ -33,6 +33,7 @@
 			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.saveRoomChangesCtrlSToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.bottomStatusStrip = new System.Windows.Forms.StatusStrip();
@@ -43,16 +44,22 @@
 			this.roomTreeView = new System.Windows.Forms.TreeView();
 			this.tilePanel = new System.Windows.Forms.Panel();
 			this.tileView = new System.Windows.Forms.PictureBox();
+			this.tileSelectionBox = new System.Windows.Forms.PictureBox();
 			this.mapPanel = new System.Windows.Forms.Panel();
 			this.mapView = new System.Windows.Forms.PictureBox();
+			this.mapSelectionBox = new System.Windows.Forms.PictureBox();
 			this.menuStrip1.SuspendLayout();
 			this.bottomStatusStrip.SuspendLayout();
 			this.toolStrip.SuspendLayout();
 			this.roomPanel.SuspendLayout();
 			this.tilePanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.tileView)).BeginInit();
+			this.tileView.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.tileSelectionBox)).BeginInit();
 			this.mapPanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.mapView)).BeginInit();
+			this.mapView.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.mapSelectionBox)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// menuStrip1
@@ -70,7 +77,8 @@
 			// 
 			this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openToolStripMenuItem,
-            this.exitToolStripMenuItem});
+            this.exitToolStripMenuItem,
+            this.saveRoomChangesCtrlSToolStripMenuItem});
 			this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
 			this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
 			this.fileToolStripMenuItem.Text = "File";
@@ -79,7 +87,7 @@
 			// 
 			this.openToolStripMenuItem.Name = "openToolStripMenuItem";
 			this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-			this.openToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+			this.openToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
 			this.openToolStripMenuItem.Text = "Open";
 			this.openToolStripMenuItem.Click += new System.EventHandler(this.OpenButtonClick);
 			// 
@@ -87,9 +95,17 @@
 			// 
 			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
 			this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-			this.exitToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+			this.exitToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
 			this.exitToolStripMenuItem.Text = "Exit";
 			this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitButtonClick);
+			// 
+			// saveRoomChangesCtrlSToolStripMenuItem
+			// 
+			this.saveRoomChangesCtrlSToolStripMenuItem.Name = "saveAllChangesCtrlSToolStripMenuItem";
+			this.saveRoomChangesCtrlSToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+			this.saveRoomChangesCtrlSToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
+			this.saveRoomChangesCtrlSToolStripMenuItem.Text = "Save All Changes ";
+			this.saveRoomChangesCtrlSToolStripMenuItem.Click += new System.EventHandler(this.saveAllChangesCtrlSToolStripMenuItem_Click);
 			// 
 			// helpToolStripMenuItem
 			// 
@@ -174,12 +190,24 @@
 			// 
 			// tileView
 			// 
+			this.tileView.Controls.Add(this.tileSelectionBox);
 			this.tileView.Location = new System.Drawing.Point(0, 0);
 			this.tileView.Name = "tileView";
-			this.tileView.Size = new System.Drawing.Size(16, 16);
+			this.tileView.Size = new System.Drawing.Size(128, 128);
 			this.tileView.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
 			this.tileView.TabIndex = 10;
 			this.tileView.TabStop = false;
+			this.tileView.Click += new System.EventHandler(this.tileView_Click);
+			// 
+			// tileSelectionBox
+			// 
+			this.tileSelectionBox.Location = new System.Drawing.Point(0, 0);
+			this.tileSelectionBox.Name = "tileSelectionBox";
+			this.tileSelectionBox.Size = new System.Drawing.Size(16, 16);
+			this.tileSelectionBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+			this.tileSelectionBox.TabIndex = 11;
+			this.tileSelectionBox.TabStop = false;
+			this.tileSelectionBox.Visible = false;
 			// 
 			// mapPanel
 			// 
@@ -193,12 +221,24 @@
 			// 
 			// mapView
 			// 
+			this.mapView.Controls.Add(this.mapSelectionBox);
 			this.mapView.Location = new System.Drawing.Point(0, 0);
 			this.mapView.Name = "mapView";
-			this.mapView.Size = new System.Drawing.Size(16, 16);
+			this.mapView.Size = new System.Drawing.Size(128, 128);
 			this.mapView.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
 			this.mapView.TabIndex = 9;
 			this.mapView.TabStop = false;
+			this.mapView.Click += new System.EventHandler(this.mapView_Click);
+			// 
+			// mapSelectionBox
+			// 
+			this.mapSelectionBox.Location = new System.Drawing.Point(0, 0);
+			this.mapSelectionBox.Name = "mapSelectionBox";
+			this.mapSelectionBox.Size = new System.Drawing.Size(16, 16);
+			this.mapSelectionBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+			this.mapSelectionBox.TabIndex = 10;
+			this.mapSelectionBox.TabStop = false;
+			this.mapSelectionBox.Visible = false;
 			// 
 			// MainWindow
 			// 
@@ -227,9 +267,15 @@
 			this.tilePanel.ResumeLayout(false);
 			this.tilePanel.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.tileView)).EndInit();
+			this.tileView.ResumeLayout(false);
+			this.tileView.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.tileSelectionBox)).EndInit();
 			this.mapPanel.ResumeLayout(false);
 			this.mapPanel.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.mapView)).EndInit();
+			this.mapView.ResumeLayout(false);
+			this.mapView.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.mapSelectionBox)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -253,6 +299,9 @@
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
 		private System.Windows.Forms.PictureBox mapView;
 		private System.Windows.Forms.PictureBox tileView;
+		private System.Windows.Forms.ToolStripMenuItem saveRoomChangesCtrlSToolStripMenuItem;
+		private System.Windows.Forms.PictureBox tileSelectionBox;
+		private System.Windows.Forms.PictureBox mapSelectionBox;
 	}
 }
 

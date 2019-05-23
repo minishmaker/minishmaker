@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
+using static MinishMaker.UI.MainWindow;
 
 namespace MinishMaker.Core
 {
@@ -75,6 +76,18 @@ namespace MinishMaker.Core
 				}
 			}
 			return new Bitmap[] { bg1, bg2 };
+		}
+
+		public void DrawTile( ref Bitmap b, Point p, int areaIndex, int layer, int tileNum)
+		{
+			if(layer==1)
+			{
+				bg1MetaTiles.DrawMetaTile(ref b,p,tset,pset,tileNum,true);
+			}
+			if(layer==2)
+			{
+				bg2MetaTiles.DrawMetaTile(ref b,p,tset,pset,tileNum,true);
+			}
 		}
 
 		private void DrawLayer( ref Bitmap b, int areaIndex, MetaTileSet metaTiles, byte[] roomData, bool overwrite )
@@ -277,11 +290,55 @@ namespace MinishMaker.Core
 			return chnk;
 		}
 		
+		public int GetTileData(int layer, int position)
+		{
+			if(layer==1)//bg1
+			{
+				return bg1RoomData[position]|bg1RoomData[position+1]<<8;
+			}
+			if(layer==2)//bg2
+			{
+				return bg2RoomData[position]|bg2RoomData[position+1]<<8;
+			}
+			return -1;
+		}
+		
+		public void SetTileData(int layer, int position, int data)
+		{
+			byte high = (byte)(data >> 8);
+			byte low = (byte)(data & 0xFF);
+			if(layer==1)//bg1
+			{
+				bg1RoomData[position]=low;
+				bg1RoomData[position+1]=high;
+			}
+			if(layer==2)//bg2
+			{
+				bg2RoomData[position]=low;
+				bg2RoomData[position+1]=high;
+			}
+		}
+
+		public long CompressRoomData(ref byte[] data, DataType type )
+		{
+			if(type == DataType.bg1Data)
+				return metadata.CompressBG1(ref data, bg1RoomData);
+
+			if(type == DataType.bg2Data)
+				return metadata.CompressBG2(ref data, bg2RoomData);
+
+			return 0;
+		}
+
+		public int GetPointerLoc( DataType type , int areaIndex)
+		{
+			return metadata.GetPointerLoc(type, areaIndex, Index);
+		}
 		//confusing myself over the bitmap size logic
 		/// <summary>
 		/// Draw images of all metatiles in the metatilesets
 		/// </summary>
-		public Bitmap[] DrawTilesetImages(int tilesPerRow)
+		public Bitmap[] DrawTilesetImages(int tilesPerRow, int areaIndex)
 		{
 			var totalValues = 0x100;// amount different low values (00-FF)
 			var tileSize = 16;// 0x10 pixels
@@ -294,7 +351,11 @@ namespace MinishMaker.Core
 			
 			Bitmap bg1 = new Bitmap( twidth, theight, PixelFormat.Format32bppArgb );
 			Bitmap bg2 = new Bitmap( twidth, theight, PixelFormat.Format32bppArgb );
-			
+
+			//commented code here is to be re-enabled once fully understood and changed
+			//ushort[] chunks = new ushort[3];
+			//ushort[] oldchunks = new ushort[3];
+			//chunks = new ushort[3] { 0x00FF, 0x00FF, 0x00FF };
 
 			var pos = 0;
 			bool ended = false;
@@ -304,6 +365,16 @@ namespace MinishMaker.Core
 					break;
 				for( int i = 0; i < tilesPerRow; i++ )
 				{
+
+					//hardcoded because there is no easy way to determine which areas use tileswapping
+					//if( Index == 00 && areaIndex == 01 || areaIndex == 02 || areaIndex == 0x15 )
+					//{
+					//	oldchunks = chunks;
+					//	chunks = GetChunks( areaIndex, (ushort)(i * 16), (ushort)(j * 16) );
+					//
+					//	SwapTiles( areaIndex, oldchunks, chunks, (ushort)(i * 16), (ushort)(j * 16) );
+					//}
+
 					try
 					{
 						if( pos != 0xFFFF )
