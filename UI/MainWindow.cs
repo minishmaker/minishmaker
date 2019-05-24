@@ -20,7 +20,7 @@ namespace MinishMaker.UI
 		private Bitmap[] tileMaps;
 
 		private Bitmap selectorImage = new Bitmap( 16, 16 );
-		private Room currentRoom = null;
+        private Room currentRoom = null;
 		private int currentArea = -1;
 		private int selectedTileData = -1;
 		private int selectedLayer = 2; //start with bg2
@@ -501,20 +501,8 @@ namespace MinishMaker.UI
 				if( selectedTileData == -1 ) //no selected tile, nothing to paste
 					return;
 
-				if( selectedLayer == 1 )
-				{
-					currentRoom.DrawTile( ref mapLayers[0], new Point( tileX * 16, tileY * 16 ), currentArea, selectedLayer, selectedTileData );
-					unsavedChanges.Add( new PendingData( currentArea, currentRoom.Index, DataType.bg1Data ) );
-				}
-				else if( selectedLayer == 2 )
-				{
-					currentRoom.DrawTile( ref mapLayers[1], new Point( tileX * 16, tileY * 16 ), currentArea, selectedLayer, selectedTileData );
-					unsavedChanges.Add( new PendingData( currentArea, currentRoom.Index, DataType.bg2Data ) );
-				}
-
-				currentRoom.SetTileData( selectedLayer, pos * 2, selectedTileData );
-				mapView.Image = OverlayImage( mapLayers[1], mapLayers[0] );
-			}
+                WriteTile(tileX, tileY, pos, selectedTileData, selectedLayer);
+            }
 		}
 
         private void mapView_MouseMove( object sender, MouseEventArgs me )
@@ -535,8 +523,19 @@ namespace MinishMaker.UI
 
                 Point tilePos = new Point(tileX, tileY);
 
-                if (lastTilePos.Equals(tilePos))
-                    lastTilePos = tilePos;
+                if (!lastTilePos.Equals(tilePos))
+                {
+
+                    if (mapSelectionBox.Image == null)
+                    {
+                        GenerateSelectorImage();
+                        tileSelectionBox.BackColor = Color.Transparent;
+                        mapSelectionBox.BackColor = Color.Transparent;
+                        tileSelectionBox.Image = selectorImage;
+                        mapSelectionBox.Image = selectorImage;
+                    }
+
+                    mapSelectionBox.Visible = true;
 
                     mapSelectionBox.Location = new Point(me.X - partialX, me.Y - partialY);
                     var pos = tileY * mTileWidth + tileX; //tilenumber if they were all in a line
@@ -547,23 +546,13 @@ namespace MinishMaker.UI
                     }
                     else if (me.Button == MouseButtons.Left)
                     {
+                        lastTilePos = tilePos;
                         if (selectedTileData == -1) //no selected tile, nothing to paste
                             return;
 
-                        if (selectedLayer == 1)
-                        {
-                            currentRoom.DrawTile(ref mapLayers[0], new Point(tileX * 16, tileY * 16), currentArea, selectedLayer, selectedTileData);
-                            unsavedChanges.Add(new PendingData(currentArea, currentRoom.Index, DataType.bg1Data));
-                        }
-                        else if (selectedLayer == 2)
-                        {
-                            currentRoom.DrawTile(ref mapLayers[1], new Point(tileX * 16, tileY * 16), currentArea, selectedLayer, selectedTileData);
-                            unsavedChanges.Add(new PendingData(currentArea, currentRoom.Index, DataType.bg2Data));
-                        }
-
-                        currentRoom.SetTileData(selectedLayer, pos * 2, selectedTileData);
-                        mapView.Image = OverlayImage(mapLayers[1], mapLayers[0]);
+                        WriteTile(tileX, tileY, pos, selectedTileData, selectedLayer);
                     }
+                }
             }
         }
 
@@ -604,5 +593,22 @@ namespace MinishMaker.UI
 				g.DrawRectangle( new Pen( Color.Red, 4 ), 0, 0, 16, 16 );
 			}
 		}
+
+        private void WriteTile (int tileX, int tileY, int pos, int tileData, int layer)
+        {
+            if (layer == 1)
+            {
+                currentRoom.DrawTile(ref mapLayers[0], new Point(tileX * 16, tileY * 16), currentArea, selectedLayer, tileData);
+                unsavedChanges.Add(new PendingData(currentArea, currentRoom.Index, DataType.bg1Data));
+            }
+            else if (layer == 2)
+            {
+                currentRoom.DrawTile(ref mapLayers[1], new Point(tileX * 16, tileY * 16), currentArea, selectedLayer, tileData);
+                unsavedChanges.Add(new PendingData(currentArea, currentRoom.Index, DataType.bg2Data));
+            }
+
+            currentRoom.SetTileData(selectedLayer, pos * 2, selectedTileData);
+            mapView.Image = OverlayImage(mapLayers[1], mapLayers[0]);
+        }
 	}
 }
