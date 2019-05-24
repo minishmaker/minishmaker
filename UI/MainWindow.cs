@@ -575,8 +575,10 @@ namespace MinishMaker.UI
 
 			if( tileSelectionBox.Image == null )
 			{
-				GenerateSelectorImage();
-				tileSelectionBox.Image = selectorImage;
+                GenerateSelectorImage();
+			    tileSelectionBox.BackColor = Color.Transparent;
+			    mapSelectionBox.BackColor = Color.Transparent;
+                tileSelectionBox.Image = selectorImage;
 				mapSelectionBox.Image = selectorImage;
 			}
 			tileSelectionBox.Visible = true;
