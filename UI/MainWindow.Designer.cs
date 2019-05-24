@@ -48,7 +48,8 @@
 			this.mapPanel = new System.Windows.Forms.Panel();
 			this.mapView = new System.Windows.Forms.PictureBox();
 			this.mapSelectionBox = new System.Windows.Forms.PictureBox();
-			this.menuStrip1.SuspendLayout();
+            this.largeSelectionBox = new System.Windows.Forms.PictureBox();
+            this.menuStrip1.SuspendLayout();
 			this.bottomStatusStrip.SuspendLayout();
 			this.toolStrip.SuspendLayout();
 			this.roomPanel.SuspendLayout();
@@ -228,7 +229,8 @@
 			this.mapView.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
 			this.mapView.TabIndex = 9;
 			this.mapView.TabStop = false;
-			this.mapView.Click += new System.EventHandler(this.mapView_Click);
+			this.mapView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.mapView_MouseDown);
+            this.mapView.MouseMove += new System.Windows.Forms.MouseEventHandler(this.mapView_MouseMove);
 			// 
 			// mapSelectionBox
 			// 
@@ -239,10 +241,20 @@
 			this.mapSelectionBox.TabIndex = 10;
 			this.mapSelectionBox.TabStop = false;
 			this.mapSelectionBox.Visible = false;
-			// 
-			// MainWindow
-			// 
-			this.AllowDrop = true;
+            // 
+            // largeSelectionBox
+            // 
+            this.largeSelectionBox.Location = new System.Drawing.Point(0, 0);
+            this.largeSelectionBox.Name = "largeSelectionBox";
+            this.largeSelectionBox.Size = new System.Drawing.Size(16, 16);
+            this.largeSelectionBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.largeSelectionBox.TabIndex = 10;
+            this.largeSelectionBox.TabStop = false;
+            this.largeSelectionBox.Visible = false;
+            // 
+            // MainWindow
+            // 
+            this.AllowDrop = true;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(800, 450);
@@ -302,6 +314,7 @@
 		private System.Windows.Forms.ToolStripMenuItem saveRoomChangesCtrlSToolStripMenuItem;
 		private System.Windows.Forms.PictureBox tileSelectionBox;
 		private System.Windows.Forms.PictureBox mapSelectionBox;
-	}
+        private System.Windows.Forms.PictureBox largeSelectionBox;
+    }
 }
 
