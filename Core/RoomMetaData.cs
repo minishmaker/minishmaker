@@ -48,6 +48,12 @@ namespace MinishMaker.Core
 		private int paletteSetID;
 		private List<AddrData> tileSetAddrs = new List<AddrData>();
 
+		private List<ChestData> chestInformation = new List<ChestData>();
+		public List<ChestData> ChestInfo
+		{
+			get { return chestInformation;}
+		}
+
 		private AddrData? bg2RoomDataAddr;
 		private AddrData bg2MetaTilesAddr;
 
@@ -76,6 +82,26 @@ namespace MinishMaker.Core
 				this.dest = dest;
 				this.size = size;
 				this.compressed = compressed;
+			}
+		}
+
+		public struct ChestData
+		{
+			byte type;
+			byte chestId;
+			byte itemId;
+			byte itemSubNumber;
+			ushort chestLocation;
+			ushort unknown;
+
+			public ChestData(byte type, byte chestId, byte itemId, byte itemSubNumber, ushort chestLocation, ushort other)
+			{
+				this.type = type;
+				this.chestId = chestId;
+				this.itemId = itemId;
+				this.itemSubNumber = itemSubNumber;
+				this.chestLocation = chestLocation;
+				this.unknown = other;
 			}
 		}
 
@@ -118,7 +144,33 @@ namespace MinishMaker.Core
 			r.SetPosition( tileDataLoc );
 
 			ParseData( r, Set3 );
+
+			//attempt at obtaining chest data (+various)
+			int areaEntityTableAddrLoc = header.AreaMetadataBase + (areaIndex << 2);
+            int areaEntityTableAddr = r.ReadAddr(areaEntityTableAddrLoc);
+
+            int roomEntityTableAddrLoc = areaEntityTableAddr + (roomIndex << 2);
+            int roomEntityTableAddr =r.ReadAddr(roomEntityTableAddrLoc);
+
+			//4 byte chunks, 1-3 are unknown use, 4th seems to be chests
+			int chestTableAddr = r.ReadAddr(roomEntityTableAddr+12);
+			
+			var data = r.ReadBytes(8);
+
+			while(!Enumerable.SequenceEqual(data, new byte[]{00,00,00,00,00,00,00,00}))//ends on reading all 0's
+			{
+				var type = data[0];
+				var id = data[1];
+				var item = data[2];
+				var subNum = data[3];
+				ushort loc = (ushort)(data[4] | (data[5]<<8));
+				ushort other = (ushort)(data[6] | (data[7]<<8));
+				chestInformation.Add(new ChestData(type,id,item,subNum,loc,other));
+				data = r.ReadBytes(8);
+			}
+			
 		}
+
 
 		public TileSet GetTileSet()
 		{

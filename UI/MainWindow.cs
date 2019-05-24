@@ -15,6 +15,7 @@ namespace MinishMaker.UI
 	{
 		private ROM ROM_;
 		private MapManager mapManager_;
+		private ChestEditorWindow chestEditor = null;
 
 		private Bitmap[] mapLayers;
 		private Bitmap[] tileMaps;
@@ -465,8 +466,6 @@ namespace MinishMaker.UI
 			if( mapSelectionBox.Image == null )
 			{
 				GenerateSelectorImage();
-				tileSelectionBox.BackColor = Color.Transparent;
-				mapSelectionBox.BackColor = Color.Transparent;
 				tileSelectionBox.Image = selectorImage;
 				mapSelectionBox.Image = selectorImage;
 			}
@@ -529,8 +528,6 @@ namespace MinishMaker.UI
                     if (mapSelectionBox.Image == null)
                     {
                         GenerateSelectorImage();
-                        tileSelectionBox.BackColor = Color.Transparent;
-                        mapSelectionBox.BackColor = Color.Transparent;
                         tileSelectionBox.Image = selectorImage;
                         mapSelectionBox.Image = selectorImage;
                     }
@@ -610,5 +607,27 @@ namespace MinishMaker.UI
             currentRoom.SetTileData(selectedLayer, pos * 2, selectedTileData);
             mapView.Image = OverlayImage(mapLayers[1], mapLayers[0]);
         }
+
+		private void chestEditorStripMenuItem_Click( object sender, EventArgs e )
+		{
+			if(chestEditorStripMenuItem.Checked)
+				return; // dont open a second one
+
+			chestEditor = new ChestEditorWindow();
+
+			if(currentRoom!=null) {
+				var chestData = currentRoom.GetChestData();
+				chestEditor.SetData(chestData);
+			}
+			chestEditor.FormClosed +=new FormClosedEventHandler(onChestEditorClose);
+			chestEditorStripMenuItem.Checked = true;
+			chestEditor.Show();
+		}
+
+		void onChestEditorClose(object sender, FormClosedEventArgs e)
+		{
+			chestEditor = null;
+			chestEditorStripMenuItem.Checked = false;
+		}
 	}
 }

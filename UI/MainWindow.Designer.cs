@@ -48,8 +48,10 @@
 			this.mapPanel = new System.Windows.Forms.Panel();
 			this.mapView = new System.Windows.Forms.PictureBox();
 			this.mapSelectionBox = new System.Windows.Forms.PictureBox();
-            this.largeSelectionBox = new System.Windows.Forms.PictureBox();
-            this.menuStrip1.SuspendLayout();
+			this.largeSelectionBox = new System.Windows.Forms.PictureBox();
+			this.windowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.chestEditorStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.menuStrip1.SuspendLayout();
 			this.bottomStatusStrip.SuspendLayout();
 			this.toolStrip.SuspendLayout();
 			this.roomPanel.SuspendLayout();
@@ -61,13 +63,15 @@
 			((System.ComponentModel.ISupportInitialize)(this.mapView)).BeginInit();
 			this.mapView.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.mapSelectionBox)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.largeSelectionBox)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// menuStrip1
 			// 
 			this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
-            this.helpToolStripMenuItem});
+            this.helpToolStripMenuItem,
+            this.windowToolStripMenuItem});
 			this.menuStrip1.Location = new System.Drawing.Point(0, 0);
 			this.menuStrip1.Name = "menuStrip1";
 			this.menuStrip1.Size = new System.Drawing.Size(800, 24);
@@ -88,7 +92,7 @@
 			// 
 			this.openToolStripMenuItem.Name = "openToolStripMenuItem";
 			this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-			this.openToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
+			this.openToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
 			this.openToolStripMenuItem.Text = "Open";
 			this.openToolStripMenuItem.Click += new System.EventHandler(this.OpenButtonClick);
 			// 
@@ -96,15 +100,15 @@
 			// 
 			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
 			this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-			this.exitToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
+			this.exitToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
 			this.exitToolStripMenuItem.Text = "Exit";
 			this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitButtonClick);
 			// 
 			// saveRoomChangesCtrlSToolStripMenuItem
 			// 
-			this.saveRoomChangesCtrlSToolStripMenuItem.Name = "saveAllChangesCtrlSToolStripMenuItem";
+			this.saveRoomChangesCtrlSToolStripMenuItem.Name = "saveRoomChangesCtrlSToolStripMenuItem";
 			this.saveRoomChangesCtrlSToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-			this.saveRoomChangesCtrlSToolStripMenuItem.Size = new System.Drawing.Size(225, 22);
+			this.saveRoomChangesCtrlSToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
 			this.saveRoomChangesCtrlSToolStripMenuItem.Text = "Save All Changes ";
 			this.saveRoomChangesCtrlSToolStripMenuItem.Click += new System.EventHandler(this.saveAllChangesCtrlSToolStripMenuItem_Click);
 			// 
@@ -119,7 +123,7 @@
 			// aboutToolStripMenuItem
 			// 
 			this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-			this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+			this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
 			this.aboutToolStripMenuItem.Text = "About";
 			this.aboutToolStripMenuItem.Click += new System.EventHandler(this.AboutButtonClick);
 			// 
@@ -202,6 +206,7 @@
 			// 
 			// tileSelectionBox
 			// 
+			this.tileSelectionBox.BackColor = System.Drawing.Color.Transparent;
 			this.tileSelectionBox.Location = new System.Drawing.Point(0, 0);
 			this.tileSelectionBox.Name = "tileSelectionBox";
 			this.tileSelectionBox.Size = new System.Drawing.Size(16, 16);
@@ -230,10 +235,11 @@
 			this.mapView.TabIndex = 9;
 			this.mapView.TabStop = false;
 			this.mapView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.mapView_MouseDown);
-            this.mapView.MouseMove += new System.Windows.Forms.MouseEventHandler(this.mapView_MouseMove);
+			this.mapView.MouseMove += new System.Windows.Forms.MouseEventHandler(this.mapView_MouseMove);
 			// 
 			// mapSelectionBox
 			// 
+			this.mapSelectionBox.BackColor = System.Drawing.Color.Transparent;
 			this.mapSelectionBox.Location = new System.Drawing.Point(0, 0);
 			this.mapSelectionBox.Name = "mapSelectionBox";
 			this.mapSelectionBox.Size = new System.Drawing.Size(16, 16);
@@ -241,20 +247,36 @@
 			this.mapSelectionBox.TabIndex = 10;
 			this.mapSelectionBox.TabStop = false;
 			this.mapSelectionBox.Visible = false;
-            // 
-            // largeSelectionBox
-            // 
-            this.largeSelectionBox.Location = new System.Drawing.Point(0, 0);
-            this.largeSelectionBox.Name = "largeSelectionBox";
-            this.largeSelectionBox.Size = new System.Drawing.Size(16, 16);
-            this.largeSelectionBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.largeSelectionBox.TabIndex = 10;
-            this.largeSelectionBox.TabStop = false;
-            this.largeSelectionBox.Visible = false;
-            // 
-            // MainWindow
-            // 
-            this.AllowDrop = true;
+			// 
+			// largeSelectionBox
+			// 
+			this.largeSelectionBox.Location = new System.Drawing.Point(0, 0);
+			this.largeSelectionBox.Name = "largeSelectionBox";
+			this.largeSelectionBox.Size = new System.Drawing.Size(16, 16);
+			this.largeSelectionBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+			this.largeSelectionBox.TabIndex = 10;
+			this.largeSelectionBox.TabStop = false;
+			this.largeSelectionBox.Visible = false;
+			// 
+			// windowToolStripMenuItem
+			// 
+			this.windowToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.chestEditorStripMenuItem});
+			this.windowToolStripMenuItem.Name = "windowToolStripMenuItem";
+			this.windowToolStripMenuItem.Size = new System.Drawing.Size(63, 20);
+			this.windowToolStripMenuItem.Text = "Window";
+			// 
+			// chestEditorStripMenuItem
+			// 
+			this.chestEditorStripMenuItem.Name = "chestEditorStripMenuItem";
+			this.chestEditorStripMenuItem.ShowShortcutKeys = false;
+			this.chestEditorStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.chestEditorStripMenuItem.Text = "Chest Editor";
+			this.chestEditorStripMenuItem.Click += new System.EventHandler(this.chestEditorStripMenuItem_Click);
+			// 
+			// MainWindow
+			// 
+			this.AllowDrop = true;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(800, 450);
@@ -288,6 +310,7 @@
 			this.mapView.ResumeLayout(false);
 			this.mapView.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.mapSelectionBox)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.largeSelectionBox)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -315,6 +338,8 @@
 		private System.Windows.Forms.PictureBox tileSelectionBox;
 		private System.Windows.Forms.PictureBox mapSelectionBox;
         private System.Windows.Forms.PictureBox largeSelectionBox;
-    }
+		private System.Windows.Forms.ToolStripMenuItem windowToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem chestEditorStripMenuItem;
+	}
 }
 

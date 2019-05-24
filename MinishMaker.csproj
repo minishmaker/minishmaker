@@ -59,6 +59,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="UI\ChestEditorWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\ChestEditorWindow.Designer.cs">
+      <DependentUpon>ChestEditorWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="Utilities\DataHelper.cs" />
     <Compile Include="Core\MapManager.cs" />
     <Compile Include="Core\MetaTileSet.cs" />
@@ -88,6 +94,9 @@
     <Compile Include="Utilities\Writer.cs" />
     <EmbeddedResource Include="UI\AboutWindow.resx">
       <DependentUpon>AboutWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\ChestEditorWindow.resx">
+      <DependentUpon>ChestEditorWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>

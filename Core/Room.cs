@@ -1,8 +1,10 @@
 ﻿using MinishMaker.Utilities;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
+using static MinishMaker.Core.RoomMetaData;
 using static MinishMaker.UI.MainWindow;
 
 namespace MinishMaker.Core
@@ -398,6 +400,11 @@ namespace MinishMaker.Core
 			}
 
 			return new Bitmap[]{ bg1, bg2 };
+		}
+
+		public List<ChestData> GetChestData()
+		{
+			return metadata.ChestInfo;
 		}
 	}
 }
