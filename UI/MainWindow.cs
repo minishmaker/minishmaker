@@ -26,8 +26,9 @@ namespace MinishMaker.UI
 		private int selectedLayer = 2; //start with bg2
 		private List<PendingData> unsavedChanges = new List<PendingData>();
 		private List<RepointData> dataPositions = new List<RepointData>();
+        private Point lastTilePos;
 
-		struct RepointData
+        struct RepointData
 		{
 			public int areaIndex;
 			public int roomIndex;
@@ -456,7 +457,7 @@ namespace MinishMaker.UI
 			//TODO
 		}
 
-		private void mapView_Click( object sender, EventArgs e )
+		private void mapView_MouseDown( object sender, MouseEventArgs me )
 		{
 			if( currentRoom == null )
 				return;
@@ -469,12 +470,11 @@ namespace MinishMaker.UI
 				tileSelectionBox.Image = selectorImage;
 				mapSelectionBox.Image = selectorImage;
 			}
+
 			mapSelectionBox.Visible = true;
 
 			var mTileWidth = mapLayers[0].Width / 16;
 			var tsTileWidth = tileMaps[0].Width / 16;
-
-			var me = (MouseEventArgs)e;
 
 			var partialX = me.X % 16;
 			var partialY = me.Y % 16;
@@ -482,7 +482,9 @@ namespace MinishMaker.UI
 			int tileX = (me.X - partialX) / 16;
 			int tileY = (me.Y - partialY) / 16;
 
-			mapSelectionBox.Location = new Point( me.X - partialX, me.Y - partialY );
+            lastTilePos = new Point(tileX, tileY);
+
+            mapSelectionBox.Location = new Point( me.X - partialX, me.Y - partialY );
 			var pos = tileY * mTileWidth + tileX; //tilenumber if they were all in a line
 
 			if( me.Button == MouseButtons.Right )
@@ -514,6 +516,56 @@ namespace MinishMaker.UI
 				mapView.Image = OverlayImage( mapLayers[1], mapLayers[0] );
 			}
 		}
+
+        private void mapView_MouseMove( object sender, MouseEventArgs me )
+        {
+            if (me.Button != MouseButtons.None)
+            {
+                if (currentRoom == null)
+                    return;
+
+                var mTileWidth = mapLayers[0].Width / 16;
+                var tsTileWidth = tileMaps[0].Width / 16;
+
+                var partialX = me.X % 16;
+                var partialY = me.Y % 16;
+
+                int tileX = (me.X - partialX) / 16;
+                int tileY = (me.Y - partialY) / 16;
+
+                Point tilePos = new Point(tileX, tileY);
+
+                if (lastTilePos.Equals(tilePos))
+                    lastTilePos = tilePos;
+
+                    mapSelectionBox.Location = new Point(me.X - partialX, me.Y - partialY);
+                    var pos = tileY * mTileWidth + tileX; //tilenumber if they were all in a line
+
+                    if (me.Button == MouseButtons.Right)
+                    {
+                        // TODO: Select box
+                    }
+                    else if (me.Button == MouseButtons.Left)
+                    {
+                        if (selectedTileData == -1) //no selected tile, nothing to paste
+                            return;
+
+                        if (selectedLayer == 1)
+                        {
+                            currentRoom.DrawTile(ref mapLayers[0], new Point(tileX * 16, tileY * 16), currentArea, selectedLayer, selectedTileData);
+                            unsavedChanges.Add(new PendingData(currentArea, currentRoom.Index, DataType.bg1Data));
+                        }
+                        else if (selectedLayer == 2)
+                        {
+                            currentRoom.DrawTile(ref mapLayers[1], new Point(tileX * 16, tileY * 16), currentArea, selectedLayer, selectedTileData);
+                            unsavedChanges.Add(new PendingData(currentArea, currentRoom.Index, DataType.bg2Data));
+                        }
+
+                        currentRoom.SetTileData(selectedLayer, pos * 2, selectedTileData);
+                        mapView.Image = OverlayImage(mapLayers[1], mapLayers[0]);
+                    }
+            }
+        }
 
 		private void tileView_Click( object sender, EventArgs e )
 		{

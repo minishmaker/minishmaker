@@ -228,7 +228,8 @@
 			this.mapView.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
 			this.mapView.TabIndex = 9;
 			this.mapView.TabStop = false;
-			this.mapView.Click += new System.EventHandler(this.mapView_Click);
+			this.mapView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.mapView_MouseDown);
+            this.mapView.MouseMove += new System.Windows.Forms.MouseEventHandler(this.mapView_MouseMove);
 			// 
 			// mapSelectionBox
 			// 
