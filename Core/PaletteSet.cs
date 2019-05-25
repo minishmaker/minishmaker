@@ -59,7 +59,7 @@ namespace MinishMaker.Core
 			if(pstart>=2)
 			{
 				
-				palettes[1][0]= Color.FromArgb(2*8,16*8,11*8);
+				palettes[1][0]= Color.Transparent;
 				palettes[1][1]= Color.FromArgb(3*8,6*8,18*8);
 				palettes[1][2]= Color.FromArgb(4*8,13*8,25*8);
 				palettes[1][3]= Color.FromArgb(5*8,20*8,30*8);
