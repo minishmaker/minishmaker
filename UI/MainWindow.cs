@@ -77,13 +77,18 @@ namespace MinishMaker.UI
 			InitializeComponent();
 		}
 
-		// MenuBar Buttons
-		private void OpenButtonClick( object sender, EventArgs e )
+        #region MenuBarButtons
+        private void OpenButtonClick( object sender, EventArgs e )
 		{
 			LoadRom();
 		}
 
-		private void ExitButtonClick( object sender, EventArgs e )
+	    private void saveAllChangesCtrlSToolStripMenuItem_Click(object sender, EventArgs e)
+	    {
+            SaveAllChanges();
+	    }
+
+        private void ExitButtonClick( object sender, EventArgs e )
 		{
 			Close();
 		}
@@ -93,15 +98,22 @@ namespace MinishMaker.UI
 			Form aboutWindow = new AboutWindow();
 			aboutWindow.Show();
 		}
+        #endregion
 
-		// ToolStrip Buttons
-		private void openToolStripButton_Click( object sender, EventArgs e )
+        #region ToolStripButtons
+        private void openToolStripButton_Click( object sender, EventArgs e )
 		{
 			LoadRom();
 		}
 
-		// Other interactions
-		private void MainWindow_DragDrop( object sender, DragEventArgs e )
+	    private void saveToolStripButton_Click(object sender, EventArgs e)
+	    {
+            SaveAllChanges();
+	    }
+        #endregion
+
+        // Other interactions
+        private void MainWindow_DragDrop( object sender, DragEventArgs e )
 		{
 
 		}
@@ -251,47 +263,47 @@ namespace MinishMaker.UI
 			return area.Rooms[foundIndex];
 		}
 
-		private void saveAllChangesCtrlSToolStripMenuItem_Click( object sender, EventArgs e )
-		{
-			if( unsavedChanges.Count == 0 )
-			{
-				return;
-			}
-			unsavedChanges = unsavedChanges.Distinct().ToList();
-			//foreach(PendingData pendingData in unsavedChanges)
-			while( unsavedChanges.Count > 0 )
-			{
-				var pendingData = unsavedChanges.ElementAt( 0 );
-				var room = FindRoom( pendingData.areaIndex, pendingData.roomIndex );
-				byte[] compressedData = null;
-				long size = room.CompressRoomData( ref compressedData, pendingData.dataType );
-				long pointerAddress = room.GetPointerLoc( pendingData.dataType, pendingData.areaIndex );
+	    private void SaveAllChanges()
+	    {
+	        if (unsavedChanges.Count == 0)
+	        {
+	            return;
+	        }
+	        unsavedChanges = unsavedChanges.Distinct().ToList();
+	        //foreach(PendingData pendingData in unsavedChanges)
+	        while (unsavedChanges.Count > 0)
+	        {
+	            var pendingData = unsavedChanges.ElementAt(0);
+	            var room = FindRoom(pendingData.areaIndex, pendingData.roomIndex);
+	            byte[] compressedData = null;
+	            long size = room.CompressRoomData(ref compressedData, pendingData.dataType);
+	            long pointerAddress = room.GetPointerLoc(pendingData.dataType, pendingData.areaIndex);
 
-				//TODO: improve repointing
-				var currentSourceIndex = GetCurrentSource( pendingData.areaIndex, pendingData.roomIndex, pendingData.dataType );
-				uint newSource = FindNewSource( (uint)size, currentSourceIndex );
+	            //TODO: improve repointing
+	            var currentSourceIndex = GetCurrentSource(pendingData.areaIndex, pendingData.roomIndex, pendingData.dataType);
+	            uint newSource = FindNewSource((uint)size, currentSourceIndex);
 
-				if( newSource == 0 )
-				{
-					MessageBox.Show( "Unable to allocate enough space for data in area:" + pendingData.areaIndex + " room:" + pendingData.roomIndex + " with size:" + size );
-					continue;
-				}
+	            if (newSource == 0)
+	            {
+	                MessageBox.Show("Unable to allocate enough space for data in area:" + pendingData.areaIndex + " room:" + pendingData.roomIndex + " with size:" + size);
+	                continue;
+	            }
 
-				dataPositions.Add(new RepointData(pendingData.areaIndex,pendingData.roomIndex,pendingData.dataType,(int)newSource,(int)size));
-				size = size | 0x80000000; //sets the compression bit
+	            dataPositions.Add(new RepointData(pendingData.areaIndex, pendingData.roomIndex, pendingData.dataType, (int)newSource, (int)size));
+	            size = size | 0x80000000; //sets the compression bit
 
-				SaveToRom( newSource, pointerAddress, compressedData, size );
+	            SaveToRom(newSource, pointerAddress, compressedData, size);
 
-				unsavedChanges.RemoveAt( 0 );//saved, remove from pending to avoid re-save
-			}
+	            unsavedChanges.RemoveAt(0);//saved, remove from pending to avoid re-save
+	        }
 
 
-			File.WriteAllBytes( ROM.Instance.path, ROM.Instance.romData );
-			//File.WriteAllBytes( "testfile1.gba", ROM.Instance.romData );
-			SaveRepointFile();
+	        File.WriteAllBytes(ROM.Instance.path, ROM.Instance.romData);
+	        //File.WriteAllBytes( "testfile1.gba", ROM.Instance.romData );
+	        SaveRepointFile();
 
-			MessageBox.Show( "All changes have been saved" );
-		}
+	        MessageBox.Show("All changes have been saved");
+        }
 
 		private int GetCurrentSource( int area, int room, DataType type )
 		{
@@ -560,8 +572,10 @@ namespace MinishMaker.UI
 
 			if( tileSelectionBox.Image == null )
 			{
-				GenerateSelectorImage();
-				tileSelectionBox.Image = selectorImage;
+                GenerateSelectorImage();
+			    tileSelectionBox.BackColor = Color.Transparent;
+			    mapSelectionBox.BackColor = Color.Transparent;
+                tileSelectionBox.Image = selectorImage;
 				mapSelectionBox.Image = selectorImage;
 			}
 			tileSelectionBox.Visible = true;
@@ -629,5 +643,5 @@ namespace MinishMaker.UI
 			chestEditor = null;
 			chestEditorStripMenuItem.Checked = false;
 		}
-	}
+    }
 }
