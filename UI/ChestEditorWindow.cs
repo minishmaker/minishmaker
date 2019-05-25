@@ -17,7 +17,6 @@ namespace MinishMaker.UI
 	{
 		private int chestIndex = -1;
 		private List<ChestData> data;
-        private int mTileWidth;
 
 		public ChestEditorWindow()
 		{
@@ -43,7 +42,7 @@ namespace MinishMaker.UI
 			}
 		}
 
-		public void SetData(List<ChestData> data, int mTileWidth)
+		public void SetData(List<ChestData> data)
 		{
 			
 			this.data = data;
@@ -76,8 +75,7 @@ namespace MinishMaker.UI
 				
                 chestIndex = 0;
 
-                this.mTileWidth = mTileWidth;
-                LoadChestData(0, mTileWidth);
+                LoadChestData(0);
 
 				if(data.Count>1)
 				{
@@ -120,7 +118,7 @@ namespace MinishMaker.UI
 
             indexLabel.Text = chestIndex.ToString();
 
-            LoadChestData(chestIndex, mTileWidth);
+            LoadChestData(chestIndex);
         }
 
 		private void prevButton_Click( object sender, EventArgs e )
@@ -134,10 +132,10 @@ namespace MinishMaker.UI
 
             indexLabel.Text = chestIndex.ToString();
 
-            LoadChestData(chestIndex, mTileWidth);
+            LoadChestData(chestIndex);
 		}
 
-        private void LoadChestData(int chest, int mTileWidth)
+        private void LoadChestData(int chest)
         {
             ChestData chestData = data[chest];
             entityType.Text = StringUtil.AsStringHex2(chestData.type);
@@ -150,8 +148,8 @@ namespace MinishMaker.UI
                 itemAmount.Text = chestData.itemSubNumber.ToString();
 
                 ushort chestPos = chestData.chestLocation;
-                int xPos = chestPos % mTileWidth;
-                int yPos = (chestPos - xPos) / mTileWidth;
+				int yPos = chestPos>>6;
+				int xPos = chestPos - (yPos<<6);
                 xPosition.Text = xPos.ToString();
                 yPosition.Text = yPos.ToString();
             }

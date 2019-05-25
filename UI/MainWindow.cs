@@ -213,7 +213,7 @@ namespace MinishMaker.UI
                 if (chestEditor != null)
                 {
                     var chestData = currentRoom.GetChestData();
-                    chestEditor.SetData(chestData, mapLayers[0].Width / 16);
+                    chestEditor.SetData(chestData);
                 }
             }
 		}
@@ -637,7 +637,7 @@ namespace MinishMaker.UI
 
 			if(currentRoom != null) {
 				var chestData = currentRoom.GetChestData();
-				chestEditor.SetData(chestData, mapLayers[0].Width / 16);
+				chestEditor.SetData(chestData);
 			}
 			chestEditor.FormClosed +=new FormClosedEventHandler(onChestEditorClose);
 			chestEditorStripMenuItem.Checked = true;
