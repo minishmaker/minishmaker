@@ -152,16 +152,30 @@ namespace MinishMaker.UI
 				int xPos = chestPos - (yPos<<6);
                 xPosition.Text = xPos.ToString();
                 yPosition.Text = yPos.ToString();
+
+                itemName.Enabled = true;
+                kinstoneType.Enabled = true;
+                itemAmount.Enabled = true;
+                xPosition.Enabled = true;
+                yPosition.Enabled = true;
+                entityId.Enabled = true;
             }
 			else
 			{
-				itemName.Enabled = false;
+                entityId.Text = "00";
+                itemName.SelectedItem = ItemType.Untyped;
+                kinstoneType.SelectedItem = KinstoneType.UnTyped;
+                itemAmount.Text = "0";
+                xPosition.Text = "0";
+                yPosition.Text = "0";
+
+                itemName.Enabled = false;
 				kinstoneType.Enabled = false;
 				itemAmount.Enabled = false;
 				xPosition.Enabled = false;
 				yPosition.Enabled = false;
 				entityId.Enabled = false;
-			}
+            }
         }
 	}
 }
