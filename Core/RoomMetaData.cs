@@ -87,12 +87,12 @@ namespace MinishMaker.Core
 
 		public struct ChestData
 		{
-			byte type;
-			byte chestId;
-			byte itemId;
-			byte itemSubNumber;
-			ushort chestLocation;
-			ushort unknown;
+			public byte type;
+            public byte chestId;
+            public byte itemId;
+            public byte itemSubNumber;
+            public ushort chestLocation;
+            public ushort unknown;
 
 			public ChestData(byte type, byte chestId, byte itemId, byte itemSubNumber, ushort chestLocation, ushort other)
 			{
@@ -155,9 +155,11 @@ namespace MinishMaker.Core
 			//4 byte chunks, 1-3 are unknown use, 4th seems to be chests
 			int chestTableAddr = r.ReadAddr(roomEntityTableAddr+12);
 			
-			var data = r.ReadBytes(8);
+			var data = r.ReadBytes(8, chestTableAddr);
 
-			while(!Enumerable.SequenceEqual(data, new byte[]{00,00,00,00,00,00,00,00}))//ends on reading all 0's
+            Console.WriteLine(data[0]);
+
+			while((TileEntityType)data[0] != TileEntityType.None) //ends on type 0
 			{
 				var type = data[0];
 				var id = data[1];

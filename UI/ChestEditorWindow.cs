@@ -1,4 +1,5 @@
 ﻿using MinishMaker.Core;
+using MinishMaker.Utilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,6 +17,7 @@ namespace MinishMaker.UI
 	{
 		private int chestIndex = -1;
 		private List<ChestData> data;
+        private int mTileWidth;
 
 		public ChestEditorWindow()
 		{
@@ -40,24 +42,32 @@ namespace MinishMaker.UI
 			}
 		}
 
-		public void SetData(List<ChestData> data)
+		public void SetData(List<ChestData> data, int mTileWidth)
 		{
-			this.data = data;
-			entityType.Enabled = true;
-			entityId.Enabled = true;
-			itemName.Enabled = true;
-			kinstoneType.Enabled =true;
-			itemAmount.Enabled = true;
-			xPosition.Enabled = true;
-			yPosition.Enabled = true;
-			nextButton.Enabled = true;
-			prevButton.Enabled = false;
-			chestIndex = 0;
+            if (data.Count > 0)
+            {
+                this.data = data;
+                entityType.Enabled = true;
+                entityId.Enabled = true;
+                itemName.Enabled = true;
+                kinstoneType.Enabled = true;
+                itemAmount.Enabled = true;
+                xPosition.Enabled = true;
+                yPosition.Enabled = true;
+                nextButton.Enabled = true;
+                prevButton.Enabled = false;
+                chestIndex = 0;
+
+                this.mTileWidth = mTileWidth;
+
+                LoadChestData(0, mTileWidth);
+            }
 		}
 
 		private void itemName_SelectedIndexChanged( object sender, EventArgs e )
 		{
 			ItemType value = (ItemType)itemName.SelectedValue;
+            Console.WriteLine(value);
 			amountLabel.Hide();
 			itemAmount.Hide();
 			kinstoneLabel.Hide();
@@ -83,8 +93,11 @@ namespace MinishMaker.UI
 			{
 				nextButton.Enabled = false;
 			}
-			//no loading yet
-		}
+
+            indexLabel.Text = chestIndex.ToString();
+
+            LoadChestData(chestIndex, mTileWidth);
+        }
 
 		private void prevButton_Click( object sender, EventArgs e )
 		{
@@ -94,7 +107,30 @@ namespace MinishMaker.UI
 			{
 				prevButton.Enabled = false;
 			}
-			//no loading yet
+
+            indexLabel.Text = chestIndex.ToString();
+
+            LoadChestData(chestIndex, mTileWidth);
 		}
+
+        private void LoadChestData(int chest, int mTileWidth)
+        {
+            ChestData chestData = data[chest];
+            entityType.Text = StringUtil.AsStringHex2(chestData.type);
+
+            if ((TileEntityType)chestData.type == TileEntityType.Chest || (TileEntityType)chestData.type == TileEntityType.BigChest)
+            {
+                entityId.Text = StringUtil.AsStringHex2(chestData.chestId);
+                itemName.SelectedItem = (ItemType)chestData.itemId;
+                kinstoneType.SelectedItem = (KinstoneType)chestData.itemSubNumber;
+                itemAmount.Text = chestData.itemSubNumber.ToString();
+
+                ushort chestPos = chestData.chestLocation;
+                int xPos = chestPos % mTileWidth;
+                int yPos = (chestPos - xPos) / mTileWidth;
+                xPosition.Text = xPos.ToString();
+                yPosition.Text = yPos.ToString();
+            }
+        }
 	}
 }

@@ -55,7 +55,7 @@ namespace MinishMaker.Core
 
 	public enum TileEntityType
 	{
-		TestU = 0x00,
+		None = 0x00,
 		TestA = 0x01,
 		Chest = 0x02,
 		BigChest = 0x03,
@@ -147,7 +147,8 @@ namespace MinishMaker.Core
 
 		KinstoneX = 0x5C,
 
-		Wallet = 0x64,
+        PieceOfHeart = 0x63,
+        Wallet = 0x64,
 
 	}
 

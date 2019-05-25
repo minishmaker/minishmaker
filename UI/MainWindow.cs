@@ -209,7 +209,13 @@ namespace MinishMaker.UI
 				mapView.Image = OverlayImage( mapLayers[1], mapLayers[0] );
 				tileMaps = room.DrawTilesetImages( 11, currentArea );
 				tileView.Image = tileMaps[1];
-			}
+
+                if (chestEditor != null)
+                {
+                    var chestData = currentRoom.GetChestData();
+                    chestEditor.SetData(chestData, mapLayers[0].Width / 16);
+                }
+            }
 		}
 
 		public Bitmap OverlayImage( Bitmap baseImage, Bitmap overlay )
@@ -629,9 +635,9 @@ namespace MinishMaker.UI
 
 			chestEditor = new ChestEditorWindow();
 
-			if(currentRoom!=null) {
+			if(currentRoom != null) {
 				var chestData = currentRoom.GetChestData();
-				chestEditor.SetData(chestData);
+				chestEditor.SetData(chestData, mapLayers[0].Width / 16);
 			}
 			chestEditor.FormClosed +=new FormClosedEventHandler(onChestEditorClose);
 			chestEditorStripMenuItem.Checked = true;

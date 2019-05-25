@@ -116,9 +116,9 @@
 			// itemAmount
 			// 
 			this.itemAmount.Location = new System.Drawing.Point(196, 102);
-			this.itemAmount.MaxLength = 2;
+			this.itemAmount.MaxLength = 3;
 			this.itemAmount.Name = "itemAmount";
-			this.itemAmount.Size = new System.Drawing.Size(20, 20);
+			this.itemAmount.Size = new System.Drawing.Size(27, 20);
 			this.itemAmount.TabIndex = 8;
 			this.itemAmount.Text = "00";
 			this.itemAmount.Visible = false;
@@ -162,7 +162,7 @@
 			// 
 			// yPosition
 			// 
-			this.yPosition.Location = new System.Drawing.Point(118, 128);
+			this.yPosition.Location = new System.Drawing.Point(120, 128);
 			this.yPosition.MaxLength = 2;
 			this.yPosition.Name = "yPosition";
 			this.yPosition.Size = new System.Drawing.Size(20, 20);
