@@ -39,14 +39,32 @@ namespace MinishMaker.UI
 				yPosition.Enabled = false;
 				nextButton.Enabled = false;
 				prevButton.Enabled = false;
+				saveButton.Enabled = false;
 			}
 		}
 
 		public void SetData(List<ChestData> data, int mTileWidth)
 		{
-            if (data.Count > 0)
+			
+			this.data = data;
+			prevButton.Enabled = false;
+			nextButton.Enabled = false;
+
+			if(data.Count == 0)
+			{
+				chestIndex = -1;
+				entityType.Enabled = false;
+				entityId.Enabled = false;
+				itemName.Enabled = false;
+				kinstoneType.Enabled =false;
+				itemAmount.Enabled = false;
+				xPosition.Enabled = false;
+				yPosition.Enabled = false;
+				nextButton.Enabled = false;
+				saveButton.Enabled = false;
+			}
+            else
             {
-                this.data = data;
                 entityType.Enabled = true;
                 entityId.Enabled = true;
                 itemName.Enabled = true;
@@ -54,14 +72,20 @@ namespace MinishMaker.UI
                 itemAmount.Enabled = true;
                 xPosition.Enabled = true;
                 yPosition.Enabled = true;
-                nextButton.Enabled = true;
-                prevButton.Enabled = false;
+                saveButton.Enabled = true;
+				
                 chestIndex = 0;
 
                 this.mTileWidth = mTileWidth;
-
                 LoadChestData(0, mTileWidth);
+
+				if(data.Count>1)
+				{
+					nextButton.Enabled = true;
+				}
             }
+
+			indexLabel.Text = chestIndex.ToString();
 		}
 
 		private void itemName_SelectedIndexChanged( object sender, EventArgs e )
@@ -131,6 +155,15 @@ namespace MinishMaker.UI
                 xPosition.Text = xPos.ToString();
                 yPosition.Text = yPos.ToString();
             }
+			else
+			{
+				itemName.Enabled = false;
+				kinstoneType.Enabled = false;
+				itemAmount.Enabled = false;
+				xPosition.Enabled = false;
+				yPosition.Enabled = false;
+				entityId.Enabled = false;
+			}
         }
 	}
 }
