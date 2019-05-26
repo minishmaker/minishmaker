@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -109,7 +110,10 @@ namespace MinishMaker.UI
 
 		private void nextButton_Click( object sender, EventArgs e )
 		{
-			chestIndex++;
+            ChestData chestData = data[chestIndex];
+            EditChestData(chestData);
+
+            chestIndex++;
 			prevButton.Enabled=true;
 			if(chestIndex == data.Count-1)
 			{
@@ -123,6 +127,9 @@ namespace MinishMaker.UI
 
 		private void prevButton_Click( object sender, EventArgs e )
 		{
+            ChestData chestData = data[chestIndex];
+            EditChestData(chestData);
+
 			chestIndex--;
 			nextButton.Enabled=true;
 			if(chestIndex == 0)
@@ -175,6 +182,62 @@ namespace MinishMaker.UI
 				xPosition.Enabled = false;
 				yPosition.Enabled = false;
 				entityId.Enabled = false;
+            }
+        }
+
+        private void EditChestData(ChestData chestData)
+        {
+            byte type = byte.Parse(entityType.Text, NumberStyles.AllowHexSpecifier);
+            chestData.type = type;
+
+            if ((TileEntityType)chestData.type == TileEntityType.Chest || (TileEntityType)chestData.type == TileEntityType.BigChest)
+            {
+                byte id = byte.Parse(entityId.Text, NumberStyles.AllowHexSpecifier);
+
+                chestData.chestId = id;
+
+                byte item = (byte)itemName.SelectedItem;
+                chestData.itemId = (byte)itemName.SelectedItem;
+
+                if ((ItemType)item == ItemType.KinstoneX)
+                {
+                    chestData.itemSubNumber = (byte)kinstoneType.SelectedItem;
+                }
+                else if ((ItemType)item == ItemType.ShellsX)
+                {
+                    int subNumber;
+                    if (Int32.TryParse(itemAmount.Text, out subNumber))
+                    {
+                        if (subNumber > 255 || subNumber < 0)
+                        {
+                            subNumber = 255;
+                        }
+
+                        chestData.itemSubNumber = (byte)subNumber;
+                    }
+                    else
+                    {
+                        chestData.itemSubNumber = 0;
+                    }
+                }
+
+                int xPos, yPos;
+                if (Int32.TryParse(xPosition.Text, out xPos) && Int32.TryParse(yPosition.Text, out yPos))
+                {
+                    ushort chestPos = (ushort)(yPos >> 6);
+                    chestPos += (ushort)xPos;
+
+                    if (chestPos > ushort.MaxValue)
+                    {
+                        chestPos = ushort.MaxValue;
+                    }
+
+                    chestData.chestLocation = chestPos;
+                }
+                else
+                {
+                    chestData.chestLocation = 0;
+                }
             }
         }
 	}

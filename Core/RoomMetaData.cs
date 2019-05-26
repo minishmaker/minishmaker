@@ -258,7 +258,9 @@ namespace MinishMaker.Core
 
 			outdata = new byte[totalSize];
 			Array.Copy(compressed,outdata,totalSize);
-			//var sizeDifference = totalSize - bg1RoomDataAddr.Value.size;
+            //var sizeDifference = totalSize - bg1RoomDataAddr.Value.size;
+
+            totalSize |= 0x80000000;
 
 			return totalSize;
 		}
@@ -272,9 +274,11 @@ namespace MinishMaker.Core
 			
 			outdata = new byte[totalSize];
 			Array.Copy(compressed,outdata,totalSize);
-			//var sizeDifference = totalSize - bg2RoomDataAddr.Value.size;
+            //var sizeDifference = totalSize - bg2RoomDataAddr.Value.size;
 
-			return totalSize;
+            totalSize |= 0x80000000;
+
+            return totalSize;
 		}
 
 		//To be changed as actual data gets changed and tested

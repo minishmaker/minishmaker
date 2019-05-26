@@ -321,15 +321,17 @@ namespace MinishMaker.Core
 			}
 		}
 
-		public long CompressRoomData(ref byte[] data, DataType type )
+		public long GetSaveData(ref byte[] data, DataType type )
 		{
-			if(type == DataType.bg1Data)
-				return metadata.CompressBG1(ref data, bg1RoomData);
-
-			if(type == DataType.bg2Data)
-				return metadata.CompressBG2(ref data, bg2RoomData);
-
-			return 0;
+            switch(type)
+            {
+                case DataType.bg1Data:
+                    return metadata.CompressBG1(ref data, bg1RoomData);
+                case DataType.bg2Data:
+                    return metadata.CompressBG2(ref data, bg2RoomData);
+                default:
+                    return 0;
+            }
 		}
 
 		public int GetPointerLoc( DataType type , int areaIndex)

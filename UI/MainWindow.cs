@@ -69,7 +69,7 @@ namespace MinishMaker.UI
 			roomMetaData,
 			tileSet,
 			metaTileSet,
-
+            chestData
 		}
 
 		public MainWindow()
@@ -281,24 +281,24 @@ namespace MinishMaker.UI
 	        {
 	            var pendingData = unsavedChanges.ElementAt(0);
 	            var room = FindRoom(pendingData.areaIndex, pendingData.roomIndex);
-	            byte[] compressedData = null;
-	            long size = room.CompressRoomData(ref compressedData, pendingData.dataType);
-	            long pointerAddress = room.GetPointerLoc(pendingData.dataType, pendingData.areaIndex);
+	            byte[] saveData = null;
+                long size = room.GetSaveData(ref saveData, pendingData.dataType);
+                long pointerAddress = room.GetPointerLoc(pendingData.dataType, pendingData.areaIndex);
+                uint newSource = 0;
 
-	            //TODO: improve repointing
-	            var currentSourceIndex = GetCurrentSource(pendingData.areaIndex, pendingData.roomIndex, pendingData.dataType);
-	            uint newSource = FindNewSource((uint)size, currentSourceIndex);
+                var currentSourceIndex = GetCurrentSource(pendingData.areaIndex, pendingData.roomIndex, pendingData.dataType);
+                newSource = FindNewSource((uint)size & 0x7FFFFFFF, currentSourceIndex);
 
-	            if (newSource == 0)
-	            {
-	                MessageBox.Show("Unable to allocate enough space for data in area:" + pendingData.areaIndex + " room:" + pendingData.roomIndex + " with size:" + size);
-	                continue;
-	            }
+                if (newSource == 0)
+                {
+                    MessageBox.Show("Unable to allocate enough space for data of type, \"" + pendingData.dataType.ToString() + "\" in area:" + pendingData.areaIndex + " room:" + pendingData.roomIndex + " with size:" + size);
+                    continue;
+                }
 
-	            dataPositions.Add(new RepointData(pendingData.areaIndex, pendingData.roomIndex, pendingData.dataType, (int)newSource, (int)size));
-	            size = size | 0x80000000; //sets the compression bit
+                dataPositions.Add(new RepointData(pendingData.areaIndex, pendingData.roomIndex, pendingData.dataType, (int)newSource, (int)size & 0x7FFFFFFF));
+                size = size | 0x80000000; //sets the compression bit
 
-	            SaveToRom(newSource, pointerAddress, compressedData, size);
+	            SaveToRom(newSource, pointerAddress, saveData, size);
 
 	            unsavedChanges.RemoveAt(0);//saved, remove from pending to avoid re-save
 	        }
@@ -436,17 +436,17 @@ namespace MinishMaker.UI
 			}
 		}
 
-		private void SaveToRom( uint newSource, long pointerAddress, byte[] compressedData, long size = 0 )
+		private void SaveToRom( uint newSource, long pointerAddress, byte[] data, long size = 0 )
 		{
 			using( MemoryStream m = new MemoryStream( ROM.Instance.romData ) )
 			{
 				Writer w = new Writer( m );
-				w.SetPosition( newSource );//actually write the compressed data somewhere
-				w.WriteBytes( compressedData );
+				w.SetPosition( newSource ); //actually write the data somewhere
+				w.WriteBytes( data );
 
 				newSource = (uint)(newSource - ROM.Instance.headers.gfxSourceBase);
 				w.SetPosition( pointerAddress );
-				w.WriteUInt32( newSource | 0x80000000 );//byte 1-4 is source, high bit was removed before
+				w.WriteUInt32( newSource | 0x80000000 ); //byte 1-4 is source, high bit was removed before
 
 				if( size != 0 ) // this is a reshuffle, no need to adjust size
 				{
