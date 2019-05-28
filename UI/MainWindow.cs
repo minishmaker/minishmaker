@@ -20,6 +20,7 @@ namespace MinishMaker.UI
 		private Bitmap[] tileMaps;
 
 		private Bitmap selectorImage = new Bitmap( 16, 16 );
+        private Bitmap hoverImage = new Bitmap( 16, 16 );
         private Room currentRoom = null;
 		private int currentArea = -1;
 		private int selectedTileData = -1;
@@ -71,9 +72,23 @@ namespace MinishMaker.UI
 
 		}
 
+	    public enum WindowType
+	    {
+            mapWindow,
+            tileWindow
+	    }
+
 		public MainWindow()
 		{
 			InitializeComponent();
+
+		    using (Graphics g = Graphics.FromImage(selectorImage)) g.DrawRectangle(new Pen(Color.Red, 4), 0, 0, 16, 16);
+		    using (Graphics g = Graphics.FromImage(hoverImage)) g.DrawRectangle(new Pen(Color.White, 2), 0, 0, 16, 16);
+		    tileSelectionBox.Image = selectorImage;
+		    mapSelectionBox.Image = selectorImage;
+
+		    mapHoverBox.Image = hoverImage;
+		    tileHoverBox.Image = hoverImage;
 		}
 
         #region MenuBarButtons
@@ -304,7 +319,8 @@ namespace MinishMaker.UI
 	        MessageBox.Show("All changes have been saved");
         }
 
-		private int GetCurrentSource( int area, int room, DataType type )
+	    #region DataManagement
+        private int GetCurrentSource( int area, int room, DataType type )
 		{
 			//load in all data repoints so far
 			if( dataPositions.Count == 0 )
@@ -463,25 +479,19 @@ namespace MinishMaker.UI
 			System.IO.File.WriteAllText(name+".pdat",s);
 			//System.IO.File.WriteAllText("testfile1.pdat",s);
 		}
+	    #endregion
 
-		private void discardRoomChangesToolStripMenuItem_Click( object sender, EventArgs e )
+        private void discardRoomChangesToolStripMenuItem_Click( object sender, EventArgs e )
 		{
 			//TODO
 		}
 
-		private void mapView_MouseDown( object sender, MouseEventArgs me )
+
+        #region MapInteraction
+        private void mapView_MouseDown( object sender, MouseEventArgs me )
 		{
 			if( currentRoom == null )
 				return;
-
-			if( mapSelectionBox.Image == null )
-			{
-				GenerateSelectorImage();
-				tileSelectionBox.BackColor = Color.Transparent;
-				mapSelectionBox.BackColor = Color.Transparent;
-				tileSelectionBox.Image = selectorImage;
-				mapSelectionBox.Image = selectorImage;
-			}
 
 			mapSelectionBox.Visible = true;
 
@@ -519,11 +529,12 @@ namespace MinishMaker.UI
 
         private void mapView_MouseMove( object sender, MouseEventArgs me )
         {
+            if (currentRoom == null)
+                return;
+
+            
             if (me.Button != MouseButtons.None)
             {
-                if (currentRoom == null)
-                    return;
-
                 var mTileWidth = mapLayers[0].Width / 16;
                 var tsTileWidth = tileMaps[0].Width / 16;
 
@@ -538,18 +549,10 @@ namespace MinishMaker.UI
                 if (!lastTilePos.Equals(tilePos))
                 {
 
-                    if (mapSelectionBox.Image == null)
-                    {
-                        GenerateSelectorImage();
-                        tileSelectionBox.BackColor = Color.Transparent;
-                        mapSelectionBox.BackColor = Color.Transparent;
-                        tileSelectionBox.Image = selectorImage;
-                        mapSelectionBox.Image = selectorImage;
-                    }
-
                     mapSelectionBox.Visible = true;
 
                     mapSelectionBox.Location = new Point(me.X - partialX, me.Y - partialY);
+
                     var pos = tileY * mTileWidth + tileX; //tilenumber if they were all in a line
 
                     if (me.Button == MouseButtons.Right)
@@ -566,47 +569,59 @@ namespace MinishMaker.UI
                     }
                 }
             }
+            /*else
+            {
+                if (mapHoverBox.Image == null)
+                {
+                    mapHoverBox.Image = hoverImage;
+                }
+
+                mapHoverBox.Visible = true;
+                mapHoverBox.Location = new Point(me.X - partialX, me.Y - partialY);
+            }*/
         }
+        #endregion
 
-		private void tileView_Click( object sender, EventArgs e )
+	    #region TilesetInteraction	  
+        private void tileView_Click( object sender, EventArgs e )
 		{
-			if( currentRoom == null )
-				return;
+		    if (currentRoom == null)
+		        return;
 
-			if( tileSelectionBox.Image == null )
-			{
-                GenerateSelectorImage();
-			    tileSelectionBox.BackColor = Color.Transparent;
-			    mapSelectionBox.BackColor = Color.Transparent;
-                tileSelectionBox.Image = selectorImage;
-				mapSelectionBox.Image = selectorImage;
-			}
-			tileSelectionBox.Visible = true;
-
-			var mTileWidth = mapLayers[0].Width / 16;
-			var tsTileWidth = tileMaps[0].Width / 16;
+            tileSelectionBox.Visible = true;
 
 			var me = (MouseEventArgs)e;
 
-			var partialX = me.X % 16;
-			var partialY = me.Y % 16;
-
-			int tileX = (me.X - partialX) / 16;
-			int tileY = (me.Y - partialY) / 16;
-
-			tileSelectionBox.Location = new Point( me.X - partialX, me.Y - partialY );
-
-			selectedTileData = tileX + tileY * tsTileWidth;
+			CondensedTileSelection(me, WindowType.tileWindow);
 		}
+        #endregion
 
-		private void GenerateSelectorImage()
-		{
-			using( Graphics g = Graphics.FromImage( selectorImage ) )
-			{
-				selectorImage.MakeTransparent();
-				g.DrawRectangle( new Pen( Color.Red, 4 ), 0, 0, 16, 16 );
-			}
-		}
+	    private void CondensedTileSelection(MouseEventArgs me, WindowType window)
+	    {
+	        var partialX = me.X % 16;
+	        var partialY = me.Y % 16;
+
+	        int tileX = (me.X - partialX) / 16;
+	        int tileY = (me.Y - partialY) / 16;
+
+	        var mTileWidth = mapLayers[0].Width / 16;
+	        var tsTileWidth = tileMaps[0].Width / 16;
+
+            Point p = new Point(me.X - partialX, me.Y - partialY);
+
+	        switch (window)
+	        {
+                case WindowType.mapWindow:
+                    mapSelectionBox.Location = p;
+                    break;
+                case WindowType.tileWindow:
+                    tileSelectionBox.Location = p;
+                    selectedTileData = tileX + tileY * tsTileWidth;
+                    break;
+	        }
+
+
+        }
 
         private void WriteTile (int tileX, int tileY, int pos, int tileData, int layer)
         {
