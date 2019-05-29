@@ -46,7 +46,7 @@
 			this.indexLabel = new System.Windows.Forms.Label();
 			this.nextButton = new System.Windows.Forms.Button();
 			this.prevButton = new System.Windows.Forms.Button();
-			this.saveButton = new System.Windows.Forms.Button();
+			this.newButton = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// entityType
@@ -57,6 +57,7 @@
 			this.entityType.Size = new System.Drawing.Size(20, 20);
 			this.entityType.TabIndex = 0;
 			this.entityType.Text = "00";
+			this.entityType.LostFocus += new System.EventHandler(this.entityType_LostFocus);																		 
 			// 
 			// label1
 			// 
@@ -84,6 +85,7 @@
 			this.entityId.Size = new System.Drawing.Size(20, 20);
 			this.entityId.TabIndex = 2;
 			this.entityId.Text = "00";
+			this.entityId.LostFocus += new System.EventHandler(this.entityId_LostFocus);														 
 			// 
 			// label3
 			// 
@@ -122,6 +124,7 @@
 			this.itemAmount.TabIndex = 8;
 			this.itemAmount.Text = "00";
 			this.itemAmount.Visible = false;
+			this.itemAmount.LostFocus += new System.EventHandler(this.itemAmount_LostFocus);																		 
 			// 
 			// kinstoneLabel
 			// 
@@ -141,6 +144,7 @@
 			this.kinstoneType.Size = new System.Drawing.Size(121, 21);
 			this.kinstoneType.TabIndex = 10;
 			this.kinstoneType.Visible = false;
+			this.kinstoneType.SelectedIndexChanged += new System.EventHandler(this.kinstoneType_SelectedIndexChanged);																								 
 			// 
 			// label6
 			// 
@@ -159,6 +163,7 @@
 			this.xPosition.Size = new System.Drawing.Size(20, 20);
 			this.xPosition.TabIndex = 12;
 			this.xPosition.Text = "00";
+			this.xPosition.LostFocus += new System.EventHandler(this.xPosition_LostFocus);																	   
 			// 
 			// yPosition
 			// 
@@ -168,6 +173,7 @@
 			this.yPosition.Size = new System.Drawing.Size(20, 20);
 			this.yPosition.TabIndex = 13;
 			this.yPosition.Text = "00";
+			this.yPosition.LostFocus += new System.EventHandler(this.yPosition_LostFocus);																	   
 			// 
 			// label7
 			// 
@@ -216,21 +222,22 @@
 			this.prevButton.UseVisualStyleBackColor = true;
 			this.prevButton.Click += new System.EventHandler(this.prevButton_Click);
 			// 
-			// saveButton
+			// newButton
 			// 
-			this.saveButton.Location = new System.Drawing.Point(16, 158);
-			this.saveButton.Name = "saveButton";
-			this.saveButton.Size = new System.Drawing.Size(50, 20);
-			this.saveButton.TabIndex = 19;
-			this.saveButton.Text = "Save";
-			this.saveButton.UseVisualStyleBackColor = true;
+			this.newButton.Location = new System.Drawing.Point(83, 12);
+			this.newButton.Name = "newButton";
+			this.newButton.Size = new System.Drawing.Size(20, 20);
+			this.newButton.TabIndex = 20;
+			this.newButton.Text = "+";
+			this.newButton.UseVisualStyleBackColor = true;
+			this.newButton.Click += new System.EventHandler(this.newButton_Click);
 			// 
 			// ChestEditorWindow
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(333, 262);
-			this.Controls.Add(this.saveButton);
+			this.ClientSize = new System.Drawing.Size(333, 162);
+			this.Controls.Add(this.newButton);
 			this.Controls.Add(this.prevButton);
 			this.Controls.Add(this.nextButton);
 			this.Controls.Add(this.indexLabel);
@@ -276,6 +283,6 @@
 		private System.Windows.Forms.Label indexLabel;
 		private System.Windows.Forms.Button nextButton;
 		private System.Windows.Forms.Button prevButton;
-		private System.Windows.Forms.Button saveButton;
+		private System.Windows.Forms.Button newButton;
 	}
 }

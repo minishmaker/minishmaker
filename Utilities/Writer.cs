@@ -96,5 +96,16 @@ namespace MinishMaker.Utilities
             stream_.Position = pos;
             WriteInt(int32);
         }
+
+        public void WriteAddr(uint addr)
+        {
+            writer_.Write(addr | 0x08000000);
+        }
+
+        public void WriteAddr(uint addr, long pos)
+        {
+            stream_.Position = pos;
+            WriteAddr(addr);
+        }
     }
 }

@@ -329,6 +329,8 @@ namespace MinishMaker.Core
                     return metadata.CompressBG1(ref data, bg1RoomData);
                 case DataType.bg2Data:
                     return metadata.CompressBG2(ref data, bg2RoomData);
+				case DataType.chestData:
+					return metadata.GetChestData(ref data);
                 default:
                     return 0;
             }
@@ -407,6 +409,11 @@ namespace MinishMaker.Core
 		public List<ChestData> GetChestData()
 		{
 			return metadata.ChestInfo;
+		}
+
+		public void AddChestData(ChestData data)
+		{
+			metadata.AddChestData(data);
 		}
 	}
 }

@@ -12,7 +12,7 @@ namespace MinishMaker.Core
 {
 	public class RoomMetaData
 	{
-		private int width, height;
+		private int width, height, mapPosX, mapPosY;
 		public int PixelWidth
 		{
 			get
@@ -59,6 +59,12 @@ namespace MinishMaker.Core
 
 		private AddrData? bg1RoomDataAddr;
 		private AddrData bg1MetaTilesAddr;
+
+		private bool chestDataLarger = false;
+		public bool ChestDataLarger
+		{
+			get { return chestDataLarger;}
+		}
 
 		private bool bg1Use20344B0 = false;
 		public bool Bg1Use20344B0
@@ -117,8 +123,9 @@ namespace MinishMaker.Core
 
 			int areaRMDTableLoc = r.ReadAddr( header.MapHeaderBase + (areaIndex << 2) );
 			int roomMetaDataTableLoc = areaRMDTableLoc + (roomIndex * 0x0A);
-
-			this.width = r.ReadUInt16( roomMetaDataTableLoc + 4 ) >> 4; //bytes 5+6 pixels/16 = tiles
+			this.mapPosX = r.ReadUInt16( roomMetaDataTableLoc )>>4;
+			this.mapPosY = r.ReadUInt16()>>4;
+			this.width = r.ReadUInt16() >> 4; //bytes 5+6 pixels/16 = tiles
 			this.height = r.ReadUInt16() >> 4;                          //bytes 7+8 pixels/16 = tiles
 
 			//get addr of TPA data
@@ -281,6 +288,44 @@ namespace MinishMaker.Core
             return totalSize;
 		}
 
+		public long GetChestData(ref byte[] outdata )
+		{
+			var size = (chestInformation.Count*8)+8;
+			outdata = new byte[chestInformation.Count*8+8];
+
+			for(int i = 0; i< chestInformation.Count; i++)
+			{
+				var index = i*8;
+				var data = chestInformation[i];
+				outdata[index] = data.type;
+				outdata[index+1] = data.chestId;
+				outdata[index+2] = data.itemId;
+				outdata[index+3] = data.itemSubNumber;
+				byte high = (byte)(data.chestLocation>>8);
+				byte low = (byte)(data.chestLocation-(high<<8));
+				outdata[index+4] = low;
+				outdata[index+5] = high;
+				high = (byte)(data.unknown>>8);
+				low = (byte)(data.unknown-(high<<8));
+				outdata[index+6] = low;
+				outdata[index+7] = high;
+
+				if(i == chestInformation.Count-1)// add ending 0's
+				{
+					for(int j= 0; j<8;j++)
+						outdata[index+8+j]=0;
+				}
+			}
+
+            return outdata.Length;
+		}
+
+		public void AddChestData(ChestData data)
+		{
+			chestDataLarger = true; //larger so should be moved
+			chestInformation.Add(data);
+		}
+
 		//To be changed as actual data gets changed and tested
 		public int GetPointerLoc(DataType type, int areaIndex, int roomIndex)
 		{
@@ -324,7 +369,21 @@ namespace MinishMaker.Core
 					{
 						ParseData(r,Bg2Check);
 					}
-					return (int)r.Position-12; //step back 12 bytes as the bg was found after reading
+					retAddr = (int)r.Position-12; //step back 12 bytes as the bg was found after reading
+					break;
+
+				case DataType.chestData:
+					int areaEntityTableAddrLoc = header.AreaMetadataBase + (areaIndex << 2);
+					int areaEntityTableAddr = r.ReadAddr(areaEntityTableAddrLoc);
+
+					int roomEntityTableAddrLoc = areaEntityTableAddr + (roomIndex << 2);
+					int roomEntityTableAddr = r.ReadAddr(roomEntityTableAddrLoc);
+
+					//4 byte chunks, 1-3 are unknown use, 4th seems to be chests
+					retAddr = roomEntityTableAddr + 0x0C;
+
+                    Console.WriteLine(retAddr);
+					break;
 
 				default:
 					break;

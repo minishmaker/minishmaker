@@ -11,14 +11,16 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static MinishMaker.Core.RoomMetaData;
+using static MinishMaker.UI.MainWindow;
 
 namespace MinishMaker.UI
 {
 	public partial class ChestEditorWindow : Form
 	{
 		private int chestIndex = -1;
-		private List<ChestData> data;
-
+		private List<ChestData> chestDataList;
+		
+		
 		public ChestEditorWindow()
 		{
 			InitializeComponent();
@@ -27,7 +29,8 @@ namespace MinishMaker.UI
 			this.itemName.DataSource = Enum.GetValues(typeof(ItemType));
 			this.kinstoneType.DataSource = Enum.GetValues(typeof(KinstoneType));
 			chestIndex = -1;
-			if(data==null)
+			
+			if(chestDataList==null)
 			{
 				//lock all stuff
 				entityType.Enabled = false;
@@ -39,14 +42,13 @@ namespace MinishMaker.UI
 				yPosition.Enabled = false;
 				nextButton.Enabled = false;
 				prevButton.Enabled = false;
-				saveButton.Enabled = false;
 			}
 		}
 
 		public void SetData(List<ChestData> data)
 		{
-			
-			this.data = data;
+			this.chestDataList = data;
+											 
 			prevButton.Enabled = false;
 			nextButton.Enabled = false;
 
@@ -61,7 +63,7 @@ namespace MinishMaker.UI
 				xPosition.Enabled = false;
 				yPosition.Enabled = false;
 				nextButton.Enabled = false;
-				saveButton.Enabled = false;
+				newButton.Visible = true;
 			}
             else
             {
@@ -72,7 +74,6 @@ namespace MinishMaker.UI
                 itemAmount.Enabled = true;
                 xPosition.Enabled = true;
                 yPosition.Enabled = true;
-                saveButton.Enabled = true;
 				
                 chestIndex = 0;
 
@@ -87,35 +88,13 @@ namespace MinishMaker.UI
 			indexLabel.Text = chestIndex.ToString();
 		}
 
-		private void itemName_SelectedIndexChanged( object sender, EventArgs e )
-		{
-			ItemType value = (ItemType)itemName.SelectedValue;
-            Console.WriteLine(value);
-			amountLabel.Hide();
-			itemAmount.Hide();
-			kinstoneLabel.Hide();
-			kinstoneType.Hide();
-
-			if(value == ItemType.KinstoneX)
-			{
-				kinstoneLabel.Show();
-				kinstoneType.Show();
-			}
-			else if(value == ItemType.ShellsX)
-			{
-				amountLabel.Show();
-				itemAmount.Show();
-			}
-		}
-
+  
 		private void nextButton_Click( object sender, EventArgs e )
 		{
-            ChestData chestData = data[chestIndex];
-            EditChestData(chestData);
 
             chestIndex++;
 			prevButton.Enabled=true;
-			if(chestIndex == data.Count-1)
+			if(chestIndex == chestDataList.Count-1)
 			{
 				nextButton.Enabled = false;
 			}
@@ -127,11 +106,8 @@ namespace MinishMaker.UI
 
 		private void prevButton_Click( object sender, EventArgs e )
 		{
-            ChestData chestData = data[chestIndex];
-            EditChestData(chestData);
-
 			chestIndex--;
-			nextButton.Enabled=true;
+			nextButton.Enabled = true;			 
 			if(chestIndex == 0)
 			{
 				prevButton.Enabled = false;
@@ -142,9 +118,22 @@ namespace MinishMaker.UI
             LoadChestData(chestIndex);
 		}
 
+		private void newButton_Click( object sender, EventArgs e )
+		{
+			MainWindow main = (MainWindow)Application.OpenForms[0];//if the main closes everything closes
+            chestIndex = chestDataList.Count;
+            indexLabel.Text = chestIndex.ToString();
+			main.AddPendingChange(DataType.chestData);
+			main.currentRoom.AddChestData(new ChestData(0x02,0,0,0,0,0));
+			LoadChestData(chestIndex);
+
+            prevButton.Enabled = true;
+            nextButton.Enabled = false;
+        }
+
         private void LoadChestData(int chest)
         {
-            ChestData chestData = data[chest];
+            ChestData chestData = chestDataList[chest];
             entityType.Text = StringUtil.AsStringHex2(chestData.type);
 
             if ((TileEntityType)chestData.type == TileEntityType.Chest || (TileEntityType)chestData.type == TileEntityType.BigChest)
@@ -185,60 +174,192 @@ namespace MinishMaker.UI
             }
         }
 
-        private void EditChestData(ChestData chestData)
-        {
-            byte type = byte.Parse(entityType.Text, NumberStyles.AllowHexSpecifier);
-            chestData.type = type;
+		private void entityType_LostFocus( object sender, EventArgs e )												
+		{
+			if(!entityType.IsHandleCreated)
+				return;		 
 
-            if ((TileEntityType)chestData.type == TileEntityType.Chest || (TileEntityType)chestData.type == TileEntityType.BigChest)
-            {
-                byte id = byte.Parse(entityId.Text, NumberStyles.AllowHexSpecifier);
+			var chest = chestDataList[chestIndex];
+			try
+			{
+				var type = Convert.ToByte(entityType.Text,16);
 
-                chestData.chestId = id;
+				if(type == chest.type)
+					return;
+	
+				var main = (MainWindow)(Application.OpenForms[0]);
+				main.AddPendingChange(DataType.chestData);
 
-                byte item = (byte)itemName.SelectedItem;
-                chestData.itemId = (byte)itemName.SelectedItem;
+				chest.type = type;
+			}
+			catch
+			{
+				entityType.Text = StringUtil.AsStringHex2(chest.type);
+			}
 
-                if ((ItemType)item == ItemType.KinstoneX)
-                {
-                    chestData.itemSubNumber = (byte)kinstoneType.SelectedItem;
-                }
-                else if ((ItemType)item == ItemType.ShellsX)
-                {
-                    int subNumber;
-                    if (Int32.TryParse(itemAmount.Text, out subNumber))
-                    {
-                        if (subNumber > 255 || subNumber < 0)
-                        {
-                            subNumber = 255;
-                        }
+			chestDataList[chestIndex] = chest;
+		}
 
-                        chestData.itemSubNumber = (byte)subNumber;
-                    }
-                    else
-                    {
-                        chestData.itemSubNumber = 0;
-                    }
-                }
+		private void entityId_LostFocus( object sender, EventArgs e )
+		{
+			if(!entityId.IsHandleCreated)
+				return;
 
-                int xPos, yPos;
-                if (Int32.TryParse(xPosition.Text, out xPos) && Int32.TryParse(yPosition.Text, out yPos))
-                {
-                    ushort chestPos = (ushort)(yPos >> 6);
-                    chestPos += (ushort)xPos;
+			var chest = chestDataList[chestIndex];
+			try
+			{
+				var chestId = Convert.ToByte(entityId.Text,16);
 
-                    if (chestPos > ushort.MaxValue)
-                    {
-                        chestPos = ushort.MaxValue;
-                    }
+				if(chestId == chest.chestId)
+					return;
+	
+				var main = (MainWindow)(Application.OpenForms[0]);
+				main.AddPendingChange(DataType.chestData);
 
-                    chestData.chestLocation = chestPos;
-                }
-                else
-                {
-                    chestData.chestLocation = 0;
-                }
-            }
-        }
+				chest.chestId = chestId;
+			}
+			catch
+			{
+				entityId.Text = StringUtil.AsStringHex2(chest.chestId);		  
+			}
+			chestDataList[chestIndex] = chest;
+		}
+
+		private void xPosition_LostFocus( object sender, EventArgs e )
+		{
+			if(!xPosition.IsHandleCreated)
+				return;
+
+			var chest = chestDataList[chestIndex];
+			try
+			{
+				ushort location = (ushort)(Convert.ToByte(xPosition.Text) + (Convert.ToByte(yPosition.Text)<<6));
+
+				if(location == chest.chestLocation)
+					return;
+	
+				var main = (MainWindow)(Application.OpenForms[0]);
+				main.AddPendingChange(DataType.chestData);
+
+				chest.chestLocation = location;
+			}
+			catch
+			{
+				var yPos = (chest.chestLocation>>6);
+				var xPos = (chest.chestLocation- (yPos<<6));
+				xPosition.Text = xPos.ToString();
+			}
+			chestDataList[chestIndex] = chest;
+		}
+
+		private void yPosition_LostFocus( object sender, EventArgs e )
+		{
+			if(!yPosition.IsHandleCreated)
+				return;
+
+			var chest = chestDataList[chestIndex];
+			try
+			{
+				ushort location = (ushort)(Convert.ToByte(xPosition.Text) + (Convert.ToByte(yPosition.Text)<<6));
+
+				if(location == chest.chestLocation)
+					return;
+	
+				var main = (MainWindow)(Application.OpenForms[0]);
+				main.AddPendingChange(DataType.chestData);
+
+				chest.chestLocation = location;
+			}
+			catch
+			{
+				var yPos = (chest.chestLocation>>6);
+				yPosition.Text = yPos.ToString();
+			}
+			
+			chestDataList[chestIndex] = chest;
+		}
+
+		private void kinstoneType_SelectedIndexChanged( object sender, EventArgs e )
+		{
+			if(!kinstoneType.IsHandleCreated)
+				return;
+
+			var chest = chestDataList[chestIndex];
+   
+			var type = (byte)((int)kinstoneType.SelectedValue);//cant directly go to byte?
+	
+			if(type == chest.itemSubNumber)
+				return;
+	
+			var main = (MainWindow)(Application.OpenForms[0]);
+			main.AddPendingChange(DataType.chestData);
+
+			itemAmount.Text = type.ToString();
+			chest.itemSubNumber = type;
+
+			chestDataList[chestIndex] = chest;
+		}
+
+		private void itemAmount_LostFocus( object sender, EventArgs e )
+		{
+			if(!itemAmount.IsHandleCreated)
+				return;
+
+			var chest = chestDataList[chestIndex];
+			try
+			{
+				var type = Convert.ToByte(itemAmount.Text);
+
+				if(type == chest.itemSubNumber)
+					return;
+	
+				var main = (MainWindow)(Application.OpenForms[0]);
+				main.AddPendingChange(DataType.chestData);
+
+				chest.itemSubNumber = type;
+				kinstoneType.SelectedValue = (KinstoneType)type;
+			}
+			catch
+			{
+				itemAmount.Text = chest.itemSubNumber.ToString();
+			}
+
+			chestDataList[chestIndex] = chest;
+		}
+
+		private void itemName_SelectedIndexChanged( object sender, EventArgs e )
+		{
+            if(!itemName.IsHandleCreated)
+				return;
+
+			ItemType value = (ItemType)itemName.SelectedValue;
+
+			var chest = chestDataList[chestIndex];
+
+			if((int)value == chest.itemId)
+				return;
+	
+			var main = (MainWindow)(Application.OpenForms[0]);
+			main.AddPendingChange(DataType.chestData);
+
+			chest.itemId = (byte)value;
+			chestDataList[chestIndex]=chest;
+
+			amountLabel.Hide();
+			itemAmount.Hide();
+			kinstoneLabel.Hide();
+			kinstoneType.Hide();
+
+			if(value == ItemType.KinstoneX)
+			{
+				kinstoneLabel.Show();
+				kinstoneType.Show();
+			}
+			else if(value == ItemType.ShellsX)
+			{
+				amountLabel.Show();
+				itemAmount.Show();
+			}
+		}
 	}
 }

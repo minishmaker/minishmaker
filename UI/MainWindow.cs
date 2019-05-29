@@ -15,13 +15,14 @@ namespace MinishMaker.UI
 	{
 		private ROM ROM_;
 		private MapManager mapManager_;
+        private SpaceManager spaceManager_;
 		private ChestEditorWindow chestEditor = null;
 
 		private Bitmap[] mapLayers;
 		private Bitmap[] tileMaps;
 
 		private Bitmap selectorImage = new Bitmap( 16, 16 );
-        private Room currentRoom = null;
+        public Room currentRoom = null;
 		private int currentArea = -1;
 		private int selectedTileData = -1;
 		private int selectedLayer = 2; //start with bg2
@@ -158,7 +159,7 @@ namespace MinishMaker.UI
 			dataPositions = new List<RepointData>();
 
 			LoadMaps();
-
+            LoadRepoints();
 
 			statusText.Text = "Loaded: " + ROM.Instance.path;
 		}
@@ -275,6 +276,7 @@ namespace MinishMaker.UI
 	        {
 	            return;
 	        }
+
 	        unsavedChanges = unsavedChanges.Distinct().ToList();
 	        //foreach(PendingData pendingData in unsavedChanges)
 	        while (unsavedChanges.Count > 0)
@@ -286,157 +288,44 @@ namespace MinishMaker.UI
                 long pointerAddress = room.GetPointerLoc(pendingData.dataType, pendingData.areaIndex);
                 uint newSource = 0;
 
-                var currentSourceIndex = GetCurrentSource(pendingData.areaIndex, pendingData.roomIndex, pendingData.dataType);
-                newSource = FindNewSource((uint)size & 0x7FFFFFFF, currentSourceIndex);
-
-                if (newSource == 0)
+                if (size > 0)
                 {
-                    MessageBox.Show("Unable to allocate enough space for data of type, \"" + pendingData.dataType.ToString() + "\" in area:" + pendingData.areaIndex + " room:" + pendingData.roomIndex + " with size:" + size);
-                    continue;
+                    newSource = spaceManager_.ReserveSpace((uint)size & 0x7FFFFFFF);
+                    if (newSource == 0)
+                    {
+                        MessageBox.Show("Unable to allocate enough space for data of type, \"" + pendingData.dataType.ToString() + "\", in area:" + pendingData.areaIndex + " room:" + pendingData.roomIndex + " with size:" + size);
+                        continue;
+                    }
+
+                    dataPositions.Add(new RepointData(pendingData.areaIndex, pendingData.roomIndex, pendingData.dataType, (int)newSource, (int)size & 0x7FFFFFFF));
                 }
 
-                dataPositions.Add(new RepointData(pendingData.areaIndex, pendingData.roomIndex, pendingData.dataType, (int)newSource, (int)size & 0x7FFFFFFF));
-                size = size | 0x80000000; //sets the compression bit
+                SaveToRom(newSource, pointerAddress, saveData, pendingData.dataType, size);
 
-	            SaveToRom(newSource, pointerAddress, saveData, size);
-
-	            unsavedChanges.RemoveAt(0);//saved, remove from pending to avoid re-save
+                unsavedChanges.RemoveAt(0);//saved, remove from pending to avoid re-save
 	        }
 
+            SaveRepoints();
 
-	        File.WriteAllBytes(ROM.Instance.path, ROM.Instance.romData);
-	        //File.WriteAllBytes( "testfile1.gba", ROM.Instance.romData );
-	        SaveRepointFile();
+            try
+            {
+                File.WriteAllBytes(ROM.Instance.path, ROM.Instance.romData);
+            }
+            catch (IOException)
+            {
+                MessageBox.Show("Unable to write to file. Your changes since your last save are probably still there?");
+                return;
+            }
 
-	        MessageBox.Show("All changes have been saved");
+            MessageBox.Show("All changes have been saved");
         }
 
-		private int GetCurrentSource( int area, int room, DataType type )
+		public void AddPendingChange(DataType type)
 		{
-			//load in all data repoints so far
-			if( dataPositions.Count == 0 )
-			{   //							shave pre-path		shave data extension
-				var name = ROM.Instance.path.Split( '\\' ).Last().Split( '.' )[0];
-
-				try { 
-					var rawData = System.IO.File.ReadAllText( name + ".pdat" );
-					var rawEntries = rawData.Split( '|' );
-					foreach( var entry in rawEntries )
-					{
-						var attributes = entry.Split( ',' );
-						var areaIndex = Convert.ToInt32( attributes[0] );
-						var roomIndex = Convert.ToInt32( attributes[1] );
-						DataType dataType = (DataType)Enum.Parse(typeof(DataType),attributes[2]);
-						var startPoint = Convert.ToInt32( attributes[3] );
-						var size = Convert.ToInt32( attributes[4] );
-
-						dataPositions.Add( new RepointData( areaIndex, roomIndex, dataType, startPoint, size ) );
-					}
-				}
-				catch
-				{
-					Debug.WriteLine(name+".pdat does not yet exist");
-					System.IO.File.WriteAllText(name+".pdat","");
-				}
-			}
-
-			return dataPositions.FindIndex( x => x.areaIndex == area && x.roomIndex == room && x.type == type ); //probably very slow, but works for now
+			unsavedChanges.Add(new PendingData(currentArea,currentRoom.Index,type));
 		}
 
-		private uint FindNewSource( uint size, int currentSourceIndex )
-		{
-			var r = ROM.Instance.reader;
-			var emptySpaces = Space.Spaces;
-
-			if( currentSourceIndex != -1 )
-			{
-				//engage the reshuffling of verious chunks of data
-				var src = dataPositions[currentSourceIndex];
-
-				if( size <= src.size ) //its smaller so put it in the same spot but shuffle stuff back
-				{
-					//everything needs to shift this amount
-					var sizeChange = src.size - size;
-					r.SetPosition( src.start + src.size );//go to next possible chunk of data
-
-					ReOrderData(r, sizeChange); //reorder chunks behind last bit
-					
-					dataPositions.RemoveAt(currentSourceIndex); //let other stuff re-add it
-					return (uint)src.start;//start is still in the same spot, just less long
-				}
-				else // its larger, remove from current spot, shift everything in by its size and find a new spot
-				{
-					r.SetPosition(src.start +src.size);
-					ReOrderData(r,src.size);
-					dataPositions.RemoveAt(currentSourceIndex); //let other stuff re-add it, we dont have room, area or type
-				}
-			}
-
-
-			foreach( var space in emptySpaces )
-			{
-				if( space.size < size )//wont fit in there no matter what
-					continue; 
-
-				r.SetPosition( space.start );
-				bool foundSpot = true;
-				uint offset = 0;
-
-				while( r.PeekByte() == 0x10 )//magicbyte from compression
-				{
-					RepointData dat = dataPositions.SingleOrDefault(x=>x.start == r.Position);//never returns null still, but size 0 means nothing is there
-
-					if(dat.size==0)//something here, but not any repointed data, stray byte?
-					{
-						break;
-					}
-
-					RepointData repointData = dat; //some repointed data is here, set next point to after that data
-					offset+=(uint)repointData.size;
-					
-					if(offset+size>space.size) //still enough space to hold this chunk after this data?
-					{
-						foundSpot = false;//not enough space next space
-						break; 
-					}
-
-					r.SetPosition(space.start+offset);//set position to check next data chunk
-				}
-
-				if( foundSpot )
-				{
-					return space.start + offset;
-				}
-			}
-
-			return 0;
-		}
-
-		private void ReOrderData(Reader r, long sizeChange)
-		{
-			while( r.PeekByte() == 0x10 )//is there another compressed chunk here? (dont move position)
-			{
-				int index = dataPositions.FindIndex(x => x.start == r.Position);
-			
-				if( index == -1 ) //there is compressed data byte but the space is not used by any repoints
-				{
-					break;
-				}
-
-				var repointData = dataPositions[index];
-				var dataCopy = r.ReadBytes( repointData.size );//reads all compressed data AND sets it to supposed next 0x10
-				var pointerTableLoc = FindRoom( repointData.areaIndex, repointData.roomIndex ).GetPointerLoc( repointData.type, repointData.areaIndex );
-				r.SetPosition(repointData.start+repointData.size);
-				var newPos = repointData.start - sizeChange;
-				repointData.start = (int)newPos;
-
-				dataPositions[index]= repointData; //modify repoint data for new position
-				
-				SaveToRom((uint)newPos,pointerTableLoc,dataCopy);
-			}
-		}
-
-		private void SaveToRom( uint newSource, long pointerAddress, byte[] data, long size = 0 )
+		private void SaveToRom( uint newSource, long pointerAddress, byte[] data, DataType type, long size = 0 )
 		{
 			using( MemoryStream m = new MemoryStream( ROM.Instance.romData ) )
 			{
@@ -444,32 +333,147 @@ namespace MinishMaker.UI
 				w.SetPosition( newSource ); //actually write the data somewhere
 				w.WriteBytes( data );
 
-				newSource = (uint)(newSource - ROM.Instance.headers.gfxSourceBase);
-				w.SetPosition( pointerAddress );
-				w.WriteUInt32( newSource | 0x80000000 ); //byte 1-4 is source, high bit was removed before
+                switch (type)
+                {
+                    case DataType.bg1Data:
+                    case DataType.bg2Data:
+                        newSource = (uint)(newSource - ROM.Instance.headers.gfxSourceBase);
+                        w.SetPosition(pointerAddress);
+                        Console.WriteLine(StringUtil.AsStringGBAAddress((int)pointerAddress));
+                        w.WriteUInt32(newSource | 0x80000000);//byte 1-4 is source, high bit was removed before
 
-				if( size != 0 ) // this is a reshuffle, no need to adjust size
-				{
-					w.SetPosition( w.Position + 4 );//byte 5-8 is dest, skip
-					w.WriteUInt32( (uint)size );//byte 9-12 is size and compressed
-				}
+                        if (size != 0) // this is a reshuffle, no need to adjust size
+                        {
 
+                            w.SetPosition(w.Position + 4);//byte 5-8 is dest, skip
+                            w.WriteUInt32((uint)size | 0x80000000);//byte 9-12 is size and compressed
+                        }
+                        break;
+                    default:
+                        if (size != 0)
+                        {
+                            w.SetPosition(pointerAddress);
+                            //w.WriteUInt32(newSource | 0x80000000);
+                            w.WriteAddr(newSource);
+                        }
+                        else
+                        {
+                            w.SetPosition(pointerAddress);
+                            w.WriteUInt32(0x00000000);
+                        }
+                        break;
+                }
 			}
 		}
 
-		private void SaveRepointFile()
+		private void SaveRepoints()
 		{
-			string s = "";
-			foreach(var entry in dataPositions)
-			{
-				s+=entry.areaIndex+","+entry.roomIndex+","+(int)entry.type+","+entry.start+","+entry.size+"|";
-			}
-			s = s.Remove(s.Length-1);
-			var name = ROM.Instance.path.Split( '\\' ).Last().Split( '.' )[0];
+            // 12 bytes per RepointData, 8 bytes per SpaceData, 8 bytes of pointer data
+            uint newDataSize = (uint)((dataPositions.Count * 12) + (spaceManager_.spaceData.Count * 8) + 8);
 
-			System.IO.File.WriteAllText(name+".pdat",s);
-			//System.IO.File.WriteAllText("testfile1.pdat",s);
+            // Find empty space for the repoints, but don't keep it reserved
+            uint newDataPosition = spaceManager_.ReserveSpace(newDataSize);
+            spaceManager_.FreeSpace(newDataPosition, newDataSize);
+
+            using (MemoryStream m = new MemoryStream(ROM.Instance.romData))
+            {
+                Writer w = new Writer(m);
+                // Start writing at the beginning of the free space
+                w.SetPosition(newDataPosition);
+
+                foreach (SpaceManager.SpaceData data in spaceManager_.spaceData)
+                {
+                    if (data.size > 0)
+                    {
+                        w.WriteAddr(data.start);
+                        w.WriteUInt32(data.size);
+                    }
+                }
+
+                // Indicates the change from SpaceData toRepoint Data
+                w.WriteUInt32(0);
+
+                /*foreach (RepointData entry in dataPositions)
+                {
+                    Console.WriteLine(m.Position);
+                    w.WriteAddr((uint)entry.start);
+                    w.WriteInt(entry.size);
+                    w.WriteByte((byte)entry.areaIndex);
+                    w.WriteByte((byte)entry.roomIndex);
+                    w.WriteInt16((short)entry.type);
+                }*/
+
+                // Indicates that there is no more RepointData
+                w.WriteUInt32(0);
+
+                w.SetPosition(ROM.Instance.romData.Length - 4);
+                w.WriteAddr(newDataPosition);
+            }
 		}
+
+        private void LoadRepoints()
+        {
+            if (spaceManager_ == null)
+            {
+                spaceManager_ = new SpaceManager();
+            }
+
+            int repointAddr = ROM_.reader.ReadAddr(ROM_.romData.Length - 4);
+
+            if (repointAddr == 0xFFFFFF)
+            {
+                spaceManager_.LoadDefaultSpaces();
+                return;
+            }
+
+            ROM_.reader.SetPosition(repointAddr);
+
+            // Get all the spaces until the 0 is reached
+            int spaceStart = ROM_.reader.ReadAddr();
+
+            if (spaceStart == 0)
+            {
+                spaceManager_.LoadDefaultSpaces();
+            }
+
+            while (spaceStart != 0)
+            {
+                uint size = ROM_.reader.ReadUInt32();
+
+                if (size == 0)
+                {
+                    MessageBox.Show("Invalid ROM spacing data - start not paired with size/size = 0");
+                    spaceStart = 0;
+                }
+
+                spaceManager_.FreeSpace((uint)spaceStart, size);
+                spaceStart = ROM_.reader.ReadAddr();
+            }
+
+            // Get all the spaces until the 0 is reached
+            int entryStart = ROM_.reader.ReadAddr();
+
+
+            while (entryStart != 0)
+            {
+                int size = ROM_.reader.ReadInt();
+                byte areaIndex = ROM_.reader.ReadByte();
+                byte roomIndex = ROM_.reader.ReadByte();
+                short type = ROM_.reader.ReadInt16();
+
+                if (size == 0)
+                {
+                    MessageBox.Show("Invalid ROM repoint data");
+                    entryStart = 0;
+                    areaIndex = 0;
+                    roomIndex = 0;
+                    type = 0;
+                }
+
+                dataPositions.Add(new RepointData(areaIndex, roomIndex, (DataType)type, entryStart, size));
+                entryStart = ROM_.reader.ReadAddr();
+            }
+        }
 
 		private void discardRoomChangesToolStripMenuItem_Click( object sender, EventArgs e )
 		{

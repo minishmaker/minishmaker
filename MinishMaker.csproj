@@ -59,6 +59,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\SpaceManager.cs" />
     <Compile Include="UI\ChestEditorWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -92,15 +93,6 @@
     <Compile Include="Utilities\Reader.cs" />
     <Compile Include="Utilities\StringUtil.cs" />
     <Compile Include="Utilities\Writer.cs" />
-    <EmbeddedResource Include="UI\AboutWindow.resx">
-      <DependentUpon>AboutWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\ChestEditorWindow.resx">
-      <DependentUpon>ChestEditorWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\MainWindow.resx">
-      <DependentUpon>MainWindow.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -111,6 +103,16 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="UI\AboutWindow.resx">
+      <DependentUpon>AboutWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\ChestEditorWindow.resx">
+      <DependentUpon>ChestEditorWindow.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\MainWindow.resx">
+      <DependentUpon>MainWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
