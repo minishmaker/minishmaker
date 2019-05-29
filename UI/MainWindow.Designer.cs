@@ -1,4 +1,6 @@
-﻿namespace MinishMaker.UI
+﻿using System;
+
+namespace MinishMaker.UI
 {
     partial class MainWindow
     {
@@ -29,7 +31,7 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -40,23 +42,24 @@
             this.statusText = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.openToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            this.saveToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.roomPanel = new System.Windows.Forms.Panel();
             this.roomTreeView = new System.Windows.Forms.TreeView();
             this.tilePanel = new System.Windows.Forms.Panel();
             this.tileTabControl = new System.Windows.Forms.TabControl();
             this.bottomTileTab = new System.Windows.Forms.TabPage();
             this.bottomTileView = new System.Windows.Forms.PictureBox();
-            this.bottomTileHoverBox = new System.Windows.Forms.PictureBox();
             this.bottomTileSelectionBox = new System.Windows.Forms.PictureBox();
+            this.bottomTileHoverBox = new System.Windows.Forms.PictureBox();
             this.topTileTab = new System.Windows.Forms.TabPage();
+            this.topTileView = new System.Windows.Forms.PictureBox();
+            this.topTileSelectionBox = new System.Windows.Forms.PictureBox();
+            this.topTileHoverBox = new System.Windows.Forms.PictureBox();
             this.mapPanel = new System.Windows.Forms.Panel();
             this.mapView = new System.Windows.Forms.PictureBox();
             this.mapHoverBox = new System.Windows.Forms.PictureBox();
             this.mapSelectionBox = new System.Windows.Forms.PictureBox();
-            this.largeSelectionBox = new System.Windows.Forms.PictureBox();
-            this.topTileView = new System.Windows.Forms.PictureBox();
-            this.menuStrip1.SuspendLayout();
+            this.menuStrip.SuspendLayout();
             this.bottomStatusStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
             this.roomPanel.SuspendLayout();
@@ -65,28 +68,30 @@
             this.bottomTileTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bottomTileView)).BeginInit();
             this.bottomTileView.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.bottomTileHoverBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bottomTileSelectionBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bottomTileHoverBox)).BeginInit();
             this.topTileTab.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.topTileView)).BeginInit();
+            this.topTileView.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.topTileSelectionBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.topTileHoverBox)).BeginInit();
             this.mapPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mapView)).BeginInit();
             this.mapView.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mapHoverBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mapSelectionBox)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.largeSelectionBox)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.topTileView)).BeginInit();
             this.SuspendLayout();
             // 
-            // menuStrip1
+            // menuStrip
             // 
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.helpToolStripMenuItem});
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1370, 24);
-            this.menuStrip1.TabIndex = 0;
-            this.menuStrip1.Text = "mainMenuStrip";
+            this.menuStrip.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip.Name = "menuStrip";
+            this.menuStrip.Size = new System.Drawing.Size(1370, 24);
+            this.menuStrip.TabIndex = 0;
+            this.menuStrip.Text = "mainMenuStrip";
             // 
             // fileToolStripMenuItem
             // 
@@ -157,7 +162,7 @@
             this.toolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openToolStripButton,
-            this.toolStripButton1});
+            this.saveToolStripButton});
             this.toolStrip.Location = new System.Drawing.Point(0, 24);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.RightToLeft = System.Windows.Forms.RightToLeft.No;
@@ -176,16 +181,16 @@
             this.openToolStripButton.ToolTipText = "open a ROM.";
             this.openToolStripButton.Click += new System.EventHandler(this.openToolStripButton_Click);
             // 
-            // toolStripButton1
+            // saveToolStripButton
             // 
-            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
-            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton1.Text = "toolStripButton1";
-            this.toolStripButton1.ToolTipText = "Save all changes.";
-            this.toolStripButton1.Click += new System.EventHandler(this.saveAllChangesCtrlSToolStripMenuItem_Click);
+            this.saveToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.saveToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("saveToolStripButton.Image")));
+            this.saveToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.saveToolStripButton.Name = "saveToolStripButton";
+            this.saveToolStripButton.Size = new System.Drawing.Size(23, 22);
+            this.saveToolStripButton.Text = "toolStripButton1";
+            this.saveToolStripButton.ToolTipText = "Save all changes.";
+            this.saveToolStripButton.Click += new System.EventHandler(this.saveAllChangesCtrlSToolStripMenuItem_Click);
             // 
             // roomPanel
             // 
@@ -248,18 +253,7 @@
             this.bottomTileView.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.bottomTileView.TabIndex = 10;
             this.bottomTileView.TabStop = false;
-            this.bottomTileView.Click += new System.EventHandler(this.tileView_Click);
-            // 
-            // bottomTileHoverBox
-            // 
-            this.bottomTileHoverBox.BackColor = System.Drawing.Color.Transparent;
-            this.bottomTileHoverBox.Location = new System.Drawing.Point(0, 0);
-            this.bottomTileHoverBox.Name = "bottomTileHoverBox";
-            this.bottomTileHoverBox.Size = new System.Drawing.Size(16, 16);
-            this.bottomTileHoverBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.bottomTileHoverBox.TabIndex = 11;
-            this.bottomTileHoverBox.TabStop = false;
-            this.bottomTileHoverBox.Visible = false;
+            this.bottomTileView.MouseDown += new System.Windows.Forms.MouseEventHandler(this.bottomTileView_MouseDown);
             // 
             // bottomTileSelectionBox
             // 
@@ -272,6 +266,17 @@
             this.bottomTileSelectionBox.TabStop = false;
             this.bottomTileSelectionBox.Visible = false;
             // 
+            // bottomTileHoverBox
+            // 
+            this.bottomTileHoverBox.BackColor = System.Drawing.Color.Transparent;
+            this.bottomTileHoverBox.Location = new System.Drawing.Point(0, 0);
+            this.bottomTileHoverBox.Name = "bottomTileHoverBox";
+            this.bottomTileHoverBox.Size = new System.Drawing.Size(16, 16);
+            this.bottomTileHoverBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.bottomTileHoverBox.TabIndex = 11;
+            this.bottomTileHoverBox.TabStop = false;
+            this.bottomTileHoverBox.Visible = false;
+            // 
             // topTileTab
             // 
             this.topTileTab.AutoScroll = true;
@@ -283,6 +288,38 @@
             this.topTileTab.TabIndex = 1;
             this.topTileTab.Text = "Top Tiles";
             this.topTileTab.UseVisualStyleBackColor = true;
+            // 
+            // topTileView
+            // 
+            this.topTileView.Controls.Add(this.topTileSelectionBox);
+            this.topTileView.Controls.Add(this.topTileHoverBox);
+            this.topTileView.Location = new System.Drawing.Point(0, 0);
+            this.topTileView.Name = "topTileView";
+            this.topTileView.Size = new System.Drawing.Size(128, 128);
+            this.topTileView.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.topTileView.TabIndex = 0;
+            this.topTileView.TabStop = false;
+            this.topTileView.MouseDown += new System.Windows.Forms.MouseEventHandler(this.topTileView_MouseDown);
+            // 
+            // topTileSelectionBox
+            // 
+            this.topTileSelectionBox.Location = new System.Drawing.Point(0, 0);
+            this.topTileSelectionBox.Name = "topTileSelectionBox";
+            this.topTileSelectionBox.Size = new System.Drawing.Size(16, 16);
+            this.topTileSelectionBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.topTileSelectionBox.TabIndex = 1;
+            this.topTileSelectionBox.TabStop = false;
+            this.topTileSelectionBox.Visible = false;
+            // 
+            // topTileHoverBox
+            // 
+            this.topTileHoverBox.Location = new System.Drawing.Point(0, 0);
+            this.topTileHoverBox.Name = "topTileHoverBox";
+            this.topTileHoverBox.Size = new System.Drawing.Size(16, 16);
+            this.topTileHoverBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.topTileHoverBox.TabIndex = 2;
+            this.topTileHoverBox.TabStop = false;
+            this.topTileHoverBox.Visible = false;
             // 
             // mapPanel
             // 
@@ -329,25 +366,6 @@
             this.mapSelectionBox.TabStop = false;
             this.mapSelectionBox.Visible = false;
             // 
-            // largeSelectionBox
-            // 
-            this.largeSelectionBox.Location = new System.Drawing.Point(0, 0);
-            this.largeSelectionBox.Name = "largeSelectionBox";
-            this.largeSelectionBox.Size = new System.Drawing.Size(16, 16);
-            this.largeSelectionBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.largeSelectionBox.TabIndex = 10;
-            this.largeSelectionBox.TabStop = false;
-            this.largeSelectionBox.Visible = false;
-            // 
-            // topTileView
-            // 
-            this.topTileView.Location = new System.Drawing.Point(0, 0);
-            this.topTileView.Name = "topTileView";
-            this.topTileView.Size = new System.Drawing.Size(128, 128);
-            this.topTileView.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.topTileView.TabIndex = 0;
-            this.topTileView.TabStop = false;
-            // 
             // MainWindow
             // 
             this.AllowDrop = true;
@@ -359,14 +377,14 @@
             this.Controls.Add(this.roomPanel);
             this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.bottomStatusStrip);
-            this.Controls.Add(this.menuStrip1);
+            this.Controls.Add(this.menuStrip);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MainMenuStrip = this.menuStrip1;
+            this.MainMenuStrip = this.menuStrip;
             this.MinimumSize = new System.Drawing.Size(600, 400);
             this.Name = "MainWindow";
             this.Text = "Minish Maker";
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
+            this.menuStrip.ResumeLayout(false);
+            this.menuStrip.PerformLayout();
             this.bottomStatusStrip.ResumeLayout(false);
             this.bottomStatusStrip.PerformLayout();
             this.toolStrip.ResumeLayout(false);
@@ -379,10 +397,15 @@
             ((System.ComponentModel.ISupportInitialize)(this.bottomTileView)).EndInit();
             this.bottomTileView.ResumeLayout(false);
             this.bottomTileView.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.bottomTileHoverBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bottomTileSelectionBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bottomTileHoverBox)).EndInit();
             this.topTileTab.ResumeLayout(false);
             this.topTileTab.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.topTileView)).EndInit();
+            this.topTileView.ResumeLayout(false);
+            this.topTileView.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.topTileSelectionBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.topTileHoverBox)).EndInit();
             this.mapPanel.ResumeLayout(false);
             this.mapPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mapView)).EndInit();
@@ -390,8 +413,6 @@
             this.mapView.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mapHoverBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mapSelectionBox)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.largeSelectionBox)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.topTileView)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -399,7 +420,7 @@
 
         #endregion
 
-        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.MenuStrip menuStrip;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
@@ -417,15 +438,16 @@
 		private System.Windows.Forms.PictureBox bottomTileView;
 		private System.Windows.Forms.ToolStripMenuItem saveRoomChangesCtrlSToolStripMenuItem;
 		private System.Windows.Forms.PictureBox bottomTileSelectionBox;
-		private System.Windows.Forms.PictureBox mapSelectionBox;
-        private System.Windows.Forms.PictureBox largeSelectionBox;
-        private System.Windows.Forms.ToolStripButton toolStripButton1;
+        private System.Windows.Forms.ToolStripButton saveToolStripButton;
         private System.Windows.Forms.PictureBox mapHoverBox;
         private System.Windows.Forms.PictureBox bottomTileHoverBox;
         private System.Windows.Forms.TabControl tileTabControl;
         private System.Windows.Forms.TabPage bottomTileTab;
         private System.Windows.Forms.TabPage topTileTab;
         private System.Windows.Forms.PictureBox topTileView;
+        private System.Windows.Forms.PictureBox topTileSelectionBox;
+        private System.Windows.Forms.PictureBox mapSelectionBox;
+        private System.Windows.Forms.PictureBox topTileHoverBox;
     }
 }
 

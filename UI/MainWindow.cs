@@ -72,10 +72,10 @@ namespace MinishMaker.UI
 
 		}
 
-	    public enum WindowType
+	    public enum TileWindowType
 	    {
-            mapWindow,
-            tileWindow
+            topTiles,
+            bottomTiles
 	    }
 
 		public MainWindow()
@@ -85,10 +85,11 @@ namespace MinishMaker.UI
 		    using (Graphics g = Graphics.FromImage(selectorImage)) g.DrawRectangle(new Pen(Color.Red, 4), 0, 0, 16, 16);
 		    using (Graphics g = Graphics.FromImage(hoverImage)) g.DrawRectangle(new Pen(Color.White, 2), 0, 0, 16, 16);
 		    bottomTileSelectionBox.Image = selectorImage;
-		    mapSelectionBox.Image = selectorImage;
+		    topTileSelectionBox.Image = selectorImage;
+            mapSelectionBox.Image = selectorImage;
 
-		    mapHoverBox.Image = hoverImage;
 		    bottomTileHoverBox.Image = hoverImage;
+		    topTileHoverBox.Image = hoverImage;
 		}
 
         #region MenuBarButtons
@@ -516,9 +517,18 @@ namespace MinishMaker.UI
 				selectedTileData = currentRoom.GetTileData( selectedLayer, pos * 2 );//*2 as each tile is 2 bytes
 				var newX = selectedTileData % tsTileWidth;
 				var newY = (selectedTileData - newX) / tsTileWidth;
-
-				bottomTileSelectionBox.Location = new Point( newX * 16, newY * 16 );
-				bottomTileSelectionBox.Visible = true;
+                // bad practice, entire map selection functions could do with refactor like the tile selection
+			    if (selectedLayer == 2)
+			    {
+			        bottomTileSelectionBox.Location = new Point(newX * 16, newY * 16);
+			        bottomTileSelectionBox.Visible = true;
+                }
+			    else
+			    {
+			        topTileSelectionBox.Location = new Point(newX * 16, newY * 16);
+			        topTileSelectionBox.Visible = true;
+                }
+				
 			}
 			else if( me.Button == MouseButtons.Left )
 			{
@@ -585,45 +595,54 @@ namespace MinishMaker.UI
         #endregion
 
 	    #region TilesetInteraction	  
-        private void tileView_Click( object sender, EventArgs e )
+        private void bottomTileView_MouseDown( object sender, MouseEventArgs e )
 		{
-		    if (currentRoom == null)
-		        return;
-
-            bottomTileSelectionBox.Visible = true;
-
-			var me = (MouseEventArgs)e;
-
-			CondensedTileSelection(me, WindowType.tileWindow);
+			CondensedTileSelection(e, TileWindowType.bottomTiles);
 		}
-        #endregion
 
-	    private void CondensedTileSelection(MouseEventArgs me, WindowType window)
+	    private void topTileView_MouseDown(object sender, MouseEventArgs e)
 	    {
+            CondensedTileSelection(e, TileWindowType.topTiles);
+	    }
+
+	    private void CondensedTileSelection(MouseEventArgs me, TileWindowType window)
+	    {
+	        if (currentRoom == null)
+	            return;
+
 	        var partialX = me.X % 16;
 	        var partialY = me.Y % 16;
 
 	        int tileX = (me.X - partialX) / 16;
 	        int tileY = (me.Y - partialY) / 16;
 
-	        var mTileWidth = mapLayers[0].Width / 16;
-	        var tsTileWidth = tileMaps[0].Width / 16;
+	        var mTileWidth = mapLayers[(int)window].Width / 16;
+	        var tsTileWidth = tileMaps[(int)window].Width / 16;
 
-            Point p = new Point(me.X - partialX, me.Y - partialY);
+	        Point p = new Point(me.X - partialX, me.Y - partialY);
 
 	        switch (window)
 	        {
-                case WindowType.mapWindow:
-                    mapSelectionBox.Location = p;
-                    break;
-                case WindowType.tileWindow:
-                    bottomTileSelectionBox.Location = p;
-                    selectedTileData = tileX + tileY * tsTileWidth;
-                    break;
+	            case TileWindowType.topTiles:
+	                topTileSelectionBox.Visible = true;
+	                topTileSelectionBox.Location = p;
+	                selectedLayer = 1;
+	                selectedTileData = tileX + tileY * tsTileWidth;
+	                break;
+	            case TileWindowType.bottomTiles:
+	                bottomTileSelectionBox.Visible = true;
+	                bottomTileSelectionBox.Location = p;
+	                selectedLayer = 2;
+	                selectedTileData = tileX + tileY * tsTileWidth;
+	                break;
 	        }
+	    }
 
-
+        private void bottomTileView_MouseMove(object sender, MouseEventArgs e)
+        {
+	        
         }
+        #endregion
 
         private void WriteTile (int tileX, int tileY, int pos, int tileData, int layer)
         {
