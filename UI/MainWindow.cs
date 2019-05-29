@@ -84,11 +84,11 @@ namespace MinishMaker.UI
 
 		    using (Graphics g = Graphics.FromImage(selectorImage)) g.DrawRectangle(new Pen(Color.Red, 4), 0, 0, 16, 16);
 		    using (Graphics g = Graphics.FromImage(hoverImage)) g.DrawRectangle(new Pen(Color.White, 2), 0, 0, 16, 16);
-		    tileSelectionBox.Image = selectorImage;
+		    bottomTileSelectionBox.Image = selectorImage;
 		    mapSelectionBox.Image = selectorImage;
 
 		    mapHoverBox.Image = hoverImage;
-		    tileHoverBox.Image = hoverImage;
+		    bottomTileHoverBox.Image = hoverImage;
 		}
 
         #region MenuBarButtons
@@ -163,7 +163,8 @@ namespace MinishMaker.UI
 			}
 
 			mapView.Image = new Bitmap(1,1); //reset some things on loading a rom
-			tileView.Image = new Bitmap(1,1);
+			bottomTileView.Image = new Bitmap(1,1);
+            topTileView.Image = new Bitmap(1, 1);
 			currentRoom = null;
 			currentArea = -1;
 			selectedTileData = -1;
@@ -214,7 +215,7 @@ namespace MinishMaker.UI
 
 				mapLayers = room.DrawRoom( areaIndex, true, true );
 
-				tileSelectionBox.Visible = false;
+				bottomTileSelectionBox.Visible = false;
 				mapSelectionBox.Visible = false;
 				selectedTileData = -1;
 
@@ -222,7 +223,8 @@ namespace MinishMaker.UI
 				//1= bg2 (flooring)
 				mapView.Image = OverlayImage( mapLayers[1], mapLayers[0] );
 				tileMaps = room.DrawTilesetImages( 11, currentArea );
-				tileView.Image = tileMaps[1];
+				bottomTileView.Image = tileMaps[1];
+                topTileView.Image = tileMaps[0];
 			}
 		}
 
@@ -515,8 +517,8 @@ namespace MinishMaker.UI
 				var newX = selectedTileData % tsTileWidth;
 				var newY = (selectedTileData - newX) / tsTileWidth;
 
-				tileSelectionBox.Location = new Point( newX * 16, newY * 16 );
-				tileSelectionBox.Visible = true;
+				bottomTileSelectionBox.Location = new Point( newX * 16, newY * 16 );
+				bottomTileSelectionBox.Visible = true;
 			}
 			else if( me.Button == MouseButtons.Left )
 			{
@@ -588,7 +590,7 @@ namespace MinishMaker.UI
 		    if (currentRoom == null)
 		        return;
 
-            tileSelectionBox.Visible = true;
+            bottomTileSelectionBox.Visible = true;
 
 			var me = (MouseEventArgs)e;
 
@@ -615,7 +617,7 @@ namespace MinishMaker.UI
                     mapSelectionBox.Location = p;
                     break;
                 case WindowType.tileWindow:
-                    tileSelectionBox.Location = p;
+                    bottomTileSelectionBox.Location = p;
                     selectedTileData = tileX + tileY * tsTileWidth;
                     break;
 	        }

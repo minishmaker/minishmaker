@@ -44,34 +44,37 @@
             this.roomPanel = new System.Windows.Forms.Panel();
             this.roomTreeView = new System.Windows.Forms.TreeView();
             this.tilePanel = new System.Windows.Forms.Panel();
-            this.tileView = new System.Windows.Forms.PictureBox();
-            this.tileHoverBox = new System.Windows.Forms.PictureBox();
-            this.tileSelectionBox = new System.Windows.Forms.PictureBox();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.tileTabControl = new System.Windows.Forms.TabControl();
+            this.bottomTileTab = new System.Windows.Forms.TabPage();
+            this.bottomTileView = new System.Windows.Forms.PictureBox();
+            this.bottomTileHoverBox = new System.Windows.Forms.PictureBox();
+            this.bottomTileSelectionBox = new System.Windows.Forms.PictureBox();
+            this.topTileTab = new System.Windows.Forms.TabPage();
             this.mapPanel = new System.Windows.Forms.Panel();
             this.mapView = new System.Windows.Forms.PictureBox();
             this.mapHoverBox = new System.Windows.Forms.PictureBox();
             this.mapSelectionBox = new System.Windows.Forms.PictureBox();
             this.largeSelectionBox = new System.Windows.Forms.PictureBox();
+            this.topTileView = new System.Windows.Forms.PictureBox();
             this.menuStrip1.SuspendLayout();
             this.bottomStatusStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
             this.roomPanel.SuspendLayout();
             this.tilePanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.tileView)).BeginInit();
-            this.tileView.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.tileHoverBox)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tileSelectionBox)).BeginInit();
-            this.tabControl1.SuspendLayout();
-            this.tabPage1.SuspendLayout();
+            this.tileTabControl.SuspendLayout();
+            this.bottomTileTab.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bottomTileView)).BeginInit();
+            this.bottomTileView.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bottomTileHoverBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bottomTileSelectionBox)).BeginInit();
+            this.topTileTab.SuspendLayout();
             this.mapPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mapView)).BeginInit();
             this.mapView.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mapHoverBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mapSelectionBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.largeSelectionBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.topTileView)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -81,7 +84,7 @@
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1375, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1370, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "mainMenuStrip";
             // 
@@ -140,7 +143,7 @@
             this.statusText});
             this.bottomStatusStrip.Location = new System.Drawing.Point(0, 659);
             this.bottomStatusStrip.Name = "bottomStatusStrip";
-            this.bottomStatusStrip.Size = new System.Drawing.Size(1375, 22);
+            this.bottomStatusStrip.Size = new System.Drawing.Size(1370, 22);
             this.bottomStatusStrip.TabIndex = 7;
             this.bottomStatusStrip.Text = "bottomStatusStrip";
             // 
@@ -158,7 +161,7 @@
             this.toolStrip.Location = new System.Drawing.Point(0, 24);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.toolStrip.Size = new System.Drawing.Size(1375, 25);
+            this.toolStrip.Size = new System.Drawing.Size(1370, 25);
             this.toolStrip.TabIndex = 1;
             this.toolStrip.Text = "toolStrip";
             // 
@@ -205,80 +208,81 @@
             // tilePanel
             // 
             this.tilePanel.AutoScroll = true;
-            this.tilePanel.Controls.Add(this.tabControl1);
+            this.tilePanel.Controls.Add(this.tileTabControl);
             this.tilePanel.Dock = System.Windows.Forms.DockStyle.Right;
-            this.tilePanel.Location = new System.Drawing.Point(1175, 49);
+            this.tilePanel.Location = new System.Drawing.Point(1167, 49);
             this.tilePanel.Name = "tilePanel";
-            this.tilePanel.Size = new System.Drawing.Size(200, 610);
+            this.tilePanel.Size = new System.Drawing.Size(203, 610);
             this.tilePanel.TabIndex = 9;
             // 
-            // tileView
+            // tileTabControl
             // 
-            this.tileView.Controls.Add(this.tileHoverBox);
-            this.tileView.Controls.Add(this.tileSelectionBox);
-            this.tileView.Location = new System.Drawing.Point(0, 0);
-            this.tileView.Name = "tileView";
-            this.tileView.Size = new System.Drawing.Size(128, 128);
-            this.tileView.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.tileView.TabIndex = 10;
-            this.tileView.TabStop = false;
-            this.tileView.Click += new System.EventHandler(this.tileView_Click);
+            this.tileTabControl.Controls.Add(this.bottomTileTab);
+            this.tileTabControl.Controls.Add(this.topTileTab);
+            this.tileTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tileTabControl.Location = new System.Drawing.Point(0, 0);
+            this.tileTabControl.Name = "tileTabControl";
+            this.tileTabControl.SelectedIndex = 0;
+            this.tileTabControl.Size = new System.Drawing.Size(203, 610);
+            this.tileTabControl.TabIndex = 11;
             // 
-            // tileHoverBox
+            // bottomTileTab
             // 
-            this.tileHoverBox.BackColor = System.Drawing.Color.Transparent;
-            this.tileHoverBox.Location = new System.Drawing.Point(0, 0);
-            this.tileHoverBox.Name = "tileHoverBox";
-            this.tileHoverBox.Size = new System.Drawing.Size(16, 16);
-            this.tileHoverBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.tileHoverBox.TabIndex = 11;
-            this.tileHoverBox.TabStop = false;
-            this.tileHoverBox.Visible = false;
+            this.bottomTileTab.AutoScroll = true;
+            this.bottomTileTab.Controls.Add(this.bottomTileView);
+            this.bottomTileTab.Location = new System.Drawing.Point(4, 22);
+            this.bottomTileTab.Name = "bottomTileTab";
+            this.bottomTileTab.Padding = new System.Windows.Forms.Padding(3);
+            this.bottomTileTab.Size = new System.Drawing.Size(195, 584);
+            this.bottomTileTab.TabIndex = 0;
+            this.bottomTileTab.Text = "Bottom Tiles";
+            this.bottomTileTab.UseVisualStyleBackColor = true;
             // 
-            // tileSelectionBox
+            // bottomTileView
             // 
-            this.tileSelectionBox.BackColor = System.Drawing.Color.Transparent;
-            this.tileSelectionBox.Location = new System.Drawing.Point(0, 0);
-            this.tileSelectionBox.Name = "tileSelectionBox";
-            this.tileSelectionBox.Size = new System.Drawing.Size(16, 16);
-            this.tileSelectionBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.tileSelectionBox.TabIndex = 11;
-            this.tileSelectionBox.TabStop = false;
-            this.tileSelectionBox.Visible = false;
+            this.bottomTileView.Controls.Add(this.bottomTileSelectionBox);
+            this.bottomTileView.Controls.Add(this.bottomTileHoverBox);
+            this.bottomTileView.Location = new System.Drawing.Point(0, 0);
+            this.bottomTileView.Name = "bottomTileView";
+            this.bottomTileView.Size = new System.Drawing.Size(128, 128);
+            this.bottomTileView.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.bottomTileView.TabIndex = 10;
+            this.bottomTileView.TabStop = false;
+            this.bottomTileView.Click += new System.EventHandler(this.tileView_Click);
             // 
-            // tabControl1
+            // bottomTileHoverBox
             // 
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl1.Location = new System.Drawing.Point(0, 0);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(200, 610);
-            this.tabControl1.TabIndex = 11;
+            this.bottomTileHoverBox.BackColor = System.Drawing.Color.Transparent;
+            this.bottomTileHoverBox.Location = new System.Drawing.Point(0, 0);
+            this.bottomTileHoverBox.Name = "bottomTileHoverBox";
+            this.bottomTileHoverBox.Size = new System.Drawing.Size(16, 16);
+            this.bottomTileHoverBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.bottomTileHoverBox.TabIndex = 11;
+            this.bottomTileHoverBox.TabStop = false;
+            this.bottomTileHoverBox.Visible = false;
             // 
-            // tabPage1
+            // bottomTileSelectionBox
             // 
-            this.tabPage1.AutoScroll = true;
-            this.tabPage1.Controls.Add(this.tileView);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(192, 584);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "tabPage1";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            this.bottomTileSelectionBox.BackColor = System.Drawing.Color.Transparent;
+            this.bottomTileSelectionBox.Location = new System.Drawing.Point(0, 0);
+            this.bottomTileSelectionBox.Name = "bottomTileSelectionBox";
+            this.bottomTileSelectionBox.Size = new System.Drawing.Size(16, 16);
+            this.bottomTileSelectionBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.bottomTileSelectionBox.TabIndex = 11;
+            this.bottomTileSelectionBox.TabStop = false;
+            this.bottomTileSelectionBox.Visible = false;
             // 
-            // tabPage2
+            // topTileTab
             // 
-            this.tabPage2.AutoScroll = true;
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(192, 584);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "tabPage2";
-            this.tabPage2.UseVisualStyleBackColor = true;
+            this.topTileTab.AutoScroll = true;
+            this.topTileTab.Controls.Add(this.topTileView);
+            this.topTileTab.Location = new System.Drawing.Point(4, 22);
+            this.topTileTab.Name = "topTileTab";
+            this.topTileTab.Padding = new System.Windows.Forms.Padding(3);
+            this.topTileTab.Size = new System.Drawing.Size(195, 584);
+            this.topTileTab.TabIndex = 1;
+            this.topTileTab.Text = "Top Tiles";
+            this.topTileTab.UseVisualStyleBackColor = true;
             // 
             // mapPanel
             // 
@@ -287,7 +291,7 @@
             this.mapPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.mapPanel.Location = new System.Drawing.Point(150, 49);
             this.mapPanel.Name = "mapPanel";
-            this.mapPanel.Size = new System.Drawing.Size(1025, 610);
+            this.mapPanel.Size = new System.Drawing.Size(1017, 610);
             this.mapPanel.TabIndex = 10;
             // 
             // mapView
@@ -335,12 +339,21 @@
             this.largeSelectionBox.TabStop = false;
             this.largeSelectionBox.Visible = false;
             // 
+            // topTileView
+            // 
+            this.topTileView.Location = new System.Drawing.Point(0, 0);
+            this.topTileView.Name = "topTileView";
+            this.topTileView.Size = new System.Drawing.Size(128, 128);
+            this.topTileView.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.topTileView.TabIndex = 0;
+            this.topTileView.TabStop = false;
+            // 
             // MainWindow
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1375, 681);
+            this.ClientSize = new System.Drawing.Size(1370, 681);
             this.Controls.Add(this.mapPanel);
             this.Controls.Add(this.tilePanel);
             this.Controls.Add(this.roomPanel);
@@ -360,14 +373,16 @@
             this.toolStrip.PerformLayout();
             this.roomPanel.ResumeLayout(false);
             this.tilePanel.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.tileView)).EndInit();
-            this.tileView.ResumeLayout(false);
-            this.tileView.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.tileHoverBox)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tileSelectionBox)).EndInit();
-            this.tabControl1.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
-            this.tabPage1.PerformLayout();
+            this.tileTabControl.ResumeLayout(false);
+            this.bottomTileTab.ResumeLayout(false);
+            this.bottomTileTab.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bottomTileView)).EndInit();
+            this.bottomTileView.ResumeLayout(false);
+            this.bottomTileView.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bottomTileHoverBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.bottomTileSelectionBox)).EndInit();
+            this.topTileTab.ResumeLayout(false);
+            this.topTileTab.PerformLayout();
             this.mapPanel.ResumeLayout(false);
             this.mapPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mapView)).EndInit();
@@ -376,6 +391,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.mapHoverBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mapSelectionBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.largeSelectionBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.topTileView)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -398,17 +414,18 @@
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
 		private System.Windows.Forms.PictureBox mapView;
-		private System.Windows.Forms.PictureBox tileView;
+		private System.Windows.Forms.PictureBox bottomTileView;
 		private System.Windows.Forms.ToolStripMenuItem saveRoomChangesCtrlSToolStripMenuItem;
-		private System.Windows.Forms.PictureBox tileSelectionBox;
+		private System.Windows.Forms.PictureBox bottomTileSelectionBox;
 		private System.Windows.Forms.PictureBox mapSelectionBox;
         private System.Windows.Forms.PictureBox largeSelectionBox;
         private System.Windows.Forms.ToolStripButton toolStripButton1;
         private System.Windows.Forms.PictureBox mapHoverBox;
-        private System.Windows.Forms.PictureBox tileHoverBox;
-        private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.PictureBox bottomTileHoverBox;
+        private System.Windows.Forms.TabControl tileTabControl;
+        private System.Windows.Forms.TabPage bottomTileTab;
+        private System.Windows.Forms.TabPage topTileTab;
+        private System.Windows.Forms.PictureBox topTileView;
     }
 }
 
