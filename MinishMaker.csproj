@@ -59,6 +59,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="UI\GridBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\GridBox.Designer.cs">
+      <DependentUpon>GridBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="Utilities\DataHelper.cs" />
     <Compile Include="Core\MapManager.cs" />
     <Compile Include="Core\MetaTileSet.cs" />
@@ -88,6 +94,9 @@
     <Compile Include="Utilities\Writer.cs" />
     <EmbeddedResource Include="UI\AboutWindow.resx">
       <DependentUpon>AboutWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\GridBox.resx">
+      <DependentUpon>GridBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
