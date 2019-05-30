@@ -13,24 +13,24 @@ namespace MinishMaker.Core
     {
         public class SpaceData
         {
-            public uint start;
-            public uint size;
+            public int start;
+            public int size;
 
-            public SpaceData(uint start, uint size)
+            public SpaceData(int start, int size)
             {
                 this.start = start;
                 this.size = size;
             }
 
-            public void ReserveBytes(uint size)
+            public void ReserveBytes(int size)
             {
                 this.start += size;
                 this.size -= size;
             }
 
-            public void Extend(uint start, uint size)
+            public void Extend(int start, int size)
             {
-                uint end = Math.Max(start + size, this.start + this.size);
+                int end = Math.Max(start + size, this.start + this.size);
                 this.start = Math.Min(start, this.start);
                 this.size = end - start;
             }
@@ -49,21 +49,21 @@ namespace MinishMaker.Core
             spaceData = new List<SpaceData>();
         }
 
-        public uint ReserveSpace(uint size)
+        public int ReserveSpace(int size)
         {
 
             foreach (SpaceData space in spaceData)
             {
                 if (space.size < size)
                     continue;
-                uint location = space.start;
+                int location = space.start;
                 space.ReserveBytes(size);
                 return location;
             }
             return 0;
         }
 
-        public SpaceData FreeSpace(uint start, uint size)
+        public SpaceData FreeSpace(int start, int size)
         {
             // Connect to any overlapping space if possible
             foreach (SpaceData space in spaceData)

@@ -286,18 +286,29 @@ namespace MinishMaker.UI
 	            byte[] saveData = null;
                 long size = room.GetSaveData(ref saveData, pendingData.dataType);
                 long pointerAddress = room.GetPointerLoc(pendingData.dataType, pendingData.areaIndex);
-                uint newSource = 0;
+                int newSource = 0;
 
                 if (size > 0)
                 {
-                    newSource = spaceManager_.ReserveSpace((uint)size & 0x7FFFFFFF);
+                    // Maybe replace this with some LINQ or other shenannigans later? Not foreach for better removal of data
+                    foreach (RepointData data in dataPositions)
+                    {
+                        if (data.areaIndex == pendingData.areaIndex && data.roomIndex == pendingData.roomIndex && data.type == pendingData.dataType)
+                        {
+                            spaceManager_.FreeSpace(data.start, data.size);
+                            dataPositions.Remove(data);
+                            break;
+                        }
+                    }
+
+                    newSource = spaceManager_.ReserveSpace((int)size & 0x7FFFFFFF);
                     if (newSource == 0)
                     {
                         MessageBox.Show("Unable to allocate enough space for data of type, \"" + pendingData.dataType.ToString() + "\", in area:" + pendingData.areaIndex + " room:" + pendingData.roomIndex + " with size:" + size);
                         continue;
                     }
 
-                    dataPositions.Add(new RepointData(pendingData.areaIndex, pendingData.roomIndex, pendingData.dataType, (int)newSource, (int)size & 0x7FFFFFFF));
+                    dataPositions.Add(new RepointData(pendingData.areaIndex, pendingData.roomIndex, pendingData.dataType, newSource, (int)size & 0x7FFFFFFF));
                 }
 
                 SaveToRom(newSource, pointerAddress, saveData, pendingData.dataType, size);
@@ -325,7 +336,7 @@ namespace MinishMaker.UI
 			unsavedChanges.Add(new PendingData(currentArea,currentRoom.Index,type));
 		}
 
-		private void SaveToRom( uint newSource, long pointerAddress, byte[] data, DataType type, long size = 0 )
+		private void SaveToRom( int newSource, long pointerAddress, byte[] data, DataType type, long size = 0 )
 		{
 			using( MemoryStream m = new MemoryStream( ROM.Instance.romData ) )
 			{
@@ -337,14 +348,13 @@ namespace MinishMaker.UI
                 {
                     case DataType.bg1Data:
                     case DataType.bg2Data:
-                        newSource = (uint)(newSource - ROM.Instance.headers.gfxSourceBase);
+                        newSource = (newSource - ROM.Instance.headers.gfxSourceBase);
                         w.SetPosition(pointerAddress);
                         Console.WriteLine(StringUtil.AsStringGBAAddress((int)pointerAddress));
-                        w.WriteUInt32(newSource | 0x80000000);//byte 1-4 is source, high bit was removed before
+                        w.WriteUInt32((uint)newSource | 0x80000000);//byte 1-4 is source, high bit was removed before
 
                         if (size != 0) // this is a reshuffle, no need to adjust size
                         {
-
                             w.SetPosition(w.Position + 4);//byte 5-8 is dest, skip
                             w.WriteUInt32((uint)size | 0x80000000);//byte 9-12 is size and compressed
                         }
@@ -353,7 +363,6 @@ namespace MinishMaker.UI
                         if (size != 0)
                         {
                             w.SetPosition(pointerAddress);
-                            //w.WriteUInt32(newSource | 0x80000000);
                             w.WriteAddr(newSource);
                         }
                         else
@@ -369,10 +378,17 @@ namespace MinishMaker.UI
 		private void SaveRepoints()
 		{
             // 12 bytes per RepointData, 8 bytes per SpaceData, 8 bytes of pointer data
-            uint newDataSize = (uint)((dataPositions.Count * 12) + (spaceManager_.spaceData.Count * 8) + 8);
+            int newDataSize = (dataPositions.Count * 12) + (spaceManager_.spaceData.Count * 8) + 8;
 
             // Find empty space for the repoints, but don't keep it reserved
-            uint newDataPosition = spaceManager_.ReserveSpace(newDataSize);
+            int newDataPosition = spaceManager_.ReserveSpace(newDataSize);
+
+            if (newDataPosition == 0)
+            {
+                MessageBox.Show("Not enough space for repoint table! Future edits may overwrite data in some cases. Consider expanding the ROM");
+                return;
+            }
+
             spaceManager_.FreeSpace(newDataPosition, newDataSize);
 
             using (MemoryStream m = new MemoryStream(ROM.Instance.romData))
@@ -380,32 +396,29 @@ namespace MinishMaker.UI
                 Writer w = new Writer(m);
                 // Start writing at the beginning of the free space
                 w.SetPosition(newDataPosition);
-
                 foreach (SpaceManager.SpaceData data in spaceManager_.spaceData)
                 {
                     if (data.size > 0)
                     {
                         w.WriteAddr(data.start);
-                        w.WriteUInt32(data.size);
+                        w.WriteInt(data.size);
                     }
                 }
 
                 // Indicates the change from SpaceData toRepoint Data
                 w.WriteUInt32(0);
 
-                /*foreach (RepointData entry in dataPositions)
+                foreach (RepointData entry in dataPositions)
                 {
-                    Console.WriteLine(m.Position);
-                    w.WriteAddr((uint)entry.start);
+                    w.WriteAddr(entry.start);
                     w.WriteInt(entry.size);
                     w.WriteByte((byte)entry.areaIndex);
                     w.WriteByte((byte)entry.roomIndex);
                     w.WriteInt16((short)entry.type);
-                }*/
+                }
 
                 // Indicates that there is no more RepointData
                 w.WriteUInt32(0);
-
                 w.SetPosition(ROM.Instance.romData.Length - 4);
                 w.WriteAddr(newDataPosition);
             }
@@ -438,7 +451,7 @@ namespace MinishMaker.UI
 
             while (spaceStart != 0)
             {
-                uint size = ROM_.reader.ReadUInt32();
+                int size = ROM_.reader.ReadInt();
 
                 if (size == 0)
                 {
@@ -446,7 +459,7 @@ namespace MinishMaker.UI
                     spaceStart = 0;
                 }
 
-                spaceManager_.FreeSpace((uint)spaceStart, size);
+                spaceManager_.FreeSpace(spaceStart, size);
                 spaceStart = ROM_.reader.ReadAddr();
             }
 
