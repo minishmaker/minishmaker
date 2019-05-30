@@ -27,7 +27,7 @@ namespace MinishMaker.UI
         private int lastHoverIndex = -1;
         private int startSelection = -1;
         private Size canvas = new Size(128, 128);
-        private Pen selectionPen = new Pen(Color.Red, 4);
+        private Pen selectionPen = new Pen(Color.Red, 2);
         private InterpolationMode mode = InterpolationMode.NearestNeighbor;
 
 
@@ -48,7 +48,7 @@ namespace MinishMaker.UI
         public Color HoverColor
         {
             get { return hoverColor; }
-            set { hoverColor = value; this.Invalidate(); }
+            set { hoverColor = value; Invalidate(); }
         }
 
         [Description("The selection color."), Browsable(true)]
@@ -62,28 +62,28 @@ namespace MinishMaker.UI
         public Size BoxSize
         {
             get { return selectionSize; }
-            set { selectionSize = value; this.Invalidate(); }
+            set { selectionSize = value; Invalidate(); }
         }
 
         [Description("The selected index."), Browsable(true)]
         public int SelectedIndex
         {
             get { return selectedIndex; }
-            set { selectedIndex = value; selectionRectangle = new Rectangle((value % (canvas.Width / selectionSize.Width)), (value / (canvas.Height / selectionSize.Height)), 1, 1); this.Invalidate(); }
+            set { selectedIndex = value; selectionRectangle = new Rectangle((value % (canvas.Width / selectionSize.Width)), (value / (canvas.Height / selectionSize.Height)), 1, 1); Invalidate(); }
         }
 
         [Description("Determines whether or not items can be selected."), Browsable(true)]
         public bool Selectable
         {
             get { return canSelect; }
-            set { canSelect = value; this.Invalidate(); }
+            set { canSelect = value; Invalidate(); }
         }
 
         [Description("Determines whether or not the hoverbox will be shown."), Browsable(true)]
         public bool HoverBox
         {
             get { return canHover; }
-            set { canHover = value; this.Invalidate(); }
+            set { canHover = value; Invalidate(); }
         }
 
         [Description("The canvas size."), Browsable(true)]
@@ -103,7 +103,7 @@ namespace MinishMaker.UI
         public Rectangle SelectionRectangle
         {
             get { return selectionRectangle; }
-            set { selectionRectangle = value; this.Invalidate(); }
+            set { selectionRectangle = value; Invalidate(); }
         }
 
         [Description("Determines whether or not more than one items can be selected."), Browsable(true)]
@@ -185,7 +185,7 @@ namespace MinishMaker.UI
                     selectionRectangle.Width = (canvas.Width / selectionSize.Width) - selectionRectangle.X;
                 if (selectionRectangle.Y + selectionRectangle.Height > canvas.Height / selectionSize.Height)
                     selectionRectangle.Height = (canvas.Height / selectionSize.Height) - selectionRectangle.Y;
-                this.Invalidate();
+                Invalidate();
                 return;
             }
 
@@ -195,7 +195,7 @@ namespace MinishMaker.UI
                 {
                     hoverIndex = -1;
                     lastHoverIndex = -1;
-                    this.Invalidate();
+                    Invalidate();
                 }
                 return;
             }
@@ -211,7 +211,7 @@ namespace MinishMaker.UI
                 if (lastHoverIndex != hoverIndex)
                 {
                     lastHoverIndex = hoverIndex;
-                    this.Invalidate();
+                    Invalidate();
                 }
             }
         }
@@ -222,7 +222,7 @@ namespace MinishMaker.UI
             {
                 hoverIndex = -1;
                 lastHoverIndex = -1;
-                this.Invalidate();
+                Invalidate();
             }
         }
 
@@ -235,7 +235,8 @@ namespace MinishMaker.UI
                     startSelection = hoverIndex;
                     selectionRectangle = new Rectangle((e.X / selectionSize.Width), (e.Y / selectionSize.Height), 1, 1);
                     selectedIndex = hoverIndex;
-                    this.Invalidate();
+                    Console.WriteLine(selectedIndex);
+                    Invalidate();
                 }
             }
         }
@@ -243,6 +244,16 @@ namespace MinishMaker.UI
         private void GridBox_MouseUp(object sender, MouseEventArgs e)
         {
             startSelection = -1;
+        }
+
+        private void GridBox_Resize(object sender, EventArgs e)
+        {
+            if (Image != null)
+            {
+                canvas.Width = Image.Width;
+                canvas.Height = Image.Height;
+                Invalidate();
+            }
         }
     }
 }

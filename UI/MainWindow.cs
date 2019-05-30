@@ -86,7 +86,6 @@ namespace MinishMaker.UI
 		    using (Graphics g = Graphics.FromImage(hoverImage)) g.DrawRectangle(new Pen(Color.White, 2), 0, 0, 16, 16);
 		    bottomTileSelectionBox.Image = selectorImage;
 		    topTileSelectionBox.Image = selectorImage;
-            mapSelectionBox.Image = selectorImage;
 
 		    bottomTileHoverBox.Image = hoverImage;
 		    topTileHoverBox.Image = hoverImage;
@@ -163,7 +162,7 @@ namespace MinishMaker.UI
 				return;
 			}
 
-			mapView.Image = new Bitmap(1,1); //reset some things on loading a rom
+			mapGridBox.Image = new Bitmap(1,1); //reset some things on loading a rom
 			bottomTileView.Image = new Bitmap(1,1);
             topTileView.Image = new Bitmap(1, 1);
 			currentRoom = null;
@@ -217,12 +216,11 @@ namespace MinishMaker.UI
 				mapLayers = room.DrawRoom( areaIndex, true, true );
 
 				bottomTileSelectionBox.Visible = false;
-				mapSelectionBox.Visible = false;
 				selectedTileData = -1;
 
 				//0= bg1 (treetops and such)
 				//1= bg2 (flooring)
-				mapView.Image = OverlayImage( mapLayers[1], mapLayers[0] );
+				mapGridBox.Image = OverlayImage( mapLayers[1], mapLayers[0] );
 				tileMaps = room.DrawTilesetImages( 11, currentArea );
 				bottomTileView.Image = tileMaps[1];
                 topTileView.Image = tileMaps[0];
@@ -496,8 +494,6 @@ namespace MinishMaker.UI
 			if( currentRoom == null )
 				return;
 
-			mapSelectionBox.Visible = true;
-
 			var mTileWidth = mapLayers[0].Width / 16;
 			var tsTileWidth = tileMaps[0].Width / 16;
 
@@ -509,7 +505,6 @@ namespace MinishMaker.UI
 
             lastTilePos = new Point(tileX, tileY);
 
-            mapSelectionBox.Location = new Point( me.X - partialX, me.Y - partialY );
 			var pos = tileY * mTileWidth + tileX; //tilenumber if they were all in a line
 
 			if( me.Button == MouseButtons.Right )
@@ -561,9 +556,7 @@ namespace MinishMaker.UI
                 if (!lastTilePos.Equals(tilePos))
                 {
 
-                    mapSelectionBox.Visible = true;
 
-                    mapSelectionBox.Location = new Point(me.X - partialX, me.Y - partialY);
 
                     var pos = tileY * mTileWidth + tileX; //tilenumber if they were all in a line
 
@@ -605,10 +598,32 @@ namespace MinishMaker.UI
             CondensedTileSelection(e, TileWindowType.topTiles);
 	    }
 
-	    private void CondensedTileSelection(MouseEventArgs me, TileWindowType window)
+	    private void bottomTileView_MouseMove(object sender, MouseEventArgs e)
+	    {
+            if (currentRoom == null)
+                return;
+
+	        var partialX = e.X % 16;
+	        var partialY = e.Y % 16;
+
+	        int tileX = (e.X - partialX) / 16;
+	        int tileY = (e.Y - partialY) / 16;
+
+	        var tsTileWidth = tileMaps[0].Width / 16;
+
+	        Point p = new Point(e.X - partialX, e.Y - partialY);
+
+            bottomTileHoverBox.Visible = true;
+	        bottomTileHoverBox.Location = p;
+	    }
+
+        private void CondensedTileSelection(MouseEventArgs me, TileWindowType window)
 	    {
 	        if (currentRoom == null)
 	            return;
+
+	        bottomTileHoverBox.Visible = false;
+            
 
 	        var partialX = me.X % 16;
 	        var partialY = me.Y % 16;
@@ -616,7 +631,6 @@ namespace MinishMaker.UI
 	        int tileX = (me.X - partialX) / 16;
 	        int tileY = (me.Y - partialY) / 16;
 
-	        var mTileWidth = mapLayers[(int)window].Width / 16;
 	        var tsTileWidth = tileMaps[(int)window].Width / 16;
 
 	        Point p = new Point(me.X - partialX, me.Y - partialY);
@@ -637,11 +651,6 @@ namespace MinishMaker.UI
 	                break;
 	        }
 	    }
-
-        private void bottomTileView_MouseMove(object sender, MouseEventArgs e)
-        {
-	        
-        }
         #endregion
 
         private void WriteTile (int tileX, int tileY, int pos, int tileData, int layer)
@@ -658,7 +667,36 @@ namespace MinishMaker.UI
             }
 
             currentRoom.SetTileData(selectedLayer, pos * 2, selectedTileData);
-            mapView.Image = OverlayImage(mapLayers[1], mapLayers[0]);
+            mapGridBox.Image = OverlayImage(mapLayers[1], mapLayers[0]);
+        }
+
+        private void mapGridBox_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                selectedTileData = currentRoom.GetTileData(selectedLayer, mapGridBox.SelectedIndex * 2);//*2 as each tile is 2 bytes
+                /*var newX = selectedTileData % tsTileWidth;
+                var newY = (selectedTileData - newX) / tsTileWidth;
+                // bad practice, entire map selection functions could do with refactor like the tile selection
+                if (selectedLayer == 2)
+                {
+                    bottomTileSelectionBox.Location = new Point(newX * 16, newY * 16);
+                    bottomTileSelectionBox.Visible = true;
+                }
+                else
+                {
+                    topTileSelectionBox.Location = new Point(newX * 16, newY * 16);
+                    topTileSelectionBox.Visible = true;
+                }*/
+
+            }
+            else if (e.Button == MouseButtons.Left)
+            {
+                if (selectedTileData == -1) //no selected tile, nothing to paste
+                    return;
+
+                //WriteTile(tileX, tileY, pos, selectedTileData, selectedLayer);
+            }
         }
     }
 }

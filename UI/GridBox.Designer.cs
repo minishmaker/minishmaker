@@ -38,6 +38,7 @@
             this.MouseLeave += new System.EventHandler(this.GridBox_MouseLeave);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.GridBox_MouseMove);
             this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.GridBox_MouseUp);
+            this.Resize += new System.EventHandler(this.GridBox_Resize);
             ((System.ComponentModel.ISupportInitialize)(this)).EndInit();
             this.ResumeLayout(false);
 
