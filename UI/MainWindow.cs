@@ -26,6 +26,7 @@ namespace MinishMaker.UI
 		private List<PendingData> unsavedChanges = new List<PendingData>();
 		private List<RepointData> dataPositions = new List<RepointData>();
         private Point lastTilePos;
+	    private ViewLayer viewLayer = 0;
 
         struct RepointData
 		{
@@ -70,6 +71,13 @@ namespace MinishMaker.UI
 
 		}
 
+	    public enum ViewLayer
+	    {
+            Both,
+            Top,
+            Bottom
+	    }
+
 		public MainWindow()
 		{
 			InitializeComponent();
@@ -81,7 +89,7 @@ namespace MinishMaker.UI
 			LoadRom();
 		}
 
-	    private void saveAllChangesCtrlSToolStripMenuItem_Click(object sender, EventArgs e)
+	    private void saveAllClick(object sender, EventArgs e)
 	    {
             SaveAllChanges();
 	    }
@@ -91,7 +99,22 @@ namespace MinishMaker.UI
 			Close();
 		}
 
-		private void AboutButtonClick( object sender, EventArgs e )
+	    private void topLayerToolStripMenuItem_Click(object sender, EventArgs e)
+	    {
+	        UpdateViewLayer(ViewLayer.Top);
+	    }
+
+	    private void bottomLayerToolStripMenuItem_Click(object sender, EventArgs e)
+	    {
+	        UpdateViewLayer(ViewLayer.Bottom);
+	    }
+
+	    private void bothLayersToolStripMenuItem_Click(object sender, EventArgs e)
+	    {
+	        UpdateViewLayer(ViewLayer.Both);
+	    }
+
+        private void AboutButtonClick( object sender, EventArgs e )
 		{
 			Form aboutWindow = new AboutWindow();
 			aboutWindow.Show();
@@ -108,6 +131,8 @@ namespace MinishMaker.UI
 	    {
             SaveAllChanges();
 	    }
+
+
         #endregion
 
         #region OtherInteractions
@@ -115,14 +140,8 @@ namespace MinishMaker.UI
         // Other interactions
 	    private void tileTabControl_SelectedIndexChanged(object sender, EventArgs e)
 	    {
-	        if (tileTabControl.SelectedIndex == 0)
-	        {
-	            selectedLayer = 2;
-	        }
-	        else
-	        {
-	            selectedLayer = 1;
-	        }
+	        selectedLayer = tileTabControl.SelectedIndex + 1;
+
 	    }
 
         private void MainWindow_DragDrop( object sender, DragEventArgs e )
@@ -214,13 +233,13 @@ namespace MinishMaker.UI
 
 				mapLayers = room.DrawRoom( areaIndex, true, true );
 
-				//bottomTileSelectionBox.Visible = false;
 				selectedTileData = -1;
+			    tileTabControl.SelectedIndex = 1; // Reset to bg2
 
 				//0= bg1 (treetops and such)
 				//1= bg2 (flooring)
 				mapGridBox.Image = OverlayImage( mapLayers[1], mapLayers[0] );
-				tileMaps = room.DrawTilesetImages( 11, currentArea );
+				tileMaps = room.DrawTilesetImages( 16, currentArea );
 				bottomTileGridBox.Image = tileMaps[1];
                 topTileGridBox.Image = tileMaps[0];
 			}
@@ -479,7 +498,39 @@ namespace MinishMaker.UI
 			System.IO.File.WriteAllText(name+".pdat",s);
 			//System.IO.File.WriteAllText("testfile1.pdat",s);
 		}
-	    #endregion
+        #endregion
+
+	    private void UpdateViewLayer(ViewLayer layer)
+	    {
+	        if (currentRoom == null)
+	            return;
+
+	        switch (layer)
+	        {
+	            case ViewLayer.Both:
+	                mapGridBox.Image = OverlayImage(mapLayers[1], mapLayers[0]);
+	                viewLayer = ViewLayer.Both;
+	                topTileTab.Enabled = true;
+	                bottomTileTab.Enabled = true;
+	                break;
+	            case ViewLayer.Top:
+	                mapGridBox.Image = mapLayers[0];
+	                tileTabControl.SelectedIndex = 0;
+	                viewLayer = ViewLayer.Top;
+                    selectedTileData = topTileGridBox.SelectedIndex;
+                    topTileTab.Enabled = true;
+	                bottomTileTab.Enabled = false;
+	                break;
+	            case ViewLayer.Bottom:
+	                mapGridBox.Image = mapLayers[1];
+	                tileTabControl.SelectedIndex = 1;
+	                viewLayer = ViewLayer.Bottom;
+                    selectedTileData = bottomTileGridBox.SelectedIndex;
+                    bottomTileTab.Enabled = true;
+	                topTileTab.Enabled = false;
+	                break;
+	        }
+	    }
 
         private void discardRoomChangesToolStripMenuItem_Click( object sender, EventArgs e )
 		{
@@ -488,106 +539,67 @@ namespace MinishMaker.UI
 
 
         #region MapInteraction
-        private void mapView_MouseDown( object sender, MouseEventArgs me )
-		{
-			if( currentRoom == null )
-				return;
+	    private void mapGridBox_MouseDown(object sender, MouseEventArgs e)
+	    {
+	        if (currentRoom == null)
+	            return;
 
-			var mTileWidth = mapLayers[0].Width / 16;
-			var tsTileWidth = tileMaps[0].Width / 16;
+	        var tsTileWidth = tileMaps[0].Width / 16;
 
-			var partialX = me.X % 16;
-			var partialY = me.Y % 16;
+	        lastTilePos = mapGridBox.GetIndexPoint(mapGridBox.HoverIndex);
 
-			int tileX = (me.X - partialX) / 16;
-			int tileY = (me.Y - partialY) / 16;
+	        if (e.Button == MouseButtons.Right)
+	        {
+	            selectedTileData = currentRoom.GetTileData(selectedLayer, mapGridBox.HoverIndex * 2);//*2 as each tile is 2 bytes
+	            mapGridBox.SelectedIndex = mapGridBox.HoverIndex;
+	            var newX = selectedTileData % tsTileWidth;
+	            var newY = (selectedTileData - newX) / tsTileWidth;
+	            // bad practice, entire map selection functions could do with refactor like the tile selection
+	            if (selectedLayer == 2)
+	            {
+	                bottomTileGridBox.SelectedIndex = selectedTileData;
+	            }
+	            else
+	            {
+	                topTileGridBox.SelectedIndex = selectedTileData;
+	            }
 
-            lastTilePos = new Point(tileX, tileY);
+	        }
+	        else if (e.Button == MouseButtons.Left)
+	        {
+	            if (selectedTileData == -1) //no selected tile, nothing to paste
+	                return;
 
-			var pos = tileY * mTileWidth + tileX; //tilenumber if they were all in a line
+	            WriteTile(mapGridBox.GetIndexPoint(mapGridBox.HoverIndex), mapGridBox.HoverIndex, selectedTileData, selectedLayer);
+	        }
+	    }
 
-			if( me.Button == MouseButtons.Right )
-			{
-				selectedTileData = currentRoom.GetTileData( selectedLayer, pos * 2 );//*2 as each tile is 2 bytes
-				var newX = selectedTileData % tsTileWidth;
-				var newY = (selectedTileData - newX) / tsTileWidth;
-                // bad practice, entire map selection functions could do with refactor like the tile selection
-			    if (selectedLayer == 2)
-			    {
-			        //bottomTileSelectionBox.Location = new Point(newX * 16, newY * 16);
-			        //bottomTileSelectionBox.Visible = true;
-                }
-			    else
-			    {
-			        //topTileSelectionBox.Location = new Point(newX * 16, newY * 16);
-			        //topTileSelectionBox.Visible = true;
-                }
-				
-			}
-			else if( me.Button == MouseButtons.Left )
-			{
-				if( selectedTileData == -1 ) //no selected tile, nothing to paste
-					return;
-
-                //WriteTile(tileX, tileY, pos, selectedTileData, selectedLayer);
-            }
-		}
-
-        private void mapView_MouseMove( object sender, MouseEventArgs me )
-        {
-            if (currentRoom == null)
+	    private void mapGridBox_MouseMove(object sender, MouseEventArgs e)
+	    {
+            if(currentRoom == null)
                 return;
 
-            
-            if (me.Button != MouseButtons.None)
-            {
-                var mTileWidth = mapLayers[0].Width / 16;
-                var tsTileWidth = tileMaps[0].Width / 16;
 
-                var partialX = me.X % 16;
-                var partialY = me.Y % 16;
+	        if (e.Button == MouseButtons.Left)
+	        {
+	            var currentPos = mapGridBox.GetIndexPoint(mapGridBox.HoverIndex);
 
-                int tileX = (me.X - partialX) / 16;
-                int tileY = (me.Y - partialY) / 16;
+	            if (!lastTilePos.Equals(currentPos))
+	            {
+	                if (selectedTileData == -1) //no selected tile, nothing to paste
+	                    return;
 
-                Point tilePos = new Point(tileX, tileY);
+                    lastTilePos = currentPos;
+	                mapGridBox.SelectedIndex = mapGridBox.HoverIndex;
 
-                if (!lastTilePos.Equals(tilePos))
-                {
-
-
-
-                    var pos = tileY * mTileWidth + tileX; //tilenumber if they were all in a line
-
-                    if (me.Button == MouseButtons.Right)
-                    {
-                        // TODO: Select box
-                    }
-                    else if (me.Button == MouseButtons.Left)
-                    {
-                        lastTilePos = tilePos;
-                        if (selectedTileData == -1) //no selected tile, nothing to paste
-                            return;
-
-                        //WriteTile(tileX, tileY, pos, selectedTileData, selectedLayer);
-                    }
+	                WriteTile(mapGridBox.GetIndexPoint(mapGridBox.HoverIndex), mapGridBox.HoverIndex, selectedTileData, selectedLayer);
                 }
-            }
-            /*else
-            {
-                if (mapHoverBox.Image == null)
-                {
-                    mapHoverBox.Image = hoverImage;
-                }
-
-                mapHoverBox.Visible = true;
-                mapHoverBox.Location = new Point(me.X - partialX, me.Y - partialY);
-            }*/
+	        }
         }
         #endregion
 
         #region TilesetInteraction	  
-	    private void bottomTileGridBox_MouseDown(object sender, MouseEventArgs e)
+        private void bottomTileGridBox_MouseDown(object sender, MouseEventArgs e)
 	    {
 	        if (currentRoom == null)
 	            return;
@@ -622,41 +634,9 @@ namespace MinishMaker.UI
             }
 
             currentRoom.SetTileData(selectedLayer, pos * 2, selectedTileData);
-            mapGridBox.Image = OverlayImage(mapLayers[1], mapLayers[0]);
-        }
 
-        private void mapGridBox_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (currentRoom == null)
-                return;
-
-
-            var tsTileWidth = tileMaps[0].Width / 16;
-
-            if (e.Button == MouseButtons.Right)
-            {
-                selectedTileData = currentRoom.GetTileData(selectedLayer, mapGridBox.HoverIndex * 2);//*2 as each tile is 2 bytes
-                mapGridBox.SelectedIndex = mapGridBox.HoverIndex;
-                var newX = selectedTileData % tsTileWidth;
-                var newY = (selectedTileData - newX) / tsTileWidth;
-                // bad practice, entire map selection functions could do with refactor like the tile selection
-                if (selectedLayer == 2)
-                {
-                    bottomTileGridBox.SelectedIndex = selectedTileData;
-                }
-                else
-                {
-                    topTileGridBox.SelectedIndex = selectedTileData;
-                }
-
-            }
-            else if (e.Button == MouseButtons.Left)
-            {
-                if (selectedTileData == -1) //no selected tile, nothing to paste
-                    return;
-
-                WriteTile(mapGridBox.GetIndexPoint(mapGridBox.HoverIndex), mapGridBox.HoverIndex, selectedTileData, selectedLayer);
-            }
+            // TODO switch on layer view
+            UpdateViewLayer(viewLayer);
         }
     }
 }

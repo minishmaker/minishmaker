@@ -38,6 +38,10 @@ namespace MinishMaker.UI
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.topLayerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bottomLayerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bothLayersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bottomStatusStrip = new System.Windows.Forms.StatusStrip();
             this.statusText = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
@@ -47,10 +51,10 @@ namespace MinishMaker.UI
             this.roomTreeView = new System.Windows.Forms.TreeView();
             this.tilePanel = new System.Windows.Forms.Panel();
             this.tileTabControl = new System.Windows.Forms.TabControl();
-            this.bottomTileTab = new System.Windows.Forms.TabPage();
-            this.bottomTileGridBox = new MinishMaker.UI.GridBox();
             this.topTileTab = new System.Windows.Forms.TabPage();
             this.topTileGridBox = new MinishMaker.UI.GridBox();
+            this.bottomTileTab = new System.Windows.Forms.TabPage();
+            this.bottomTileGridBox = new MinishMaker.UI.GridBox();
             this.mapPanel = new System.Windows.Forms.Panel();
             this.mapGridBox = new MinishMaker.UI.GridBox();
             this.menuStrip.SuspendLayout();
@@ -59,10 +63,10 @@ namespace MinishMaker.UI
             this.roomPanel.SuspendLayout();
             this.tilePanel.SuspendLayout();
             this.tileTabControl.SuspendLayout();
-            this.bottomTileTab.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.bottomTileGridBox)).BeginInit();
             this.topTileTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.topTileGridBox)).BeginInit();
+            this.bottomTileTab.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bottomTileGridBox)).BeginInit();
             this.mapPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mapGridBox)).BeginInit();
             this.SuspendLayout();
@@ -71,7 +75,8 @@ namespace MinishMaker.UI
             // 
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
-            this.helpToolStripMenuItem});
+            this.helpToolStripMenuItem,
+            this.viewToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
             this.menuStrip.Size = new System.Drawing.Size(1370, 24);
@@ -102,7 +107,7 @@ namespace MinishMaker.UI
             this.saveRoomChangesCtrlSToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
             this.saveRoomChangesCtrlSToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
             this.saveRoomChangesCtrlSToolStripMenuItem.Text = "Save All Changes ";
-            this.saveRoomChangesCtrlSToolStripMenuItem.Click += new System.EventHandler(this.saveAllChangesCtrlSToolStripMenuItem_Click);
+            this.saveRoomChangesCtrlSToolStripMenuItem.Click += new System.EventHandler(this.saveAllClick);
             // 
             // exitToolStripMenuItem
             // 
@@ -126,6 +131,40 @@ namespace MinishMaker.UI
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.AboutButtonClick);
+            // 
+            // viewToolStripMenuItem
+            // 
+            this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.topLayerToolStripMenuItem,
+            this.bottomLayerToolStripMenuItem,
+            this.bothLayersToolStripMenuItem});
+            this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
+            this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.viewToolStripMenuItem.Text = "View";
+            // 
+            // topLayerToolStripMenuItem
+            // 
+            this.topLayerToolStripMenuItem.Name = "topLayerToolStripMenuItem";
+            this.topLayerToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D1)));
+            this.topLayerToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
+            this.topLayerToolStripMenuItem.Text = "Top Layer";
+            this.topLayerToolStripMenuItem.Click += new System.EventHandler(this.topLayerToolStripMenuItem_Click);
+            // 
+            // bottomLayerToolStripMenuItem
+            // 
+            this.bottomLayerToolStripMenuItem.Name = "bottomLayerToolStripMenuItem";
+            this.bottomLayerToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D2)));
+            this.bottomLayerToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
+            this.bottomLayerToolStripMenuItem.Text = "Bottom Layer";
+            this.bottomLayerToolStripMenuItem.Click += new System.EventHandler(this.bottomLayerToolStripMenuItem_Click);
+            // 
+            // bothLayersToolStripMenuItem
+            // 
+            this.bothLayersToolStripMenuItem.Name = "bothLayersToolStripMenuItem";
+            this.bothLayersToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D3)));
+            this.bothLayersToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
+            this.bothLayersToolStripMenuItem.Text = "Both Layers";
+            this.bothLayersToolStripMenuItem.Click += new System.EventHandler(this.bothLayersToolStripMenuItem_Click);
             // 
             // bottomStatusStrip
             // 
@@ -175,7 +214,7 @@ namespace MinishMaker.UI
             this.saveToolStripButton.Size = new System.Drawing.Size(23, 22);
             this.saveToolStripButton.Text = "toolStripButton1";
             this.saveToolStripButton.ToolTipText = "Save all changes.";
-            this.saveToolStripButton.Click += new System.EventHandler(this.saveAllChangesCtrlSToolStripMenuItem_Click);
+            this.saveToolStripButton.Click += new System.EventHandler(this.saveToolStripButton_Click);
             // 
             // roomPanel
             // 
@@ -200,54 +239,22 @@ namespace MinishMaker.UI
             this.tilePanel.AutoScroll = true;
             this.tilePanel.Controls.Add(this.tileTabControl);
             this.tilePanel.Dock = System.Windows.Forms.DockStyle.Right;
-            this.tilePanel.Location = new System.Drawing.Point(1167, 49);
+            this.tilePanel.Location = new System.Drawing.Point(1089, 49);
             this.tilePanel.Name = "tilePanel";
-            this.tilePanel.Size = new System.Drawing.Size(203, 610);
+            this.tilePanel.Size = new System.Drawing.Size(281, 610);
             this.tilePanel.TabIndex = 9;
             // 
             // tileTabControl
             // 
-            this.tileTabControl.Controls.Add(this.bottomTileTab);
             this.tileTabControl.Controls.Add(this.topTileTab);
+            this.tileTabControl.Controls.Add(this.bottomTileTab);
             this.tileTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tileTabControl.Location = new System.Drawing.Point(0, 0);
             this.tileTabControl.Name = "tileTabControl";
             this.tileTabControl.SelectedIndex = 0;
-            this.tileTabControl.Size = new System.Drawing.Size(203, 610);
+            this.tileTabControl.Size = new System.Drawing.Size(281, 610);
             this.tileTabControl.TabIndex = 11;
             this.tileTabControl.SelectedIndexChanged += new System.EventHandler(this.tileTabControl_SelectedIndexChanged);
-            // 
-            // bottomTileTab
-            // 
-            this.bottomTileTab.AutoScroll = true;
-            this.bottomTileTab.Controls.Add(this.bottomTileGridBox);
-            this.bottomTileTab.Location = new System.Drawing.Point(4, 22);
-            this.bottomTileTab.Name = "bottomTileTab";
-            this.bottomTileTab.Padding = new System.Windows.Forms.Padding(3);
-            this.bottomTileTab.Size = new System.Drawing.Size(195, 584);
-            this.bottomTileTab.TabIndex = 0;
-            this.bottomTileTab.Text = "Bottom Tiles";
-            this.bottomTileTab.UseVisualStyleBackColor = true;
-            // 
-            // bottomTileGridBox
-            // 
-            this.bottomTileGridBox.AllowMultiSelection = false;
-            this.bottomTileGridBox.BoxSize = new System.Drawing.Size(16, 16);
-            this.bottomTileGridBox.CanvasSize = new System.Drawing.Size(128, 128);
-            this.bottomTileGridBox.HoverBox = true;
-            this.bottomTileGridBox.HoverColor = System.Drawing.Color.White;
-            this.bottomTileGridBox.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-            this.bottomTileGridBox.Location = new System.Drawing.Point(0, 0);
-            this.bottomTileGridBox.Name = "bottomTileGridBox";
-            this.bottomTileGridBox.Selectable = true;
-            this.bottomTileGridBox.SelectedIndex = 0;
-            this.bottomTileGridBox.SelectionColor = System.Drawing.Color.Red;
-            this.bottomTileGridBox.SelectionRectangle = new System.Drawing.Rectangle(0, 0, 1, 1);
-            this.bottomTileGridBox.Size = new System.Drawing.Size(128, 128);
-            this.bottomTileGridBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.bottomTileGridBox.TabIndex = 11;
-            this.bottomTileGridBox.TabStop = false;
-            this.bottomTileGridBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.bottomTileGridBox_MouseDown);
             // 
             // topTileTab
             // 
@@ -256,7 +263,7 @@ namespace MinishMaker.UI
             this.topTileTab.Location = new System.Drawing.Point(4, 22);
             this.topTileTab.Name = "topTileTab";
             this.topTileTab.Padding = new System.Windows.Forms.Padding(3);
-            this.topTileTab.Size = new System.Drawing.Size(195, 584);
+            this.topTileTab.Size = new System.Drawing.Size(273, 584);
             this.topTileTab.TabIndex = 1;
             this.topTileTab.Text = "Top Tiles";
             this.topTileTab.UseVisualStyleBackColor = true;
@@ -281,6 +288,38 @@ namespace MinishMaker.UI
             this.topTileGridBox.TabStop = false;
             this.topTileGridBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.topTileGridBox_MouseDown);
             // 
+            // bottomTileTab
+            // 
+            this.bottomTileTab.AutoScroll = true;
+            this.bottomTileTab.Controls.Add(this.bottomTileGridBox);
+            this.bottomTileTab.Location = new System.Drawing.Point(4, 22);
+            this.bottomTileTab.Name = "bottomTileTab";
+            this.bottomTileTab.Padding = new System.Windows.Forms.Padding(3);
+            this.bottomTileTab.Size = new System.Drawing.Size(273, 584);
+            this.bottomTileTab.TabIndex = 0;
+            this.bottomTileTab.Text = "Bottom Tiles";
+            this.bottomTileTab.UseVisualStyleBackColor = true;
+            // 
+            // bottomTileGridBox
+            // 
+            this.bottomTileGridBox.AllowMultiSelection = false;
+            this.bottomTileGridBox.BoxSize = new System.Drawing.Size(16, 16);
+            this.bottomTileGridBox.CanvasSize = new System.Drawing.Size(128, 128);
+            this.bottomTileGridBox.HoverBox = true;
+            this.bottomTileGridBox.HoverColor = System.Drawing.Color.White;
+            this.bottomTileGridBox.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+            this.bottomTileGridBox.Location = new System.Drawing.Point(0, 0);
+            this.bottomTileGridBox.Name = "bottomTileGridBox";
+            this.bottomTileGridBox.Selectable = true;
+            this.bottomTileGridBox.SelectedIndex = 0;
+            this.bottomTileGridBox.SelectionColor = System.Drawing.Color.Red;
+            this.bottomTileGridBox.SelectionRectangle = new System.Drawing.Rectangle(0, 0, 1, 1);
+            this.bottomTileGridBox.Size = new System.Drawing.Size(128, 128);
+            this.bottomTileGridBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.bottomTileGridBox.TabIndex = 11;
+            this.bottomTileGridBox.TabStop = false;
+            this.bottomTileGridBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.bottomTileGridBox_MouseDown);
+            // 
             // mapPanel
             // 
             this.mapPanel.AutoScroll = true;
@@ -288,7 +327,7 @@ namespace MinishMaker.UI
             this.mapPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.mapPanel.Location = new System.Drawing.Point(150, 49);
             this.mapPanel.Name = "mapPanel";
-            this.mapPanel.Size = new System.Drawing.Size(1017, 610);
+            this.mapPanel.Size = new System.Drawing.Size(939, 610);
             this.mapPanel.TabIndex = 10;
             // 
             // mapGridBox
@@ -310,6 +349,7 @@ namespace MinishMaker.UI
             this.mapGridBox.TabIndex = 10;
             this.mapGridBox.TabStop = false;
             this.mapGridBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.mapGridBox_MouseDown);
+            this.mapGridBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.mapGridBox_MouseMove);
             // 
             // MainWindow
             // 
@@ -337,12 +377,12 @@ namespace MinishMaker.UI
             this.roomPanel.ResumeLayout(false);
             this.tilePanel.ResumeLayout(false);
             this.tileTabControl.ResumeLayout(false);
-            this.bottomTileTab.ResumeLayout(false);
-            this.bottomTileTab.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.bottomTileGridBox)).EndInit();
             this.topTileTab.ResumeLayout(false);
             this.topTileTab.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.topTileGridBox)).EndInit();
+            this.bottomTileTab.ResumeLayout(false);
+            this.bottomTileTab.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bottomTileGridBox)).EndInit();
             this.mapPanel.ResumeLayout(false);
             this.mapPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mapGridBox)).EndInit();
@@ -375,6 +415,10 @@ namespace MinishMaker.UI
         private GridBox mapGridBox;
         private GridBox bottomTileGridBox;
         private GridBox topTileGridBox;
+        private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem bothLayersToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem topLayerToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem bottomLayerToolStripMenuItem;
     }
 }
 
