@@ -131,12 +131,12 @@ namespace MinishMaker.UI
                 {
                     if (selectedIndex != -1)
                     {
-                        Point p = getIndexPoint(selectedIndex);
+                        Point p = GetIndexPoint(selectedIndex);
                         e.Graphics.DrawRectangle(selectionPen, p.X, p.Y, selectionSize.Width, selectionSize.Height);
                     }
                     else
                     {
-                        Point p = getIndexPoint(selectedIndex);
+                        Point p = GetIndexPoint(selectedIndex);
                         e.Graphics.DrawRectangle(selectionPen, p.X, p.Y, selectionSize.Width * selectionRectangle.Width, selectionSize.Height * selectionRectangle.Height);
                     }
                 }
@@ -145,14 +145,14 @@ namespace MinishMaker.UI
                 {
                     if (hoverIndex != -1)
                     {
-                        Point p = getIndexPoint(hoverIndex);
+                        Point p = GetIndexPoint(hoverIndex);
                         e.Graphics.DrawRectangle(new Pen(hoverColor), p.X, p.Y, selectionSize.Width - 1, selectionSize.Height - 1);
                     }
                 }
             }
         }
 
-        private Point getIndexPoint(int i)
+        public Point GetIndexPoint(int i)
         {
             int width = (canvas.Width / selectionSize.Width);
             int height = (canvas.Height / selectionSize.Height);

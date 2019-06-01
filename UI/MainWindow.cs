@@ -530,7 +530,7 @@ namespace MinishMaker.UI
 				if( selectedTileData == -1 ) //no selected tile, nothing to paste
 					return;
 
-                WriteTile(tileX, tileY, pos, selectedTileData, selectedLayer);
+                //WriteTile(tileX, tileY, pos, selectedTileData, selectedLayer);
             }
 		}
 
@@ -570,7 +570,7 @@ namespace MinishMaker.UI
                         if (selectedTileData == -1) //no selected tile, nothing to paste
                             return;
 
-                        WriteTile(tileX, tileY, pos, selectedTileData, selectedLayer);
+                        //WriteTile(tileX, tileY, pos, selectedTileData, selectedLayer);
                     }
                 }
             }
@@ -653,16 +653,16 @@ namespace MinishMaker.UI
 	    }
         #endregion
 
-        private void WriteTile (int tileX, int tileY, int pos, int tileData, int layer)
+        private void WriteTile (Point p, int pos, int tileData, int layer)
         {
             if (layer == 1)
             {
-                currentRoom.DrawTile(ref mapLayers[0], new Point(tileX * 16, tileY * 16), currentArea, selectedLayer, tileData);
+                currentRoom.DrawTile(ref mapLayers[0], p, currentArea, selectedLayer, tileData);
                 unsavedChanges.Add(new PendingData(currentArea, currentRoom.Index, DataType.bg1Data));
             }
             else if (layer == 2)
             {
-                currentRoom.DrawTile(ref mapLayers[1], new Point(tileX * 16, tileY * 16), currentArea, selectedLayer, tileData);
+                currentRoom.DrawTile(ref mapLayers[1], p, currentArea, selectedLayer, tileData);
                 unsavedChanges.Add(new PendingData(currentArea, currentRoom.Index, DataType.bg2Data));
             }
 
@@ -672,10 +672,16 @@ namespace MinishMaker.UI
 
         private void mapGridBox_MouseDown(object sender, MouseEventArgs e)
         {
+            if (currentRoom == null)
+                return;
+
+
+            var tsTileWidth = tileMaps[0].Width / 16;
+
             if (e.Button == MouseButtons.Right)
             {
-                selectedTileData = currentRoom.GetTileData(selectedLayer, mapGridBox.SelectedIndex * 2);//*2 as each tile is 2 bytes
-                /*var newX = selectedTileData % tsTileWidth;
+                selectedTileData = currentRoom.GetTileData(selectedLayer, mapGridBox.HoverIndex * 2);//*2 as each tile is 2 bytes
+                var newX = selectedTileData % tsTileWidth;
                 var newY = (selectedTileData - newX) / tsTileWidth;
                 // bad practice, entire map selection functions could do with refactor like the tile selection
                 if (selectedLayer == 2)
@@ -687,7 +693,7 @@ namespace MinishMaker.UI
                 {
                     topTileSelectionBox.Location = new Point(newX * 16, newY * 16);
                     topTileSelectionBox.Visible = true;
-                }*/
+                }
 
             }
             else if (e.Button == MouseButtons.Left)
@@ -695,7 +701,7 @@ namespace MinishMaker.UI
                 if (selectedTileData == -1) //no selected tile, nothing to paste
                     return;
 
-                //WriteTile(tileX, tileY, pos, selectedTileData, selectedLayer);
+                WriteTile(mapGridBox.GetIndexPoint(mapGridBox.HoverIndex), mapGridBox.HoverIndex, selectedTileData, selectedLayer);
             }
         }
     }
