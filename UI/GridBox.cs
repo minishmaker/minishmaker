@@ -235,7 +235,6 @@ namespace MinishMaker.UI
                     startSelection = hoverIndex;
                     selectionRectangle = new Rectangle((e.X / selectionSize.Width), (e.Y / selectionSize.Height), 1, 1);
                     selectedIndex = hoverIndex;
-                    Console.WriteLine(selectedIndex);
                     Invalidate();
                 }
             }

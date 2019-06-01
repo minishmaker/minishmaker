@@ -19,8 +19,6 @@ namespace MinishMaker.UI
 		private Bitmap[] mapLayers;
 		private Bitmap[] tileMaps;
 
-		private Bitmap selectorImage = new Bitmap( 16, 16 );
-        private Bitmap hoverImage = new Bitmap( 16, 16 );
         private Room currentRoom = null;
 		private int currentArea = -1;
 		private int selectedTileData = -1;
@@ -72,23 +70,9 @@ namespace MinishMaker.UI
 
 		}
 
-	    public enum TileWindowType
-	    {
-            topTiles,
-            bottomTiles
-	    }
-
 		public MainWindow()
 		{
 			InitializeComponent();
-
-		    using (Graphics g = Graphics.FromImage(selectorImage)) g.DrawRectangle(new Pen(Color.Red, 4), 0, 0, 16, 16);
-		    using (Graphics g = Graphics.FromImage(hoverImage)) g.DrawRectangle(new Pen(Color.White, 2), 0, 0, 16, 16);
-		    bottomTileSelectionBox.Image = selectorImage;
-		    topTileSelectionBox.Image = selectorImage;
-
-		    bottomTileHoverBox.Image = hoverImage;
-		    topTileHoverBox.Image = hoverImage;
 		}
 
         #region MenuBarButtons
@@ -126,13 +110,28 @@ namespace MinishMaker.UI
 	    }
         #endregion
 
+        #region OtherInteractions
+
         // Other interactions
+	    private void tileTabControl_SelectedIndexChanged(object sender, EventArgs e)
+	    {
+	        if (tileTabControl.SelectedIndex == 0)
+	        {
+	            selectedLayer = 2;
+	        }
+	        else
+	        {
+	            selectedLayer = 1;
+	        }
+	    }
+
         private void MainWindow_DragDrop( object sender, DragEventArgs e )
 		{
 
 		}
+	    #endregion
 
-		private void LoadRom()
+        private void LoadRom()
 		{
 			OpenFileDialog ofd = new OpenFileDialog
 			{
@@ -163,8 +162,8 @@ namespace MinishMaker.UI
 			}
 
 			mapGridBox.Image = new Bitmap(1,1); //reset some things on loading a rom
-			bottomTileView.Image = new Bitmap(1,1);
-            topTileView.Image = new Bitmap(1, 1);
+			bottomTileGridBox.Image = new Bitmap(1,1);
+            topTileGridBox.Image = new Bitmap(1, 1);
 			currentRoom = null;
 			currentArea = -1;
 			selectedTileData = -1;
@@ -215,15 +214,15 @@ namespace MinishMaker.UI
 
 				mapLayers = room.DrawRoom( areaIndex, true, true );
 
-				bottomTileSelectionBox.Visible = false;
+				//bottomTileSelectionBox.Visible = false;
 				selectedTileData = -1;
 
 				//0= bg1 (treetops and such)
 				//1= bg2 (flooring)
 				mapGridBox.Image = OverlayImage( mapLayers[1], mapLayers[0] );
 				tileMaps = room.DrawTilesetImages( 11, currentArea );
-				bottomTileView.Image = tileMaps[1];
-                topTileView.Image = tileMaps[0];
+				bottomTileGridBox.Image = tileMaps[1];
+                topTileGridBox.Image = tileMaps[0];
 			}
 		}
 
@@ -515,13 +514,13 @@ namespace MinishMaker.UI
                 // bad practice, entire map selection functions could do with refactor like the tile selection
 			    if (selectedLayer == 2)
 			    {
-			        bottomTileSelectionBox.Location = new Point(newX * 16, newY * 16);
-			        bottomTileSelectionBox.Visible = true;
+			        //bottomTileSelectionBox.Location = new Point(newX * 16, newY * 16);
+			        //bottomTileSelectionBox.Visible = true;
                 }
 			    else
 			    {
-			        topTileSelectionBox.Location = new Point(newX * 16, newY * 16);
-			        topTileSelectionBox.Visible = true;
+			        //topTileSelectionBox.Location = new Point(newX * 16, newY * 16);
+			        //topTileSelectionBox.Visible = true;
                 }
 				
 			}
@@ -587,69 +586,25 @@ namespace MinishMaker.UI
         }
         #endregion
 
-	    #region TilesetInteraction	  
-        private void bottomTileView_MouseDown( object sender, MouseEventArgs e )
-		{
-			CondensedTileSelection(e, TileWindowType.bottomTiles);
-		}
-
-	    private void topTileView_MouseDown(object sender, MouseEventArgs e)
-	    {
-            CondensedTileSelection(e, TileWindowType.topTiles);
-	    }
-
-	    private void bottomTileView_MouseMove(object sender, MouseEventArgs e)
-	    {
-            if (currentRoom == null)
-                return;
-
-	        var partialX = e.X % 16;
-	        var partialY = e.Y % 16;
-
-	        int tileX = (e.X - partialX) / 16;
-	        int tileY = (e.Y - partialY) / 16;
-
-	        var tsTileWidth = tileMaps[0].Width / 16;
-
-	        Point p = new Point(e.X - partialX, e.Y - partialY);
-
-            bottomTileHoverBox.Visible = true;
-	        bottomTileHoverBox.Location = p;
-	    }
-
-        private void CondensedTileSelection(MouseEventArgs me, TileWindowType window)
+        #region TilesetInteraction	  
+	    private void bottomTileGridBox_MouseDown(object sender, MouseEventArgs e)
 	    {
 	        if (currentRoom == null)
 	            return;
 
-	        bottomTileHoverBox.Visible = false;
-            
+	        bottomTileGridBox.SelectedIndex = bottomTileGridBox.HoverIndex;
+	        selectedLayer = 2;
+	        selectedTileData = bottomTileGridBox.SelectedIndex;
+	    }
 
-	        var partialX = me.X % 16;
-	        var partialY = me.Y % 16;
+	    private void topTileGridBox_MouseDown(object sender, MouseEventArgs e)
+	    {
+	        if (currentRoom == null)
+	            return;
 
-	        int tileX = (me.X - partialX) / 16;
-	        int tileY = (me.Y - partialY) / 16;
-
-	        var tsTileWidth = tileMaps[(int)window].Width / 16;
-
-	        Point p = new Point(me.X - partialX, me.Y - partialY);
-
-	        switch (window)
-	        {
-	            case TileWindowType.topTiles:
-	                topTileSelectionBox.Visible = true;
-	                topTileSelectionBox.Location = p;
-	                selectedLayer = 1;
-	                selectedTileData = tileX + tileY * tsTileWidth;
-	                break;
-	            case TileWindowType.bottomTiles:
-	                bottomTileSelectionBox.Visible = true;
-	                bottomTileSelectionBox.Location = p;
-	                selectedLayer = 2;
-	                selectedTileData = tileX + tileY * tsTileWidth;
-	                break;
-	        }
+	        topTileGridBox.SelectedIndex = topTileGridBox.HoverIndex;
+	        selectedLayer = 1;
+	        selectedTileData = topTileGridBox.SelectedIndex;
 	    }
         #endregion
 
@@ -681,18 +636,17 @@ namespace MinishMaker.UI
             if (e.Button == MouseButtons.Right)
             {
                 selectedTileData = currentRoom.GetTileData(selectedLayer, mapGridBox.HoverIndex * 2);//*2 as each tile is 2 bytes
+                mapGridBox.SelectedIndex = mapGridBox.HoverIndex;
                 var newX = selectedTileData % tsTileWidth;
                 var newY = (selectedTileData - newX) / tsTileWidth;
                 // bad practice, entire map selection functions could do with refactor like the tile selection
                 if (selectedLayer == 2)
                 {
-                    bottomTileSelectionBox.Location = new Point(newX * 16, newY * 16);
-                    bottomTileSelectionBox.Visible = true;
+                    bottomTileGridBox.SelectedIndex = selectedTileData;
                 }
                 else
                 {
-                    topTileSelectionBox.Location = new Point(newX * 16, newY * 16);
-                    topTileSelectionBox.Visible = true;
+                    topTileGridBox.SelectedIndex = selectedTileData;
                 }
 
             }
