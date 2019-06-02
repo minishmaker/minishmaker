@@ -77,7 +77,7 @@ namespace MinishMaker.Core
                     }
                     else if (overwrite)
                     {
-                        tileImg.SetPixel(posX, posY, Color.White);
+                        tileImg.SetPixel(posX, posY, Color.Transparent);
                     }
                     if (color2.A > 0)//if see through dont draw white
                     {
@@ -85,7 +85,7 @@ namespace MinishMaker.Core
                     }
                     else if (overwrite)
                     {
-                        tileImg.SetPixel(posX + 1, posY, Color.White);
+                        tileImg.SetPixel(posX + 1, posY, Color.Transparent);
                     }
                     dataPos++;
                 }

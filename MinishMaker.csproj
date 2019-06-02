@@ -66,6 +66,12 @@
     <Compile Include="UI\ChestEditorWindow.Designer.cs">
       <DependentUpon>ChestEditorWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\GridBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\GridBox.Designer.cs">
+      <DependentUpon>GridBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="Utilities\DataHelper.cs" />
     <Compile Include="Core\MapManager.cs" />
     <Compile Include="Core\MetaTileSet.cs" />
@@ -93,6 +99,9 @@
     <Compile Include="Utilities\Reader.cs" />
     <Compile Include="Utilities\StringUtil.cs" />
     <Compile Include="Utilities\Writer.cs" />
+    <EmbeddedResource Include="UI\GridBox.resx">
+      <DependentUpon>GridBox.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
