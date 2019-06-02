@@ -48,6 +48,40 @@ namespace MinishMaker.Core
             RegenerateMapList();
         }
 
+        public Room FindRoom(int areaIndex, int roomIndex)
+        {
+            int foundIndex = 0;
+
+            for (int i = 0; i < MapAreas.Count; i++)
+            {
+                if (MapAreas[i].Index == areaIndex)
+                {
+                    foundIndex = i;
+                    break;
+                }
+                if (i == MapAreas.Count - 1)
+                {
+                    throw new Exception("Could not find any area with index: " + areaIndex.Hex());
+                }
+            }
+
+            var area = MapAreas[foundIndex];
+            for (int j = 0; j < area.Rooms.Count; j++)
+            {
+                if (area.Rooms[j].Index == roomIndex)
+                {
+                    foundIndex = j;
+                    break;
+                }
+                if (j == area.Rooms.Count - 1)
+                {
+                    throw new Exception("Could not find any room with index: " + roomIndex.Hex() + " in area: " + areaIndex.Hex());
+                }
+            }
+
+            return area.Rooms[foundIndex];
+        }
+
         private void RegenerateMapList()
         {
             List<Area> areas = new List<Area>();

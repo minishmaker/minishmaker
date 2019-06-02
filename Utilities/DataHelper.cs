@@ -16,15 +16,15 @@ namespace MinishMaker.Core
 		{
 			if( addrData.compressed )
 			{
-				return Lz77Decompress( addrData.src );
+				return GetCompressed( addrData.src );
 			}
 			else
 			{
-				return DMA( addrData.src, addrData.size );
+				return GetUncompressed( addrData.src, addrData.size );
 			}
 		}
 
-		private static byte[] Lz77Decompress( int addr )
+		private static byte[] GetCompressed( int addr )
 		{
 			var r = ROM.Instance.reader;
 			var sizeBytes = r.ReadBytes( 3, addr);
@@ -35,11 +35,11 @@ namespace MinishMaker.Core
 			r.SetPosition( addr ); //pos was changed from getting size
 
 			using( MemoryStream ms = new MemoryStream( data ) )
-				Lz77Decompress( ms );
+				Lz77Decompress( ROM.Instance.reader, ms );
 			return data;
 		}
 
-		private static byte[] DMA( int addr, int size )
+		private static byte[] GetUncompressed( int addr, int size )
 		{
 			var r = ROM.Instance.reader;
 			return r.ReadBytes( size << 2, 0 );
@@ -55,7 +55,7 @@ namespace MinishMaker.Core
 		/// Doesn't check input length (for ROM hacking projects)
 		/// </summary>
 		/// <param name="outstream">The output stream, where the decompressed data is written to.</param>
-		public static long Lz77Decompress( Stream outstream)
+		public static long Lz77Decompress(Reader r, Stream outstream)
 		{
 			#region format definition from GBATEK/NDSTEK
 			/*  Data header (32bit)
@@ -73,7 +73,6 @@ namespace MinishMaker.Core
 				  Bit 8-15  Disp LSBs
 			 */
 			#endregion
-			Reader r = ROM.Instance.reader;
 
 
 			var magicByte = 0x10;

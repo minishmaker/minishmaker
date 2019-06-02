@@ -32,14 +32,18 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveRoomChangesCtrlSToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportROMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.windowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.chestEditorStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bottomStatusStrip = new System.Windows.Forms.StatusStrip();
             this.statusText = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.openToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.roomPanel = new System.Windows.Forms.Panel();
             this.roomTreeView = new System.Windows.Forms.TreeView();
             this.tilePanel = new System.Windows.Forms.Panel();
@@ -48,11 +52,8 @@
             this.mapPanel = new System.Windows.Forms.Panel();
             this.mapView = new System.Windows.Forms.PictureBox();
             this.mapSelectionBox = new System.Windows.Forms.PictureBox();
-			this.largeSelectionBox = new System.Windows.Forms.PictureBox();
-			this.windowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
-			this.chestEditorStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.menuStrip1.SuspendLayout();
+            this.largeSelectionBox = new System.Windows.Forms.PictureBox();
+            this.menuStrip1.SuspendLayout();
             this.bottomStatusStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
             this.roomPanel.SuspendLayout();
@@ -83,8 +84,9 @@
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openToolStripMenuItem,
-            this.exitToolStripMenuItem,
-            this.saveRoomChangesCtrlSToolStripMenuItem});
+            this.saveRoomChangesCtrlSToolStripMenuItem,
+            this.exportROMToolStripMenuItem,
+            this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
@@ -93,25 +95,32 @@
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
             this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.OpenButtonClick);
-            // 
-            // exitToolStripMenuItem
-            // 
-            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
-            this.exitToolStripMenuItem.Text = "Exit";
-            this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitButtonClick);
             // 
             // saveRoomChangesCtrlSToolStripMenuItem
             // 
             this.saveRoomChangesCtrlSToolStripMenuItem.Name = "saveRoomChangesCtrlSToolStripMenuItem";
             this.saveRoomChangesCtrlSToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.saveRoomChangesCtrlSToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
-            this.saveRoomChangesCtrlSToolStripMenuItem.Text = "Save All Changes ";
+            this.saveRoomChangesCtrlSToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveRoomChangesCtrlSToolStripMenuItem.Text = "Save Project";
             this.saveRoomChangesCtrlSToolStripMenuItem.Click += new System.EventHandler(this.saveAllChangesCtrlSToolStripMenuItem_Click);
+            // 
+            // exportROMToolStripMenuItem
+            // 
+            this.exportROMToolStripMenuItem.Name = "exportROMToolStripMenuItem";
+            this.exportROMToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exportROMToolStripMenuItem.Text = "Export ROM";
+            this.exportROMToolStripMenuItem.Click += new System.EventHandler(this.ExportROMToolStripMenuItem_Click);
+            // 
+            // exitToolStripMenuItem
+            // 
+            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+            this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exitToolStripMenuItem.Text = "Exit";
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitButtonClick);
             // 
             // helpToolStripMenuItem
             // 
@@ -127,6 +136,22 @@
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.AboutButtonClick);
+            // 
+            // windowToolStripMenuItem
+            // 
+            this.windowToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.chestEditorStripMenuItem});
+            this.windowToolStripMenuItem.Name = "windowToolStripMenuItem";
+            this.windowToolStripMenuItem.Size = new System.Drawing.Size(63, 20);
+            this.windowToolStripMenuItem.Text = "Window";
+            // 
+            // chestEditorStripMenuItem
+            // 
+            this.chestEditorStripMenuItem.Name = "chestEditorStripMenuItem";
+            this.chestEditorStripMenuItem.ShowShortcutKeys = false;
+            this.chestEditorStripMenuItem.Size = new System.Drawing.Size(131, 22);
+            this.chestEditorStripMenuItem.Text = "Chest Editor";
+            this.chestEditorStripMenuItem.Click += new System.EventHandler(this.chestEditorStripMenuItem_Click);
             // 
             // bottomStatusStrip
             // 
@@ -166,6 +191,17 @@
             this.openToolStripButton.Text = "toolStripButton1";
             this.openToolStripButton.ToolTipText = "open a ROM.";
             this.openToolStripButton.Click += new System.EventHandler(this.openToolStripButton_Click);
+            // 
+            // toolStripButton1
+            // 
+            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
+            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton1.Name = "toolStripButton1";
+            this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton1.Text = "toolStripButton1";
+            this.toolStripButton1.ToolTipText = "Save all changes.";
+            this.toolStripButton1.Click += new System.EventHandler(this.saveAllChangesCtrlSToolStripMenuItem_Click);
             // 
             // roomPanel
             // 
@@ -208,7 +244,7 @@
             // 
             // tileSelectionBox
             // 
-			this.tileSelectionBox.BackColor = System.Drawing.Color.Transparent;
+            this.tileSelectionBox.BackColor = System.Drawing.Color.Transparent;
             this.tileSelectionBox.Location = new System.Drawing.Point(0, 0);
             this.tileSelectionBox.Name = "tileSelectionBox";
             this.tileSelectionBox.Size = new System.Drawing.Size(16, 16);
@@ -237,11 +273,11 @@
             this.mapView.TabIndex = 9;
             this.mapView.TabStop = false;
             this.mapView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.mapView_MouseDown);
-			this.mapView.MouseMove += new System.Windows.Forms.MouseEventHandler(this.mapView_MouseMove);
+            this.mapView.MouseMove += new System.Windows.Forms.MouseEventHandler(this.mapView_MouseMove);
             // 
             // mapSelectionBox
             // 
-			this.mapSelectionBox.BackColor = System.Drawing.Color.Transparent;
+            this.mapSelectionBox.BackColor = System.Drawing.Color.Transparent;
             this.mapSelectionBox.Location = new System.Drawing.Point(0, 0);
             this.mapSelectionBox.Name = "mapSelectionBox";
             this.mapSelectionBox.Size = new System.Drawing.Size(16, 16);
@@ -249,47 +285,20 @@
             this.mapSelectionBox.TabIndex = 10;
             this.mapSelectionBox.TabStop = false;
             this.mapSelectionBox.Visible = false;
-			// 
-			// largeSelectionBox
-			// 
-			this.largeSelectionBox.Location = new System.Drawing.Point(0, 0);
-			this.largeSelectionBox.Name = "largeSelectionBox";
-			this.largeSelectionBox.Size = new System.Drawing.Size(16, 16);
-			this.largeSelectionBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-			this.largeSelectionBox.TabIndex = 10;
-			this.largeSelectionBox.TabStop = false;
-			this.largeSelectionBox.Visible = false;
-			// 
-            // toolStripButton1
             // 
-            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
-            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton1.Text = "toolStripButton1";
-            this.toolStripButton1.ToolTipText = "Save all changes.";
-            this.toolStripButton1.Click += new System.EventHandler(this.saveAllChangesCtrlSToolStripMenuItem_Click);
+            // largeSelectionBox
             // 
-			// windowToolStripMenuItem
-			// 
-			this.windowToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.chestEditorStripMenuItem});
-			this.windowToolStripMenuItem.Name = "windowToolStripMenuItem";
-			this.windowToolStripMenuItem.Size = new System.Drawing.Size(63, 20);
-			this.windowToolStripMenuItem.Text = "Window";
-			// 
-			// chestEditorStripMenuItem
-			// 
-			this.chestEditorStripMenuItem.Name = "chestEditorStripMenuItem";
-			this.chestEditorStripMenuItem.ShowShortcutKeys = false;
-			this.chestEditorStripMenuItem.Size = new System.Drawing.Size(152, 22);
-			this.chestEditorStripMenuItem.Text = "Chest Editor";
-			this.chestEditorStripMenuItem.Click += new System.EventHandler(this.chestEditorStripMenuItem_Click);
-			// 
-			// MainWindow
-			// 
-			this.AllowDrop = true;
+            this.largeSelectionBox.Location = new System.Drawing.Point(0, 0);
+            this.largeSelectionBox.Name = "largeSelectionBox";
+            this.largeSelectionBox.Size = new System.Drawing.Size(16, 16);
+            this.largeSelectionBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.largeSelectionBox.TabIndex = 10;
+            this.largeSelectionBox.TabStop = false;
+            this.largeSelectionBox.Visible = false;
+            // 
+            // MainWindow
+            // 
+            this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
@@ -354,6 +363,7 @@
         private System.Windows.Forms.ToolStripButton toolStripButton1;
 		private System.Windows.Forms.ToolStripMenuItem windowToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem chestEditorStripMenuItem;
-	}
+        private System.Windows.Forms.ToolStripMenuItem exportROMToolStripMenuItem;
+    }
 }
 

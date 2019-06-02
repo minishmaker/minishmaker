@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using static MinishMaker.Core.RoomMetaData;
-using static MinishMaker.UI.MainWindow;
 
 namespace MinishMaker.Core
 {
@@ -31,7 +30,7 @@ namespace MinishMaker.Core
 			Loaded = false;
         }
 
-		private void LoadRoom(int areaIndex)
+		public void LoadRoom(int areaIndex)
 		{
 			metadata = new RoomMetaData( areaIndex, this.Index );
 

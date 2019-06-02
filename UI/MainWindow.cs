@@ -14,8 +14,8 @@ namespace MinishMaker.UI
 	public partial class MainWindow : Form
 	{
 		private ROM ROM_;
+        private Project project_;
 		private MapManager mapManager_;
-        private SpaceManager spaceManager_;
 		private ChestEditorWindow chestEditor = null;
 
 		private Bitmap[] mapLayers;
@@ -27,7 +27,6 @@ namespace MinishMaker.UI
 		private int selectedTileData = -1;
 		private int selectedLayer = 2; //start with bg2
 		private List<PendingData> unsavedChanges = new List<PendingData>();
-		private List<RepointData> dataPositions = new List<RepointData>();
         private Point lastTilePos;
 
         struct RepointData
@@ -63,15 +62,7 @@ namespace MinishMaker.UI
 			}
 		}
 
-		public enum DataType
-		{
-			bg1Data,
-			bg2Data,
-			roomMetaData,
-			tileSet,
-			metaTileSet,
-            chestData
-		}
+		
 
 		public MainWindow()
 		{
@@ -84,7 +75,12 @@ namespace MinishMaker.UI
 			LoadRom();
 		}
 
-	    private void saveAllChangesCtrlSToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ExportROMToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ExportRom();
+        }
+
+        private void saveAllChangesCtrlSToolStripMenuItem_Click(object sender, EventArgs e)
 	    {
             SaveAllChanges();
 	    }
@@ -156,12 +152,11 @@ namespace MinishMaker.UI
 			selectedTileData = -1;
 			selectedLayer = 2; 
 			unsavedChanges = new List<PendingData>();
-			dataPositions = new List<RepointData>();
+            
+            LoadMaps();
+            project_ = new Project(ROM.Instance, mapManager_);
 
-			LoadMaps();
-            LoadRepoints();
-
-			statusText.Text = "Loaded: " + ROM.Instance.path;
+            statusText.Text = "Loaded: " + ROM.Instance.path;
 		}
 
 		private void LoadMaps()
@@ -187,6 +182,33 @@ namespace MinishMaker.UI
 
 			roomTreeView.EndUpdate();
 		}
+
+        private void ExportRom()
+        {
+            if (unsavedChanges.Count > 0)
+            {
+                DialogResult dialogResult = MessageBox.Show("You have unsaved changes. Save and export?", "Confirm Save", MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.Yes)
+                {
+                    SaveAllChanges();
+                }
+                else if (dialogResult == DialogResult.No)
+                {
+                    return;
+                }
+            }
+
+            bool success = Project.Instance.ExportToRom();
+
+            if (success)
+            {
+                MessageBox.Show("Successfully built ROM");
+            }
+            else
+            {
+                MessageBox.Show("Error building ROM");
+            }
+        }
 
 		private void roomTreeView_NodeMouseDoubleClick( object sender, TreeNodeMouseClickEventArgs e )
 		{
@@ -270,223 +292,25 @@ namespace MinishMaker.UI
 			return area.Rooms[foundIndex];
 		}
 
-	    private void SaveAllChanges()
-	    {
-	        if (unsavedChanges.Count == 0)
-	        {
-	            return;
-	        }
-
-	        unsavedChanges = unsavedChanges.Distinct().ToList();
-	        //foreach(PendingData pendingData in unsavedChanges)
-	        while (unsavedChanges.Count > 0)
-	        {
-	            var pendingData = unsavedChanges.ElementAt(0);
-	            var room = FindRoom(pendingData.areaIndex, pendingData.roomIndex);
-	            byte[] saveData = null;
-                long size = room.GetSaveData(ref saveData, pendingData.dataType);
-                long pointerAddress = room.GetPointerLoc(pendingData.dataType, pendingData.areaIndex);
-                int newSource = 0;
-
-                if (size > 0)
-                {
-                    // Maybe replace this with some LINQ or other shenannigans later? Not foreach for better removal of data
-                    foreach (RepointData data in dataPositions)
-                    {
-                        if (data.areaIndex == pendingData.areaIndex && data.roomIndex == pendingData.roomIndex && data.type == pendingData.dataType)
-                        {
-                            spaceManager_.FreeSpace(data.start, data.size);
-                            dataPositions.Remove(data);
-                            break;
-                        }
-                    }
-
-                    newSource = spaceManager_.ReserveSpace((int)size & 0x7FFFFFFF);
-                    if (newSource == 0)
-                    {
-                        MessageBox.Show("Unable to allocate enough space for data of type, \"" + pendingData.dataType.ToString() + "\", in area:" + pendingData.areaIndex + " room:" + pendingData.roomIndex + " with size:" + size);
-                        continue;
-                    }
-
-                    dataPositions.Add(new RepointData(pendingData.areaIndex, pendingData.roomIndex, pendingData.dataType, newSource, (int)size & 0x7FFFFFFF));
-                }
-
-                SaveToRom(newSource, pointerAddress, saveData, pendingData.dataType, size);
-
-                unsavedChanges.RemoveAt(0);//saved, remove from pending to avoid re-save
-	        }
-
-            SaveRepoints();
-
-            try
+        private void SaveAllChanges()
+        {
+            unsavedChanges = unsavedChanges.Distinct().ToList();
+            while (unsavedChanges.Count > 0)
             {
-                File.WriteAllBytes(ROM.Instance.path, ROM.Instance.romData);
-            }
-            catch (IOException)
-            {
-                MessageBox.Show("Unable to write to file. Your changes since your last save are probably still there?");
-                return;
+                PendingData data = unsavedChanges.ElementAt(0);
+                Project.Instance.AddChange(data.areaIndex, data.roomIndex, data.dataType);
+                unsavedChanges.RemoveAt(0);
             }
 
-            MessageBox.Show("All changes have been saved");
+            Project.Instance.SaveProject();
+
+            MessageBox.Show("Project Saved");
         }
 
 		public void AddPendingChange(DataType type)
 		{
 			unsavedChanges.Add(new PendingData(currentArea,currentRoom.Index,type));
 		}
-
-		private void SaveToRom( int newSource, long pointerAddress, byte[] data, DataType type, long size = 0 )
-		{
-			using( MemoryStream m = new MemoryStream( ROM.Instance.romData ) )
-			{
-				Writer w = new Writer( m );
-				w.SetPosition( newSource ); //actually write the data somewhere
-				w.WriteBytes( data );
-
-                switch (type)
-                {
-                    case DataType.bg1Data:
-                    case DataType.bg2Data:
-                        newSource = (newSource - ROM.Instance.headers.gfxSourceBase);
-                        w.SetPosition(pointerAddress);
-                        Console.WriteLine(StringUtil.AsStringGBAAddress((int)pointerAddress));
-                        w.WriteUInt32((uint)newSource | 0x80000000);//byte 1-4 is source, high bit was removed before
-
-                        if (size != 0) // this is a reshuffle, no need to adjust size
-                        {
-                            w.SetPosition(w.Position + 4);//byte 5-8 is dest, skip
-                            w.WriteUInt32((uint)size | 0x80000000);//byte 9-12 is size and compressed
-                        }
-                        break;
-                    default:
-                        if (size != 0)
-                        {
-                            w.SetPosition(pointerAddress);
-                            w.WriteAddr(newSource);
-                        }
-                        else
-                        {
-                            w.SetPosition(pointerAddress);
-                            w.WriteUInt32(0x00000000);
-                        }
-                        break;
-                }
-			}
-		}
-
-		private void SaveRepoints()
-		{
-            // 12 bytes per RepointData, 8 bytes per SpaceData, 8 bytes of pointer data
-            int newDataSize = (dataPositions.Count * 12) + (spaceManager_.spaceData.Count * 8) + 8;
-
-            // Find empty space for the repoints, but don't keep it reserved
-            int newDataPosition = spaceManager_.ReserveSpace(newDataSize);
-
-            if (newDataPosition == 0)
-            {
-                MessageBox.Show("Not enough space for repoint table! Future edits may overwrite data in some cases. Consider expanding the ROM");
-                return;
-            }
-
-            spaceManager_.FreeSpace(newDataPosition, newDataSize);
-
-            using (MemoryStream m = new MemoryStream(ROM.Instance.romData))
-            {
-                Writer w = new Writer(m);
-                // Start writing at the beginning of the free space
-                w.SetPosition(newDataPosition);
-                foreach (SpaceManager.SpaceData data in spaceManager_.spaceData)
-                {
-                    if (data.size > 0)
-                    {
-                        w.WriteAddr(data.start);
-                        w.WriteInt(data.size);
-                    }
-                }
-
-                // Indicates the change from SpaceData toRepoint Data
-                w.WriteUInt32(0);
-
-                foreach (RepointData entry in dataPositions)
-                {
-                    w.WriteAddr(entry.start);
-                    w.WriteInt(entry.size);
-                    w.WriteByte((byte)entry.areaIndex);
-                    w.WriteByte((byte)entry.roomIndex);
-                    w.WriteInt16((short)entry.type);
-                }
-
-                // Indicates that there is no more RepointData
-                w.WriteUInt32(0);
-                w.SetPosition(ROM.Instance.romData.Length - 4);
-                w.WriteAddr(newDataPosition);
-            }
-		}
-
-        private void LoadRepoints()
-        {
-            if (spaceManager_ == null)
-            {
-                spaceManager_ = new SpaceManager();
-            }
-
-            int repointAddr = ROM_.reader.ReadAddr(ROM_.romData.Length - 4);
-
-            if (repointAddr == 0xFFFFFF)
-            {
-                spaceManager_.LoadDefaultSpaces();
-                return;
-            }
-
-            ROM_.reader.SetPosition(repointAddr);
-
-            // Get all the spaces until the 0 is reached
-            int spaceStart = ROM_.reader.ReadAddr();
-
-            if (spaceStart == 0)
-            {
-                spaceManager_.LoadDefaultSpaces();
-            }
-
-            while (spaceStart != 0)
-            {
-                int size = ROM_.reader.ReadInt();
-
-                if (size == 0)
-                {
-                    MessageBox.Show("Invalid ROM spacing data - start not paired with size/size = 0");
-                    spaceStart = 0;
-                }
-
-                spaceManager_.FreeSpace(spaceStart, size);
-                spaceStart = ROM_.reader.ReadAddr();
-            }
-
-            // Get all the spaces until the 0 is reached
-            int entryStart = ROM_.reader.ReadAddr();
-
-
-            while (entryStart != 0)
-            {
-                int size = ROM_.reader.ReadInt();
-                byte areaIndex = ROM_.reader.ReadByte();
-                byte roomIndex = ROM_.reader.ReadByte();
-                short type = ROM_.reader.ReadInt16();
-
-                if (size == 0)
-                {
-                    MessageBox.Show("Invalid ROM repoint data");
-                    entryStart = 0;
-                    areaIndex = 0;
-                    roomIndex = 0;
-                    type = 0;
-                }
-
-                dataPositions.Add(new RepointData(areaIndex, roomIndex, (DataType)type, entryStart, size));
-                entryStart = ROM_.reader.ReadAddr();
-            }
-        }
 
 		private void discardRoomChangesToolStripMenuItem_Click( object sender, EventArgs e )
 		{
@@ -633,12 +457,12 @@ namespace MinishMaker.UI
             if (layer == 1)
             {
                 currentRoom.DrawTile(ref mapLayers[0], new Point(tileX * 16, tileY * 16), currentArea, selectedLayer, tileData);
-                unsavedChanges.Add(new PendingData(currentArea, currentRoom.Index, DataType.bg1Data));
+                AddPendingChange(DataType.bg1Data);
             }
             else if (layer == 2)
             {
                 currentRoom.DrawTile(ref mapLayers[1], new Point(tileX * 16, tileY * 16), currentArea, selectedLayer, tileData);
-                unsavedChanges.Add(new PendingData(currentArea, currentRoom.Index, DataType.bg2Data));
+                AddPendingChange(DataType.bg2Data);
             }
 
             currentRoom.SetTileData(selectedLayer, pos * 2, selectedTileData);

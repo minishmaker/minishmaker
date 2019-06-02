@@ -36,6 +36,13 @@ namespace MinishMaker.Core
 			}
         }
 
+        public TileSet(byte[] data)
+        {
+            byte[] tilesetData = new byte[0x10000];
+            Array.Copy(tilesetData, data, data.Length);
+            this.tilesetData = tilesetData;
+        }
+
         public void SetChunk(byte[] newdata, int dest)
         {
             newdata.CopyTo(this.tilesetData, dest);

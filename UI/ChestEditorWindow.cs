@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static MinishMaker.Core.RoomMetaData;
-using static MinishMaker.UI.MainWindow;
+using static MinishMaker.Core.Project;
 
 namespace MinishMaker.UI
 {
