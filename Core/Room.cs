@@ -15,7 +15,17 @@ namespace MinishMaker.Core
 
 		private RoomMetaData metadata;
 		private TileSet tset;
+		public TileSet tileSet
+		{
+			get { return tset;}
+		}
+
 		private PaletteSet pset;
+		public Color[][] palettes
+		{
+			get { return pset.Palettes;}
+		}
+
 		private MetaTileSet bg2MetaTiles;
 		private MetaTileSet bg1MetaTiles;
 		private byte[] bg2RoomData;

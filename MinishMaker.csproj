@@ -72,6 +72,12 @@
     <Compile Include="UI\GridBox.Designer.cs">
       <DependentUpon>GridBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\MetaTileEditorWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\MetaTileEditorWindow.Designer.cs">
+      <DependentUpon>MetaTileEditorWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="Utilities\DataHelper.cs" />
     <Compile Include="Core\MapManager.cs" />
     <Compile Include="Core\MetaTileSet.cs" />
@@ -121,6 +127,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\MetaTileEditorWindow.resx">
+      <DependentUpon>MetaTileEditorWindow.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

@@ -17,6 +17,7 @@ namespace MinishMaker.UI
         private Project project_;
 		private MapManager mapManager_;
 		private ChestEditorWindow chestEditor = null;
+		private MetaTileEditor metatileEditor = null;
 
 		private Bitmap[] mapLayers;
 		private Bitmap[] tileMaps;
@@ -272,6 +273,11 @@ namespace MinishMaker.UI
                     var chestData = currentRoom.GetChestData();
                     chestEditor.SetData(chestData);
                 }
+
+				if(metatileEditor != null)
+				{
+					metatileEditor.RedrawTiles(currentRoom);
+				}
             }
 		}
 
@@ -505,5 +511,27 @@ namespace MinishMaker.UI
 			chestEditor = null;
 			chestEditorStripMenuItem.Checked = false;
 		}
-    }
+
+		private void metatileEditorToolStripMenuItem_Click( object sender, EventArgs e )
+		{
+			if(chestEditorStripMenuItem.Checked)
+				return; // dont open a second one
+
+			metatileEditor = new MetaTileEditor();
+
+			if(currentRoom != null) {
+				metatileEditor.RedrawTiles(currentRoom);
+			}
+
+			metatileEditor.FormClosed +=new FormClosedEventHandler(onChestEditorClose);
+			metatileEditorToolStripMenuItem.Checked = true;
+			metatileEditor.Show();
+		}
+
+		void onMetaTileEditorClose(object sender, FormClosedEventArgs e)
+		{
+			metatileEditor = null;
+			metatileEditorToolStripMenuItem.Checked = false;
+		}
+	}
 }
