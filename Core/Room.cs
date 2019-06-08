@@ -424,5 +424,34 @@ namespace MinishMaker.Core
 		{
 			metadata.AddChestData(data);
 		}
+
+		public byte[] GetMetaTileData(int tileNum, int layer)
+		{
+			switch(layer)
+			{
+				case 1:
+					return bg1MetaTiles.GetTileInfo(tileNum);
+					break;
+				case 2:
+					return bg2MetaTiles.GetTileInfo(tileNum);
+					break;
+				default:			
+					return null;
+					break;
+			}
+		}
+
+		public void SetMetaTileData(byte[] data,int tileNum, int layer)
+		{
+			switch(layer)
+			{
+				case 1:
+					bg1MetaTiles.SetTileInfo(data, tileNum);
+					break;
+				case 2:
+					bg2MetaTiles.SetTileInfo(data, tileNum);
+					break;
+			}
+		}
 	}
 }

@@ -514,7 +514,7 @@ namespace MinishMaker.UI
 
 		private void metatileEditorToolStripMenuItem_Click( object sender, EventArgs e )
 		{
-			if(chestEditorStripMenuItem.Checked)
+			if(metatileEditorToolStripMenuItem.Checked)
 				return; // dont open a second one
 
 			metatileEditor = new MetaTileEditor();
@@ -523,7 +523,7 @@ namespace MinishMaker.UI
 				metatileEditor.RedrawTiles(currentRoom);
 			}
 
-			metatileEditor.FormClosed +=new FormClosedEventHandler(onChestEditorClose);
+			metatileEditor.FormClosed +=new FormClosedEventHandler(onMetaTileEditorClose);
 			metatileEditorToolStripMenuItem.Checked = true;
 			metatileEditor.Show();
 		}
