@@ -242,12 +242,18 @@ namespace MinishMaker.UI
 
 			int loc = tileX*2 + tileY*4;
 
-			byte lowByte = (byte)(selectedTileNum & 0xff);
-			byte highByte= (byte)(selectedTileNum >> 8);
-			
+			byte lowByte = (byte)(selectedTileNum & 0xff); //only first 8 bits
+			byte highByte= (byte)(selectedTileNum >> 8); //trim first 8 bits
+
+			if(hFlip)
+				highByte+=(1<<3);
+
+			if(vFlip)
+				highByte+=(1<<4);
+
 			currentTileInfo[loc]= lowByte;
 
-			var newByte = currentTileInfo[loc+1] & 0xfc;
+			var newByte = currentTileInfo[loc+1] & 0xf0;//only retain palette (last 4 bits)
 			newByte += highByte;
 			currentTileInfo[loc+1]=(byte)newByte;
 
