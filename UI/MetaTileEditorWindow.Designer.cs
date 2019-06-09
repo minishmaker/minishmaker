@@ -125,6 +125,7 @@
 			this.selectedMetaTileBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
 			this.selectedMetaTileBox.TabIndex = 1;
 			this.selectedMetaTileBox.TabStop = false;
+			this.selectedMetaTileBox.Click += new System.EventHandler(this.selectedMetaTileBox_Click);
 			// 
 			// selectedTilePanel
 			// 

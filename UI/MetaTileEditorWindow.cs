@@ -172,7 +172,7 @@ namespace MinishMaker.UI
 
 			if( currentLayer == 1 )
 			{
-				tnum += 0x400;
+				tnum += 0x200;
 			}
 
 			room.tileSet.DrawQuarterTile( ref b, new Point( 0, 0 ), tnum, room.palettes[pnum], this.hFlip, this.vFlip, true );
@@ -214,6 +214,45 @@ namespace MinishMaker.UI
 			metaTileSetBox.Image=image;
 		}
 
+		private void selectedMetaTileBox_Click( object sender, EventArgs e )
+		{
+			if(selectedMetaTileNum==-1||selectedTileNum==-1)
+				return;
+
+			var me = (MouseEventArgs)e;
+
+			int tileX = me.X/32;
+			int tileY = me.Y/32;
+
+			switch(tileX+(tileY*2))
+			{
+				case 0:
+					tId1.Text = selectedTileNum.Hex();
+					break;
+				case 1:
+					tId2.Text = selectedTileNum.Hex();
+					break;
+				case 2:
+					tId3.Text = selectedTileNum.Hex();
+					break;
+				case 3:
+					tId4.Text = selectedTileNum.Hex();
+					break;
+			}
+
+			int loc = tileX*2 + tileY*4;
+
+			byte lowByte = (byte)(selectedTileNum & 0xff);
+			byte highByte= (byte)(selectedTileNum >> 8);
+			
+			currentTileInfo[loc]= lowByte;
+
+			var newByte = currentTileInfo[loc+1] & 0xfc;
+			newByte += highByte;
+			currentTileInfo[loc+1]=(byte)newByte;
+
+			selectedMetaTileBox.Image= DrawMetaTile(currentTileInfo);
+		}
 
 		//utility functions start here
 		public void RedrawTiles( Room room )
@@ -235,7 +274,7 @@ namespace MinishMaker.UI
 				var ypos = (tnum - xpos) / 0x10; //tiles
 				ypos *= 8; //pixels
 				xpos *= 8; //pixels
-				tset.DrawQuarterTile( ref tileset[0], new Point( xpos, ypos ), tnum + 0x400, palettes[pnum], false, false, true );
+				tset.DrawQuarterTile( ref tileset[0], new Point( xpos, ypos ), tnum + 0x200, palettes[pnum], false, false, true );
 				tset.DrawQuarterTile( ref tileset[1], new Point( xpos, ypos ), tnum, palettes[pnum], false, false, true );
 			}
 		}
@@ -263,6 +302,18 @@ namespace MinishMaker.UI
 			return ret;
 		}
 
+		private Bitmap DrawMetaTile(byte[] tiledata)
+		{
+			var b = new Bitmap(64,64);
+			for(var i = 0; i< 4; i++)
+			{
+				var tile = DrawTile(new byte[]{ tiledata[i*2],tiledata[i*2+1]});
+
+				b=OverlayImage(b,tile,i*2);
+			}
+			return b;
+		}
+
 		private Bitmap DrawTile( byte[] tileData )
 		{
 			UInt16 data = 0;
@@ -280,7 +331,7 @@ namespace MinishMaker.UI
 
 			if( currentLayer == 1 )
 			{
-				tnum += 0x400; //im confused, werent we working with 0x200 per layer? how did it turn into not working unless 0x400?
+				tnum += 0x200;
 			}
 
 			room.tileSet.DrawQuarterTile( ref b, new Point( 0, 0 ), tnum, room.palettes[palnum], hflip, vflip, true );
@@ -316,7 +367,7 @@ namespace MinishMaker.UI
 			using( Graphics g = Graphics.FromImage( finalImage ) )
 			{
 				//set background color
-				g.Clear( Color.Black );
+				g.Clear( Color.Transparent );
 
 				g.DrawImage( baseImage, new Rectangle( 0, 0, baseImage.Width, baseImage.Height ) );
 				g.DrawImage( overlay, new Point( x * 32, y * 32 ) );
@@ -324,7 +375,5 @@ namespace MinishMaker.UI
 			//Draw the final image in the pictureBox
 			return finalImage;
 		}
-
-
 	}
 }
