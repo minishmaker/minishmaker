@@ -293,7 +293,7 @@ namespace MinishMaker.UI
 				g.DrawImage( baseImage, new Rectangle( 0, 0, baseImage.Width, baseImage.Height ) );
 				g.DrawImage( overlay, new Rectangle( 0, 0, baseImage.Width, baseImage.Height ) );
 			}
-			//Draw the final image in the pictureBox
+			//Draw the final image in the gridBox
 			return finalImage;
 		}
 

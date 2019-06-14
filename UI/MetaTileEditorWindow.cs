@@ -30,9 +30,9 @@ namespace MinishMaker.UI
 		}
 
 		//control functions start here
-		private void tileSetBox_Click( object sender, EventArgs e )
+		private void tileGridBox_Click( object sender, EventArgs e )
 		{
-			if( tileSetBox.Image == null )
+			if( tileSetGridBox.Image == null )
 				return;
 
 			MouseEventArgs me = (MouseEventArgs)e;
@@ -45,9 +45,9 @@ namespace MinishMaker.UI
 		}
 
 
-		private void metaTileSetBox_Click( object sender, EventArgs e )
+		private void metaTileGridBox_Click( object sender, EventArgs e )
 		{
-			if( metaTileSetBox.Image == null )
+			if( metaTileGridBox.Image == null )
 				return;
 
 			MouseEventArgs me = (MouseEventArgs)e;
@@ -96,7 +96,7 @@ namespace MinishMaker.UI
 				prevButton.Enabled = false;
 			}
 
-			tileSetBox.Image = tileset[currentLayer - 1];
+			tileSetGridBox.Image = tileset[currentLayer - 1];
 			PaletteNum.Text = pnum.Hex();
 		}
 
@@ -114,7 +114,7 @@ namespace MinishMaker.UI
 				nextButton.Enabled = false;
 			}
 
-			tileSetBox.Image = tileset[currentLayer - 1];
+			tileSetGridBox.Image = tileset[currentLayer - 1];
 			PaletteNum.Text = pnum.Hex();
 		}
 
@@ -145,8 +145,8 @@ namespace MinishMaker.UI
 			selectedMetaTileBox.Image=null;
 			selectedMetaTileNum=-1;
 
-			tileSetBox.Image = tileset[currentLayer - 1];
-			metaTileSetBox.Image = metaTiles[currentLayer - 1];
+			tileSetGridBox.Image = tileset[currentLayer - 1];
+			metaTileGridBox.Image = metaTiles[currentLayer - 1];
 		}
 
 		private void layer2Button_Click( object sender, EventArgs e )
@@ -160,8 +160,8 @@ namespace MinishMaker.UI
 			selectedMetaTileBox.Image=null;
 			selectedMetaTileNum=-1;
 			
-			tileSetBox.Image = tileset[currentLayer - 1];
-			metaTileSetBox.Image = metaTiles[currentLayer - 1];
+			tileSetGridBox.Image = tileset[currentLayer - 1];
+			metaTileGridBox.Image = metaTiles[currentLayer - 1];
 		}
 
 		private Bitmap DrawTile()
@@ -211,7 +211,7 @@ namespace MinishMaker.UI
 			int x = selectedMetaTileNum%16;
 			int y = selectedMetaTileNum/16;
 			MetaTileSet.DrawTileData(ref image,currentTileInfo,new Point(x*16,y*16),room.tileSet,room.palettes,currentLayer==1,true);
-			metaTileSetBox.Image=image;
+			metaTileGridBox.Image=image;
 		}
 
 		private void selectedMetaTileBox_Click( object sender, EventArgs e )
@@ -265,8 +265,8 @@ namespace MinishMaker.UI
 		{
 			metaTiles = room.DrawTilesetImages( 16, 0 ); //areaindex currently unused because what even is swaptiles
 			DrawTileset( room.tileSet, room.palettes );
-			metaTileSetBox.Image = metaTiles[currentLayer - 1];
-			tileSetBox.Image = tileset[currentLayer - 1];
+			metaTileGridBox.Image = metaTiles[currentLayer - 1];
+			tileSetGridBox.Image = tileset[currentLayer - 1];
 		}
 
 		public void DrawTileset( TileSet tset, Color[][] palettes )
