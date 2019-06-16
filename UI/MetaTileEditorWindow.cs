@@ -30,17 +30,15 @@ namespace MinishMaker.UI
 		}
 
 		//control functions start here
-		private void tileGridBox_Click( object sender, EventArgs e )
+		private void tileSetGridBox_Click( object sender, EventArgs e )
 		{
 			if( tileSetGridBox.Image == null )
 				return;
 
 			MouseEventArgs me = (MouseEventArgs)e;
 
-			int xpos = me.X / 0x8;
-			int ypos = me.Y / 0x8;
-			selectedTileNum = xpos + (ypos * 0x10);
-			sTId.Text = selectedTileNum.Hex();
+		    selectedTileNum = tileSetGridBox.SelectedIndex;
+            sTId.Text = selectedTileNum.Hex();
 			selectedTileBox.Image = DrawTile();
 		}
 

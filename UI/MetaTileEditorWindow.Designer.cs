@@ -28,8 +28,11 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MetaTileEditor));
             this.metaTileSetPanel = new System.Windows.Forms.Panel();
+            this.metaTileGridBox = new MinishMaker.UI.GridBox();
             this.tileSetPanel = new System.Windows.Forms.Panel();
+            this.tileSetGridBox = new MinishMaker.UI.GridBox();
             this.selectedMetaTilePanel = new System.Windows.Forms.Panel();
             this.selectedMetaTileBox = new System.Windows.Forms.PictureBox();
             this.selectedTilePanel = new System.Windows.Forms.Panel();
@@ -58,16 +61,14 @@
             this.tId4 = new System.Windows.Forms.TextBox();
             this.sTId = new System.Windows.Forms.TextBox();
             this.mTId = new System.Windows.Forms.TextBox();
-            this.tileSetGridBox = new MinishMaker.UI.GridBox();
-            this.metaTileGridBox = new MinishMaker.UI.GridBox();
             this.metaTileSetPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.metaTileGridBox)).BeginInit();
             this.tileSetPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tileSetGridBox)).BeginInit();
             this.selectedMetaTilePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.selectedMetaTileBox)).BeginInit();
             this.selectedTilePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.selectedTileBox)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tileSetGridBox)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.metaTileGridBox)).BeginInit();
             this.SuspendLayout();
             // 
             // metaTileSetPanel
@@ -79,6 +80,26 @@
             this.metaTileSetPanel.Size = new System.Drawing.Size(275, 240);
             this.metaTileSetPanel.TabIndex = 1;
             // 
+            // metaTileGridBox
+            // 
+            this.metaTileGridBox.AllowMultiSelection = false;
+            this.metaTileGridBox.BoxSize = new System.Drawing.Size(16, 16);
+            this.metaTileGridBox.CanvasSize = new System.Drawing.Size(128, 128);
+            this.metaTileGridBox.HoverBox = true;
+            this.metaTileGridBox.HoverColor = System.Drawing.Color.White;
+            this.metaTileGridBox.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+            this.metaTileGridBox.Location = new System.Drawing.Point(0, 0);
+            this.metaTileGridBox.Name = "metaTileGridBox";
+            this.metaTileGridBox.Selectable = true;
+            this.metaTileGridBox.SelectedIndex = 0;
+            this.metaTileGridBox.SelectionColor = System.Drawing.Color.Red;
+            this.metaTileGridBox.SelectionRectangle = new System.Drawing.Rectangle(0, 0, 1, 1);
+            this.metaTileGridBox.Size = new System.Drawing.Size(128, 128);
+            this.metaTileGridBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.metaTileGridBox.TabIndex = 1;
+            this.metaTileGridBox.TabStop = false;
+            this.metaTileGridBox.Click += new System.EventHandler(this.metaTileGridBox_Click);
+            // 
             // tileSetPanel
             // 
             this.tileSetPanel.AutoScroll = true;
@@ -87,6 +108,26 @@
             this.tileSetPanel.Name = "tileSetPanel";
             this.tileSetPanel.Size = new System.Drawing.Size(147, 240);
             this.tileSetPanel.TabIndex = 2;
+            // 
+            // tileSetGridBox
+            // 
+            this.tileSetGridBox.AllowMultiSelection = false;
+            this.tileSetGridBox.BoxSize = new System.Drawing.Size(8, 8);
+            this.tileSetGridBox.CanvasSize = new System.Drawing.Size(128, 128);
+            this.tileSetGridBox.HoverBox = true;
+            this.tileSetGridBox.HoverColor = System.Drawing.Color.White;
+            this.tileSetGridBox.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+            this.tileSetGridBox.Location = new System.Drawing.Point(0, 0);
+            this.tileSetGridBox.Name = "tileSetGridBox";
+            this.tileSetGridBox.Selectable = true;
+            this.tileSetGridBox.SelectedIndex = 0;
+            this.tileSetGridBox.SelectionColor = System.Drawing.Color.Red;
+            this.tileSetGridBox.SelectionRectangle = new System.Drawing.Rectangle(0, 0, 1, 1);
+            this.tileSetGridBox.Size = new System.Drawing.Size(128, 128);
+            this.tileSetGridBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.tileSetGridBox.TabIndex = 1;
+            this.tileSetGridBox.TabStop = false;
+            this.tileSetGridBox.Click += new System.EventHandler(this.tileSetGridBox_Click);
             // 
             // selectedMetaTilePanel
             // 
@@ -356,46 +397,6 @@
             this.mTId.TabIndex = 26;
             this.mTId.Text = "FFF";
             // 
-            // tileSetGridBox
-            // 
-            this.tileSetGridBox.AllowMultiSelection = false;
-            this.tileSetGridBox.BoxSize = new System.Drawing.Size(8, 8);
-            this.tileSetGridBox.CanvasSize = new System.Drawing.Size(128, 128);
-            this.tileSetGridBox.HoverBox = true;
-            this.tileSetGridBox.HoverColor = System.Drawing.Color.White;
-            this.tileSetGridBox.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-            this.tileSetGridBox.Location = new System.Drawing.Point(0, 0);
-            this.tileSetGridBox.Name = "tileSetGridBox";
-            this.tileSetGridBox.Selectable = true;
-            this.tileSetGridBox.SelectedIndex = 0;
-            this.tileSetGridBox.SelectionColor = System.Drawing.Color.Red;
-            this.tileSetGridBox.SelectionRectangle = new System.Drawing.Rectangle(0, 0, 1, 1);
-            this.tileSetGridBox.Size = new System.Drawing.Size(128, 128);
-            this.tileSetGridBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.tileSetGridBox.TabIndex = 1;
-            this.tileSetGridBox.TabStop = false;
-            this.tileSetGridBox.Click += new System.EventHandler(this.tileGridBox_Click);
-            // 
-            // metaTileGridBox
-            // 
-            this.metaTileGridBox.AllowMultiSelection = false;
-            this.metaTileGridBox.BoxSize = new System.Drawing.Size(16, 16);
-            this.metaTileGridBox.CanvasSize = new System.Drawing.Size(128, 128);
-            this.metaTileGridBox.HoverBox = true;
-            this.metaTileGridBox.HoverColor = System.Drawing.Color.White;
-            this.metaTileGridBox.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-            this.metaTileGridBox.Location = new System.Drawing.Point(0, 0);
-            this.metaTileGridBox.Name = "metaTileGridBox";
-            this.metaTileGridBox.Selectable = true;
-            this.metaTileGridBox.SelectedIndex = 0;
-            this.metaTileGridBox.SelectionColor = System.Drawing.Color.Red;
-            this.metaTileGridBox.SelectionRectangle = new System.Drawing.Rectangle(0, 0, 1, 1);
-            this.metaTileGridBox.Size = new System.Drawing.Size(128, 128);
-            this.metaTileGridBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.metaTileGridBox.TabIndex = 1;
-            this.metaTileGridBox.TabStop = false;
-            this.metaTileGridBox.Click += new System.EventHandler(this.metaTileGridBox_Click);
-            // 
             // MetaTileEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -429,20 +430,21 @@
             this.Controls.Add(this.selectedMetaTilePanel);
             this.Controls.Add(this.tileSetPanel);
             this.Controls.Add(this.metaTileSetPanel);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MetaTileEditor";
             this.Text = "Metatile Editor";
             this.metaTileSetPanel.ResumeLayout(false);
             this.metaTileSetPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.metaTileGridBox)).EndInit();
             this.tileSetPanel.ResumeLayout(false);
             this.tileSetPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tileSetGridBox)).EndInit();
             this.selectedMetaTilePanel.ResumeLayout(false);
             this.selectedMetaTilePanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.selectedMetaTileBox)).EndInit();
             this.selectedTilePanel.ResumeLayout(false);
             this.selectedTilePanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.selectedTileBox)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tileSetGridBox)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.metaTileGridBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
