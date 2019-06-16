@@ -113,6 +113,16 @@ namespace MinishMaker.UI
 	        UpdateViewLayer(ViewLayer.Both);
 	    }
 
+	    private void chestEditorStripMenuItem_Click(object sender, EventArgs e)
+	    {
+	        OpenChestEditor();
+	    }
+
+        private void metatileEditorToolStripMenuItem_Click(object sender, EventArgs e)
+	    {
+	        OpenMetatileEditor();
+	    }
+
         private void AboutButtonClick( object sender, EventArgs e )
 		{
 			Form aboutWindow = new AboutWindow();
@@ -131,13 +141,22 @@ namespace MinishMaker.UI
             SaveAllChanges();
 	    }
 
+	    private void chestToolStripButton_Click(object sender, EventArgs e)
+	    {
+	        OpenChestEditor();
+	    }
+
+	    private void metatileToolStripButton_Click(object sender, EventArgs e)
+	    {
+	        OpenMetatileEditor();
+	    }
 
         #endregion
 
         #region OtherInteractions
 
         // Other interactions
-	    private void tileTabControl_SelectedIndexChanged(object sender, EventArgs e)
+        private void tileTabControl_SelectedIndexChanged(object sender, EventArgs e)
 	    {
 	        selectedLayer = tileTabControl.SelectedIndex + 1;
 
@@ -245,7 +264,53 @@ namespace MinishMaker.UI
             }
         }
 
-		private void roomTreeView_NodeMouseDoubleClick( object sender, TreeNodeMouseClickEventArgs e )
+	    private void OpenChestEditor()
+	    {
+	        if (chestEditorStripMenuItem.Checked)
+	            return; // dont open a second one
+
+	        chestEditor = new ChestEditorWindow();
+
+	        if (currentRoom != null)
+	        {
+	            var chestData = currentRoom.GetChestData();
+	            chestEditor.SetData(chestData);
+	        }
+	        chestEditor.FormClosed += new FormClosedEventHandler(OnChestEditorClose);
+	        chestEditorStripMenuItem.Checked = true;
+	        chestEditor.Show();
+	    }
+
+	    private void OnChestEditorClose(object sender, FormClosedEventArgs e)
+	    {
+	        chestEditor = null;
+	        chestEditorStripMenuItem.Checked = false;
+	    }
+
+	    private void OpenMetatileEditor()
+	    {
+	        if (metatileEditorToolStripMenuItem.Checked)
+	            return; // dont open a second one
+
+	        metatileEditor = new MetaTileEditor();
+
+	        if (currentRoom != null)
+	        {
+	            metatileEditor.RedrawTiles(currentRoom);
+	        }
+
+	        metatileEditor.FormClosed += new FormClosedEventHandler(OnMetaTileEditorClose);
+	        metatileEditorToolStripMenuItem.Checked = true;
+	        metatileEditor.Show();
+	    }
+
+	    private void OnMetaTileEditorClose(object sender, FormClosedEventArgs e)
+	    {
+	        metatileEditor = null;
+	        metatileEditorToolStripMenuItem.Checked = false;
+	    }
+
+        private void roomTreeView_NodeMouseDoubleClick( object sender, TreeNodeMouseClickEventArgs e )
 		{
 			if( e.Node.Parent != null )
 			{
@@ -489,49 +554,5 @@ namespace MinishMaker.UI
             // TODO switch on layer view
             UpdateViewLayer(viewLayer);
         }
-
-		private void chestEditorStripMenuItem_Click( object sender, EventArgs e )
-		{
-			if(chestEditorStripMenuItem.Checked)
-				return; // dont open a second one
-
-			chestEditor = new ChestEditorWindow();
-
-			if(currentRoom != null) {
-				var chestData = currentRoom.GetChestData();
-				chestEditor.SetData(chestData);
-			}
-			chestEditor.FormClosed +=new FormClosedEventHandler(onChestEditorClose);
-			chestEditorStripMenuItem.Checked = true;
-			chestEditor.Show();
-		}
-
-		void onChestEditorClose(object sender, FormClosedEventArgs e)
-		{
-			chestEditor = null;
-			chestEditorStripMenuItem.Checked = false;
-		}
-
-		private void metatileEditorToolStripMenuItem_Click( object sender, EventArgs e )
-		{
-			if(metatileEditorToolStripMenuItem.Checked)
-				return; // dont open a second one
-
-			metatileEditor = new MetaTileEditor();
-
-			if(currentRoom != null) {
-				metatileEditor.RedrawTiles(currentRoom);
-			}
-
-			metatileEditor.FormClosed +=new FormClosedEventHandler(onMetaTileEditorClose);
-			metatileEditorToolStripMenuItem.Checked = true;
-			metatileEditor.Show();
-		}
-
-		void onMetaTileEditorClose(object sender, FormClosedEventArgs e)
-		{
-			metatileEditor = null;
-			metatileEditorToolStripMenuItem.Checked = false;
-		}
-	}
+    }
 }
