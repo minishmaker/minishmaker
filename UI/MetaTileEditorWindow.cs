@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace MinishMaker.UI
-{
+{ 
 	public partial class MetaTileEditor : Form
 	{
 		Bitmap[] tileset = new Bitmap[2];
@@ -19,8 +19,6 @@ namespace MinishMaker.UI
 		byte[] currentTileInfo = new byte[8];
 		int pnum = 0;
 		int currentLayer = 1;
-		int selectedTileNum = -1;
-		int selectedMetaTileNum = -1;
 		bool vFlip = false;
 		bool hFlip = false;
 
@@ -34,11 +32,10 @@ namespace MinishMaker.UI
 		{
 			if( tileSetGridBox.Image == null )
 				return;
+            //TODO check that the selected index actually gets right number
 
-			MouseEventArgs me = (MouseEventArgs)e;
 
-		    selectedTileNum = tileSetGridBox.SelectedIndex;
-            sTId.Text = selectedTileNum.Hex();
+            sTId.Text = tileSetGridBox.SelectedIndex.Hex();
 			selectedTileBox.Image = DrawTile();
 		}
 
@@ -53,17 +50,17 @@ namespace MinishMaker.UI
 			int xpos = me.X / 0x10;
 			int ypos = me.Y / 0x10;
 
+
 			var enlarged = Magnify( metaTiles[currentLayer - 1], new Rectangle( xpos * 16, ypos * 16, 16, 16 ), 4 );
 
-			selectedMetaTileNum = xpos + (ypos * 0x10);
 			var room = ((MainWindow)Application.OpenForms[0]).currentRoom;
 
-			currentTileInfo = room.GetMetaTileData( selectedMetaTileNum, currentLayer );
+			currentTileInfo = room.GetMetaTileData(metaTileGridBox.SelectedIndex, currentLayer );
 
 			if(currentTileInfo ==null)
 				return;
 
-			mTId.Text = selectedMetaTileNum.Hex();
+			mTId.Text = metaTileGridBox.SelectedIndex.Hex();
 
 			tId1.Text		= (currentTileInfo[0]+(currentTileInfo[1]<<8) & 0x3ff).Hex();	//first 10 bits of 1st byte
 			tLPalette.Text	= (currentTileInfo[1] >> 4).Hex();		//last 4 bits of 2nd byte
@@ -77,7 +74,7 @@ namespace MinishMaker.UI
 			tId4.Text		= (currentTileInfo[6]+(currentTileInfo[7]<<8) & 0x3ff).Hex();	//first 10 bits of 7st byte
 			bRPalette.Text	= (currentTileInfo[7] >> 4).Hex();		//last 4 bits of 8th byte
 
-			selectedMetaTileBox.Image = enlarged;
+			selectedMetaGridBox.Image = enlarged;
 		}
 
 		private void prevButton_Click( object sender, EventArgs e )
@@ -118,7 +115,7 @@ namespace MinishMaker.UI
 
 		private void hFlip_CheckedChanged( object sender, EventArgs e )
 		{
-			if( selectedTileNum == -1 )
+			if( tileSetGridBox.SelectedIndex == -1 )
 				return;
 			hFlip = hFlipBox.Checked;
 			selectedTileBox.Image = DrawTile();
@@ -127,7 +124,7 @@ namespace MinishMaker.UI
 		private void vFlipBox_CheckedChanged( object sender, EventArgs e )
 		{
 			vFlip = vFlipBox.Checked;
-			if( selectedTileNum == -1 )
+			if( tileSetGridBox.SelectedIndex == -1 )
 				return;
 			selectedTileBox.Image = DrawTile();
 		}
@@ -139,9 +136,9 @@ namespace MinishMaker.UI
 			layer2Button.Enabled = true;
 
 			selectedTileBox.Image=null;
-			selectedTileNum=-1;
-			selectedMetaTileBox.Image=null;
-			selectedMetaTileNum=-1;
+		    tileSetGridBox.SelectedIndex = -1;
+		    selectedMetaGridBox.Image=null;
+		    metaTileGridBox.SelectedIndex = -1;
 
 			tileSetGridBox.Image = tileset[currentLayer - 1];
 			metaTileGridBox.Image = metaTiles[currentLayer - 1];
@@ -154,9 +151,9 @@ namespace MinishMaker.UI
 			layer1Button.Enabled = true;
 
 			selectedTileBox.Image=null;
-			selectedTileNum=-1;
-			selectedMetaTileBox.Image=null;
-			selectedMetaTileNum=-1;
+		    tileSetGridBox.SelectedIndex = -1;
+		    selectedMetaGridBox.Image=null;
+		    metaTileGridBox.SelectedIndex = -1;
 			
 			tileSetGridBox.Image = tileset[currentLayer - 1];
 			metaTileGridBox.Image = metaTiles[currentLayer - 1];
@@ -166,7 +163,7 @@ namespace MinishMaker.UI
 		{
 			var room = ((MainWindow)Application.OpenForms[0]).currentRoom;
 			var b = new Bitmap( 8, 8 );
-			var tnum = selectedTileNum;
+			var tnum = tileSetGridBox.SelectedIndex;
 
 			if( currentLayer == 1 )
 			{
@@ -200,21 +197,21 @@ namespace MinishMaker.UI
 
 		private void tileChange_Click( object sender, EventArgs e )
 		{
-			if(selectedMetaTileNum==-1)
+			if(metaTileGridBox.SelectedIndex == -1)
 				return;
 
 			var room = ((MainWindow)Application.OpenForms[0]).currentRoom;
-			room.SetMetaTileData(currentTileInfo,selectedMetaTileNum,currentLayer-1);
+			room.SetMetaTileData(currentTileInfo, metaTileGridBox.SelectedIndex, currentLayer-1);
 			var image = metaTiles[currentLayer-1];
-			int x = selectedMetaTileNum%16;
-			int y = selectedMetaTileNum/16;
+			int x = metaTileGridBox.SelectedIndex % 16;
+			int y = metaTileGridBox.SelectedIndex / 16;
 			MetaTileSet.DrawTileData(ref image,currentTileInfo,new Point(x*16,y*16),room.tileSet,room.palettes,currentLayer==1,true);
 			metaTileGridBox.Image=image;
 		}
 
 		private void selectedMetaTileBox_Click( object sender, EventArgs e )
 		{
-			if(selectedMetaTileNum==-1||selectedTileNum==-1)
+			if(metaTileGridBox.SelectedIndex == -1|| tileSetGridBox.SelectedIndex == -1)
 				return;
 
 			var me = (MouseEventArgs)e;
@@ -225,23 +222,23 @@ namespace MinishMaker.UI
 			switch(tileX+(tileY*2))
 			{
 				case 0:
-					tId1.Text = selectedTileNum.Hex();
+					tId1.Text = tileSetGridBox.SelectedIndex.Hex();
 					break;
 				case 1:
-					tId2.Text = selectedTileNum.Hex();
+					tId2.Text = tileSetGridBox.SelectedIndex.Hex();
 					break;
 				case 2:
-					tId3.Text = selectedTileNum.Hex();
+					tId3.Text = tileSetGridBox.SelectedIndex.Hex();
 					break;
 				case 3:
-					tId4.Text = selectedTileNum.Hex();
+					tId4.Text = tileSetGridBox.SelectedIndex.Hex();
 					break;
 			}
 
 			int loc = tileX*2 + tileY*4;
 
-			byte lowByte = (byte)(selectedTileNum & 0xff); //only first 8 bits
-			byte highByte= (byte)(selectedTileNum >> 8); //trim first 8 bits
+			byte lowByte = (byte)(tileSetGridBox.SelectedIndex & 0xff); //only first 8 bits
+			byte highByte= (byte)(tileSetGridBox.SelectedIndex >> 8); //trim first 8 bits
 
 			if(hFlip)
 				highByte+=(1<<3);
@@ -255,7 +252,7 @@ namespace MinishMaker.UI
 			newByte += highByte;
 			currentTileInfo[loc+1]=(byte)newByte;
 
-			selectedMetaTileBox.Image= DrawMetaTile(currentTileInfo);
+		    selectedMetaGridBox.Image= DrawMetaTile(currentTileInfo);
 		}
 
 		//utility functions start here
@@ -353,8 +350,8 @@ namespace MinishMaker.UI
 				byte newByte = (byte)(pCleared + (palette << 4));
 				currentTileInfo[id + 1] = newByte;
 				var newTile = DrawTile( new byte[] { currentTileInfo[id], currentTileInfo[id + 1] } );
-				var b = OverlayImage( (Bitmap)selectedMetaTileBox.Image, newTile, id );
-				selectedMetaTileBox.Image = b;
+				var b = OverlayImage( (Bitmap)selectedMetaGridBox.Image, newTile, id );
+			    selectedMetaGridBox.Image = b;
 			}
 			catch
 			{

@@ -34,7 +34,7 @@
             this.tileSetPanel = new System.Windows.Forms.Panel();
             this.tileSetGridBox = new MinishMaker.UI.GridBox();
             this.selectedMetaTilePanel = new System.Windows.Forms.Panel();
-            this.selectedMetaTileBox = new System.Windows.Forms.PictureBox();
+            this.selectedMetaGridBox = new MinishMaker.UI.GridBox();
             this.selectedTilePanel = new System.Windows.Forms.Panel();
             this.selectedTileBox = new System.Windows.Forms.PictureBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -66,7 +66,7 @@
             this.tileSetPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tileSetGridBox)).BeginInit();
             this.selectedMetaTilePanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.selectedMetaTileBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.selectedMetaGridBox)).BeginInit();
             this.selectedTilePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.selectedTileBox)).BeginInit();
             this.SuspendLayout();
@@ -91,9 +91,9 @@
             this.metaTileGridBox.Location = new System.Drawing.Point(0, 0);
             this.metaTileGridBox.Name = "metaTileGridBox";
             this.metaTileGridBox.Selectable = true;
-            this.metaTileGridBox.SelectedIndex = 0;
+            this.metaTileGridBox.SelectedIndex = -1;
             this.metaTileGridBox.SelectionColor = System.Drawing.Color.Red;
-            this.metaTileGridBox.SelectionRectangle = new System.Drawing.Rectangle(0, 0, 1, 1);
+            this.metaTileGridBox.SelectionRectangle = new System.Drawing.Rectangle(-1, 0, 1, 1);
             this.metaTileGridBox.Size = new System.Drawing.Size(128, 128);
             this.metaTileGridBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.metaTileGridBox.TabIndex = 1;
@@ -120,9 +120,9 @@
             this.tileSetGridBox.Location = new System.Drawing.Point(0, 0);
             this.tileSetGridBox.Name = "tileSetGridBox";
             this.tileSetGridBox.Selectable = true;
-            this.tileSetGridBox.SelectedIndex = 0;
+            this.tileSetGridBox.SelectedIndex = -1;
             this.tileSetGridBox.SelectionColor = System.Drawing.Color.Red;
-            this.tileSetGridBox.SelectionRectangle = new System.Drawing.Rectangle(0, 0, 1, 1);
+            this.tileSetGridBox.SelectionRectangle = new System.Drawing.Rectangle(-1, 0, 1, 1);
             this.tileSetGridBox.Size = new System.Drawing.Size(128, 128);
             this.tileSetGridBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.tileSetGridBox.TabIndex = 1;
@@ -132,21 +132,29 @@
             // selectedMetaTilePanel
             // 
             this.selectedMetaTilePanel.AutoScroll = true;
-            this.selectedMetaTilePanel.Controls.Add(this.selectedMetaTileBox);
+            this.selectedMetaTilePanel.Controls.Add(this.selectedMetaGridBox);
             this.selectedMetaTilePanel.Location = new System.Drawing.Point(32, 12);
             this.selectedMetaTilePanel.Name = "selectedMetaTilePanel";
             this.selectedMetaTilePanel.Size = new System.Drawing.Size(64, 64);
             this.selectedMetaTilePanel.TabIndex = 2;
             // 
-            // selectedMetaTileBox
+            // selectedMetaGridBox
             // 
-            this.selectedMetaTileBox.Location = new System.Drawing.Point(0, 0);
-            this.selectedMetaTileBox.Name = "selectedMetaTileBox";
-            this.selectedMetaTileBox.Size = new System.Drawing.Size(32, 32);
-            this.selectedMetaTileBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.selectedMetaTileBox.TabIndex = 1;
-            this.selectedMetaTileBox.TabStop = false;
-            this.selectedMetaTileBox.Click += new System.EventHandler(this.selectedMetaTileBox_Click);
+            this.selectedMetaGridBox.AllowMultiSelection = false;
+            this.selectedMetaGridBox.BoxSize = new System.Drawing.Size(32, 32);
+            this.selectedMetaGridBox.CanvasSize = new System.Drawing.Size(64, 64);
+            this.selectedMetaGridBox.HoverBox = true;
+            this.selectedMetaGridBox.HoverColor = System.Drawing.Color.White;
+            this.selectedMetaGridBox.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+            this.selectedMetaGridBox.Location = new System.Drawing.Point(0, 0);
+            this.selectedMetaGridBox.Name = "selectedMetaGridBox";
+            this.selectedMetaGridBox.Selectable = true;
+            this.selectedMetaGridBox.SelectedIndex = -1;
+            this.selectedMetaGridBox.SelectionColor = System.Drawing.Color.White;
+            this.selectedMetaGridBox.SelectionRectangle = new System.Drawing.Rectangle(-1, 0, 1, 1);
+            this.selectedMetaGridBox.Size = new System.Drawing.Size(64, 64);
+            this.selectedMetaGridBox.TabIndex = 2;
+            this.selectedMetaGridBox.TabStop = false;
             // 
             // selectedTilePanel
             // 
@@ -440,8 +448,7 @@
             this.tileSetPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tileSetGridBox)).EndInit();
             this.selectedMetaTilePanel.ResumeLayout(false);
-            this.selectedMetaTilePanel.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.selectedMetaTileBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.selectedMetaGridBox)).EndInit();
             this.selectedTilePanel.ResumeLayout(false);
             this.selectedTilePanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.selectedTileBox)).EndInit();
@@ -454,7 +461,6 @@
 		private System.Windows.Forms.Panel metaTileSetPanel;
 		private System.Windows.Forms.Panel tileSetPanel;
 		private System.Windows.Forms.Panel selectedMetaTilePanel;
-		private System.Windows.Forms.PictureBox selectedMetaTileBox;
 		private System.Windows.Forms.Panel selectedTilePanel;
 		private System.Windows.Forms.PictureBox selectedTileBox;
 		private System.Windows.Forms.Label label1;
@@ -483,5 +489,6 @@
 		private System.Windows.Forms.TextBox mTId;
         private GridBox metaTileGridBox;
         private GridBox tileSetGridBox;
+        private GridBox selectedMetaGridBox;
     }
 }

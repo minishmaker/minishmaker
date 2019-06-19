@@ -43,7 +43,7 @@
             this.label1.Size = new System.Drawing.Size(284, 211);
             this.label1.TabIndex = 0;
             this.label1.Text = "Minish Maker\r\nv.0.3.0a\r\n\r\nDeveloped by \r\nMikesky\r\nwjg999\r\nBerylliosis\r\n\r\nGame res" +
-    "earch by ppltoast\r\n\r\n";
+    "earch by ppltoast and Leonarth\r\n\r\n";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // linkLabel1

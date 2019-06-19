@@ -431,13 +431,10 @@ namespace MinishMaker.Core
 			{
 				case 1:
 					return bg1MetaTiles.GetTileInfo(tileNum);
-					break;
 				case 2:
 					return bg2MetaTiles.GetTileInfo(tileNum);
-					break;
 				default:			
 					return null;
-					break;
 			}
 		}
 
