@@ -333,6 +333,10 @@ namespace MinishMaker.UI
 				bottomTileGridBox.Image = tileMaps[1];
                 topTileGridBox.Image = tileMaps[0];
 
+                mapGridBox.Selectable = true;
+                bottomTileGridBox.Selectable = true;
+                topTileGridBox.Selectable = true;
+
                 if (chestEditor != null)
                 {
                     var chestData = currentRoom.GetChestData();

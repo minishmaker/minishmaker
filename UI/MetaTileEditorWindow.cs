@@ -262,6 +262,10 @@ namespace MinishMaker.UI
 			DrawTileset( room.tileSet, room.palettes );
 			metaTileGridBox.Image = metaTiles[currentLayer - 1];
 			tileSetGridBox.Image = tileset[currentLayer - 1];
+
+            metaTileGridBox.Selectable = true;
+            tileSetGridBox.Selectable = true;
+            selectedMetaGridBox.Selectable = true;
 		}
 
 		public void DrawTileset( TileSet tset, Color[][] palettes )
