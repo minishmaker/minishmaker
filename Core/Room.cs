@@ -340,6 +340,10 @@ namespace MinishMaker.Core
                     return metadata.CompressBG2(ref data, bg2RoomData);
 				case DataType.chestData:
 					return metadata.GetChestData(ref data);
+				case DataType.bg1MetaTileSet:
+					return bg1MetaTiles.GetCompressedMetaTileSet(ref data);
+				case DataType.bg2MetaTileSet:
+					return bg2MetaTiles.GetCompressedMetaTileSet(ref data);
                 default:
                     return 0;
             }

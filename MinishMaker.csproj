@@ -59,6 +59,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\ChangeTypes\AreaInfoChange.cs" />
+    <Compile Include="Core\ChangeTypes\Bg1DataChange.cs" />
+    <Compile Include="Core\ChangeTypes\Bg2MetaTileSetChange.cs" />
+    <Compile Include="Core\ChangeTypes\Bg2DataChange.cs" />
+    <Compile Include="Core\ChangeTypes\ChestDataChange.cs" />
+    <Compile Include="Core\ChangeTypes\Bg1MetaTileSetChange.cs" />
+    <Compile Include="Core\ChangeTypes\PendingChange.cs" />
     <Compile Include="Core\Project.cs" />
     <Compile Include="UI\ChestEditorWindow.cs">
       <SubType>Form</SubType>

@@ -14,8 +14,10 @@ namespace MinishMaker.Core
         bg2Data,
         roomMetaData,
         tileSet,
-        metaTileSet,
-        chestData
+        bg1MetaTileSet,
+		bg2MetaTileSet,
+        chestData,
+		areaInfo
     }
 
     /// <summary>

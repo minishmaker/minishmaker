@@ -419,9 +419,20 @@ namespace MinishMaker.Core
 					retAddr = roomTileSetAddrLoc;
 					break;
 
-				case DataType.metaTileSet:
+				case DataType.bg1MetaTileSet:
+				case DataType.bg2MetaTileSet:
 					int metaTileSetsAddrLoc = r.ReadAddr( header.globalMetaTileSetTableLoc + (areaIndex << 2) );
-					retAddr = metaTileSetsAddrLoc;
+					//retAddr = metaTileSetsAddrLoc;
+					r.SetPosition(metaTileSetsAddrLoc);
+					if(type == DataType.bg1MetaTileSet)
+					{
+						ParseData(r, Meta2Check);
+					}
+					if(type == DataType.bg2MetaTileSet)
+					{
+						ParseData(r, Meta2Check);
+					}
+					retAddr = (int)r.Position-12; //step back 12 bytes as the bg was found after reading
 					break;
 
 				case DataType.bg1Data:
@@ -545,6 +556,30 @@ namespace MinishMaker.Core
 			switch(data.dest)
 			{
 				case 0x02025EB4:
+					return false;
+				default:
+					break;
+			}
+			return true;
+		}
+
+		private bool Meta1Check(AddrData data)
+		{
+			switch(data.dest)
+			{
+				case 0x02012654:
+					return false;
+				default:
+					break;
+			}
+			return true;
+		}
+
+		private bool Meta2Check(AddrData data)
+		{
+			switch(data.dest)
+			{
+				case 0x0202CEB4:
 					return false;
 				default:
 					break;
