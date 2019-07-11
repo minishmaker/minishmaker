@@ -8,6 +8,7 @@ using GBHL;
 using MinishMaker.Core;
 using MinishMaker.Utilities;
 using System.Drawing;
+using MinishMaker.Core.ChangeTypes;
 
 namespace MinishMaker.UI
 {
@@ -22,11 +23,11 @@ namespace MinishMaker.UI
 		private Bitmap[] mapLayers;
 		private Bitmap[] tileMaps;
 
-        public Room currentRoom = null;
-		private int currentArea = -1;
+        public static Room currentRoom = null;
+		public static int currentArea = -1;
 		private int selectedTileData = -1;
 		private int selectedLayer = 2; //start with bg2
-		private List<PendingData> unsavedChanges = new List<PendingData>();
+		private static List<Change> pendingRomChanges;
         private Point lastTilePos;
 	    private ViewLayer viewLayer = 0;
 
@@ -48,21 +49,6 @@ namespace MinishMaker.UI
 				this.size = size;
 			}
 		}
-
-		struct PendingData
-		{
-			public int areaIndex;
-			public int roomIndex;
-			public DataType dataType;
-
-			public PendingData( int areaIndex, int roomIndex, DataType type )
-			{
-				this.areaIndex = areaIndex;
-				this.roomIndex = roomIndex;
-				this.dataType = type;
-			}
-		}
-
 		
 
 	    public enum ViewLayer
@@ -83,10 +69,10 @@ namespace MinishMaker.UI
 			LoadRom();
 		}
 
-        private void ExportROMToolStripMenuItem_Click(object sender, EventArgs e)
+        /*private void ExportROMToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ExportRom();
-        }
+        }*/
 
         private void saveAllChangesCtrlSToolStripMenuItem_Click(object sender, EventArgs e)
 	    {
@@ -205,7 +191,7 @@ namespace MinishMaker.UI
 			currentArea = -1;
 			selectedTileData = -1;
 			selectedLayer = 2; 
-			unsavedChanges = new List<PendingData>();
+			pendingRomChanges = new List<Change>();
             
             LoadMaps();
             project_ = new Project(ROM.Instance, mapManager_);
@@ -237,9 +223,9 @@ namespace MinishMaker.UI
 			roomTreeView.EndUpdate();
 		}
 
-        private void ExportRom()
+       /* private void ExportRom()
         {
-            if (unsavedChanges.Count > 0)
+            if (romChanges.Count > 0)
             {
                 DialogResult dialogResult = MessageBox.Show("You have unsaved changes. Save and export?", "Confirm Save", MessageBoxButtons.YesNo);
                 if (dialogResult == DialogResult.Yes)
@@ -262,7 +248,7 @@ namespace MinishMaker.UI
             {
                 MessageBox.Show("Error building ROM");
             }
-        }
+        }*/
 
 	    private void OpenChestEditor()
 	    {
@@ -403,22 +389,27 @@ namespace MinishMaker.UI
 
         private void SaveAllChanges()
         {
-            unsavedChanges = unsavedChanges.Distinct().ToList();
-            while (unsavedChanges.Count > 0)
+			if(Project.Instance==null)
+				return;
+
+			Project.Instance.StartSave();
+
+            while (pendingRomChanges.Count > 0)
             {
-                PendingData data = unsavedChanges.ElementAt(0);
-                Project.Instance.AddChange(data.areaIndex, data.roomIndex, data.dataType);
-                unsavedChanges.RemoveAt(0);
+                Change data = pendingRomChanges.ElementAt(0);
+                Project.Instance.SaveChange(data);
+                pendingRomChanges.RemoveAt(0);
             }
 
-            Project.Instance.SaveProject();
+            Project.Instance.EndSave();
 
             MessageBox.Show("Project Saved");
         }
 
-		public void AddPendingChange(DataType type)
+		public static void AddPendingChange(Change change)
 		{
-			unsavedChanges.Add(new PendingData(currentArea,currentRoom.Index,type));
+			if(!pendingRomChanges.Any(x=>x.Compare(change))) //change does not yet exist
+				pendingRomChanges.Add(change);
 		}
 
 	    private void UpdateViewLayer(ViewLayer layer)
@@ -545,12 +536,12 @@ namespace MinishMaker.UI
             if (layer == 1)
             {
                 currentRoom.DrawTile(ref mapLayers[0], p, currentArea, selectedLayer, tileData);
-                AddPendingChange(DataType.bg1Data);
+                AddPendingChange(new Bg1DataChange(currentRoom.Index,currentArea));
             }
             else if (layer == 2)
             {
                 currentRoom.DrawTile(ref mapLayers[1], p, currentArea, selectedLayer, tileData);
-                AddPendingChange(DataType.bg2Data);
+                AddPendingChange(new Bg2DataChange(currentRoom.Index,currentArea));
             }
 
             currentRoom.SetTileData(selectedLayer, pos * 2, selectedTileData);

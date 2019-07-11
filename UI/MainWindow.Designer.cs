@@ -122,10 +122,10 @@ namespace MinishMaker.UI
             // 
             // exportROMToolStripMenuItem
             // 
-            this.exportROMToolStripMenuItem.Name = "exportROMToolStripMenuItem";
-            this.exportROMToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
-            this.exportROMToolStripMenuItem.Text = "Export ROM";
-            this.exportROMToolStripMenuItem.Click += new System.EventHandler(this.ExportROMToolStripMenuItem_Click);
+            //this.exportROMToolStripMenuItem.Name = "exportROMToolStripMenuItem";
+            //this.exportROMToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            //this.exportROMToolStripMenuItem.Text = "Export ROM";
+            //this.exportROMToolStripMenuItem.Click += new System.EventHandler(this.ExportROMToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 

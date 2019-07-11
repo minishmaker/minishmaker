@@ -1,4 +1,5 @@
 ﻿using MinishMaker.Core;
+using MinishMaker.Core.ChangeTypes;
 using MinishMaker.Utilities;
 using System;
 using System.Collections.Generic;
@@ -210,9 +211,9 @@ namespace MinishMaker.UI
 			MetaTileSet.DrawTileData(ref image,currentTileInfo,new Point(x*16,y*16),room.tileSet,room.palettes,currentLayer==1,true);
 			metaTileGridBox.Image=image;
 			if(currentLayer==1)
-				((MainWindow)Application.OpenForms[0]).AddPendingChange(DataType.bg1MetaTileSet);
+				MainWindow.AddPendingChange(new Bg1MetaTileSetChange(currentArea));
 			if(currentLayer==2)
-				((MainWindow)Application.OpenForms[0]).AddPendingChange(DataType.bg2MetaTileSet);
+				MainWindow.AddPendingChange(new Bg2MetaTileSetChange(currentArea));
 		}
 
 		private void selectedMetaTileBox_Click( object sender, EventArgs e )

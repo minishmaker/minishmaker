@@ -7,31 +7,21 @@ using System.Threading.Tasks;
 
 namespace MinishMaker.Core.ChangeTypes
 {
-	public class AreaInfoChange: PendingChange
+	public class AreaInfoChange: Change
 	{
 		public AreaInfoChange(int areaId):base(areaId, 0, DataType.areaInfo, true)
 		{
 		}
 
-		public override int GetPointerLoc()
-		{
-			throw new NotImplementedException(); //shouldnt need to use this as the pointer going to this should not be changed because its being overwritten
-		}
-
-		public override int GetOldLocation()
-		{
-			return ROM.Instance.headers.areaInformationTableLoc + (4 * areaId);
-		}
-
-		public override string FolderLocation()
+		public override string GetFolderLocation()
 		{
 			return "/Area "+StringUtil.AsStringHex2(areaId);
 		}
 
 		public override string GetEAString()
 		{
+			var infoLoc = ROM.Instance.headers.areaInformationTableLoc + (4 * areaId);
 			var sb = new StringBuilder();
-			var infoLoc = GetOldLocation();
 			var areaBytes =ROM.Instance.reader.ReadBytes(4, infoLoc);
 			sb.AppendLine("PUSH"); //save cursor location
 			sb.AppendLine("ORG "+infoLoc); //go to the area info
@@ -42,7 +32,7 @@ namespace MinishMaker.Core.ChangeTypes
 		}
 
 
-		public override bool Compare( PendingChange change )
+		public override bool Compare( Change change )
 		{
 			return change.changeType == changeType && change.areaId == areaId;
 		}
