@@ -87,18 +87,26 @@ namespace MinishMaker.Core
 			File.WriteAllLines(exeFolder+"\\Settings.cfg",lines);
 
 			loadedChanges.Clear();
+			var pos = ROM.Instance.romData.Length-1;
+
+			while(ROM.Instance.romData[pos]==0xFF)
+			{
+				pos--;
+			}
 
 			if(!File.Exists(projectPath+"/Main.event"))
 			{
 				var file = File.Create(projectPath+"/Main.event");
 				using( StreamWriter s = new StreamWriter( file ) )
 				{
-					s.WriteLine("ORG 0x1000000");
+					s.WriteLine("ORG "+(pos+1));
 				}
 				file.Dispose();
 			}
 
 			var mainSets = File.ReadAllLines(projectPath+"/Main.event").ToList();
+			mainSets[0]= "ORG "+(pos+1);
+			File.WriteAllLines(projectPath+"/Main.event",mainSets);
 			mainSets.RemoveAt(0);
 			StartSave();
 			
