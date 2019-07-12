@@ -395,8 +395,13 @@ namespace MinishMaker.Core
 			chestInformation.Add(data);
 		}
 
-		//To be changed as actual data gets changed and tested
-		public int GetPointerLoc(DataType type, int areaIndex, int roomIndex)
+        public void RemoveChestData(ChestData data)
+        {
+            chestInformation.Remove(data);
+        }
+
+        //To be changed as actual data gets changed and tested
+        public int GetPointerLoc(DataType type, int areaIndex, int roomIndex)
 		{
 			var r = ROM.Instance.reader;
 			var header = ROM.Instance.headers;

@@ -429,6 +429,11 @@ namespace MinishMaker.Core
 			metadata.AddChestData(data);
 		}
 
+        public void RemoveChestData(ChestData data)
+        {
+            metadata.RemoveChestData(data);
+        }
+
 		public byte[] GetMetaTileData(int tileNum, int layer)
 		{
 			switch(layer)

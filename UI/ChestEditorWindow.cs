@@ -85,8 +85,15 @@ namespace MinishMaker.UI
 				}
             }
 
-			indexLabel.Text = chestIndex.ToString();
-		}
+            if (chestIndex >= 0)
+            {
+                indexLabel.Text = StringUtil.AsStringHex2(chestIndex);
+            }
+            else
+            {
+                indexLabel.Text = "";
+            }
+        }
 
   
 		private void nextButton_Click( object sender, EventArgs e )
@@ -99,7 +106,14 @@ namespace MinishMaker.UI
 				nextButton.Enabled = false;
 			}
 
-            indexLabel.Text = chestIndex.ToString();
+            if (chestIndex >= 0)
+            {
+                indexLabel.Text = StringUtil.AsStringHex2(chestIndex);
+            }
+            else
+            {
+                indexLabel.Text = "";
+            }
 
             LoadChestData(chestIndex);
         }
@@ -113,22 +127,84 @@ namespace MinishMaker.UI
 				prevButton.Enabled = false;
 			}
 
-            indexLabel.Text = chestIndex.ToString();
+            if (chestIndex >= 0)
+            {
+                indexLabel.Text = StringUtil.AsStringHex2(chestIndex);
+            }
+            else
+            {
+                indexLabel.Text = "";
+            }
 
             LoadChestData(chestIndex);
 		}
 
 		private void newButton_Click( object sender, EventArgs e )
 		{
+            if (chestDataList == null)
+            {
+                return;
+            }
+
 			MainWindow main = (MainWindow)Application.OpenForms[0];//if the main closes everything closes
             chestIndex = chestDataList.Count;
-            indexLabel.Text = chestIndex.ToString();
-			main.AddPendingChange(DataType.chestData);
+
+            indexLabel.Text = StringUtil.AsStringHex2(chestIndex);
+
+            main.AddPendingChange(DataType.chestData);
 			main.currentRoom.AddChestData(new ChestData(0x02,0,0,0,0,0));
 			LoadChestData(chestIndex);
 
-            prevButton.Enabled = true;
+            // Don't enable the previous button if there weren't previously any chests
+            if (chestDataList.Count > 1)
+            {
+                prevButton.Enabled = true;
+            }
+
             nextButton.Enabled = false;
+        }
+
+        private void RemoveButton_Click(object sender, EventArgs e)
+        {
+            if (chestDataList == null || chestDataList.Count <= 0)
+            {
+                return;
+            }
+
+            MainWindow main = (MainWindow)Application.OpenForms[0];//if the main closes everything closes
+            main.AddPendingChange(DataType.chestData);
+            main.currentRoom.RemoveChestData(chestDataList[chestIndex]);
+
+            if (chestIndex > 0)
+            {
+                chestIndex--;
+            }
+            else
+            {
+                if (chestDataList.Count <= 0)
+                {
+                    chestIndex = -1;
+                    entityType.Enabled = false;
+                    entityId.Enabled = false;
+                    itemName.Enabled = false;
+                    kinstoneType.Enabled = false;
+                    itemAmount.Enabled = false;
+                    xPosition.Enabled = false;
+                    yPosition.Enabled = false;
+                    nextButton.Enabled = false;
+                    newButton.Visible = true;
+                }
+            }
+
+            if (chestIndex >= 0)
+            {
+                indexLabel.Text = StringUtil.AsStringHex2(chestIndex);
+                LoadChestData(chestIndex);
+            }
+            else
+            {
+                indexLabel.Text = "";
+            }
         }
 
         private void LoadChestData(int chest)
@@ -361,5 +437,5 @@ namespace MinishMaker.UI
 				itemAmount.Show();
 			}
 		}
-	}
+    }
 }
