@@ -61,6 +61,33 @@ namespace MinishMaker.UI
 		public MainWindow()
 		{
 			InitializeComponent();
+
+			var exeFolder = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).Substring(6);
+			if(File.Exists(exeFolder+"/Settings.cfg"))
+			{
+				var settings = File.ReadLines(exeFolder+"/Settings.cfg").ToList();
+				project_ = new Project();
+
+				var romFile = settings.Single(x=>x.Contains("romFile")).Split('=')[1];
+				var projectFolder = settings.Single(x=>x.Contains("projectFolder")).Split('=')[1];
+
+				project_.sourcePath = romFile;
+				project_.projectPath = projectFolder;
+				ROM_ = new ROM( romFile );
+				mapGridBox.Image = new Bitmap(1,1); //reset some things on loading a rom
+				bottomTileGridBox.Image = new Bitmap(1,1);
+				topTileGridBox.Image = new Bitmap(1, 1);
+				currentRoom = null;
+				currentArea = -1;
+				selectedTileData = -1;
+				selectedLayer = 2; 
+				pendingRomChanges = new List<Change>();
+				project_.LoadProject();
+				LoadMaps();
+
+				var pName = new DirectoryInfo(projectFolder).Name;
+				statusText.Text = "Opened last project: "+pName;
+			}
 		}
 
         #region MenuBarButtons
@@ -69,6 +96,10 @@ namespace MinishMaker.UI
 			LoadRom();
 		}
 
+		private void SelectProjectButtonClick( object sender, EventArgs e )
+		{
+			SelectProject();
+		}
         /*private void ExportROMToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ExportRom();
@@ -183,20 +214,76 @@ namespace MinishMaker.UI
 				statusText.Text = "Unable to determine ROM.";
 				return;
 			}
-
-			mapGridBox.Image = new Bitmap(1,1); //reset some things on loading a rom
-			bottomTileGridBox.Image = new Bitmap(1,1);
-            topTileGridBox.Image = new Bitmap(1, 1);
-			currentRoom = null;
-			currentArea = -1;
-			selectedTileData = -1;
-			selectedLayer = 2; 
-			pendingRomChanges = new List<Change>();
             
-            LoadMaps();
-            project_ = new Project(ROM.Instance, mapManager_);
+            //LoadMaps();
+			if(project_== null)
+			{
+				project_ = new Project();
+			}
 
-            statusText.Text = "Loaded: " + ROM.Instance.path;
+			project_.sourcePath = ROM.Instance.path;
+			var st = "Loaded: " + ROM.Instance.path;
+
+			if(project_.projectPath!=null)
+			{
+
+				project_.LoadProject();//load first as rooms or areas could be added at some point
+				mapGridBox.Image = new Bitmap(1,1); //reset some things on loading a rom
+				bottomTileGridBox.Image = new Bitmap(1,1);
+				topTileGridBox.Image = new Bitmap(1, 1);
+				currentRoom = null;
+				currentArea = -1;
+				selectedTileData = -1;
+				selectedLayer = 2; 
+				pendingRomChanges = new List<Change>();
+				LoadMaps();
+			}
+			else
+			{
+				st+=", also select a project folder.";
+			}
+
+            statusText.Text = st;
+		}
+
+		private void SelectProject()
+		{
+			FolderBrowserDialog fbd = new FolderBrowserDialog()
+			{
+				ShowNewFolderButton = true,
+				Description = "Select project root folder."
+			};
+
+			if( fbd.ShowDialog() != DialogResult.OK )
+			{
+				return;
+			}
+
+			if(project_== null)
+			{
+				project_ = new Project();
+			}
+
+			project_.projectPath =  fbd.SelectedPath;
+
+			if(project_.sourcePath!=null)
+			{
+				statusText.Text = "Project opened";
+				project_.LoadProject();//load first as rooms or areas could be added at some point
+				mapGridBox.Image = new Bitmap(1,1); //reset some things on loading a rom
+				bottomTileGridBox.Image = new Bitmap(1,1);
+				topTileGridBox.Image = new Bitmap(1, 1);
+				currentRoom = null;
+				currentArea = -1;
+				selectedTileData = -1;
+				selectedLayer = 2; 
+				pendingRomChanges = new List<Change>();
+				LoadMaps();
+			}
+			else
+			{
+				statusText.Text ="Folder selected, select a ROM file.";
+			}
 		}
 
 		private void LoadMaps()
@@ -549,5 +636,5 @@ namespace MinishMaker.UI
             // TODO switch on layer view
             UpdateViewLayer(viewLayer);
         }
-    }
+	}
 }

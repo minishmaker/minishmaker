@@ -21,7 +21,7 @@ namespace MinishMaker.Core
 		bg2MetaTileSet,
         chestData,
 		areaInfo
-    }
+	}
 
     /// <summary>
     /// Stores configuration for a minishmaker project
@@ -30,7 +30,7 @@ namespace MinishMaker.Core
     {
         public static Project Instance;
 
-        public MapManager mapManager;
+        //public MapManager mapManager;
 
         public string sourcePath;
         public string exportPath;
@@ -39,20 +39,27 @@ namespace MinishMaker.Core
 		private List<Change> loadedChanges;
 		private StreamWriter mainWriter;
 
-        public Project(ROM baseRom, MapManager manager)
+        public Project()
         {
 			loadedChanges = new List<Change>();
             Instance = this;
-            projectPath = "";
+            //projectPath = "";
 
-            sourcePath = baseRom.path;
-            projectPath = Path.GetDirectoryName(sourcePath);
+            //sourcePath = baseRom.path;
+            //projectPath = Path.GetDirectoryName(sourcePath);
             //exportPath = projectPath + "/mc-hack.gba";
-            mapManager = manager;
-            LoadProject(true);
+            //mapManager = manager;
+            //LoadProject();
         }
 
-
+		public void CreateProject(string directory)
+		{
+			if(!File.Exists(projectPath+"/Main.event"))
+			{
+				var file = File.Create(projectPath+"/Main.event");
+				file.Dispose();
+			}
+		}
 
 		public void RecheckProject()
 		{
@@ -71,23 +78,35 @@ namespace MinishMaker.Core
 
 
 
-        public void LoadProject( bool applyEvents)
+        public void LoadProject()
         {
+			var exeFolder = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).Substring(6);
+			var lines = new string[2];
+			lines[0] = "romFile="+sourcePath;
+			lines[1] = "projectFolder="+projectPath;
+			File.WriteAllLines(exeFolder+"\\Settings.cfg",lines);
+
+			loadedChanges.Clear();
+
 			if(!File.Exists(projectPath+"/Main.event"))
 			{
 				var file = File.Create(projectPath+"/Main.event");
+				using( StreamWriter s = new StreamWriter( file ) )
+				{
+					s.WriteLine("ORG 0x1000000");
+				}
 				file.Dispose();
 			}
 
-			StartSave();
-
 			var mainSets = File.ReadAllLines(projectPath+"/Main.event").ToList();
+			mainSets.RemoveAt(0);
+			StartSave();
 			
-			mainSets = mainSets.Select(s => s.Substring(9)).ToList();
-
-			if (Directory.Exists(projectPath + "/Areas"))
+			mainSets = mainSets.Select(s => s.Substring(10).TrimEnd('\"').Replace('/','\\')).ToList();
+			
+			if (Directory.Exists(projectPath + "\\Areas"))
             {
-                string[] areaDirectories = Directory.GetDirectories(projectPath + "/Areas");
+                string[] areaDirectories = Directory.GetDirectories(projectPath + "\\Areas");
 
                 foreach (string areaDirectory in areaDirectories)
                 {
@@ -134,16 +153,16 @@ namespace MinishMaker.Core
 							if(success)
 							{ 
 								var change = CreateChange(type, areaIndex, roomIndex);
-
-								if(mainSets.Contains(file))
+								var entry = mainSets.SingleOrDefault(x=>file.Contains(x));
+								if(entry!=null)
 								{
 									mainSets.Remove(file);
-									loadedChanges.Add(change);
 								}
 								else
 								{ 
-									MainWindow.AddPendingChange(change);
+									mainWriter.WriteLine("#include \"/Areas"+change.GetFolderLocation()+"/"+change.changeType.ToString()+".event\"");
 								}
+								loadedChanges.Add(change);
 							}
 							else
 							{
@@ -225,11 +244,17 @@ namespace MinishMaker.Core
         {
             var folderLoc = projectPath+"/Areas"+change.GetFolderLocation();
 			var fileName = change.changeType.ToString() +".event";
-			var content = change.GetEAString();
+			byte[] binData;
+			var content = change.GetEAString(out binData);
 			Directory.CreateDirectory(folderLoc);
 			File.WriteAllText(folderLoc+"/"+fileName, content);
 
-			if(!loadedChanges.Contains(change)) //change not yet already written
+			if(binData!=null)
+			{
+				File.WriteAllBytes(folderLoc+"/"+change.changeType.ToString()+"Dat.bin", binData);
+			}
+
+			if(!loadedChanges.Any(x=>x.Compare(change))) //change not yet already written
 				mainWriter.WriteLine("#include \"/Areas"+change.GetFolderLocation()+"/"+fileName+"\"");
         }
 

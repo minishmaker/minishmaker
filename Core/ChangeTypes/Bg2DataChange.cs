@@ -9,7 +9,7 @@ namespace MinishMaker.Core.ChangeTypes
 {
 	class Bg2DataChange : Change
 	{
-		public Bg2DataChange( int areaId, int roomId ) : base( areaId, roomId, DataType.bg2Data, false )
+		public Bg2DataChange( int areaId, int roomId ) : base( areaId, roomId, DataType.bg2Data )
 		{
 		}
 
@@ -18,7 +18,7 @@ namespace MinishMaker.Core.ChangeTypes
 			return "/Area "+StringUtil.AsStringHex2(areaId)+"/Room " + StringUtil.AsStringHex2(roomId);
 		}
 
-		public override string GetEAString()
+		public override string GetEAString(out byte[] binDat)
 		{
 			var sb = new StringBuilder();
 			var gfxOffset = ROM.Instance.headers.gfxSourceBase;
@@ -36,11 +36,8 @@ namespace MinishMaker.Core.ChangeTypes
 
 			sb.AppendLine("ALIGN 4");	//align to avoid a mess
 			sb.AppendLine(changeType+"x"+areaId.Hex()+"x"+roomId.Hex()+":"); //create label,  wont need to supply a new position like this (if it has this functionallity like some other patcher)
-			sb.Append("BYTE ");
-			foreach(var dbyte in data) //write all bytes
-			{
-				sb.Append(dbyte+" ");
-			}
+			sb.AppendLine("#incbin \"/Areas"+GetFolderLocation()+"/"+changeType.ToString()+"Dat.bin\"");
+			binDat = data;
 			
 			return sb.ToString();
 		}

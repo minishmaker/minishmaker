@@ -9,7 +9,7 @@ namespace MinishMaker.Core.ChangeTypes
 {
 	public class Bg1MetaTileSetChange: Change
 	{
-		public Bg1MetaTileSetChange(int areaId):base(areaId, 0, DataType.bg1MetaTileSet, false)
+		public Bg1MetaTileSetChange(int areaId):base(areaId, 0, DataType.bg1MetaTileSet)
 		{
 		}
 
@@ -18,7 +18,7 @@ namespace MinishMaker.Core.ChangeTypes
 			return "/Area "+StringUtil.AsStringHex2(areaId);
 		}
 
-		public override string GetEAString()
+		public override string GetEAString(out byte[] binDat)
 		{
 			var sb = new StringBuilder();
 			var room = MapManager.Instance.MapAreas.Single(a=>a.Index == areaId).Rooms.First();
@@ -36,11 +36,8 @@ namespace MinishMaker.Core.ChangeTypes
 
 			sb.AppendLine("ALIGN 4");	//align to avoid a mess
 			sb.AppendLine(changeType+"x"+areaId.Hex()+":"); //create label,  wont need to supply a new position like this
-			sb.Append("BYTE ");
-			foreach(var dbyte in data) //write all bytes
-			{
-				sb.Append(dbyte+" ");
-			}
+			sb.AppendLine("#incbin \"/Areas"+GetFolderLocation()+"/"+changeType.ToString()+"Dat.bin\"");
+			binDat = data;
 			
 			return sb.ToString();
 		}

@@ -9,7 +9,7 @@ namespace MinishMaker.Core.ChangeTypes
 {
 	public class AreaInfoChange: Change
 	{
-		public AreaInfoChange(int areaId):base(areaId, 0, DataType.areaInfo, true)
+		public AreaInfoChange(int areaId):base(areaId, 0, DataType.areaInfo)
 		{
 		}
 
@@ -18,7 +18,7 @@ namespace MinishMaker.Core.ChangeTypes
 			return "/Area "+StringUtil.AsStringHex2(areaId);
 		}
 
-		public override string GetEAString()
+		public override string GetEAString(out byte[] binDat)
 		{
 			var infoLoc = ROM.Instance.headers.areaInformationTableLoc + (4 * areaId);
 			var sb = new StringBuilder();
@@ -27,7 +27,7 @@ namespace MinishMaker.Core.ChangeTypes
 			sb.AppendLine("ORG "+infoLoc); //go to the area info
 			sb.AppendLine("BYTE "+areaBytes[0]+" "+areaBytes[1]+" "+areaBytes[2]+" "+areaBytes[3]); //write the area info bytes
 			sb.AppendLine("POP"); //return to cursor location
-
+			binDat = null;
 			return sb.ToString();
 		}
 

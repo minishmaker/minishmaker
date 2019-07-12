@@ -9,7 +9,7 @@ namespace MinishMaker.Core.ChangeTypes
 {
 	class ChestDataChange : Change
 	{
-		public ChestDataChange( int areaId, int roomId ) : base( areaId, roomId, DataType.chestData, false )
+		public ChestDataChange( int areaId, int roomId ) : base( areaId, roomId, DataType.chestData )
 		{
 		}
 
@@ -18,7 +18,7 @@ namespace MinishMaker.Core.ChangeTypes
 			return "/Area "+StringUtil.AsStringHex2(areaId)+"/Room " + StringUtil.AsStringHex2(roomId);
 		}
 
-		public override string GetEAString()
+		public override string GetEAString(out byte[] binDat)
 		{
 			var sb = new StringBuilder();
 			var room = MapManager.Instance.FindRoom(areaId,roomId);
@@ -41,6 +41,7 @@ namespace MinishMaker.Core.ChangeTypes
 				sb.AppendLine("BYTE "+chest.type+" "+chest.chestId+" "+chest.itemId+" "+chest.itemSubNumber+" "+b5+" "+b6+" "+b7+" "+b8);
 			}
 
+			binDat = null;
 			return sb.ToString();
 		}
 
