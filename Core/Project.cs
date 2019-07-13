@@ -94,6 +94,11 @@ namespace MinishMaker.Core
 				pos--;
 			}
 
+            if (!Directory.Exists(projectPath))
+            {
+                Directory.CreateDirectory(projectPath);
+            }
+
 			if(!File.Exists(projectPath+"/Main.event"))
 			{
 				var file = File.Create(projectPath+"/Main.event");
