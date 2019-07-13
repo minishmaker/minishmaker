@@ -7,32 +7,22 @@ using System.Threading.Tasks;
 
 namespace MinishMaker.Core.ChangeTypes
 {
-	class ChestDataChange : PendingChange
+	class ChestDataChange : Change
 	{
-		public ChestDataChange( int areaId, int roomId ) : base( areaId, roomId, DataType.chestData, false )
+		public ChestDataChange( int areaId, int roomId ) : base( areaId, roomId, DataType.chestData )
 		{
 		}
 
-		public override int GetPointerLoc()
-		{
-			var room = MapManager.Instance.FindRoom(areaId,roomId);
-			return room.GetPointerLoc(changeType, areaId);
-		}
-
-		public override int GetOldLocation()
-		{
-			throw new NotImplementedException(); //not required since room has the chest information
-		}
-
-		public override string FolderLocation()
+		public override string GetFolderLocation()
 		{
 			return "/Area "+StringUtil.AsStringHex2(areaId)+"/Room " + StringUtil.AsStringHex2(roomId);
 		}
 
-		public override string GetEAString()
+		public override string GetEAString(out byte[] binDat)
 		{
 			var sb = new StringBuilder();
-			var pointerLoc = GetPointerLoc();
+			var room = MapManager.Instance.FindRoom(areaId,roomId);
+			var pointerLoc = room.GetPointerLoc(changeType, areaId);
 			var chestData = MapManager.Instance.FindRoom(areaId,roomId).GetChestData();
 
 			sb.AppendLine("PUSH");//save cursor location
@@ -51,10 +41,11 @@ namespace MinishMaker.Core.ChangeTypes
 				sb.AppendLine("BYTE "+chest.type+" "+chest.chestId+" "+chest.itemId+" "+chest.itemSubNumber+" "+b5+" "+b6+" "+b7+" "+b8);
 			}
 
+			binDat = null;
 			return sb.ToString();
 		}
 
-		public override bool Compare( PendingChange change )
+		public override bool Compare( Change change )
 		{
 			return change.changeType == changeType && change.areaId==areaId && change.roomId==roomId;
 		}

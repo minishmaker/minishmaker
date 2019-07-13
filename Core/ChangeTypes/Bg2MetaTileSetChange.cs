@@ -7,56 +7,43 @@ using System.Threading.Tasks;
 
 namespace MinishMaker.Core.ChangeTypes
 {
-	public class Bg2MetaTileSetChange: PendingChange
+	public class Bg2MetaTileSetChange: Change
 	{
-		public Bg2MetaTileSetChange(int areaId):base(areaId, 0, DataType.bg2MetaTileSet, false)
+		public Bg2MetaTileSetChange(int areaId):base(areaId, 0, DataType.bg2MetaTileSet)
 		{
 		}
 
-		public override int GetPointerLoc()
-		{
-			var room = MapManager.Instance.MapAreas.Single(a=>a.Index == areaId).Rooms.First();
-			return room.GetPointerLoc(changeType,areaId);
-		}
-
-		public override int GetOldLocation()
-		{
-			throw new NotImplementedException();
-		}
-
-		public override string FolderLocation()
+		public override string GetFolderLocation()
 		{
 			return "/Area "+StringUtil.AsStringHex2(areaId);
 		}
 
-		public override string GetEAString()
+		public override string GetEAString(out byte[] binDat)
 		{
 			var sb = new StringBuilder();
-			var pointerLoc = GetPointerLoc();
+			var room = MapManager.Instance.MapAreas.Single(a=>a.Index == areaId).Rooms.First();
+			var pointerLoc = room.GetPointerLoc(changeType,areaId);
 			var gfxOffset = ROM.Instance.headers.gfxSourceBase;
 			byte[] data = null;
 			var size = MapManager.Instance.MapAreas.Single(a=>a.Index == areaId).Rooms.First().GetSaveData(ref data, changeType);
 			
 			sb.AppendLine("PUSH");	//save cursor location
 			sb.AppendLine("ORG "+pointerLoc);	//go to pointer location
-			sb.AppendLine("POIN "+changeType+"x"+areaId.Hex()+"-"+gfxOffset.Hex());	//write label location to position - constant
+			sb.AppendLine("POIN "+changeType+"x"+areaId.Hex()+"-"+gfxOffset);	//write label location to position - constant
 			sb.AppendLine("ORG currentoffset+4"); //move over dest
 			sb.AppendLine("WORD "+size); //write size
 			sb.AppendLine("POP");	//go back to cursor location
 
 			sb.AppendLine("ALIGN 4");	//align to avoid a mess
 			sb.AppendLine(changeType+"x"+areaId.Hex()+":"); //create label,  wont need to supply a new position like this
-			sb.Append("BYTE ");
-			foreach(var dbyte in data) //write all bytes
-			{
-				sb.AppendLine(dbyte+" ");
-			}
+			sb.AppendLine("#incbin \"/Areas"+GetFolderLocation()+"/"+changeType.ToString()+"Dat.bin\"");
+			binDat = data;
 			
 			return sb.ToString();
 		}
 
 
-		public override bool Compare( PendingChange change )
+		public override bool Compare( Change change )
 		{
 			return change.changeType == changeType && change.areaId == areaId;
 		}
