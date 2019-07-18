@@ -623,12 +623,12 @@ namespace MinishMaker.UI
             if (layer == 1)
             {
                 currentRoom.DrawTile(ref mapLayers[0], p, currentArea, selectedLayer, tileData);
-                AddPendingChange(new Bg1DataChange(currentRoom.Index,currentArea));
+                AddPendingChange(new Bg1DataChange(currentArea,currentRoom.Index));
             }
             else if (layer == 2)
             {
                 currentRoom.DrawTile(ref mapLayers[1], p, currentArea, selectedLayer, tileData);
-                AddPendingChange(new Bg2DataChange(currentRoom.Index,currentArea));
+                AddPendingChange(new Bg2DataChange(currentArea,currentRoom.Index));
             }
 
             currentRoom.SetTileData(selectedLayer, pos * 2, selectedTileData);
