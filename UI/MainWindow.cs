@@ -70,10 +70,30 @@ namespace MinishMaker.UI
 
 				var romFile = settings.Single(x=>x.Contains("romFile")).Split('=')[1];
 				var projectFolder = settings.Single(x=>x.Contains("projectFolder")).Split('=')[1];
+				var allFound = true;
+				if(!Directory.Exists(projectFolder))
+				{
+					allFound = false;
+				}
+				else
+				{
+					project_.projectPath = projectFolder;
+				}
+				
+				if(!File.Exists(romFile))
+				{
+					allFound = false;
+				}
+				else
+				{
+					project_.sourcePath = romFile;
+					ROM_ = new ROM( romFile );
+				}
 
-				project_.sourcePath = romFile;
-				project_.projectPath = projectFolder;
-				ROM_ = new ROM( romFile );
+				if(!allFound)
+				{
+					return;
+				}
 				mapGridBox.Image = new Bitmap(1,1); //reset some things on loading a rom
 				bottomTileGridBox.Image = new Bitmap(1,1);
 				topTileGridBox.Image = new Bitmap(1, 1);

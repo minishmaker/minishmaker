@@ -115,7 +115,7 @@ namespace MinishMaker.Core
 			mainSets.RemoveAt(0);
 			StartSave();
 			
-			mainSets = mainSets.Select(s => s.Substring(10).TrimEnd('\"').Replace('/','\\')).ToList();
+			mainSets = mainSets.Select(s => s.Substring(11).TrimEnd('\"').Replace('/','\\')).ToList();
 			
 			if (Directory.Exists(projectPath + "\\Areas"))
             {

@@ -26,18 +26,19 @@ namespace MinishMaker.Core.ChangeTypes
 			var room = MapManager.Instance.FindRoom(areaId,roomId);
 			var pointerLoc = room.GetPointerLoc(changeType, areaId);
 			byte[] data = null;
-			var size = MapManager.Instance.FindRoom(areaId,roomId).GetSaveData(ref data, changeType);
+			var size = room.GetSaveData(ref data, changeType);
+			var bitSet = ROM.Instance.reader.ReadByte(pointerLoc+3)==0x80;
 
 			sb.AppendLine("PUSH");	//save cursor location
 			sb.AppendLine("ORG "+pointerLoc);	//go to pointer location
-			sb.AppendLine("POIN "+changeType+"x"+areaId.Hex()+"x"+roomId.Hex()+"-"+gfxOffset);	//write label location to position - constant
+			sb.AppendLine("WORD "+changeType+"x"+areaId.Hex()+"x"+roomId.Hex()+"-"+gfxOffset + "+$" + (bitSet?0x80000000:0));	//write label location to position - constant
 			sb.AppendLine("ORG currentoffset+4");//move over dest
-			sb.AppendLine("WORD "+size);	//write size
+			sb.AppendLine("WORD $"+size.Hex());	//write size
 			sb.AppendLine("POP");	//go back to cursor location
 
 			sb.AppendLine("ALIGN 4");	//align to avoid a mess
 			sb.AppendLine(changeType+"x"+areaId.Hex()+"x"+roomId.Hex()+":"); //create label,  wont need to supply a new position like this (if it has this functionallity like some other patcher)
-			sb.AppendLine("#incbin \"./Areas"+GetFolderLocation()+"/"+changeType.ToString()+"Dat.bin\"");
+			sb.AppendLine("#incbin \"./"+changeType.ToString()+"Dat.bin\"");
 			binDat = data;
 
 			return sb.ToString();
