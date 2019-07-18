@@ -1,4 +1,5 @@
-﻿using MinishMaker.Utilities;
+﻿using MinishMaker.UI;
+using MinishMaker.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -24,6 +25,16 @@ namespace MinishMaker.Core
 		public Color[][] palettes
 		{
 			get { return pset.Palettes;}
+		}
+
+		public bool Bg1Exists
+		{
+			get { return bg1Exists;}
+		}
+
+		public bool Bg2Exists
+		{
+			get { return bg2Exists;}
 		}
 
 		private MetaTileSet bg2MetaTiles;
@@ -56,6 +67,11 @@ namespace MinishMaker.Core
 
 			bg2Exists = metadata.GetBG2Data( ref bg2RoomData, ref bg2MetaTiles );//loads in the data and tiles
 			bg1Exists = metadata.GetBG1Data( ref bg1RoomData, ref bg1MetaTiles );//loads in the data, tiles and sets bg1Use20344B0
+
+			if(!bg1Exists && !bg2Exists)
+			{
+				MainWindow.Notify("No layers exist for this room, the room is highly likely invalid.","Invalid Room");
+			}
 
 			Loaded = true; //do not load data a 2nd time for this room
 		}
@@ -107,6 +123,7 @@ namespace MinishMaker.Core
 			ushort[] chunks = new ushort[3];
 			ushort[] oldchunks = new ushort[3];
 			chunks = new ushort[3] { 0x00FF, 0x00FF, 0x00FF };
+			int badTiles = 0;
 
 			for( int j = 0; j < metadata.TileHeight; j++ )
 			{
@@ -124,7 +141,11 @@ namespace MinishMaker.Core
 					int mt = roomData[pos] | (roomData[pos + 1] << 8);
 
 					pos += 2; //2 bytes per tile
-
+					if(metaTiles.GetTileInfo(mt)==null)
+					{
+						badTiles++;
+						continue;
+					}
 					try
 					{
 						if( mt != 0xFFFF ) //nonexistant room data does this, eg. area 0D room 10
@@ -136,6 +157,10 @@ namespace MinishMaker.Core
 											+ "\n" + e.Message, e );
 					}
 				}
+			}
+			if(badTiles>0)
+			{
+				MainWindow.Notify("Found "+badTiles+" bad tiles while trying to draw them, the room may be unused.","Bad Tiles");
 			}
 		}
 

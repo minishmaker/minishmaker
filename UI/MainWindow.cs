@@ -542,12 +542,12 @@ namespace MinishMaker.UI
 
         private void WriteTile (Point p, int pos, int tileData, int layer)
         {
-            if (layer == 1)
+            if (layer == 1 && currentRoom.Bg1Exists)
             {
                 currentRoom.DrawTile(ref mapLayers[0], p, currentArea, selectedLayer, tileData);
                 AddPendingChange(DataType.bg1Data);
             }
-            else if (layer == 2)
+            else if (layer == 2 && currentRoom.Bg2Exists)
             {
                 currentRoom.DrawTile(ref mapLayers[1], p, currentArea, selectedLayer, tileData);
                 AddPendingChange(DataType.bg2Data);
@@ -558,5 +558,10 @@ namespace MinishMaker.UI
             // TODO switch on layer view
             UpdateViewLayer(viewLayer);
         }
+
+		public static void Notify(string info, string title)
+		{
+			MessageBox.Show( info, title, MessageBoxButtons.OK );
+		}
     }
 }
