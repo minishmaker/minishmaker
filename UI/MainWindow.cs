@@ -141,7 +141,13 @@ namespace MinishMaker.UI
 				throw;
 			}
 
-			if( ROM.Instance.version.Equals( RegionVersion.None ) )
+			if (ROM.Instance.version.Equals(RegionVersion.EU) == false) {
+				MessageBox.Show("Invalid TMC ROM. Only the EU version is supported at this time.", "Wrong Version", MessageBoxButtons.OK);
+				statusText.Text = "Incorrect ROM version.";
+				return;
+			}
+
+			if ( ROM.Instance.version.Equals( RegionVersion.None ) )
 			{
 				MessageBox.Show( "Invalid TMC ROM. Please Open a valid ROM.", "Incorrect ROM", MessageBoxButtons.OK );
 				statusText.Text = "Unable to determine ROM.";
