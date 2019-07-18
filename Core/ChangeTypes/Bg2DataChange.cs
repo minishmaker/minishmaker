@@ -36,7 +36,7 @@ namespace MinishMaker.Core.ChangeTypes
 
 			sb.AppendLine("ALIGN 4");	//align to avoid a mess
 			sb.AppendLine(changeType+"x"+areaId.Hex()+"x"+roomId.Hex()+":"); //create label,  wont need to supply a new position like this (if it has this functionallity like some other patcher)
-			sb.AppendLine("#incbin \"/Areas"+GetFolderLocation()+"/"+changeType.ToString()+"Dat.bin\"");
+			sb.AppendLine("#incbin \"./Areas"+GetFolderLocation()+"/"+changeType.ToString()+"Dat.bin\"");
 			binDat = data;
 			
 			return sb.ToString();

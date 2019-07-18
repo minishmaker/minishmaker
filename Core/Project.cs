@@ -141,7 +141,7 @@ namespace MinishMaker.Core
 							}
 							else
 							{ 
-								mainWriter.WriteLine("#include \"/Areas"+change.GetFolderLocation()+"/"+change.changeType.ToString()+".event\"");
+								mainWriter.WriteLine("#include \"./Areas"+change.GetFolderLocation()+"/"+change.changeType.ToString()+".event\"");
 							}
 							loadedChanges.Add(change);
 						}
@@ -173,7 +173,7 @@ namespace MinishMaker.Core
 								}
 								else
 								{ 
-									mainWriter.WriteLine("#include \"/Areas"+change.GetFolderLocation()+"/"+change.changeType.ToString()+".event\"");
+									mainWriter.WriteLine("#include \"./Areas"+change.GetFolderLocation()+"/"+change.changeType.ToString()+".event\"");
 								}
 								loadedChanges.Add(change);
 							}
@@ -268,7 +268,7 @@ namespace MinishMaker.Core
 			}
 
 			if(!loadedChanges.Any(x=>x.Compare(change))) //change not yet already written
-				mainWriter.WriteLine("#include \"/Areas"+change.GetFolderLocation()+"/"+fileName+"\"");
+				mainWriter.WriteLine("#include \"./Areas"+change.GetFolderLocation()+"/"+fileName+"\"");
         }
 
 
