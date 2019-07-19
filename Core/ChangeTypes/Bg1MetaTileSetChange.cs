@@ -25,12 +25,12 @@ namespace MinishMaker.Core.ChangeTypes
 			var pointerLoc = room.GetPointerLoc(changeType,areaId);
 			var gfxOffset = ROM.Instance.headers.gfxSourceBase;
 			byte[] data = null;
-			var size = MapManager.Instance.MapAreas.Single(a=>a.Index == areaId).Rooms.First().GetSaveData(ref data, changeType);
+			var size = room.GetSaveData(ref data, changeType);
 			var bitSet = ROM.Instance.reader.ReadByte(pointerLoc+3)==0x80;
 
 			sb.AppendLine("PUSH");	//save cursor location
 			sb.AppendLine("ORG "+pointerLoc);	//go to pointer location
-			sb.AppendLine("WORD "+changeType+"x"+areaId.Hex()+"-"+gfxOffset + "+$" + (bitSet?0x80000000:0));	//write label location to position - constant
+			sb.AppendLine("WORD "+changeType+"x"+areaId.Hex()+"-"+gfxOffset + "+$" + (bitSet?"80000000":"0"));	//write label location to position - constant
 			sb.AppendLine("ORG currentoffset+4"); //move over dest
 			sb.AppendLine("WORD $"+size.Hex()); //write size
 			sb.AppendLine("POP");	//go back to cursor location

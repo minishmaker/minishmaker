@@ -14,9 +14,15 @@ namespace MinishMaker.Core
 		byte[] metaTileSetData;
 		bool isBg1;
 
-		public MetaTileSet( AddrData addrData, bool isBg1 )
+		public MetaTileSet( AddrData addrData, bool isBg1, string filePath )
 		{
-			metaTileSetData = DataHelper.GetData( addrData );
+			metaTileSetData = Project.Instance.GetSavedData(filePath, true, addrData.size);
+
+			if(metaTileSetData == null)
+			{
+				metaTileSetData = DataHelper.GetData( addrData );
+			}
+
 			this.isBg1 = isBg1;
 		}
 

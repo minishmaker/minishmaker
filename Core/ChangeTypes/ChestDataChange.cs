@@ -24,24 +24,31 @@ namespace MinishMaker.Core.ChangeTypes
 			var room = MapManager.Instance.FindRoom(areaId,roomId);
 			var pointerLoc = room.GetPointerLoc(changeType, areaId);
 			var chestData = MapManager.Instance.FindRoom(areaId,roomId).GetChestData();
-
+			
 			sb.AppendLine("PUSH");//save cursor location
 			sb.AppendLine("ORG "+pointerLoc);//go to pointer location
-			//write label location to position
+			sb.AppendLine("POIN "+changeType+"x"+areaId.Hex()+"x"+roomId.Hex()); //write label location to position
 			sb.AppendLine("POP");//go back to cursor location
 			sb.AppendLine("ALIGN 4");
 			sb.AppendLine(changeType+"x"+areaId.Hex()+"x"+roomId.Hex()+":"); //create label
-			
+			sb.AppendLine("#incbin \"./"+changeType.ToString()+"Dat.bin\"");
+
+			var index = 0;
+			var data = new byte[chestData.Count*8];
 			foreach(var chest in chestData)
 			{
-				var b5 = chest.chestLocation & 0xFF; //first 8
-				var b6 = chest.chestLocation >> 8; //last 8
-				var b7 = chest.unknown & 0xFF; //first 8
-				var b8 = chest.unknown >>8; //last 8
-				sb.AppendLine("BYTE "+chest.type+" "+chest.chestId+" "+chest.itemId+" "+chest.itemSubNumber+" "+b5+" "+b6+" "+b7+" "+b8);
+				data[0+index]=chest.type;
+				data[1+index]=chest.chestId;
+				data[2+index]=chest.itemId;
+				data[3+index]=chest.itemSubNumber;
+				data[4+index]=(byte)(chest.chestLocation & 0xFF);
+				data[5+index]=(byte)(chest.chestLocation >> 8);
+				data[6+index]=(byte)(chest.unknown & 0xFF);
+				data[7+index]=(byte)(chest.unknown >> 8);
+				index+=8;
 			}
 
-			binDat = null;
+			binDat = data;
 			return sb.ToString();
 		}
 

@@ -389,7 +389,13 @@ namespace MinishMaker.UI
 
 	        if (currentRoom != null)
 	        {
-	            metatileEditor.RedrawTiles(currentRoom);
+				metatileEditor.currentArea = currentArea;
+				var room = MapManager.Instance.MapAreas.Single(a=>a.Index==currentArea).Rooms.First();
+				if(!room.Loaded)
+				{
+					room.LoadRoom(currentArea);
+				}
+	            metatileEditor.RedrawTiles(room);
 	        }
 
 	        metatileEditor.FormClosed += new FormClosedEventHandler(OnMetaTileEditorClose);
@@ -438,6 +444,12 @@ namespace MinishMaker.UI
 
 				if(metatileEditor != null)
 				{
+					metatileEditor.currentArea = currentArea;
+					room = MapManager.Instance.MapAreas.Single(a=>a.Index==currentArea).Rooms.First();
+					if(!room.Loaded)
+					{
+						room.LoadRoom(currentArea);
+					}
 					metatileEditor.RedrawTiles(currentRoom);
 				}
             }

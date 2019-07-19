@@ -52,6 +52,27 @@ namespace MinishMaker.Core
             //LoadProject();
         }
 
+		public byte[] GetSavedData(string path, bool compressed, int size = 0x2000)
+		{
+			byte[] data = null;
+			if (File.Exists(path))
+            {
+				data = new byte[size];
+				byte[] savedData = File.ReadAllBytes(path);
+				if(compressed) {
+					using (MemoryStream os = new MemoryStream(data))
+					{
+						using (MemoryStream ms = new MemoryStream(savedData))
+						{
+							Reader r = new Reader(ms);
+							DataHelper.Lz77Decompress(r, os);
+						}
+					}
+				}
+			}
+			return data;
+		}
+
 		public void CreateProject(string directory)
 		{
 			if(!File.Exists(projectPath+"/Main.event"))
@@ -134,8 +155,8 @@ namespace MinishMaker.Core
 						if(success)
 						{ 
 							var change = CreateChange(type ,areaIndex,0);
-
-							if(mainSets.Contains(file))
+							var entry = mainSets.SingleOrDefault(x=>file.Contains(x));
+							if(entry !=null)
 							{
 								mainSets.Remove(file);
 							}
@@ -191,8 +212,6 @@ namespace MinishMaker.Core
 			{
 				CleanIncludes(mainSets);
 			}
-			ApplyMainEventPatch();
-
         }
 
 		private void CleanIncludes(List<string> remaining)
@@ -214,11 +233,6 @@ namespace MinishMaker.Core
 
 				File.WriteAllText(projectPath+"/Main.event",text);
 			}
-		}
-
-		private void ApplyMainEventPatch()
-		{
-			//TODO: add EA integration to modify the ROM byte[] to show changes already made
 		}
 
 

@@ -20,7 +20,7 @@ namespace MinishMaker.UI
 		byte[] currentTileInfo = new byte[8];
 		int pnum = 0;
 		int currentLayer = 1;
-		int currentArea=-1;
+		public int currentArea=-1;
 		bool vFlip = false;
 		bool hFlip = false;
 
@@ -58,7 +58,7 @@ namespace MinishMaker.UI
 
 			var room = MapManager.Instance.MapAreas.Single(a=>a.Index==currentArea).Rooms.First();
 
-			currentTileInfo = room.GetMetaTileData(metaTileGridBox.SelectedIndex, currentLayer );
+			currentTileInfo = room.GetMetaTileData(metaTileGridBox.SelectedIndex, currentLayer);
 
 			if(currentTileInfo ==null)
 				return;
@@ -204,7 +204,7 @@ namespace MinishMaker.UI
 				return;
 
 			var room = MapManager.Instance.MapAreas.Single(a=>a.Index==currentArea).Rooms.First();
-			room.SetMetaTileData(currentTileInfo, metaTileGridBox.SelectedIndex, currentLayer-1);
+			room.SetMetaTileData(currentTileInfo, metaTileGridBox.SelectedIndex, currentLayer);
 			var image = metaTiles[currentLayer-1];
 			int x = metaTileGridBox.SelectedIndex % 16;
 			int y = metaTileGridBox.SelectedIndex / 16;
@@ -248,10 +248,10 @@ namespace MinishMaker.UI
 			byte highByte= (byte)(tileSetGridBox.SelectedIndex >> 8); //trim first 8 bits
 
 			if(hFlip)
-				highByte+=(1<<3);
+				highByte+=(1<<2);
 
 			if(vFlip)
-				highByte+=(1<<4);
+				highByte+=(1<<3);
 
 			currentTileInfo[loc]= lowByte;
 
