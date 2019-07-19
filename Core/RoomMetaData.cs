@@ -225,7 +225,7 @@ namespace MinishMaker.Core
 				bg2MetaTiles = new MetaTileSet( bg2MetaTilesAddr, false );
 
                 byte[] data = null;
-                string bg2Path = roomPath + "/" + (int)DataType.bg2Data;
+                string bg2Path = roomPath + "/" + DataType.bg2Data+"Dat.bin";
                 if (File.Exists(bg2Path)) {
                     data = new byte[0x2000];
                     byte[] savedData = File.ReadAllBytes(bg2Path);
@@ -255,7 +255,7 @@ namespace MinishMaker.Core
 			if( bg1RoomDataAddr != null )
 			{
                 byte[] data = null;
-                string bg1Path = roomPath + "/" + (int)DataType.bg1Data;
+                string bg1Path = roomPath + "/" + DataType.bg1Data+"Dat.bin";;
                 if (File.Exists(bg1Path))
                 {
                     data = new byte[0x2000];
