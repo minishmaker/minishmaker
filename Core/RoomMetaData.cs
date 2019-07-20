@@ -45,6 +45,7 @@ namespace MinishMaker.Core
 		}
 
         private string roomPath;
+		private string areaPath;
 
 		private int paletteSetID;
 		private List<AddrData> tileSetAddrs = new List<AddrData>();
@@ -119,7 +120,8 @@ namespace MinishMaker.Core
 
 		private void LoadMetaData( int areaIndex, int roomIndex )
 		{
-            roomPath = Project.Instance.projectPath + "/Areas/Area " + StringUtil.AsStringHex2(areaIndex) + "/Room " + StringUtil.AsStringHex2(roomIndex);
+			areaPath = Project.Instance.projectPath + "/Areas/Area " + StringUtil.AsStringHex2(areaIndex);
+            roomPath = areaPath + "/Room " + StringUtil.AsStringHex2(roomIndex);
 
             var r = ROM.Instance.reader;
 			var header = ROM.Instance.headers;
@@ -163,7 +165,7 @@ namespace MinishMaker.Core
             int roomEntityTableAddr =r.ReadAddr(roomEntityTableAddrLoc);
 
             //4 byte chunks, 1-3 are unknown use, 4th seems to be chests
-            string chestDataPath = roomPath + "/" + (int)DataType.chestData;
+            string chestDataPath = roomPath + "/" + DataType.chestData +"Dat.bin";
             if (File.Exists(chestDataPath))
             {
                 byte[] data = File.ReadAllBytes(chestDataPath);
@@ -222,24 +224,13 @@ namespace MinishMaker.Core
 		{
 			if( bg2RoomDataAddr != null )
 			{
-				bg2MetaTiles = new MetaTileSet( bg2MetaTilesAddr, false );
+				bg2MetaTiles = new MetaTileSet( bg2MetaTilesAddr, false, areaPath+"/"+DataType.bg2MetaTileSet+"Dat.bin" );
 
                 byte[] data = null;
-                string bg2Path = roomPath + "/" + (int)DataType.bg2Data;
-                if (File.Exists(bg2Path)) {
-                    data = new byte[0x2000];
-                    byte[] savedData = File.ReadAllBytes(bg2Path);
+                string bg2Path = roomPath + "/" + DataType.bg2Data+"Dat.bin";
 
-                    using (MemoryStream os = new MemoryStream(data))
-                    {
-                        using (MemoryStream ms = new MemoryStream(savedData))
-                        {
-                            Reader r = new Reader(ms);
-                            DataHelper.Lz77Decompress(r, os);
-                        }
-                    }
-                }
-                else
+				data = Project.Instance.GetSavedData(bg2Path,true);
+                if(data==null)
                 {
                     data = DataHelper.GetData((AddrData)bg2RoomDataAddr);
                 }
@@ -255,29 +246,17 @@ namespace MinishMaker.Core
 			if( bg1RoomDataAddr != null )
 			{
                 byte[] data = null;
-                string bg1Path = roomPath + "/" + (int)DataType.bg1Data;
-                if (File.Exists(bg1Path))
-                {
-                    data = new byte[0x2000];
-                    byte[] savedData = File.ReadAllBytes(bg1Path);
+                string bg1Path = roomPath + "/" + DataType.bg1Data+"Dat.bin";
 
-                    using (MemoryStream os = new MemoryStream(data))
-                    {
-                        using (MemoryStream ms = new MemoryStream(savedData))
-                        {
-                            Reader r = new Reader(ms);
-                            DataHelper.Lz77Decompress(r, os);
-                        }
-                    }
-                }
-                else
+				data = Project.Instance.GetSavedData(bg1Path, true);
+                if(data == null)
                 {
                     data = DataHelper.GetData((AddrData)bg1RoomDataAddr);
                 }
 
 				if( !bg1Use20344B0 )
                 {
-					bg1MetaTiles = new MetaTileSet( bg1MetaTilesAddr , true );
+					bg1MetaTiles = new MetaTileSet( bg1MetaTilesAddr , true, areaPath+"/"+DataType.bg1MetaTileSet+"Dat.bin" );
 				}
 
                 data.CopyTo(bg1RoomData, 0);
@@ -353,7 +332,7 @@ namespace MinishMaker.Core
 		public long GetChestData(ref byte[] outdata )
 		{
             //var size = (chestInformation.Count*8)+8;
-            string chestDataPath = roomPath + "/" + (int)DataType.chestData;
+            string chestDataPath = roomPath + "/" + DataType.chestData+"Dat.bin";
             if (File.Exists(chestDataPath))
             {
                 outdata = File.ReadAllBytes(chestDataPath);
@@ -395,8 +374,13 @@ namespace MinishMaker.Core
 			chestInformation.Add(data);
 		}
 
-		//To be changed as actual data gets changed and tested
-		public int GetPointerLoc(DataType type, int areaIndex, int roomIndex)
+        public void RemoveChestData(ChestData data)
+        {
+            chestInformation.Remove(data);
+        }
+
+        //To be changed as actual data gets changed and tested
+        public int GetPointerLoc(DataType type, int areaIndex, int roomIndex)
 		{
 			var r = ROM.Instance.reader;
 			var header = ROM.Instance.headers;
@@ -419,9 +403,20 @@ namespace MinishMaker.Core
 					retAddr = roomTileSetAddrLoc;
 					break;
 
-				case DataType.metaTileSet:
+				case DataType.bg1MetaTileSet:
+				case DataType.bg2MetaTileSet:
 					int metaTileSetsAddrLoc = r.ReadAddr( header.globalMetaTileSetTableLoc + (areaIndex << 2) );
-					retAddr = metaTileSetsAddrLoc;
+					//retAddr = metaTileSetsAddrLoc;
+					r.SetPosition(metaTileSetsAddrLoc);
+					if(type == DataType.bg1MetaTileSet)
+					{
+						ParseData(r, Meta1Check);
+					}
+					if(type == DataType.bg2MetaTileSet)
+					{
+						ParseData(r, Meta2Check);
+					}
+					retAddr = (int)r.Position-12; //step back 12 bytes as the bg was found after reading
 					break;
 
 				case DataType.bg1Data:
@@ -545,6 +540,30 @@ namespace MinishMaker.Core
 			switch(data.dest)
 			{
 				case 0x02025EB4:
+					return false;
+				default:
+					break;
+			}
+			return true;
+		}
+
+		private bool Meta1Check(AddrData data)
+		{
+			switch(data.dest)
+			{
+				case 0x02012654:
+					return false;
+				default:
+					break;
+			}
+			return true;
+		}
+
+		private bool Meta2Check(AddrData data)
+		{
+			switch(data.dest)
+			{
+				case 0x0202CEB4:
 					return false;
 				default:
 					break;

@@ -48,6 +48,7 @@
             this.nextButton = new System.Windows.Forms.Button();
             this.prevButton = new System.Windows.Forms.Button();
             this.newButton = new System.Windows.Forms.Button();
+            this.removeButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // entityType
@@ -55,7 +56,7 @@
             this.entityType.Location = new System.Drawing.Point(79, 75);
             this.entityType.MaxLength = 2;
             this.entityType.Name = "entityType";
-            this.entityType.Size = new System.Drawing.Size(20, 20);
+            this.entityType.Size = new System.Drawing.Size(24, 20);
             this.entityType.TabIndex = 0;
             this.entityType.Text = "00";
             this.entityType.LostFocus += new System.EventHandler(this.entityType_LostFocus);
@@ -83,7 +84,7 @@
             this.entityId.Location = new System.Drawing.Point(79, 102);
             this.entityId.MaxLength = 2;
             this.entityId.Name = "entityId";
-            this.entityId.Size = new System.Drawing.Size(20, 20);
+            this.entityId.Size = new System.Drawing.Size(24, 20);
             this.entityId.TabIndex = 2;
             this.entityId.Text = "00";
             this.entityId.LostFocus += new System.EventHandler(this.entityId_LostFocus);
@@ -197,11 +198,11 @@
             // indexLabel
             // 
             this.indexLabel.AutoSize = true;
-            this.indexLabel.Location = new System.Drawing.Point(38, 16);
+            this.indexLabel.Location = new System.Drawing.Point(35, 16);
             this.indexLabel.Name = "indexLabel";
-            this.indexLabel.Size = new System.Drawing.Size(13, 13);
+            this.indexLabel.Size = new System.Drawing.Size(19, 13);
             this.indexLabel.TabIndex = 16;
-            this.indexLabel.Text = "0";
+            this.indexLabel.Text = "";
             // 
             // nextButton
             // 
@@ -233,11 +234,22 @@
             this.newButton.UseVisualStyleBackColor = true;
             this.newButton.Click += new System.EventHandler(this.newButton_Click);
             // 
+            // removeButton
+            // 
+            this.removeButton.Location = new System.Drawing.Point(109, 12);
+            this.removeButton.Name = "removeButton";
+            this.removeButton.Size = new System.Drawing.Size(20, 20);
+            this.removeButton.TabIndex = 21;
+            this.removeButton.Text = "-";
+            this.removeButton.UseVisualStyleBackColor = true;
+            this.removeButton.Click += new System.EventHandler(this.RemoveButton_Click);
+            // 
             // ChestEditorWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(333, 162);
+            this.Controls.Add(this.removeButton);
             this.Controls.Add(this.newButton);
             this.Controls.Add(this.prevButton);
             this.Controls.Add(this.nextButton);
@@ -286,5 +298,6 @@
 		private System.Windows.Forms.Button nextButton;
 		private System.Windows.Forms.Button prevButton;
 		private System.Windows.Forms.Button newButton;
-	}
+        private System.Windows.Forms.Button removeButton;
+    }
 }

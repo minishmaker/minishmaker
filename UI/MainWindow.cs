@@ -8,6 +8,7 @@ using GBHL;
 using MinishMaker.Core;
 using MinishMaker.Utilities;
 using System.Drawing;
+using MinishMaker.Core.ChangeTypes;
 
 namespace MinishMaker.UI
 {
@@ -22,11 +23,11 @@ namespace MinishMaker.UI
 		private Bitmap[] mapLayers;
 		private Bitmap[] tileMaps;
 
-        public Room currentRoom = null;
-		private int currentArea = -1;
+        public static Room currentRoom = null;
+		public static int currentArea = -1;
 		private int selectedTileData = -1;
 		private int selectedLayer = 2; //start with bg2
-		private List<PendingData> unsavedChanges = new List<PendingData>();
+		private static List<Change> pendingRomChanges;
         private Point lastTilePos;
 	    private ViewLayer viewLayer = 0;
 
@@ -48,21 +49,6 @@ namespace MinishMaker.UI
 				this.size = size;
 			}
 		}
-
-		struct PendingData
-		{
-			public int areaIndex;
-			public int roomIndex;
-			public DataType dataType;
-
-			public PendingData( int areaIndex, int roomIndex, DataType type )
-			{
-				this.areaIndex = areaIndex;
-				this.roomIndex = roomIndex;
-				this.dataType = type;
-			}
-		}
-
 		
 
 	    public enum ViewLayer
@@ -75,6 +61,53 @@ namespace MinishMaker.UI
 		public MainWindow()
 		{
 			InitializeComponent();
+
+			var exeFolder = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).Substring(6);
+			if(File.Exists(exeFolder+"/Settings.cfg"))
+			{
+				var settings = File.ReadLines(exeFolder+"/Settings.cfg").ToList();
+				project_ = new Project();
+
+				var romFile = settings.Single(x=>x.Contains("romFile")).Split('=')[1];
+				var projectFolder = settings.Single(x=>x.Contains("projectFolder")).Split('=')[1];
+				var allFound = true;
+				if(!Directory.Exists(projectFolder))
+				{
+					allFound = false;
+				}
+				else
+				{
+					project_.projectPath = projectFolder;
+				}
+				
+				if(!File.Exists(romFile))
+				{
+					allFound = false;
+				}
+				else
+				{
+					project_.sourcePath = romFile;
+					ROM_ = new ROM( romFile );
+				}
+
+				if(!allFound)
+				{
+					return;
+				}
+				mapGridBox.Image = new Bitmap(1,1); //reset some things on loading a rom
+				bottomTileGridBox.Image = new Bitmap(1,1);
+				topTileGridBox.Image = new Bitmap(1, 1);
+				currentRoom = null;
+				currentArea = -1;
+				selectedTileData = -1;
+				selectedLayer = 2; 
+				pendingRomChanges = new List<Change>();
+				project_.LoadProject();
+				LoadMaps();
+
+				var pName = new DirectoryInfo(projectFolder).Name;
+				statusText.Text = "Opened last project: "+pName;
+			}
 		}
 
         #region MenuBarButtons
@@ -83,10 +116,14 @@ namespace MinishMaker.UI
 			LoadRom();
 		}
 
-        private void ExportROMToolStripMenuItem_Click(object sender, EventArgs e)
+		private void SelectProjectButtonClick( object sender, EventArgs e )
+		{
+			SelectProject();
+		}
+        /*private void ExportROMToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ExportRom();
-        }
+        }*/
 
         private void saveAllChangesCtrlSToolStripMenuItem_Click(object sender, EventArgs e)
 	    {
@@ -197,20 +234,76 @@ namespace MinishMaker.UI
 				statusText.Text = "Unable to determine ROM.";
 				return;
 			}
-
-			mapGridBox.Image = new Bitmap(1,1); //reset some things on loading a rom
-			bottomTileGridBox.Image = new Bitmap(1,1);
-            topTileGridBox.Image = new Bitmap(1, 1);
-			currentRoom = null;
-			currentArea = -1;
-			selectedTileData = -1;
-			selectedLayer = 2; 
-			unsavedChanges = new List<PendingData>();
             
-            LoadMaps();
-            project_ = new Project(ROM.Instance, mapManager_);
+            //LoadMaps();
+			if(project_== null)
+			{
+				project_ = new Project();
+			}
 
-            statusText.Text = "Loaded: " + ROM.Instance.path;
+			project_.sourcePath = ROM.Instance.path;
+			var st = "Loaded: " + ROM.Instance.path;
+
+			if(project_.projectPath!=null)
+			{
+
+				project_.LoadProject();//load first as rooms or areas could be added at some point
+				mapGridBox.Image = new Bitmap(1,1); //reset some things on loading a rom
+				bottomTileGridBox.Image = new Bitmap(1,1);
+				topTileGridBox.Image = new Bitmap(1, 1);
+				currentRoom = null;
+				currentArea = -1;
+				selectedTileData = -1;
+				selectedLayer = 2; 
+				pendingRomChanges = new List<Change>();
+				LoadMaps();
+			}
+			else
+			{
+				st+=", also select a project folder.";
+			}
+
+            statusText.Text = st;
+		}
+
+		private void SelectProject()
+		{
+			FolderBrowserDialog fbd = new FolderBrowserDialog()
+			{
+				ShowNewFolderButton = true,
+				Description = "Select project root folder."
+			};
+
+			if( fbd.ShowDialog() != DialogResult.OK )
+			{
+				return;
+			}
+
+			if(project_== null)
+			{
+				project_ = new Project();
+			}
+
+			project_.projectPath =  fbd.SelectedPath;
+
+			if(project_.sourcePath!=null)
+			{
+				statusText.Text = "Project opened";
+				project_.LoadProject();//load first as rooms or areas could be added at some point
+				mapGridBox.Image = new Bitmap(1,1); //reset some things on loading a rom
+				bottomTileGridBox.Image = new Bitmap(1,1);
+				topTileGridBox.Image = new Bitmap(1, 1);
+				currentRoom = null;
+				currentArea = -1;
+				selectedTileData = -1;
+				selectedLayer = 2; 
+				pendingRomChanges = new List<Change>();
+				LoadMaps();
+			}
+			else
+			{
+				statusText.Text ="Folder selected, select a ROM file.";
+			}
 		}
 
 		private void LoadMaps()
@@ -237,9 +330,9 @@ namespace MinishMaker.UI
 			roomTreeView.EndUpdate();
 		}
 
-        private void ExportRom()
+       /* private void ExportRom()
         {
-            if (unsavedChanges.Count > 0)
+            if (romChanges.Count > 0)
             {
                 DialogResult dialogResult = MessageBox.Show("You have unsaved changes. Save and export?", "Confirm Save", MessageBoxButtons.YesNo);
                 if (dialogResult == DialogResult.Yes)
@@ -262,7 +355,7 @@ namespace MinishMaker.UI
             {
                 MessageBox.Show("Error building ROM");
             }
-        }
+        }*/
 
 	    private void OpenChestEditor()
 	    {
@@ -296,7 +389,13 @@ namespace MinishMaker.UI
 
 	        if (currentRoom != null)
 	        {
-	            metatileEditor.RedrawTiles(currentRoom);
+				metatileEditor.currentArea = currentArea;
+				var room = MapManager.Instance.MapAreas.Single(a=>a.Index==currentArea).Rooms.First();
+				if(!room.Loaded)
+				{
+					room.LoadRoom(currentArea);
+				}
+	            metatileEditor.RedrawTiles(room);
 	        }
 
 	        metatileEditor.FormClosed += new FormClosedEventHandler(OnMetaTileEditorClose);
@@ -345,6 +444,12 @@ namespace MinishMaker.UI
 
 				if(metatileEditor != null)
 				{
+					metatileEditor.currentArea = currentArea;
+					room = MapManager.Instance.MapAreas.Single(a=>a.Index==currentArea).Rooms.First();
+					if(!room.Loaded)
+					{
+						room.LoadRoom(currentArea);
+					}
 					metatileEditor.RedrawTiles(currentRoom);
 				}
             }
@@ -403,22 +508,27 @@ namespace MinishMaker.UI
 
         private void SaveAllChanges()
         {
-            unsavedChanges = unsavedChanges.Distinct().ToList();
-            while (unsavedChanges.Count > 0)
+			if(Project.Instance==null)
+				return;
+
+			Project.Instance.StartSave();
+
+            while (pendingRomChanges.Count > 0)
             {
-                PendingData data = unsavedChanges.ElementAt(0);
-                Project.Instance.AddChange(data.areaIndex, data.roomIndex, data.dataType);
-                unsavedChanges.RemoveAt(0);
+                Change data = pendingRomChanges.ElementAt(0);
+                Project.Instance.SaveChange(data);
+                pendingRomChanges.RemoveAt(0);
             }
 
-            Project.Instance.SaveProject();
+            Project.Instance.EndSave();
 
             MessageBox.Show("Project Saved");
         }
 
-		public void AddPendingChange(DataType type)
+		public static void AddPendingChange(Change change)
 		{
-			unsavedChanges.Add(new PendingData(currentArea,currentRoom.Index,type));
+			if(!pendingRomChanges.Any(x=>x.Compare(change))) //change does not yet exist
+				pendingRomChanges.Add(change);
 		}
 
 	    private void UpdateViewLayer(ViewLayer layer)
@@ -545,12 +655,12 @@ namespace MinishMaker.UI
             if (layer == 1)
             {
                 currentRoom.DrawTile(ref mapLayers[0], p, currentArea, selectedLayer, tileData);
-                AddPendingChange(DataType.bg1Data);
+                AddPendingChange(new Bg1DataChange(currentArea,currentRoom.Index));
             }
             else if (layer == 2)
             {
                 currentRoom.DrawTile(ref mapLayers[1], p, currentArea, selectedLayer, tileData);
-                AddPendingChange(DataType.bg2Data);
+                AddPendingChange(new Bg2DataChange(currentArea,currentRoom.Index));
             }
 
             currentRoom.SetTileData(selectedLayer, pos * 2, selectedTileData);
@@ -558,5 +668,5 @@ namespace MinishMaker.UI
             // TODO switch on layer view
             UpdateViewLayer(viewLayer);
         }
-    }
+	}
 }
