@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Nintenlord.Event_Assembler;
 
 namespace MinishMaker.Core
 {
@@ -283,6 +284,12 @@ namespace MinishMaker.Core
 
 			if(!loadedChanges.Any(x=>x.Compare(change))) //change not yet already written
 				mainWriter.WriteLine("#include \"./Areas"+change.GetFolderLocation()+"/"+fileName+"\"");
+        }
+
+        public bool BuildProject()
+        {
+            Nintenlord.Event_Assembler.Core.Program.Assemble(projectPath + "/Main.event", sourcePath, "FE7", null);
+            return true;
         }
 
 

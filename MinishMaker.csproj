@@ -154,5 +154,14 @@
   <ItemGroup>
     <Folder Include="Resources\" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Vendor\Event-Assembler\Event Assembler\Core\Core.csproj">
+      <Project>{224c71e2-5e52-4910-910a-6fa9c2f937be}</Project>
+      <Name>Core</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy /y /d /s /i /e "$(ProjectDir)Vendor\Event-Assembler\Event Assembler\Event Assembler\Language Raws" "$(TargetDir)Language Raws"</PostBuildEvent>
+  </PropertyGroup>
 </Project>

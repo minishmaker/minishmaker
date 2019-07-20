@@ -120,15 +120,16 @@ namespace MinishMaker.UI
 		{
 			SelectProject();
 		}
-        /*private void ExportROMToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ExportRom();
-        }*/
 
         private void saveAllChangesCtrlSToolStripMenuItem_Click(object sender, EventArgs e)
 	    {
             SaveAllChanges();
 	    }
+
+        private void BuildProjectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            BuildProject();
+        }
 
         private void ExitButtonClick( object sender, EventArgs e )
 		{
@@ -330,34 +331,47 @@ namespace MinishMaker.UI
 			roomTreeView.EndUpdate();
 		}
 
-       /* private void ExportRom()
+        private void BuildProject()
         {
-            if (romChanges.Count > 0)
+            if (Project.Instance == null)
             {
-                DialogResult dialogResult = MessageBox.Show("You have unsaved changes. Save and export?", "Confirm Save", MessageBoxButtons.YesNo);
-                if (dialogResult == DialogResult.Yes)
-                {
-                    SaveAllChanges();
-                }
-                else if (dialogResult == DialogResult.No)
-                {
-                    return;
-                }
+                MessageBox.Show("No project loaded!");
+                return;
             }
+            // TODO check for pending changes before building, and prompt user
 
-            bool success = Project.Instance.ExportToRom();
+            project_.BuildProject();
 
-            if (success)
-            {
-                MessageBox.Show("Successfully built ROM");
-            }
-            else
-            {
-                MessageBox.Show("Error building ROM");
-            }
-        }*/
+        }
 
-	    private void OpenChestEditor()
+        /* private void ExportRom()
+         {
+             if (romChanges.Count > 0)
+             {
+                 DialogResult dialogResult = MessageBox.Show("You have unsaved changes. Save and export?", "Confirm Save", MessageBoxButtons.YesNo);
+                 if (dialogResult == DialogResult.Yes)
+                 {
+                     SaveAllChanges();
+                 }
+                 else if (dialogResult == DialogResult.No)
+                 {
+                     return;
+                 }
+             }
+
+             bool success = Project.Instance.ExportToRom();
+
+             if (success)
+             {
+                 MessageBox.Show("Successfully built ROM");
+             }
+             else
+             {
+                 MessageBox.Show("Error building ROM");
+             }
+         }*/
+
+        private void OpenChestEditor()
 	    {
 	        if (chestEditorStripMenuItem.Checked)
 	            return; // dont open a second one
@@ -668,5 +682,5 @@ namespace MinishMaker.UI
             // TODO switch on layer view
             UpdateViewLayer(viewLayer);
         }
-	}
+    }
 }
