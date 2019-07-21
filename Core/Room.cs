@@ -1,11 +1,11 @@
-﻿using MinishMaker.Utilities;
+﻿using MinishMaker.UI;
+using MinishMaker.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using static MinishMaker.Core.RoomMetaData;
-using static MinishMaker.UI.MainWindow;
 
 namespace MinishMaker.Core
 {
@@ -16,7 +16,27 @@ namespace MinishMaker.Core
 
 		private RoomMetaData metadata;
 		private TileSet tset;
+		public TileSet tileSet
+		{
+			get { return tset;}
+		}
+
 		private PaletteSet pset;
+		public Color[][] palettes
+		{
+			get { return pset.Palettes;}
+		}
+
+		public bool Bg1Exists
+		{
+			get { return bg1Exists;}
+		}
+
+		public bool Bg2Exists
+		{
+			get { return bg2Exists;}
+		}
+
 		private MetaTileSet bg2MetaTiles;
 		private MetaTileSet bg1MetaTiles;
 		private byte[] bg2RoomData;
@@ -31,7 +51,7 @@ namespace MinishMaker.Core
 			Loaded = false;
         }
 
-		private void LoadRoom(int areaIndex)
+		public void LoadRoom(int areaIndex)
 		{
 			metadata = new RoomMetaData( areaIndex, this.Index );
 
@@ -47,6 +67,11 @@ namespace MinishMaker.Core
 
 			bg2Exists = metadata.GetBG2Data( ref bg2RoomData, ref bg2MetaTiles );//loads in the data and tiles
 			bg1Exists = metadata.GetBG1Data( ref bg1RoomData, ref bg1MetaTiles );//loads in the data, tiles and sets bg1Use20344B0
+
+			if(!bg1Exists && !bg2Exists)
+			{
+				MainWindow.Notify("No layers exist for this room, the room is highly likely invalid.","Invalid Room");
+			}
 
 			Loaded = true; //do not load data a 2nd time for this room
 		}
@@ -98,6 +123,7 @@ namespace MinishMaker.Core
 			ushort[] chunks = new ushort[3];
 			ushort[] oldchunks = new ushort[3];
 			chunks = new ushort[3] { 0x00FF, 0x00FF, 0x00FF };
+			int badTiles = 0;
 
 			for( int j = 0; j < metadata.TileHeight; j++ )
 			{
@@ -115,7 +141,11 @@ namespace MinishMaker.Core
 					int mt = roomData[pos] | (roomData[pos + 1] << 8);
 
 					pos += 2; //2 bytes per tile
-
+					if(metaTiles.GetTileInfo(mt)==null)
+					{
+						badTiles++;
+						continue;
+					}
 					try
 					{
 						if( mt != 0xFFFF ) //nonexistant room data does this, eg. area 0D room 10
@@ -127,6 +157,10 @@ namespace MinishMaker.Core
 											+ "\n" + e.Message, e );
 					}
 				}
+			}
+			if(badTiles>0)
+			{
+				MainWindow.Notify("Found "+badTiles+" bad tiles while trying to draw them, the room may be unused.","Bad Tiles");
 			}
 		}
 
@@ -321,15 +355,23 @@ namespace MinishMaker.Core
 			}
 		}
 
-		public long CompressRoomData(ref byte[] data, DataType type )
+		public long GetSaveData(ref byte[] data, DataType type )
 		{
-			if(type == DataType.bg1Data)
-				return metadata.CompressBG1(ref data, bg1RoomData);
-
-			if(type == DataType.bg2Data)
-				return metadata.CompressBG2(ref data, bg2RoomData);
-
-			return 0;
+            switch(type)
+            {
+                case DataType.bg1Data:
+                    return metadata.CompressBG1(ref data, bg1RoomData);
+                case DataType.bg2Data:
+                    return metadata.CompressBG2(ref data, bg2RoomData);
+				case DataType.chestData:
+					return metadata.GetChestData(ref data);
+				case DataType.bg1MetaTileSet:
+					return bg1MetaTiles.GetCompressedMetaTileSet(ref data);
+				case DataType.bg2MetaTileSet:
+					return bg2MetaTiles.GetCompressedMetaTileSet(ref data);
+                default:
+                    return 0;
+            }
 		}
 
 		public int GetPointerLoc( DataType type , int areaIndex)
@@ -405,6 +447,42 @@ namespace MinishMaker.Core
 		public List<ChestData> GetChestData()
 		{
 			return metadata.ChestInfo;
+		}
+
+		public void AddChestData(ChestData data)
+		{
+			metadata.AddChestData(data);
+		}
+
+        public void RemoveChestData(ChestData data)
+        {
+            metadata.RemoveChestData(data);
+        }
+
+		public byte[] GetMetaTileData(int tileNum, int layer)
+		{
+			switch(layer)
+			{
+				case 1:
+					return bg1MetaTiles.GetTileInfo(tileNum);
+				case 2:
+					return bg2MetaTiles.GetTileInfo(tileNum);
+				default:			
+					return null;
+			}
+		}
+
+		public void SetMetaTileData(byte[] data,int tileNum, int layer)
+		{
+			switch(layer)
+			{
+				case 1:
+					bg1MetaTiles.SetTileInfo(data, tileNum);
+					break;
+				case 2:
+					bg2MetaTiles.SetTileInfo(data, tileNum);
+					break;
+			}
 		}
 	}
 }

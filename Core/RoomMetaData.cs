@@ -6,13 +6,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MinishMaker.Utilities;
-using static MinishMaker.UI.MainWindow;
 
 namespace MinishMaker.Core
 {
 	public class RoomMetaData
 	{
-		private int width, height;
+		private int width, height, mapPosX, mapPosY;
 		public int PixelWidth
 		{
 			get
@@ -45,6 +44,9 @@ namespace MinishMaker.Core
 			}
 		}
 
+        private string roomPath;
+		private string areaPath;
+
 		private int paletteSetID;
 		private List<AddrData> tileSetAddrs = new List<AddrData>();
 
@@ -59,6 +61,12 @@ namespace MinishMaker.Core
 
 		private AddrData? bg1RoomDataAddr;
 		private AddrData bg1MetaTilesAddr;
+
+		private bool chestDataLarger = false;
+		public bool ChestDataLarger
+		{
+			get { return chestDataLarger;}
+		}
 
 		private bool bg1Use20344B0 = false;
 		public bool Bg1Use20344B0
@@ -87,12 +95,12 @@ namespace MinishMaker.Core
 
 		public struct ChestData
 		{
-			byte type;
-			byte chestId;
-			byte itemId;
-			byte itemSubNumber;
-			ushort chestLocation;
-			ushort unknown;
+			public byte type;
+            public byte chestId;
+            public byte itemId;
+            public byte itemSubNumber;
+            public ushort chestLocation;
+            public ushort unknown;
 
 			public ChestData(byte type, byte chestId, byte itemId, byte itemSubNumber, ushort chestLocation, ushort other)
 			{
@@ -112,13 +120,17 @@ namespace MinishMaker.Core
 
 		private void LoadMetaData( int areaIndex, int roomIndex )
 		{
-			var r = ROM.Instance.reader;
+			areaPath = Project.Instance.projectPath + "/Areas/Area " + StringUtil.AsStringHex2(areaIndex);
+            roomPath = areaPath + "/Room " + StringUtil.AsStringHex2(roomIndex);
+
+            var r = ROM.Instance.reader;
 			var header = ROM.Instance.headers;
 
 			int areaRMDTableLoc = r.ReadAddr( header.MapHeaderBase + (areaIndex << 2) );
 			int roomMetaDataTableLoc = areaRMDTableLoc + (roomIndex * 0x0A);
-
-			this.width = r.ReadUInt16( roomMetaDataTableLoc + 4 ) >> 4; //bytes 5+6 pixels/16 = tiles
+			this.mapPosX = r.ReadUInt16( roomMetaDataTableLoc )>>4;
+			this.mapPosY = r.ReadUInt16()>>4;
+			this.width = r.ReadUInt16() >> 4; //bytes 5+6 pixels/16 = tiles
 			this.height = r.ReadUInt16() >> 4;                          //bytes 7+8 pixels/16 = tiles
 
 			//get addr of TPA data
@@ -152,43 +164,76 @@ namespace MinishMaker.Core
             int roomEntityTableAddrLoc = areaEntityTableAddr + (roomIndex << 2);
             int roomEntityTableAddr =r.ReadAddr(roomEntityTableAddrLoc);
 
-			//4 byte chunks, 1-3 are unknown use, 4th seems to be chests
-			int chestTableAddr = r.ReadAddr(roomEntityTableAddr+12);
-			
-			var data = r.ReadBytes(8);
+            //4 byte chunks, 1-3 are unknown use, 4th seems to be chests
+            string chestDataPath = roomPath + "/" + DataType.chestData +"Dat.bin";
+            if (File.Exists(chestDataPath))
+            {
+                byte[] data = File.ReadAllBytes(chestDataPath);
+                int index = 0;
+                while (index < data.Length && (TileEntityType)data[index] != TileEntityType.None)
+                {
+                    var type = data[index];
+                    var id = data[index + 1];
+                    var item = data[index + 2];
+                    var subNum = data[index + 3];
+                    ushort loc = (ushort)(data[index + 4] | (data[index + 5] << 8));
+                    ushort other = (ushort)(data[index + 6] | (data[index + 7] << 8));
+                    chestInformation.Add(new ChestData(type, id, item, subNum, loc, other));
+                    index += 8;
+                }
+            } 
+            else
+            {
+                int chestTableAddr = r.ReadAddr(roomEntityTableAddr + 12);
 
-			while(!Enumerable.SequenceEqual(data, new byte[]{00,00,00,00,00,00,00,00}))//ends on reading all 0's
-			{
-				var type = data[0];
-				var id = data[1];
-				var item = data[2];
-				var subNum = data[3];
-				ushort loc = (ushort)(data[4] | (data[5]<<8));
-				ushort other = (ushort)(data[6] | (data[7]<<8));
-				chestInformation.Add(new ChestData(type,id,item,subNum,loc,other));
-				data = r.ReadBytes(8);
-			}
-			
+                var data = r.ReadBytes(8, chestTableAddr);
+
+                while ((TileEntityType)data[0] != TileEntityType.None) //ends on type 0
+                {
+                    var type = data[0];
+                    var id = data[1];
+                    var item = data[2];
+                    var subNum = data[3];
+                    ushort loc = (ushort)(data[4] | (data[5] << 8));
+                    ushort other = (ushort)(data[6] | (data[7] << 8));
+                    chestInformation.Add(new ChestData(type, id, item, subNum, loc, other));
+                    data = r.ReadBytes(8);
+                }
+            }
 		}
-
 
 		public TileSet GetTileSet()
 		{
-			return new TileSet( tileSetAddrs );
+            string tilesetPath = roomPath + "/" + (int)DataType.tileSet;
+            if (File.Exists(tilesetPath))
+            {
+                return new TileSet(File.ReadAllBytes(tilesetPath));
+            }
+            else
+            {
+                return new TileSet(tileSetAddrs);
+            }
 		}
 
 		public PaletteSet GetPaletteSet()
 		{
-			return new PaletteSet( paletteSetID );
+            return new PaletteSet(paletteSetID);
 		}
 
 		public bool GetBG2Data( ref byte[] bg2RoomData, ref MetaTileSet bg2MetaTiles )
 		{
 			if( bg2RoomDataAddr != null )
 			{
-				bg2MetaTiles = new MetaTileSet( bg2MetaTilesAddr, false );
+				bg2MetaTiles = new MetaTileSet( bg2MetaTilesAddr, false, areaPath+"/"+DataType.bg2MetaTileSet+"Dat.bin" );
 
-				var data = DataHelper.GetData( (AddrData)bg2RoomDataAddr );
+                byte[] data = null;
+                string bg2Path = roomPath + "/" + DataType.bg2Data+"Dat.bin";
+
+				data = Project.Instance.GetSavedData(bg2Path,true);
+                if(data==null)
+                {
+                    data = DataHelper.GetData((AddrData)bg2RoomDataAddr);
+                }
 				data.CopyTo( bg2RoomData, 0 );
 
 				return true;
@@ -200,17 +245,22 @@ namespace MinishMaker.Core
 		{
 			if( bg1RoomDataAddr != null )
 			{
-				if( bg1Use20344B0 )
-				{
-					DataHelper.GetData( (AddrData)bg1RoomDataAddr ).CopyTo( bg1RoomData, 0 );
-					bg1Use20344B0 = true;
+                byte[] data = null;
+                string bg1Path = roomPath + "/" + DataType.bg1Data+"Dat.bin";
+
+				data = Project.Instance.GetSavedData(bg1Path, true);
+                if(data == null)
+                {
+                    data = DataHelper.GetData((AddrData)bg1RoomDataAddr);
+                }
+
+				if( !bg1Use20344B0 )
+                {
+					bg1MetaTiles = new MetaTileSet( bg1MetaTilesAddr , true, areaPath+"/"+DataType.bg1MetaTileSet+"Dat.bin" );
 				}
-				else
-				{
-					bg1MetaTiles = new MetaTileSet( bg1MetaTilesAddr , true );
-					DataHelper.GetData( (AddrData)bg1RoomDataAddr ).CopyTo( bg1RoomData, 0 );
-				}
-				return true;
+
+                data.CopyTo(bg1RoomData, 0);
+                return true;
 			}
 			return false;
 		}
@@ -233,7 +283,7 @@ namespace MinishMaker.Core
 				}
 				else
 				{
-					int source = (int)((data & 0x7FFFFFFF) + header.gfxSourceBase); //8324AE4 is tile gfx base
+					int source = (int)((data & 0x7FFFFFFF) + header.gfxSourceBase); //08324AE4 is tile gfx base
 					int dest = (int)(data2 & 0x7FFFFFFF);
 					bool compressed = (data3 & 0x80000000) != 0; //high bit of size determines LZ or DMA
 					int size = (int)(data3 & 0x7FFFFFFF);
@@ -256,7 +306,9 @@ namespace MinishMaker.Core
 
 			outdata = new byte[totalSize];
 			Array.Copy(compressed,outdata,totalSize);
-			//var sizeDifference = totalSize - bg1RoomDataAddr.Value.size;
+            //var sizeDifference = totalSize - bg1RoomDataAddr.Value.size;
+
+            totalSize |= 0x80000000;
 
 			return totalSize;
 		}
@@ -270,13 +322,65 @@ namespace MinishMaker.Core
 			
 			outdata = new byte[totalSize];
 			Array.Copy(compressed,outdata,totalSize);
-			//var sizeDifference = totalSize - bg2RoomDataAddr.Value.size;
+            //var sizeDifference = totalSize - bg2RoomDataAddr.Value.size;
 
-			return totalSize;
+            totalSize |= 0x80000000;
+
+            return totalSize;
 		}
 
-		//To be changed as actual data gets changed and tested
-		public int GetPointerLoc(DataType type, int areaIndex, int roomIndex)
+		public long GetChestData(ref byte[] outdata )
+		{
+            //var size = (chestInformation.Count*8)+8;
+            string chestDataPath = roomPath + "/" + DataType.chestData+"Dat.bin";
+            if (File.Exists(chestDataPath))
+            {
+                outdata = File.ReadAllBytes(chestDataPath);
+                return outdata.Length;
+            }
+
+            outdata = new byte[chestInformation.Count*8+8];
+
+			for(int i = 0; i< chestInformation.Count; i++)
+			{
+				var index = i*8;
+				var data = chestInformation[i];
+				outdata[index] = data.type;
+				outdata[index+1] = data.chestId;
+				outdata[index+2] = data.itemId;
+				outdata[index+3] = data.itemSubNumber;
+				byte high = (byte)(data.chestLocation>>8);
+				byte low = (byte)(data.chestLocation-(high<<8));
+				outdata[index+4] = low;
+				outdata[index+5] = high;
+				high = (byte)(data.unknown>>8);
+				low = (byte)(data.unknown-(high<<8));
+				outdata[index+6] = low;
+				outdata[index+7] = high;
+
+				if(i == chestInformation.Count-1)// add ending 0's
+				{
+					for(int j= 0; j<8;j++)
+						outdata[index+8+j]=0;
+				}
+			}
+
+            return outdata.Length;
+		}
+
+		public void AddChestData(ChestData data)
+		{
+			chestDataLarger = true; //larger so should be moved
+			chestInformation.Add(data);
+		}
+
+        public void RemoveChestData(ChestData data)
+        {
+            chestInformation.Remove(data);
+        }
+
+        //To be changed as actual data gets changed and tested
+        public int GetPointerLoc(DataType type, int areaIndex, int roomIndex)
 		{
 			var r = ROM.Instance.reader;
 			var header = ROM.Instance.headers;
@@ -299,9 +403,20 @@ namespace MinishMaker.Core
 					retAddr = roomTileSetAddrLoc;
 					break;
 
-				case DataType.metaTileSet:
+				case DataType.bg1MetaTileSet:
+				case DataType.bg2MetaTileSet:
 					int metaTileSetsAddrLoc = r.ReadAddr( header.globalMetaTileSetTableLoc + (areaIndex << 2) );
-					retAddr = metaTileSetsAddrLoc;
+					//retAddr = metaTileSetsAddrLoc;
+					r.SetPosition(metaTileSetsAddrLoc);
+					if(type == DataType.bg1MetaTileSet)
+					{
+						ParseData(r, Meta1Check);
+					}
+					if(type == DataType.bg2MetaTileSet)
+					{
+						ParseData(r, Meta2Check);
+					}
+					retAddr = (int)r.Position-12; //step back 12 bytes as the bg was found after reading
 					break;
 
 				case DataType.bg1Data:
@@ -318,7 +433,21 @@ namespace MinishMaker.Core
 					{
 						ParseData(r,Bg2Check);
 					}
-					return (int)r.Position-12; //step back 12 bytes as the bg was found after reading
+					retAddr = (int)r.Position-12; //step back 12 bytes as the bg was found after reading
+					break;
+
+				case DataType.chestData:
+					int areaEntityTableAddrLoc = header.AreaMetadataBase + (areaIndex << 2);
+					int areaEntityTableAddr = r.ReadAddr(areaEntityTableAddrLoc);
+
+					int roomEntityTableAddrLoc = areaEntityTableAddr + (roomIndex << 2);
+					int roomEntityTableAddr = r.ReadAddr(roomEntityTableAddrLoc);
+
+					//4 byte chunks, 1-3 are unknown use, 4th seems to be chests
+					retAddr = roomEntityTableAddr + 0x0C;
+
+                    Console.WriteLine(retAddr);
+					break;
 
 				default:
 					break;
@@ -379,7 +508,7 @@ namespace MinishMaker.Core
 				case 0x0200B654:
 					this.bg1RoomDataAddr = data;
 					break;
-				case 0x2002F00:
+				case 0x02002F00:
 					this.bg1RoomDataAddr = data;
 					this.bg1Use20344B0 = true;
 					break;
@@ -411,6 +540,30 @@ namespace MinishMaker.Core
 			switch(data.dest)
 			{
 				case 0x02025EB4:
+					return false;
+				default:
+					break;
+			}
+			return true;
+		}
+
+		private bool Meta1Check(AddrData data)
+		{
+			switch(data.dest)
+			{
+				case 0x02012654:
+					return false;
+				default:
+					break;
+			}
+			return true;
+		}
+
+		private bool Meta2Check(AddrData data)
+		{
+			switch(data.dest)
+			{
+				case 0x0202CEB4:
 					return false;
 				default:
 					break;

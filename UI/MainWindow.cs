@@ -4,30 +4,31 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using GBHL;
 using MinishMaker.Core;
 using MinishMaker.Utilities;
 using System.Drawing;
+using MinishMaker.Core.ChangeTypes;
 
 namespace MinishMaker.UI
 {
 	public partial class MainWindow : Form
 	{
 		private ROM ROM_;
+        private Project project_;
 		private MapManager mapManager_;
 		private ChestEditorWindow chestEditor = null;
+		private MetaTileEditor metatileEditor = null;
 
 		private Bitmap[] mapLayers;
 		private Bitmap[] tileMaps;
 
-		private Bitmap selectorImage = new Bitmap( 16, 16 );
-        private Room currentRoom = null;
-		private int currentArea = -1;
+        public static Room currentRoom = null;
+		public static int currentArea = -1;
 		private int selectedTileData = -1;
 		private int selectedLayer = 2; //start with bg2
-		private List<PendingData> unsavedChanges = new List<PendingData>();
-		private List<RepointData> dataPositions = new List<RepointData>();
+		private static List<Change> pendingRomChanges;
         private Point lastTilePos;
+	    private ViewLayer viewLayer = 0;
 
         struct RepointData
 		{
@@ -47,34 +48,65 @@ namespace MinishMaker.UI
 				this.size = size;
 			}
 		}
+		
 
-		struct PendingData
-		{
-			public int areaIndex;
-			public int roomIndex;
-			public DataType dataType;
-
-			public PendingData( int areaIndex, int roomIndex, DataType type )
-			{
-				this.areaIndex = areaIndex;
-				this.roomIndex = roomIndex;
-				this.dataType = type;
-			}
-		}
-
-		public enum DataType
-		{
-			bg1Data,
-			bg2Data,
-			roomMetaData,
-			tileSet,
-			metaTileSet,
-
-		}
+	    public enum ViewLayer
+	    {
+            Both,
+            Top,
+            Bottom
+	    }
 
 		public MainWindow()
 		{
 			InitializeComponent();
+
+			var exeFolder = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).Substring(6);
+			if(File.Exists(exeFolder+"/Settings.cfg"))
+			{
+				var settings = File.ReadLines(exeFolder+"/Settings.cfg").ToList();
+				project_ = new Project();
+
+				var romFile = settings.Single(x=>x.Contains("romFile")).Split('=')[1];
+				var projectFolder = settings.Single(x=>x.Contains("projectFolder")).Split('=')[1];
+				var allFound = true;
+				if(!Directory.Exists(projectFolder))
+				{
+					allFound = false;
+				}
+				else
+				{
+					project_.projectPath = projectFolder;
+				}
+				
+				if(!File.Exists(romFile))
+				{
+					allFound = false;
+				}
+				else
+				{
+					project_.sourcePath = romFile;
+					ROM_ = new ROM( romFile );
+				}
+
+				if(!allFound)
+				{
+					return;
+				}
+				mapGridBox.Image = new Bitmap(1,1); //reset some things on loading a rom
+				bottomTileGridBox.Image = new Bitmap(1,1);
+				topTileGridBox.Image = new Bitmap(1, 1);
+				currentRoom = null;
+				currentArea = -1;
+				selectedTileData = -1;
+				selectedLayer = 2; 
+				pendingRomChanges = new List<Change>();
+				project_.LoadProject();
+				LoadMaps();
+
+				var pName = new DirectoryInfo(projectFolder).Name;
+				statusText.Text = "Opened last project: "+pName;
+			}
 		}
 
         #region MenuBarButtons
@@ -83,17 +115,52 @@ namespace MinishMaker.UI
 			LoadRom();
 		}
 
-	    private void saveAllChangesCtrlSToolStripMenuItem_Click(object sender, EventArgs e)
+		private void SelectProjectButtonClick( object sender, EventArgs e )
+		{
+			SelectProject();
+		}
+
+        private void saveAllChangesCtrlSToolStripMenuItem_Click(object sender, EventArgs e)
 	    {
             SaveAllChanges();
 	    }
+
+        private void BuildProjectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            BuildProject();
+        }
 
         private void ExitButtonClick( object sender, EventArgs e )
 		{
 			Close();
 		}
 
-		private void AboutButtonClick( object sender, EventArgs e )
+	    private void topLayerToolStripMenuItem_Click(object sender, EventArgs e)
+	    {
+	        UpdateViewLayer(ViewLayer.Top);
+	    }
+
+	    private void bottomLayerToolStripMenuItem_Click(object sender, EventArgs e)
+	    {
+	        UpdateViewLayer(ViewLayer.Bottom);
+	    }
+
+	    private void bothLayersToolStripMenuItem_Click(object sender, EventArgs e)
+	    {
+	        UpdateViewLayer(ViewLayer.Both);
+	    }
+
+	    private void chestEditorStripMenuItem_Click(object sender, EventArgs e)
+	    {
+	        OpenChestEditor();
+	    }
+
+        private void metatileEditorToolStripMenuItem_Click(object sender, EventArgs e)
+	    {
+	        OpenMetatileEditor();
+	    }
+
+        private void AboutButtonClick( object sender, EventArgs e )
 		{
 			Form aboutWindow = new AboutWindow();
 			aboutWindow.Show();
@@ -110,15 +177,35 @@ namespace MinishMaker.UI
 	    {
             SaveAllChanges();
 	    }
+
+	    private void chestToolStripButton_Click(object sender, EventArgs e)
+	    {
+	        OpenChestEditor();
+	    }
+
+	    private void metatileToolStripButton_Click(object sender, EventArgs e)
+	    {
+	        OpenMetatileEditor();
+	    }
+
         #endregion
 
+        #region OtherInteractions
+
         // Other interactions
+        private void tileTabControl_SelectedIndexChanged(object sender, EventArgs e)
+	    {
+	        selectedLayer = tileTabControl.SelectedIndex + 1;
+
+	    }
+
         private void MainWindow_DragDrop( object sender, DragEventArgs e )
 		{
 
 		}
+	    #endregion
 
-		private void LoadRom()
+        private void LoadRom()
 		{
 			OpenFileDialog ofd = new OpenFileDialog
 			{
@@ -147,20 +234,76 @@ namespace MinishMaker.UI
 				statusText.Text = "Unable to determine ROM.";
 				return;
 			}
+            
+            //LoadMaps();
+			if(project_== null)
+			{
+				project_ = new Project();
+			}
 
-			mapView.Image = new Bitmap(1,1); //reset some things on loading a rom
-			tileView.Image = new Bitmap(1,1);
-			currentRoom = null;
-			currentArea = -1;
-			selectedTileData = -1;
-			selectedLayer = 2; 
-			unsavedChanges = new List<PendingData>();
-			dataPositions = new List<RepointData>();
+			project_.sourcePath = ROM.Instance.path;
+			var st = "Loaded: " + ROM.Instance.path;
 
-			LoadMaps();
+			if(project_.projectPath!=null)
+			{
 
+				project_.LoadProject();//load first as rooms or areas could be added at some point
+				mapGridBox.Image = new Bitmap(1,1); //reset some things on loading a rom
+				bottomTileGridBox.Image = new Bitmap(1,1);
+				topTileGridBox.Image = new Bitmap(1, 1);
+				currentRoom = null;
+				currentArea = -1;
+				selectedTileData = -1;
+				selectedLayer = 2; 
+				pendingRomChanges = new List<Change>();
+				LoadMaps();
+			}
+			else
+			{
+				st+=", also select a project folder.";
+			}
 
-			statusText.Text = "Loaded: " + ROM.Instance.path;
+            statusText.Text = st;
+		}
+
+		private void SelectProject()
+		{
+			FolderBrowserDialog fbd = new FolderBrowserDialog()
+			{
+				ShowNewFolderButton = true,
+				Description = "Select project root folder."
+			};
+
+			if( fbd.ShowDialog() != DialogResult.OK )
+			{
+				return;
+			}
+
+			if(project_== null)
+			{
+				project_ = new Project();
+			}
+
+			project_.projectPath =  fbd.SelectedPath;
+
+			if(project_.sourcePath!=null)
+			{
+				statusText.Text = "Project opened";
+				project_.LoadProject();//load first as rooms or areas could be added at some point
+				mapGridBox.Image = new Bitmap(1,1); //reset some things on loading a rom
+				bottomTileGridBox.Image = new Bitmap(1,1);
+				topTileGridBox.Image = new Bitmap(1, 1);
+				currentRoom = null;
+				currentArea = -1;
+				selectedTileData = -1;
+				selectedLayer = 2; 
+				pendingRomChanges = new List<Change>();
+				LoadMaps();
+			}
+			else
+			{
+				statusText.Text ="Folder selected, select a ROM file.";
+			}
 		}
 
 		private void LoadMaps()
@@ -187,7 +330,78 @@ namespace MinishMaker.UI
 			roomTreeView.EndUpdate();
 		}
 
-		private void roomTreeView_NodeMouseDoubleClick( object sender, TreeNodeMouseClickEventArgs e )
+        private void BuildProject()
+        {
+            if (Project.Instance == null)
+            {
+                MessageBox.Show("No project loaded!");
+                return;
+            }
+            // TODO check for pending changes before building, and prompt user
+
+            if (project_.BuildProject())
+            {
+                MessageBox.Show("Build Completed!");
+                statusText.Text = "Build Completed. Output file: " + project_.projectPath + "\\build.gba";
+            }
+            // TODO check for build completing correctly, probably needs deeper integration with ColorzCore
+
+            
+        }
+
+        private void OpenChestEditor()
+	    {
+	        if (chestEditorStripMenuItem.Checked)
+	            return; // dont open a second one
+
+	        chestEditor = new ChestEditorWindow();
+
+	        if (currentRoom != null)
+	        {
+	            var chestData = currentRoom.GetChestData();
+	            chestEditor.SetData(chestData);
+	        }
+	        chestEditor.FormClosed += new FormClosedEventHandler(OnChestEditorClose);
+	        chestEditorStripMenuItem.Checked = true;
+	        chestEditor.Show();
+	    }
+
+	    private void OnChestEditorClose(object sender, FormClosedEventArgs e)
+	    {
+	        chestEditor = null;
+	        chestEditorStripMenuItem.Checked = false;
+	    }
+
+	    private void OpenMetatileEditor()
+	    {
+	        if (metatileEditorToolStripMenuItem.Checked)
+	            return; // dont open a second one
+
+	        metatileEditor = new MetaTileEditor();
+
+	        if (currentRoom != null)
+	        {
+				metatileEditor.currentArea = currentArea;
+				var room = MapManager.Instance.MapAreas.Single(a=>a.Index==currentArea).Rooms.First();
+				if(!room.Loaded)
+				{
+					room.LoadRoom(currentArea);
+				}
+	            metatileEditor.RedrawTiles(room);
+	        }
+
+	        metatileEditor.FormClosed += new FormClosedEventHandler(OnMetaTileEditorClose);
+	        metatileEditorToolStripMenuItem.Checked = true;
+	        metatileEditor.Show();
+	    }
+
+	    private void OnMetaTileEditorClose(object sender, FormClosedEventArgs e)
+	    {
+	        metatileEditor = null;
+	        metatileEditorToolStripMenuItem.Checked = false;
+	    }
+
+        private void roomTreeView_NodeMouseDoubleClick( object sender, TreeNodeMouseClickEventArgs e )
 		{
 			if( e.Node.Parent != null )
 			{
@@ -200,16 +414,37 @@ namespace MinishMaker.UI
 
 				mapLayers = room.DrawRoom( areaIndex, true, true );
 
-				tileSelectionBox.Visible = false;
-				mapSelectionBox.Visible = false;
 				selectedTileData = -1;
+			    tileTabControl.SelectedIndex = 1; // Reset to bg2
 
 				//0= bg1 (treetops and such)
 				//1= bg2 (flooring)
-				mapView.Image = OverlayImage( mapLayers[1], mapLayers[0] );
-				tileMaps = room.DrawTilesetImages( 11, currentArea );
-				tileView.Image = tileMaps[1];
-			}
+				mapGridBox.Image = OverlayImage( mapLayers[1], mapLayers[0] );
+				tileMaps = room.DrawTilesetImages( 16, currentArea );
+				bottomTileGridBox.Image = tileMaps[1];
+                topTileGridBox.Image = tileMaps[0];
+
+                mapGridBox.Selectable = true;
+                bottomTileGridBox.Selectable = true;
+                topTileGridBox.Selectable = true;
+
+                if (chestEditor != null)
+                {
+                    var chestData = currentRoom.GetChestData();
+                    chestEditor.SetData(chestData);
+                }
+
+				if(metatileEditor != null)
+				{
+					metatileEditor.currentArea = currentArea;
+					room = MapManager.Instance.MapAreas.Single(a=>a.Index==currentArea).Rooms.First();
+					if(!room.Loaded)
+					{
+						room.LoadRoom(currentArea);
+					}
+					metatileEditor.RedrawTiles(currentRoom);
+				}
+            }
 		}
 
 		public Bitmap OverlayImage( Bitmap baseImage, Bitmap overlay )
@@ -224,7 +459,7 @@ namespace MinishMaker.UI
 				g.DrawImage( baseImage, new Rectangle( 0, 0, baseImage.Width, baseImage.Height ) );
 				g.DrawImage( overlay, new Rectangle( 0, 0, baseImage.Width, baseImage.Height ) );
 			}
-			//Draw the final image in the pictureBox
+			//Draw the final image in the gridBox
 			return finalImage;
 		}
 
@@ -263,385 +498,172 @@ namespace MinishMaker.UI
 			return area.Rooms[foundIndex];
 		}
 
-	    private void SaveAllChanges()
-	    {
-	        if (unsavedChanges.Count == 0)
-	        {
-	            return;
-	        }
-	        unsavedChanges = unsavedChanges.Distinct().ToList();
-	        //foreach(PendingData pendingData in unsavedChanges)
-	        while (unsavedChanges.Count > 0)
-	        {
-	            var pendingData = unsavedChanges.ElementAt(0);
-	            var room = FindRoom(pendingData.areaIndex, pendingData.roomIndex);
-	            byte[] compressedData = null;
-	            long size = room.CompressRoomData(ref compressedData, pendingData.dataType);
-	            long pointerAddress = room.GetPointerLoc(pendingData.dataType, pendingData.areaIndex);
+        private void SaveAllChanges()
+        {
+			if(Project.Instance==null)
+				return;
 
-	            //TODO: improve repointing
-	            var currentSourceIndex = GetCurrentSource(pendingData.areaIndex, pendingData.roomIndex, pendingData.dataType);
-	            uint newSource = FindNewSource((uint)size, currentSourceIndex);
+			Project.Instance.StartSave();
 
-	            if (newSource == 0)
-	            {
-	                MessageBox.Show("Unable to allocate enough space for data in area:" + pendingData.areaIndex + " room:" + pendingData.roomIndex + " with size:" + size);
-	                continue;
-	            }
+            while (pendingRomChanges.Count > 0)
+            {
+                Change data = pendingRomChanges.ElementAt(0);
+                Project.Instance.SaveChange(data);
+                pendingRomChanges.RemoveAt(0);
+            }
 
-	            dataPositions.Add(new RepointData(pendingData.areaIndex, pendingData.roomIndex, pendingData.dataType, (int)newSource, (int)size));
-	            size = size | 0x80000000; //sets the compression bit
+            Project.Instance.EndSave();
 
-	            SaveToRom(newSource, pointerAddress, compressedData, size);
-
-	            unsavedChanges.RemoveAt(0);//saved, remove from pending to avoid re-save
-	        }
-
-
-	        File.WriteAllBytes(ROM.Instance.path, ROM.Instance.romData);
-	        //File.WriteAllBytes( "testfile1.gba", ROM.Instance.romData );
-	        SaveRepointFile();
-
-	        MessageBox.Show("All changes have been saved");
+            MessageBox.Show("Project Saved");
         }
 
-		private int GetCurrentSource( int area, int room, DataType type )
+		public static void AddPendingChange(Change change)
 		{
-			//load in all data repoints so far
-			if( dataPositions.Count == 0 )
-			{   //							shave pre-path		shave data extension
-				var name = ROM.Instance.path.Split( '\\' ).Last().Split( '.' )[0];
-
-				try { 
-					var rawData = System.IO.File.ReadAllText( name + ".pdat" );
-					var rawEntries = rawData.Split( '|' );
-					foreach( var entry in rawEntries )
-					{
-						var attributes = entry.Split( ',' );
-						var areaIndex = Convert.ToInt32( attributes[0] );
-						var roomIndex = Convert.ToInt32( attributes[1] );
-						DataType dataType = (DataType)Enum.Parse(typeof(DataType),attributes[2]);
-						var startPoint = Convert.ToInt32( attributes[3] );
-						var size = Convert.ToInt32( attributes[4] );
-
-						dataPositions.Add( new RepointData( areaIndex, roomIndex, dataType, startPoint, size ) );
-					}
-				}
-				catch
-				{
-					Debug.WriteLine(name+".pdat does not yet exist");
-					System.IO.File.WriteAllText(name+".pdat","");
-				}
-			}
-
-			return dataPositions.FindIndex( x => x.areaIndex == area && x.roomIndex == room && x.type == type ); //probably very slow, but works for now
+			if(!pendingRomChanges.Any(x=>x.Compare(change))) //change does not yet exist
+				pendingRomChanges.Add(change);
 		}
 
-		private uint FindNewSource( uint size, int currentSourceIndex )
-		{
-			var r = ROM.Instance.reader;
-			var emptySpaces = Space.Spaces;
+	    private void UpdateViewLayer(ViewLayer layer)
+	    {
+	        if (currentRoom == null)
+	            return;
 
-			if( currentSourceIndex != -1 )
-			{
-				//engage the reshuffling of verious chunks of data
-				var src = dataPositions[currentSourceIndex];
+	        switch (layer)
+	        {
+	            case ViewLayer.Both:
+	                mapGridBox.Image = OverlayImage(mapLayers[1], mapLayers[0]);
+	                viewLayer = ViewLayer.Both;
+	                topTileTab.Enabled = true;
+	                bottomTileTab.Enabled = true;
+	                break;
+	            case ViewLayer.Top:
+	                mapGridBox.Image = mapLayers[0];
+	                tileTabControl.SelectedIndex = 0;
+	                viewLayer = ViewLayer.Top;
+                    selectedTileData = topTileGridBox.SelectedIndex;
+                    topTileTab.Enabled = true;
+	                bottomTileTab.Enabled = false;
+	                break;
+	            case ViewLayer.Bottom:
+	                mapGridBox.Image = mapLayers[1];
+	                tileTabControl.SelectedIndex = 1;
+	                viewLayer = ViewLayer.Bottom;
+                    selectedTileData = bottomTileGridBox.SelectedIndex;
+                    bottomTileTab.Enabled = true;
+	                topTileTab.Enabled = false;
+	                break;
+	        }
+	    }
 
-				if( size <= src.size ) //its smaller so put it in the same spot but shuffle stuff back
-				{
-					//everything needs to shift this amount
-					var sizeChange = src.size - size;
-					r.SetPosition( src.start + src.size );//go to next possible chunk of data
-
-					ReOrderData(r, sizeChange); //reorder chunks behind last bit
-					
-					dataPositions.RemoveAt(currentSourceIndex); //let other stuff re-add it
-					return (uint)src.start;//start is still in the same spot, just less long
-				}
-				else // its larger, remove from current spot, shift everything in by its size and find a new spot
-				{
-					r.SetPosition(src.start +src.size);
-					ReOrderData(r,src.size);
-					dataPositions.RemoveAt(currentSourceIndex); //let other stuff re-add it, we dont have room, area or type
-				}
-			}
-
-
-			foreach( var space in emptySpaces )
-			{
-				if( space.size < size )//wont fit in there no matter what
-					continue; 
-
-				r.SetPosition( space.start );
-				bool foundSpot = true;
-				uint offset = 0;
-
-				while( r.PeekByte() == 0x10 )//magicbyte from compression
-				{
-					RepointData dat = dataPositions.SingleOrDefault(x=>x.start == r.Position);//never returns null still, but size 0 means nothing is there
-
-					if(dat.size==0)//something here, but not any repointed data, stray byte?
-					{
-						break;
-					}
-
-					RepointData repointData = dat; //some repointed data is here, set next point to after that data
-					offset+=(uint)repointData.size;
-					
-					if(offset+size>space.size) //still enough space to hold this chunk after this data?
-					{
-						foundSpot = false;//not enough space next space
-						break; 
-					}
-
-					r.SetPosition(space.start+offset);//set position to check next data chunk
-				}
-
-				if( foundSpot )
-				{
-					return space.start + offset;
-				}
-			}
-
-			return 0;
-		}
-
-		private void ReOrderData(Reader r, long sizeChange)
-		{
-			while( r.PeekByte() == 0x10 )//is there another compressed chunk here? (dont move position)
-			{
-				int index = dataPositions.FindIndex(x => x.start == r.Position);
-			
-				if( index == -1 ) //there is compressed data byte but the space is not used by any repoints
-				{
-					break;
-				}
-
-				var repointData = dataPositions[index];
-				var dataCopy = r.ReadBytes( repointData.size );//reads all compressed data AND sets it to supposed next 0x10
-				var pointerTableLoc = FindRoom( repointData.areaIndex, repointData.roomIndex ).GetPointerLoc( repointData.type, repointData.areaIndex );
-				r.SetPosition(repointData.start+repointData.size);
-				var newPos = repointData.start - sizeChange;
-				repointData.start = (int)newPos;
-
-				dataPositions[index]= repointData; //modify repoint data for new position
-				
-				SaveToRom((uint)newPos,pointerTableLoc,dataCopy);
-			}
-		}
-
-		private void SaveToRom( uint newSource, long pointerAddress, byte[] compressedData, long size = 0 )
-		{
-			using( MemoryStream m = new MemoryStream( ROM.Instance.romData ) )
-			{
-				Writer w = new Writer( m );
-				w.SetPosition( newSource );//actually write the compressed data somewhere
-				w.WriteBytes( compressedData );
-
-				newSource = (uint)(newSource - ROM.Instance.headers.gfxSourceBase);
-				w.SetPosition( pointerAddress );
-				w.WriteUInt32( newSource | 0x80000000 );//byte 1-4 is source, high bit was removed before
-
-				if( size != 0 ) // this is a reshuffle, no need to adjust size
-				{
-					w.SetPosition( w.Position + 4 );//byte 5-8 is dest, skip
-					w.WriteUInt32( (uint)size );//byte 9-12 is size and compressed
-				}
-
-			}
-		}
-
-		private void SaveRepointFile()
-		{
-			string s = "";
-			foreach(var entry in dataPositions)
-			{
-				s+=entry.areaIndex+","+entry.roomIndex+","+(int)entry.type+","+entry.start+","+entry.size+"|";
-			}
-			s = s.Remove(s.Length-1);
-			var name = ROM.Instance.path.Split( '\\' ).Last().Split( '.' )[0];
-
-			System.IO.File.WriteAllText(name+".pdat",s);
-			//System.IO.File.WriteAllText("testfile1.pdat",s);
-		}
-
-		private void discardRoomChangesToolStripMenuItem_Click( object sender, EventArgs e )
+        private void discardRoomChangesToolStripMenuItem_Click( object sender, EventArgs e )
 		{
 			//TODO
 		}
 
-		private void mapView_MouseDown( object sender, MouseEventArgs me )
-		{
-			if( currentRoom == null )
-				return;
+        #region MapInteraction
+	    private void mapGridBox_MouseDown(object sender, MouseEventArgs e)
+	    {
+	        if (currentRoom == null)
+	            return;
 
-			if( mapSelectionBox.Image == null )
-			{
-				GenerateSelectorImage();
-				tileSelectionBox.Image = selectorImage;
-				mapSelectionBox.Image = selectorImage;
-			}
+	        var tsTileWidth = tileMaps[0].Width / 16;
 
-			mapSelectionBox.Visible = true;
+	        lastTilePos = mapGridBox.GetIndexPoint(mapGridBox.HoverIndex);
 
-			var mTileWidth = mapLayers[0].Width / 16;
-			var tsTileWidth = tileMaps[0].Width / 16;
+	        if (e.Button == MouseButtons.Right)
+	        {
+	            selectedTileData = currentRoom.GetTileData(selectedLayer, mapGridBox.HoverIndex * 2);//*2 as each tile is 2 bytes
+	            mapGridBox.SelectedIndex = mapGridBox.HoverIndex;
+	            var newX = selectedTileData % tsTileWidth;
+	            var newY = (selectedTileData - newX) / tsTileWidth;
+	            // bad practice, entire map selection functions could do with refactor like the tile selection
+	            if (selectedLayer == 2)
+	            {
+	                bottomTileGridBox.SelectedIndex = selectedTileData;
+	            }
+	            else
+	            {
+	                topTileGridBox.SelectedIndex = selectedTileData;
+	            }
 
-			var partialX = me.X % 16;
-			var partialY = me.Y % 16;
+	        }
+	        else if (e.Button == MouseButtons.Left)
+	        {
+	            if (selectedTileData == -1) //no selected tile, nothing to paste
+	                return;
 
-			int tileX = (me.X - partialX) / 16;
-			int tileY = (me.Y - partialY) / 16;
+	            WriteTile(mapGridBox.GetIndexPoint(mapGridBox.HoverIndex), mapGridBox.HoverIndex, selectedTileData, selectedLayer);
+	        }
+	    }
 
-            lastTilePos = new Point(tileX, tileY);
+	    private void mapGridBox_MouseMove(object sender, MouseEventArgs e)
+	    {
+            if(currentRoom == null)
+                return;
 
-            mapSelectionBox.Location = new Point( me.X - partialX, me.Y - partialY );
-			var pos = tileY * mTileWidth + tileX; //tilenumber if they were all in a line
 
-			if( me.Button == MouseButtons.Right )
-			{
-				selectedTileData = currentRoom.GetTileData( selectedLayer, pos * 2 );//*2 as each tile is 2 bytes
-				var newX = selectedTileData % tsTileWidth;
-				var newY = (selectedTileData - newX) / tsTileWidth;
+	        if (e.Button == MouseButtons.Left)
+	        {
+	            var currentPos = mapGridBox.GetIndexPoint(mapGridBox.HoverIndex);
 
-				tileSelectionBox.Location = new Point( newX * 16, newY * 16 );
-				tileSelectionBox.Visible = true;
-			}
-			else if( me.Button == MouseButtons.Left )
-			{
-				if( selectedTileData == -1 ) //no selected tile, nothing to paste
-					return;
+	            if (!lastTilePos.Equals(currentPos))
+	            {
+	                if (selectedTileData == -1) //no selected tile, nothing to paste
+	                    return;
 
-                WriteTile(tileX, tileY, pos, selectedTileData, selectedLayer);
-            }
-		}
+                    lastTilePos = currentPos;
+	                mapGridBox.SelectedIndex = mapGridBox.HoverIndex;
 
-        private void mapView_MouseMove( object sender, MouseEventArgs me )
-        {
-            if (me.Button != MouseButtons.None)
-            {
-                if (currentRoom == null)
-                    return;
-
-                var mTileWidth = mapLayers[0].Width / 16;
-                var tsTileWidth = tileMaps[0].Width / 16;
-
-                var partialX = me.X % 16;
-                var partialY = me.Y % 16;
-
-                int tileX = (me.X - partialX) / 16;
-                int tileY = (me.Y - partialY) / 16;
-
-                Point tilePos = new Point(tileX, tileY);
-
-                if (!lastTilePos.Equals(tilePos))
-                {
-
-                    if (mapSelectionBox.Image == null)
-                    {
-                        GenerateSelectorImage();
-                        tileSelectionBox.Image = selectorImage;
-                        mapSelectionBox.Image = selectorImage;
-                    }
-
-                    mapSelectionBox.Visible = true;
-
-                    mapSelectionBox.Location = new Point(me.X - partialX, me.Y - partialY);
-                    var pos = tileY * mTileWidth + tileX; //tilenumber if they were all in a line
-
-                    if (me.Button == MouseButtons.Right)
-                    {
-                        // TODO: Select box
-                    }
-                    else if (me.Button == MouseButtons.Left)
-                    {
-                        lastTilePos = tilePos;
-                        if (selectedTileData == -1) //no selected tile, nothing to paste
-                            return;
-
-                        WriteTile(tileX, tileY, pos, selectedTileData, selectedLayer);
-                    }
+	                WriteTile(mapGridBox.GetIndexPoint(mapGridBox.HoverIndex), mapGridBox.HoverIndex, selectedTileData, selectedLayer);
                 }
-            }
+	        }
         }
+        #endregion
 
-		private void tileView_Click( object sender, EventArgs e )
-		{
-			if( currentRoom == null )
-				return;
+        #region TilesetInteraction	  
+        private void bottomTileGridBox_MouseDown(object sender, MouseEventArgs e)
+	    {
+	        if (currentRoom == null)
+	            return;
 
-			if( tileSelectionBox.Image == null )
-			{
-                GenerateSelectorImage();
-			    tileSelectionBox.BackColor = Color.Transparent;
-			    mapSelectionBox.BackColor = Color.Transparent;
-                tileSelectionBox.Image = selectorImage;
-				mapSelectionBox.Image = selectorImage;
-			}
-			tileSelectionBox.Visible = true;
+	        bottomTileGridBox.SelectedIndex = bottomTileGridBox.HoverIndex;
+	        selectedLayer = 2;
+	        selectedTileData = bottomTileGridBox.SelectedIndex;
+	    }
 
-			var mTileWidth = mapLayers[0].Width / 16;
-			var tsTileWidth = tileMaps[0].Width / 16;
+	    private void topTileGridBox_MouseDown(object sender, MouseEventArgs e)
+	    {
+	        if (currentRoom == null)
+	            return;
 
-			var me = (MouseEventArgs)e;
+	        topTileGridBox.SelectedIndex = topTileGridBox.HoverIndex;
+	        selectedLayer = 1;
+	        selectedTileData = topTileGridBox.SelectedIndex;
+	    }
+        #endregion
 
-			var partialX = me.X % 16;
-			var partialY = me.Y % 16;
-
-			int tileX = (me.X - partialX) / 16;
-			int tileY = (me.Y - partialY) / 16;
-
-			tileSelectionBox.Location = new Point( me.X - partialX, me.Y - partialY );
-
-			selectedTileData = tileX + tileY * tsTileWidth;
-		}
-
-		private void GenerateSelectorImage()
-		{
-			using( Graphics g = Graphics.FromImage( selectorImage ) )
-			{
-				selectorImage.MakeTransparent();
-				g.DrawRectangle( new Pen( Color.Red, 4 ), 0, 0, 16, 16 );
-			}
-		}
-
-        private void WriteTile (int tileX, int tileY, int pos, int tileData, int layer)
+        private void WriteTile (Point p, int pos, int tileData, int layer)
         {
-            if (layer == 1)
+            if (layer == 1 && currentRoom.Bg1Exists)
             {
-                currentRoom.DrawTile(ref mapLayers[0], new Point(tileX * 16, tileY * 16), currentArea, selectedLayer, tileData);
-                unsavedChanges.Add(new PendingData(currentArea, currentRoom.Index, DataType.bg1Data));
+                currentRoom.DrawTile(ref mapLayers[0], p, currentArea, selectedLayer, tileData);
+                AddPendingChange(new Bg1DataChange(currentArea,currentRoom.Index));
             }
-            else if (layer == 2)
+            else if (layer == 2 && currentRoom.Bg2Exists)
             {
-                currentRoom.DrawTile(ref mapLayers[1], new Point(tileX * 16, tileY * 16), currentArea, selectedLayer, tileData);
-                unsavedChanges.Add(new PendingData(currentArea, currentRoom.Index, DataType.bg2Data));
+                currentRoom.DrawTile(ref mapLayers[1], p, currentArea, selectedLayer, tileData);
+                AddPendingChange(new Bg2DataChange(currentArea,currentRoom.Index));
             }
 
             currentRoom.SetTileData(selectedLayer, pos * 2, selectedTileData);
-            mapView.Image = OverlayImage(mapLayers[1], mapLayers[0]);
+
+            // TODO switch on layer view
+            UpdateViewLayer(viewLayer);
         }
 
-		private void chestEditorStripMenuItem_Click( object sender, EventArgs e )
+		public static void Notify(string info, string title)
 		{
-			if(chestEditorStripMenuItem.Checked)
-				return; // dont open a second one
-
-			chestEditor = new ChestEditorWindow();
-
-			if(currentRoom!=null) {
-				var chestData = currentRoom.GetChestData();
-				chestEditor.SetData(chestData);
-			}
-			chestEditor.FormClosed +=new FormClosedEventHandler(onChestEditorClose);
-			chestEditorStripMenuItem.Checked = true;
-			chestEditor.Show();
-		}
-
-		void onChestEditorClose(object sender, FormClosedEventArgs e)
-		{
-			chestEditor = null;
-			chestEditorStripMenuItem.Checked = false;
+			MessageBox.Show( info, title, MessageBoxButtons.OK );
 		}
     }
 }

@@ -36,6 +36,13 @@ namespace MinishMaker.Core
 			}
         }
 
+        public TileSet(byte[] data)
+        {
+            byte[] tilesetData = new byte[0x10000];
+            Array.Copy(tilesetData, data, data.Length);
+            this.tilesetData = tilesetData;
+        }
+
         public void SetChunk(byte[] newdata, int dest)
         {
             newdata.CopyTo(this.tilesetData, dest);
@@ -70,7 +77,7 @@ namespace MinishMaker.Core
                     }
                     else if (overwrite)
                     {
-                        tileImg.SetPixel(posX, posY, Color.White);
+                        tileImg.SetPixel(posX, posY, Color.Transparent);
                     }
                     if (color2.A > 0)//if see through dont draw white
                     {
@@ -78,7 +85,7 @@ namespace MinishMaker.Core
                     }
                     else if (overwrite)
                     {
-                        tileImg.SetPixel(posX + 1, posY, Color.White);
+                        tileImg.SetPixel(posX + 1, posY, Color.Transparent);
                     }
                     dataPos++;
                 }
