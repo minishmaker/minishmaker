@@ -291,44 +291,7 @@ namespace MinishMaker.Core
         {
             String[] args = new[] {"A","FE8","-input:"+projectPath+"/Main.event","-output:"+sourcePath};
             ColorzCore.Program.Main(args);
-            //Nintenlord.Event_Assembler.Core.Program.Assemble(projectPath + "/Main.event", sourcePath, "FE7", null);
             return true;
         }
-
-
-		//TO BE REMOVED?
-		/*
-        public bool ExportToRom()
-        {
-            int newSource = 0xEF3340;
-
-            foreach (ModifiedData data in modifiedData)
-            {
-                var room = mapManager.FindRoom(data.areaIndex, data.roomIndex);
-
-                if (!room.Loaded)
-                {
-                    room.LoadRoom(data.areaIndex);
-                }
-
-                byte[] saveData = null;
-                long pointerAddress = room.GetPointerLoc(data.dataType, data.areaIndex);
-                long size = room.GetSaveData(ref saveData, data.dataType);
-                ROM.Instance.WriteData(newSource, pointerAddress, saveData, data.dataType, size);
-                newSource += (int)size & 0x7FFFFFFF;
-            }
-
-            try
-            {
-                File.WriteAllBytes(exportPath, ROM.Instance.romData);
-            }
-            catch (IOException)
-            {
-                return false;
-            }
-
-            return true;
-        }
-		*/
     }
 }

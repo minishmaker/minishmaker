@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using GBHL;
 using MinishMaker.Core;
 using MinishMaker.Utilities;
 using System.Drawing;
@@ -340,36 +339,15 @@ namespace MinishMaker.UI
             }
             // TODO check for pending changes before building, and prompt user
 
-            project_.BuildProject();
+            if (project_.BuildProject())
+            {
+                MessageBox.Show("Build Completed!");
+                statusText.Text = "Build Completed. File overwritten: " + project_.sourcePath;
+            }
+            // TODO check for build completing correctly, probably needs deeper integration with ColorzCore
 
+            
         }
-
-        /* private void ExportRom()
-         {
-             if (romChanges.Count > 0)
-             {
-                 DialogResult dialogResult = MessageBox.Show("You have unsaved changes. Save and export?", "Confirm Save", MessageBoxButtons.YesNo);
-                 if (dialogResult == DialogResult.Yes)
-                 {
-                     SaveAllChanges();
-                 }
-                 else if (dialogResult == DialogResult.No)
-                 {
-                     return;
-                 }
-             }
-
-             bool success = Project.Instance.ExportToRom();
-
-             if (success)
-             {
-                 MessageBox.Show("Successfully built ROM");
-             }
-             else
-             {
-                 MessageBox.Show("Error building ROM");
-             }
-         }*/
 
         private void OpenChestEditor()
 	    {
