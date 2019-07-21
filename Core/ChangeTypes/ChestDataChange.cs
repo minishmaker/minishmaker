@@ -48,6 +48,15 @@ namespace MinishMaker.Core.ChangeTypes
 				index+=8;
 			}
 
+			data[0+index]=0; //terminator
+			data[1+index]=0;
+			data[2+index]=0;
+			data[3+index]=0;
+			data[4+index]=0;
+			data[5+index]=0;
+			data[6+index]=0;
+			data[7+index]=0;
+
 			binDat = data;
 			return sb.ToString();
 		}
