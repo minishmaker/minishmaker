@@ -8,7 +8,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Nintenlord.Event_Assembler;
+using ColorzCore;
+
 
 namespace MinishMaker.Core
 {
@@ -288,7 +289,9 @@ namespace MinishMaker.Core
 
         public bool BuildProject()
         {
-            Nintenlord.Event_Assembler.Core.Program.Assemble(projectPath + "/Main.event", sourcePath, "FE7", null);
+            String[] args = new[] {"A","FE8","-input:"+projectPath+"/Main.event","-output:"+sourcePath};
+            ColorzCore.Program.Main(args);
+            //Nintenlord.Event_Assembler.Core.Program.Assemble(projectPath + "/Main.event", sourcePath, "FE7", null);
             return true;
         }
 

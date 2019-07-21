@@ -41,6 +41,9 @@
     <Win32Resource>
     </Win32Resource>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>MinishMaker.Program</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="GBHL, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -155,13 +158,14 @@
     <Folder Include="Resources\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="Vendor\Event-Assembler\Event Assembler\Core\Core.csproj">
-      <Project>{224c71e2-5e52-4910-910a-6fa9c2f937be}</Project>
-      <Name>Core</Name>
+    <ProjectReference Include="Vendor\ColorzCore\ColorzCore\ColorzCore.csproj">
+      <Project>{b98f7ccf-9caa-406e-88d7-2040fa99f631}</Project>
+      <Name>ColorzCore</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /y /d /s /i /e "$(ProjectDir)Vendor\Event-Assembler\Event Assembler\Event Assembler\Language Raws" "$(TargetDir)Language Raws"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>

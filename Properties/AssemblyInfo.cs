@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("MinishMaker")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Minish Maker")]
+[assembly: AssemblyDescription("Level editor for The Legend of Zelda: The Minish Cap")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("MinishMaker")]
-[assembly: AssemblyCopyright("Copyright ©  2018")]
+[assembly: AssemblyCompany("Team MinishMaker")]
+[assembly: AssemblyProduct("Minish Maker")]
+[assembly: AssemblyCopyright("Copyright © 2019 Team MinishMaker")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
