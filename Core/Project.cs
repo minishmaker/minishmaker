@@ -289,6 +289,9 @@ namespace MinishMaker.Core
 
         public bool BuildProject()
         {
+            if (!File.Exists(sourcePath) || !Directory.Exists(projectPath))
+                return false;
+
             byte[] copy = File.ReadAllBytes(sourcePath);
             File.WriteAllBytes(projectPath+"/build.gba", copy);
 
