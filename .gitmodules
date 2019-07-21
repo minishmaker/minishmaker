@@ -1,4 +1,4 @@
 [submodule "Vendor/ColorzCore"]
 	path = Vendor/ColorzCore
-	url = git@github.com:minishmaker/ColorzCore.git
+	url = https://github.com/minishmaker/ColorzCore.git
 	branch = master
