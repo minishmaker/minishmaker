@@ -6,18 +6,20 @@
 
 Minish Maker is a level editor for The Legend of Zelda: The Minish Cap.
 
-Current version: 0.3.0a
+Current version: 0.4.0a
 
 The project is still in early development and will not see a full release for a while.
 However, prerelease binaries will be made available as each featureset is implemented.
 
-### Upcoming Features
+### Current Features
 Feature | Status
 ------- | ------
-Map Viewer | released
-Tileset Viewer | Per map
-Map Editing | BG2 editing
-Tileset Editing | Planned
+Map Editing | released
+Metatile Editing | released
+Chest Editing | released
+Area Editing | in development
+Text Editing | planned
+Object Editing | planned
 
 Please join our [Discord server](https://discord.gg/ndFuWbV) to discuss the project!
 
