@@ -289,7 +289,10 @@ namespace MinishMaker.Core
 
         public bool BuildProject()
         {
-            String[] args = new[] {"A","FE8","-input:"+projectPath+"/Main.event","-output:"+sourcePath};
+            byte[] copy = File.ReadAllBytes(sourcePath);
+            File.WriteAllBytes(projectPath+"/build.gba", copy);
+
+            String[] args = new[] {"A","FE8","-input:"+projectPath+"/Main.event","-output:"+ projectPath + "/build.gba"};
             ColorzCore.Program.Main(args);
             return true;
         }

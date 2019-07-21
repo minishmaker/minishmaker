@@ -342,7 +342,7 @@ namespace MinishMaker.UI
             if (project_.BuildProject())
             {
                 MessageBox.Show("Build Completed!");
-                statusText.Text = "Build Completed. File overwritten: " + project_.sourcePath;
+                statusText.Text = "Build Completed. Output file: " + project_.projectPath + "\\build.gba";
             }
             // TODO check for build completing correctly, probably needs deeper integration with ColorzCore
 
