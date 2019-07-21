@@ -183,6 +183,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /y /d "$(ProjectDir)Vendor\Raw_code.txt" "$(TargetDir)Language Raws\"</PostBuildEvent>
+    <PostBuildEvent>xcopy /y /d /s "$(ProjectDir)Vendor\Language Raws" "$(TargetDir)Language Raws\"</PostBuildEvent>
   </PropertyGroup>
 </Project>
