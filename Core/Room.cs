@@ -340,6 +340,10 @@ namespace MinishMaker.Core
                     return metadata.CompressBG2(ref data, bg2RoomData);
 				case DataType.chestData:
 					return metadata.GetChestData(ref data);
+				case DataType.bg1MetaTileSet:
+					return bg1MetaTiles.GetCompressedMetaTileSet(ref data);
+				case DataType.bg2MetaTileSet:
+					return bg2MetaTiles.GetCompressedMetaTileSet(ref data);
                 default:
                     return 0;
             }
@@ -424,6 +428,11 @@ namespace MinishMaker.Core
 		{
 			metadata.AddChestData(data);
 		}
+
+        public void RemoveChestData(ChestData data)
+        {
+            metadata.RemoveChestData(data);
+        }
 
 		public byte[] GetMetaTileData(int tileNum, int layer)
 		{

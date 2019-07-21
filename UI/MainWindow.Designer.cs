@@ -33,9 +33,9 @@ namespace MinishMaker.UI
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.selectRomToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveRoomChangesCtrlSToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.exportROMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.topLayerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -64,6 +64,7 @@ namespace MinishMaker.UI
             this.bottomTileGridBox = new MinishMaker.UI.GridBox();
             this.mapPanel = new System.Windows.Forms.Panel();
             this.mapGridBox = new MinishMaker.UI.GridBox();
+            this.buildProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.bottomStatusStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
@@ -94,44 +95,46 @@ namespace MinishMaker.UI
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.openToolStripMenuItem,
+            this.selectRomToolStripMenuItem,
+            this.openProjectToolStripMenuItem,
             this.saveRoomChangesCtrlSToolStripMenuItem,
-            this.exportROMToolStripMenuItem,
+            this.buildProjectToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
-            // openToolStripMenuItem
+            // selectRomToolStripMenuItem
             // 
-            this.openToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("openToolStripMenuItem.Image")));
-            this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
-            this.openToolStripMenuItem.Text = "Open";
-            this.openToolStripMenuItem.Click += new System.EventHandler(this.OpenButtonClick);
+            this.selectRomToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("selectRomToolStripMenuItem.Image")));
+            this.selectRomToolStripMenuItem.Name = "selectRomToolStripMenuItem";
+            this.selectRomToolStripMenuItem.ShowShortcutKeys = false;
+            this.selectRomToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.selectRomToolStripMenuItem.Text = "Select ROM";
+            this.selectRomToolStripMenuItem.Click += new System.EventHandler(this.OpenButtonClick);
+            // 
+            // openProjectToolStripMenuItem
+            // 
+            this.openProjectToolStripMenuItem.Name = "openProjectToolStripMenuItem";
+            this.openProjectToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+            this.openProjectToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.openProjectToolStripMenuItem.Text = "Open Project";
+            this.openProjectToolStripMenuItem.Click += new System.EventHandler(this.SelectProjectButtonClick);
             // 
             // saveRoomChangesCtrlSToolStripMenuItem
             // 
             this.saveRoomChangesCtrlSToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("saveRoomChangesCtrlSToolStripMenuItem.Image")));
             this.saveRoomChangesCtrlSToolStripMenuItem.Name = "saveRoomChangesCtrlSToolStripMenuItem";
             this.saveRoomChangesCtrlSToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.saveRoomChangesCtrlSToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            this.saveRoomChangesCtrlSToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
             this.saveRoomChangesCtrlSToolStripMenuItem.Text = "Save Project";
             this.saveRoomChangesCtrlSToolStripMenuItem.Click += new System.EventHandler(this.saveAllChangesCtrlSToolStripMenuItem_Click);
-            // 
-            // exportROMToolStripMenuItem
-            // 
-            this.exportROMToolStripMenuItem.Name = "exportROMToolStripMenuItem";
-            this.exportROMToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
-            this.exportROMToolStripMenuItem.Text = "Export ROM";
-            this.exportROMToolStripMenuItem.Click += new System.EventHandler(this.ExportROMToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitButtonClick);
             // 
@@ -423,6 +426,14 @@ namespace MinishMaker.UI
             this.mapGridBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.mapGridBox_MouseDown);
             this.mapGridBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.mapGridBox_MouseMove);
             // 
+            // buildProjectToolStripMenuItem
+            // 
+            this.buildProjectToolStripMenuItem.Name = "buildProjectToolStripMenuItem";
+            this.buildProjectToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.B)));
+            this.buildProjectToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.buildProjectToolStripMenuItem.Text = "Build Project";
+            this.buildProjectToolStripMenuItem.Click += new System.EventHandler(this.BuildProjectToolStripMenuItem_Click);
+            // 
             // MainWindow
             // 
             this.AllowDrop = true;
@@ -467,7 +478,7 @@ namespace MinishMaker.UI
 
         private System.Windows.Forms.MenuStrip menuStrip;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem selectRomToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.StatusStrip bottomStatusStrip;
         private System.Windows.Forms.ToolStripStatusLabel statusText;
@@ -482,7 +493,6 @@ namespace MinishMaker.UI
 		private System.Windows.Forms.ToolStripMenuItem saveRoomChangesCtrlSToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem windowToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem chestEditorStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem exportROMToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton saveToolStripButton;
         private System.Windows.Forms.TabControl tileTabControl;
         private System.Windows.Forms.TabPage bottomTileTab;
@@ -498,6 +508,8 @@ namespace MinishMaker.UI
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripButton chestToolStripButton;
         private System.Windows.Forms.ToolStripButton metatileToolStripButton;
+		private System.Windows.Forms.ToolStripMenuItem openProjectToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem buildProjectToolStripMenuItem;
     }
 }
 

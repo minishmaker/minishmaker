@@ -41,6 +41,9 @@
     <Win32Resource>
     </Win32Resource>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>MinishMaker.Program</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="GBHL, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -59,6 +62,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\ChangeTypes\AreaInfoChange.cs" />
+    <Compile Include="Core\ChangeTypes\Bg1DataChange.cs" />
+    <Compile Include="Core\ChangeTypes\Bg2MetaTileSetChange.cs" />
+    <Compile Include="Core\ChangeTypes\Bg2DataChange.cs" />
+    <Compile Include="Core\ChangeTypes\ChestDataChange.cs" />
+    <Compile Include="Core\ChangeTypes\Bg1MetaTileSetChange.cs" />
+    <Compile Include="Core\ChangeTypes\Change.cs" />
     <Compile Include="Core\Project.cs" />
     <Compile Include="UI\ChestEditorWindow.cs">
       <SubType>Form</SubType>
@@ -147,5 +157,15 @@
   <ItemGroup>
     <Folder Include="Resources\" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Vendor\ColorzCore\ColorzCore\ColorzCore.csproj">
+      <Project>{b98f7ccf-9caa-406e-88d7-2040fa99f631}</Project>
+      <Name>ColorzCore</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
 </Project>

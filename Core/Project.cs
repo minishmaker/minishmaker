@@ -1,10 +1,15 @@
-﻿using MinishMaker.Utilities;
+﻿using MinishMaker.Core.ChangeTypes;
+using MinishMaker.UI;
+using MinishMaker.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ColorzCore;
+
 
 namespace MinishMaker.Core
 {
@@ -14,9 +19,11 @@ namespace MinishMaker.Core
         bg2Data,
         roomMetaData,
         tileSet,
-        metaTileSet,
-        chestData
-    }
+        bg1MetaTileSet,
+		bg2MetaTileSet,
+        chestData,
+		areaInfo
+	}
 
     /// <summary>
     /// Stores configuration for a minishmaker project
@@ -25,61 +32,147 @@ namespace MinishMaker.Core
     {
         public static Project Instance;
 
-        public MapManager mapManager;
+        //public MapManager mapManager;
 
         public string sourcePath;
         public string exportPath;
         public string projectPath;
-        public List<ModifiedData> modifiedData;
 
-        public struct SpecialData
+		private List<Change> loadedChanges;
+		private StreamWriter mainWriter;
+
+        public Project()
         {
-            public DataType dataType;
-            public string path;
-
-            public SpecialData(DataType type, string filepath)
-            {
-                dataType = type;
-                path = filepath;
-            }
-        }
-
-        public struct ModifiedData
-        {
-            public int areaIndex;
-            public int roomIndex;
-            public DataType dataType;
-
-            public ModifiedData(int areaIndex, int roomIndex, DataType type)
-            {
-                this.areaIndex = areaIndex;
-                this.roomIndex = roomIndex;
-                this.dataType = type;
-            }
-        }
-
-        public Project(ROM baseRom, MapManager manager)
-        {
+			loadedChanges = new List<Change>();
             Instance = this;
-            projectPath = "";
+            //projectPath = "";
 
-            sourcePath = baseRom.path;
-            projectPath = Path.GetDirectoryName(sourcePath);
-            exportPath = projectPath + "/mc-hack.gba";
-            modifiedData = new List<ModifiedData>();
-            mapManager = manager;
-            LoadProject();
+            //sourcePath = baseRom.path;
+            //projectPath = Path.GetDirectoryName(sourcePath);
+            //exportPath = projectPath + "/mc-hack.gba";
+            //mapManager = manager;
+            //LoadProject();
         }
+
+		public byte[] GetSavedData(string path, bool compressed, int size = 0x2000)
+		{
+			byte[] data = null;
+			if (File.Exists(path))
+            {
+				data = new byte[size];
+				byte[] savedData = File.ReadAllBytes(path);
+				if(compressed) {
+					using (MemoryStream os = new MemoryStream(data))
+					{
+						using (MemoryStream ms = new MemoryStream(savedData))
+						{
+							Reader r = new Reader(ms);
+							DataHelper.Lz77Decompress(r, os);
+						}
+					}
+				}
+			}
+			return data;
+		}
+
+		public void CreateProject(string directory)
+		{
+			if(!File.Exists(projectPath+"/Main.event"))
+			{
+				var file = File.Create(projectPath+"/Main.event");
+				file.Dispose();
+			}
+		}
+
+		public void RecheckProject()
+		{
+			var mainSets = File.ReadAllLines(projectPath+"/Main.event").ToList();
+
+			mainSets = mainSets.Select(s => s.Substring(4)).ToList();
+		}
+
+
+
+		private void AddLoadedChange(Change change)
+		{
+			if(!loadedChanges.Any(x=>x.Compare(change)))
+				loadedChanges.Add(change);
+		}
+
+
 
         public void LoadProject()
         {
-            if (Directory.Exists(projectPath + "/Areas"))
+			var exeFolder = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).Substring(6);
+			var lines = new string[2];
+			lines[0] = "romFile="+sourcePath;
+			lines[1] = "projectFolder="+projectPath;
+			File.WriteAllLines(exeFolder+"\\Settings.cfg",lines);
+
+			loadedChanges.Clear();
+			var pos = ROM.Instance.romData.Length-1;
+
+			while(ROM.Instance.romData[pos]==0xFF)
+			{
+				pos--;
+			}
+
+            if (!Directory.Exists(projectPath))
             {
-                string[] areaDirectories = Directory.GetDirectories(projectPath + "/Areas");
+                Directory.CreateDirectory(projectPath);
+            }
+
+			if(!File.Exists(projectPath+"/Main.event"))
+			{
+				var file = File.Create(projectPath+"/Main.event");
+				using( StreamWriter s = new StreamWriter( file ) )
+				{
+					s.WriteLine("ORG "+(pos+1));
+				}
+				file.Dispose();
+			}
+
+			var mainSets = File.ReadAllLines(projectPath+"/Main.event").ToList();
+			mainSets[0]= "ORG "+(pos+1);
+			File.WriteAllLines(projectPath+"/Main.event",mainSets);
+			mainSets.RemoveAt(0);
+			StartSave();
+			
+			mainSets = mainSets.Select(s => s.Substring(11).TrimEnd('\"').Replace('/','\\')).ToList();
+			
+			if (Directory.Exists(projectPath + "\\Areas"))
+            {
+                string[] areaDirectories = Directory.GetDirectories(projectPath + "\\Areas");
 
                 foreach (string areaDirectory in areaDirectories)
                 {
                     int areaIndex = Convert.ToInt32(areaDirectory.Substring(areaDirectory.Length - 2), 16);
+
+					string[] areaFiles = Directory.GetFiles(areaDirectory,"*.event");
+					foreach (var file in areaFiles)
+					{
+						DataType type;
+						var success = Enum.TryParse(Path.GetFileNameWithoutExtension(file), out type);
+
+						if(success)
+						{ 
+							var change = CreateChange(type ,areaIndex,0);
+							var entry = mainSets.SingleOrDefault(x=>file.Contains(x));
+							if(entry !=null)
+							{
+								mainSets.Remove(file);
+							}
+							else
+							{ 
+								mainWriter.WriteLine("#include \"./Areas"+change.GetFolderLocation()+"/"+change.changeType.ToString()+".event\"");
+							}
+							loadedChanges.Add(change);
+						}
+						else
+						{
+							Debug.WriteLine("unknown file found: "+file);
+						}
+					}
 
                     string[] roomDirectories = Directory.GetDirectories(areaDirectory);
 
@@ -87,67 +180,124 @@ namespace MinishMaker.Core
                     {
                         int roomIndex = Convert.ToInt32(roomDirectory.Substring(roomDirectory.Length - 2), 16);
 
-                        string[] roomModifications = Directory.GetFiles(roomDirectory);
-
-                        //Room room = mapManager.FindRoom(areaIndex, roomIndex);
-
-                        foreach (string modification in roomModifications)
-                        {
-                            string filename = modification.Split('\\').Last();
-                            ModifiedData newData = new ModifiedData(areaIndex, roomIndex, (DataType)Convert.ToInt32(filename));
-                            modifiedData.Add(newData);
-                        }
+                        string[] roomFiles = Directory.GetFiles(roomDirectory,"*.event");
+						foreach (var file in roomFiles)
+						{
+							DataType type;
+							var success = Enum.TryParse(Path.GetFileNameWithoutExtension(file), out type);
+	
+							if(success)
+							{ 
+								var change = CreateChange(type, areaIndex, roomIndex);
+								var entry = mainSets.SingleOrDefault(x=>file.Contains(x));
+								if(entry!=null)
+								{
+									mainSets.Remove(file);
+								}
+								else
+								{ 
+									mainWriter.WriteLine("#include \"./Areas"+change.GetFolderLocation()+"/"+change.changeType.ToString()+".event\"");
+								}
+								loadedChanges.Add(change);
+							}
+							else
+							{
+								Debug.WriteLine("unknown file found: "+file);
+							}
+						}
                     }
                 }
             }
+			EndSave();
+
+			if(mainSets.Count!=0)
+			{
+				CleanIncludes(mainSets);
+			}
         }
 
-        public void SaveProject()
+		private void CleanIncludes(List<string> remaining)
+		{
+			var text = File.ReadAllText(projectPath+"/Main.event");
+
+			foreach(var line in remaining)
+			{
+				var pos = text.IndexOf(line);
+				if(pos == -1)
+				{
+					Debug.WriteLine("Didnt find include line: "+ line);
+				}
+				else
+				{
+					var length = line.Length+9; //#include + space
+					text.Remove(pos-9,length);
+				}
+
+				File.WriteAllText(projectPath+"/Main.event",text);
+			}
+		}
+
+
+		private Change CreateChange(DataType type, int area, int room)
+		{
+			switch (type)
+			{
+				case DataType.areaInfo:
+					return new AreaInfoChange( area );
+				case DataType.bg1Data:
+					return new Bg1DataChange( area, room );
+				case DataType.bg1MetaTileSet:
+					return new Bg1MetaTileSetChange( area );
+				case DataType.bg2Data:
+					return new Bg2DataChange( area, room );
+				case DataType.bg2MetaTileSet:
+					return new Bg2MetaTileSetChange( area );
+				case DataType.chestData:
+					return new ChestDataChange( area, room );
+				default:
+					Debug.WriteLine("unknown file found of type: "+type);
+					return null;
+			}
+		}
+		public void StartSave()
+		{
+			mainWriter = File.AppendText(projectPath+"/Main.event");
+		}
+
+		public void EndSave()
+		{
+			mainWriter.Dispose();
+		}
+
+        public void SaveChange(Change change)
         {
-            modifiedData = modifiedData.Distinct().ToList();
+            var folderLoc = projectPath+"/Areas"+change.GetFolderLocation();
+			var fileName = change.changeType.ToString() +".event";
+			byte[] binData;
+			var content = change.GetEAString(out binData);
+			Directory.CreateDirectory(folderLoc);
+			File.WriteAllText(folderLoc+"/"+fileName, content);
 
-            if (modifiedData.Count > 0 && !Directory.Exists(projectPath + "/Areas")) 
-            {
-                Directory.CreateDirectory(projectPath + "/Areas");
-            }
+			if(binData!=null)
+			{
+				File.WriteAllBytes(folderLoc+"/"+change.changeType.ToString()+"Dat.bin", binData);
+			}
 
-            foreach (ModifiedData modification in modifiedData)
-            {
-                string areaDirectory = projectPath + "/Areas/Area " + StringUtil.AsStringHex2(modification.areaIndex);
-
-                if (!Directory.Exists(areaDirectory))
-                {
-                    Directory.CreateDirectory(areaDirectory);
-                }
-
-                string roomDirectory = areaDirectory + "/Room " + StringUtil.AsStringHex2(modification.roomIndex);
-
-                if (!Directory.Exists(roomDirectory))
-                {
-                    Directory.CreateDirectory(roomDirectory);
-                }
-
-                Room room = mapManager.FindRoom(modification.areaIndex, modification.roomIndex);
-
-                if (!room.Loaded)
-                {
-                    room.LoadRoom(modification.areaIndex);
-                }
-
-                byte[] data = null;
-                long size = room.GetSaveData(ref data, modification.dataType);
-
-                string name = ((int)modification.dataType).ToString();
-
-                File.WriteAllBytes(roomDirectory + "/" + name, data);
-            }
+			if(!loadedChanges.Any(x=>x.Compare(change))) //change not yet already written
+				mainWriter.WriteLine("#include \"./Areas"+change.GetFolderLocation()+"/"+fileName+"\"");
         }
 
-        public void AddChange(int areaIndex, int roomIndex, DataType type)
+        public bool BuildProject()
         {
-            modifiedData.Add(new ModifiedData(areaIndex, roomIndex, type));
+            String[] args = new[] {"A","FE8","-input:"+projectPath+"/Main.event","-output:"+sourcePath};
+            ColorzCore.Program.Main(args);
+            //Nintenlord.Event_Assembler.Core.Program.Assemble(projectPath + "/Main.event", sourcePath, "FE7", null);
+            return true;
         }
 
+
+		//TO BE REMOVED?
+		/*
         public bool ExportToRom()
         {
             int newSource = 0xEF3340;
@@ -179,5 +329,6 @@ namespace MinishMaker.Core
 
             return true;
         }
+		*/
     }
 }
