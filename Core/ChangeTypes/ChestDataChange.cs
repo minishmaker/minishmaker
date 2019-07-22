@@ -34,7 +34,7 @@ namespace MinishMaker.Core.ChangeTypes
 			sb.AppendLine("#incbin \"./"+changeType.ToString()+"Dat.bin\"");
 
 			var index = 0;
-			var data = new byte[chestData.Count*8];
+			var data = new byte[chestData.Count*8+8];
 			foreach(var chest in chestData)
 			{
 				data[0+index]=chest.type;
