@@ -8,7 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ColorzCore;
 
 
 namespace MinishMaker.Core
@@ -244,6 +243,8 @@ namespace MinishMaker.Core
 			{
 				case DataType.areaInfo:
 					return new AreaInfoChange( area );
+				case DataType.roomMetaData:
+					return new RoomMetadataChange( area, room );
 				case DataType.bg1Data:
 					return new Bg1DataChange( area, room );
 				case DataType.bg1MetaTileSet:

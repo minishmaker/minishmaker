@@ -63,6 +63,7 @@ namespace MinishMaker.UI
             this.bottomTileTab = new System.Windows.Forms.TabPage();
             this.bottomTileGridBox = new MinishMaker.UI.GridBox();
             this.mapPanel = new System.Windows.Forms.Panel();
+			this.areaEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mapGridBox = new MinishMaker.UI.GridBox();
             this.buildProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
@@ -176,7 +177,8 @@ namespace MinishMaker.UI
             // 
             this.windowToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.chestEditorStripMenuItem,
-            this.metatileEditorToolStripMenuItem});
+            this.metatileEditorToolStripMenuItem,
+            this.areaEditorToolStripMenuItem});
             this.windowToolStripMenuItem.Name = "windowToolStripMenuItem";
             this.windowToolStripMenuItem.Size = new System.Drawing.Size(63, 20);
             this.windowToolStripMenuItem.Text = "Window";
@@ -404,6 +406,13 @@ namespace MinishMaker.UI
             this.mapPanel.Name = "mapPanel";
             this.mapPanel.Size = new System.Drawing.Size(853, 610);
             this.mapPanel.TabIndex = 10;
+			// 
+			// areaEditorToolStripMenuItem
+			// 
+			this.areaEditorToolStripMenuItem.Name = "areaEditorToolStripMenuItem";
+			this.areaEditorToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+			this.areaEditorToolStripMenuItem.Text = "Area Editor";
+			this.areaEditorToolStripMenuItem.Click += new System.EventHandler(this.areaEditorToolStripMenuItem_Click);
             // 
             // mapGridBox
             // 
@@ -510,6 +519,7 @@ namespace MinishMaker.UI
         private System.Windows.Forms.ToolStripButton metatileToolStripButton;
 		private System.Windows.Forms.ToolStripMenuItem openProjectToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem buildProjectToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem areaEditorToolStripMenuItem;
     }
 }
 

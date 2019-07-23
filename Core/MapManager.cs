@@ -13,10 +13,12 @@ namespace MinishMaker.Core
         {
             public int Index { get; private set; }
             private readonly List<Room> AreaRooms;
+			public byte[] areaInfo;
 
             public Area(int index)
             {
                 Index = index;
+				areaInfo = new byte[4];
                 AreaRooms = new List<Room>();
             }
 

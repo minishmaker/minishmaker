@@ -484,5 +484,24 @@ namespace MinishMaker.Core
 					break;
 			}
 		}
+
+		public Rectangle GetMapRect(int areaIndex)
+		{
+			if(metadata==null)
+			{
+				metadata = new RoomMetaData( areaIndex, this.Index );
+			}
+
+			return new Rectangle(new Point(metadata.mapPosX,metadata.mapPosY),new Size(metadata.TileWidth,metadata.TileHeight));
+		}
+
+		public void SetMapPosition(int x, int y)
+		{
+			if(x>0 &&y>0 && x<0x10000 &&y<0x10000)
+			{
+				metadata.mapPosX = x;
+				metadata.mapPosY = y;
+			}
+		}
 	}
 }

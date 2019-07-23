@@ -28,9 +28,21 @@ namespace MinishMaker.UI
 		{
 			InitializeComponent();
 			selectedMetaGridBox.Click+= selectedMetaTileBox_Click;
+			tLPalette.KeyDown +=EnterUnfocus;
+			tRPalette.KeyDown +=EnterUnfocus;
+			bLPalette.KeyDown +=EnterUnfocus;
+			bRPalette.KeyDown +=EnterUnfocus;
 		}
 
 		//control functions start here
+		private void EnterUnfocus(object sender, KeyEventArgs e)
+		{
+			if(e.KeyCode==Keys.Enter)
+			{
+				HiddenLabel.Focus();
+			}
+		}
+
 		private void tileSetGridBox_Click( object sender, EventArgs e )
 		{
 			if( tileSetGridBox.Image == null )

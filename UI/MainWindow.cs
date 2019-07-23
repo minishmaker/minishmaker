@@ -18,6 +18,7 @@ namespace MinishMaker.UI
 		private MapManager mapManager_;
 		private ChestEditorWindow chestEditor = null;
 		private MetaTileEditor metatileEditor = null;
+		private AreaEditor areaEditor = null;
 
 		private Bitmap[] mapLayers;
 		private Bitmap[] tileMaps;
@@ -401,6 +402,28 @@ namespace MinishMaker.UI
 	        metatileEditorToolStripMenuItem.Checked = false;
 	    }
 
+		private void areaEditorToolStripMenuItem_Click( object sender, EventArgs e)
+		{
+			if(areaEditorToolStripMenuItem.Checked)
+				return;
+			
+			areaEditor = new AreaEditor();
+
+			if(currentRoom!=null) {
+				areaEditor.LoadArea(currentArea);
+			}
+
+			areaEditor.FormClosed += new FormClosedEventHandler(onAreaEditorClose);
+			areaEditorToolStripMenuItem.Checked = true;
+			areaEditor.Show();
+		}
+
+		void onAreaEditorClose(object sender, FormClosedEventArgs e)
+		{
+			areaEditor = null;
+			areaEditorToolStripMenuItem.Checked = false;
+		}
+
         private void roomTreeView_NodeMouseDoubleClick( object sender, TreeNodeMouseClickEventArgs e )
 		{
 			if( e.Node.Parent != null )
@@ -408,6 +431,7 @@ namespace MinishMaker.UI
 				Console.WriteLine( e.Node.Parent.Text.Split( ' ' )[1] + " " + e.Node.Text.Split( ' ' )[1] );
 				int areaIndex = Convert.ToInt32( e.Node.Parent.Text.Split( ' ' )[1], 16 );
 				int roomIndex = Convert.ToInt32( e.Node.Text.Split( ' ' )[1], 16 );
+				var prevArea = currentArea; //changed in next line so hold temporarily
 				var room = FindRoom( areaIndex, roomIndex );
 
 				currentRoom = room;
@@ -443,6 +467,11 @@ namespace MinishMaker.UI
 						room.LoadRoom(currentArea);
 					}
 					metatileEditor.RedrawTiles(currentRoom);
+				}
+
+				if(areaEditor != null&& currentArea != prevArea)//still in the same area? dont reload
+				{
+					areaEditor.LoadArea(areaIndex);
 				}
             }
 		}
