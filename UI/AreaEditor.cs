@@ -265,7 +265,7 @@ namespace MinishMaker.UI
 				(unknown1			  *0x0) +
 				(moleCave.Checked	?0x20:0) +
 				(unknown2			  *0x40) +
-				(canFlute.Checked	?0x80:0);
+				(canFlute.Checked&&ROM.Instance.version!=RegionVersion.EU?0x80:0);
 
 			var byte2Data = Convert.ToByte(areaNameId.Text,16);
 
