@@ -188,12 +188,17 @@ namespace MinishMaker.UI
 	        OpenMetatileEditor();
 	    }
 
-        #endregion
+		private void exportAsImageToolStripButton_Click(object sender, EventArgs e) {
+			
+			ExportAsImage(mapGridBox.Image);
+		}
 
-        #region OtherInteractions
+		#endregion
 
-        // Other interactions
-        private void tileTabControl_SelectedIndexChanged(object sender, EventArgs e)
+		#region OtherInteractions
+
+		// Other interactions
+		private void tileTabControl_SelectedIndexChanged(object sender, EventArgs e)
 	    {
 	        selectedLayer = tileTabControl.SelectedIndex + 1;
 
@@ -400,6 +405,17 @@ namespace MinishMaker.UI
 	        metatileEditor = null;
 	        metatileEditorToolStripMenuItem.Checked = false;
 	    }
+
+		private void ExportAsImage(Image exportImg) {
+
+			SaveFileDialog sfd = new SaveFileDialog {
+				Filter = "Images (*.png, *.bmp)| *.png; *.bmp",
+				FilterIndex = 1
+			};
+			if(sfd.ShowDialog() == DialogResult.OK) {
+				exportImg.Save(sfd.FileName);
+			}
+		}
 
         private void roomTreeView_NodeMouseDoubleClick( object sender, TreeNodeMouseClickEventArgs e )
 		{
