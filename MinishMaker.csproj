@@ -80,7 +80,14 @@
     <Compile Include="Core\ChangeTypes\ChestDataChange.cs" />
     <Compile Include="Core\ChangeTypes\Bg1MetaTileSetChange.cs" />
     <Compile Include="Core\ChangeTypes\Change.cs" />
+    <Compile Include="Core\ChangeTypes\RoomMetadataChange.cs" />
     <Compile Include="Core\Project.cs" />
+    <Compile Include="UI\AreaEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\AreaEditor.Designer.cs">
+      <DependentUpon>AreaEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\ChestEditorWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -126,6 +133,9 @@
     <Compile Include="Utilities\Reader.cs" />
     <Compile Include="Utilities\StringUtil.cs" />
     <Compile Include="Utilities\Writer.cs" />
+    <EmbeddedResource Include="UI\AreaEditor.resx">
+      <DependentUpon>AreaEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\GridBox.resx">
       <DependentUpon>GridBox.cs</DependentUpon>
     </EmbeddedResource>

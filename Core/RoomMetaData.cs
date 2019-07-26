@@ -11,7 +11,9 @@ namespace MinishMaker.Core
 {
 	public class RoomMetaData
 	{
-		private int width, height, mapPosX, mapPosY;
+		private int width, height;
+		public int mapPosX, mapPosY;
+
 		public int PixelWidth
 		{
 			get
@@ -43,7 +45,7 @@ namespace MinishMaker.Core
 				return height;
 			}
 		}
-
+		
         private string roomPath;
 		private string areaPath;
 
@@ -128,8 +130,20 @@ namespace MinishMaker.Core
 
 			int areaRMDTableLoc = r.ReadAddr( header.MapHeaderBase + (areaIndex << 2) );
 			int roomMetaDataTableLoc = areaRMDTableLoc + (roomIndex * 0x0A);
-			this.mapPosX = r.ReadUInt16( roomMetaDataTableLoc )>>4;
-			this.mapPosY = r.ReadUInt16()>>4;
+			
+			if(File.Exists(roomPath+ "/" + DataType.roomMetaData +"Dat.bin"))
+			{
+				var data = File.ReadAllBytes(roomPath+ "/" + DataType.roomMetaData +"Dat.bin");
+				this.mapPosX = (data[0]+(data[1]<<8))>>4;
+				this.mapPosY = (data[2]+(data[3]<<8))>>4;
+				r.SetPosition(roomMetaDataTableLoc+4);
+			}
+			else
+			{
+				this.mapPosX = r.ReadUInt16( roomMetaDataTableLoc )>>4;
+				this.mapPosY = r.ReadUInt16()>>4;
+			}
+			
 			this.width = r.ReadUInt16() >> 4; //bytes 5+6 pixels/16 = tiles
 			this.height = r.ReadUInt16() >> 4;                          //bytes 7+8 pixels/16 = tiles
 

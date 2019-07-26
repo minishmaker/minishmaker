@@ -36,6 +36,7 @@ namespace MinishMaker.UI
             this.selectRomToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveRoomChangesCtrlSToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.buildProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.topLayerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -44,6 +45,7 @@ namespace MinishMaker.UI
             this.windowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.chestEditorStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.metatileEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.areaEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bottomStatusStrip = new System.Windows.Forms.StatusStrip();
@@ -54,6 +56,7 @@ namespace MinishMaker.UI
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.chestToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.metatileToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.areaToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.roomPanel = new System.Windows.Forms.Panel();
             this.roomTreeView = new System.Windows.Forms.TreeView();
             this.tilePanel = new System.Windows.Forms.Panel();
@@ -64,7 +67,6 @@ namespace MinishMaker.UI
             this.bottomTileGridBox = new MinishMaker.UI.GridBox();
             this.mapPanel = new System.Windows.Forms.Panel();
             this.mapGridBox = new MinishMaker.UI.GridBox();
-            this.buildProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.bottomStatusStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
@@ -130,6 +132,14 @@ namespace MinishMaker.UI
             this.saveRoomChangesCtrlSToolStripMenuItem.Text = "Save Project";
             this.saveRoomChangesCtrlSToolStripMenuItem.Click += new System.EventHandler(this.saveAllChangesCtrlSToolStripMenuItem_Click);
             // 
+            // buildProjectToolStripMenuItem
+            // 
+            this.buildProjectToolStripMenuItem.Name = "buildProjectToolStripMenuItem";
+            this.buildProjectToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.B)));
+            this.buildProjectToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.buildProjectToolStripMenuItem.Text = "Build Project";
+            this.buildProjectToolStripMenuItem.Click += new System.EventHandler(this.BuildProjectToolStripMenuItem_Click);
+            // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
@@ -176,7 +186,8 @@ namespace MinishMaker.UI
             // 
             this.windowToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.chestEditorStripMenuItem,
-            this.metatileEditorToolStripMenuItem});
+            this.metatileEditorToolStripMenuItem,
+            this.areaEditorToolStripMenuItem});
             this.windowToolStripMenuItem.Name = "windowToolStripMenuItem";
             this.windowToolStripMenuItem.Size = new System.Drawing.Size(63, 20);
             this.windowToolStripMenuItem.Text = "Window";
@@ -197,6 +208,14 @@ namespace MinishMaker.UI
             this.metatileEditorToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
             this.metatileEditorToolStripMenuItem.Text = "Metatile Editor";
             this.metatileEditorToolStripMenuItem.Click += new System.EventHandler(this.metatileEditorToolStripMenuItem_Click);
+            // 
+            // areaEditorToolStripMenuItem
+            // 
+            this.areaEditorToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("areaEditorToolStripMenuItem.Image")));
+            this.areaEditorToolStripMenuItem.Name = "areaEditorToolStripMenuItem";
+            this.areaEditorToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
+            this.areaEditorToolStripMenuItem.Text = "Area Editor";
+            this.areaEditorToolStripMenuItem.Click += new System.EventHandler(this.areaEditorToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -236,7 +255,8 @@ namespace MinishMaker.UI
             this.saveToolStripButton,
             this.toolStripSeparator1,
             this.chestToolStripButton,
-            this.metatileToolStripButton});
+            this.metatileToolStripButton,
+            this.areaToolStripButton});
             this.toolStrip.Location = new System.Drawing.Point(0, 24);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.RightToLeft = System.Windows.Forms.RightToLeft.No;
@@ -290,6 +310,16 @@ namespace MinishMaker.UI
             this.metatileToolStripButton.Size = new System.Drawing.Size(23, 22);
             this.metatileToolStripButton.Text = "Metatile Editor";
             this.metatileToolStripButton.Click += new System.EventHandler(this.metatileToolStripButton_Click);
+            // 
+            // areaToolStripButton
+            // 
+            this.areaToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.areaToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("areaToolStripButton.Image")));
+            this.areaToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.areaToolStripButton.Name = "areaToolStripButton";
+            this.areaToolStripButton.Size = new System.Drawing.Size(23, 22);
+            this.areaToolStripButton.Text = "Area Editor";
+            this.areaToolStripButton.Click += new System.EventHandler(this.areaToolStripButton_Click);
             // 
             // roomPanel
             // 
@@ -426,14 +456,6 @@ namespace MinishMaker.UI
             this.mapGridBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.mapGridBox_MouseDown);
             this.mapGridBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.mapGridBox_MouseMove);
             // 
-            // buildProjectToolStripMenuItem
-            // 
-            this.buildProjectToolStripMenuItem.Name = "buildProjectToolStripMenuItem";
-            this.buildProjectToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.B)));
-            this.buildProjectToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
-            this.buildProjectToolStripMenuItem.Text = "Build Project";
-            this.buildProjectToolStripMenuItem.Click += new System.EventHandler(this.BuildProjectToolStripMenuItem_Click);
-            // 
             // MainWindow
             // 
             this.AllowDrop = true;
@@ -510,6 +532,8 @@ namespace MinishMaker.UI
         private System.Windows.Forms.ToolStripButton metatileToolStripButton;
 		private System.Windows.Forms.ToolStripMenuItem openProjectToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem buildProjectToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem areaEditorToolStripMenuItem;
+        private System.Windows.Forms.ToolStripButton areaToolStripButton;
     }
 }
 

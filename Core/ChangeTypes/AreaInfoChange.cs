@@ -22,12 +22,12 @@ namespace MinishMaker.Core.ChangeTypes
 		{
 			var infoLoc = ROM.Instance.headers.areaInformationTableLoc + (4 * areaId);
 			var sb = new StringBuilder();
-			var areaBytes =ROM.Instance.reader.ReadBytes(4, infoLoc);
+			var areaBytes = MapManager.Instance.MapAreas.Single(a=>a.Index==this.areaId).areaInfo;
 			sb.AppendLine("PUSH"); //save cursor location
 			sb.AppendLine("ORG "+infoLoc); //go to the area info
-			sb.AppendLine("BYTE "+areaBytes[0]+" "+areaBytes[1]+" "+areaBytes[2]+" "+areaBytes[3]); //write the area info bytes
+			sb.AppendLine("#incbin \"./"+changeType.ToString()+"Dat.bin\"");
 			sb.AppendLine("POP"); //return to cursor location
-			binDat = null;
+			binDat = areaBytes;
 			return sb.ToString();
 		}
 
