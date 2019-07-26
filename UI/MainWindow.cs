@@ -161,6 +161,11 @@ namespace MinishMaker.UI
 	        OpenMetatileEditor();
 	    }
 
+	    private void areaEditorToolStripMenuItem_Click(object sender, EventArgs e)
+	    {
+            OpenAreaEditor();
+	    }
+
         private void AboutButtonClick( object sender, EventArgs e )
 		{
 			Form aboutWindow = new AboutWindow();
@@ -187,6 +192,11 @@ namespace MinishMaker.UI
 	    private void metatileToolStripButton_Click(object sender, EventArgs e)
 	    {
 	        OpenMetatileEditor();
+	    }
+
+	    private void areaToolStripButton_Click(object sender, EventArgs e)
+	    {
+            OpenAreaEditor();
 	    }
 
         #endregion
@@ -236,7 +246,6 @@ namespace MinishMaker.UI
 				return;
 			}
             
-            //LoadMaps();
 			if(project_== null)
 			{
 				project_ = new Project();
@@ -402,21 +411,22 @@ namespace MinishMaker.UI
 	        metatileEditorToolStripMenuItem.Checked = false;
 	    }
 
-		private void areaEditorToolStripMenuItem_Click( object sender, EventArgs e)
-		{
-			if(areaEditorToolStripMenuItem.Checked)
-				return;
-			
-			areaEditor = new AreaEditor();
+	    private void OpenAreaEditor()
+	    {
+	        if (areaEditorToolStripMenuItem.Checked)
+	            return;
 
-			if(currentRoom!=null) {
-				areaEditor.LoadArea(currentArea);
-			}
+	        areaEditor = new AreaEditor();
 
-			areaEditor.FormClosed += new FormClosedEventHandler(onAreaEditorClose);
-			areaEditorToolStripMenuItem.Checked = true;
-			areaEditor.Show();
-		}
+	        if (currentRoom != null)
+	        {
+	            areaEditor.LoadArea(currentArea);
+	        }
+
+	        areaEditor.FormClosed += new FormClosedEventHandler(onAreaEditorClose);
+	        areaEditorToolStripMenuItem.Checked = true;
+	        areaEditor.Show();
+        }
 
 		void onAreaEditorClose(object sender, FormClosedEventArgs e)
 		{
