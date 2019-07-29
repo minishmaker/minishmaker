@@ -121,15 +121,6 @@
     <value>17, 17</value>
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="selectRomToolStripMenuItem.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        wgAADsIBFShKgAAAAMtJREFUOE9jAIHv378rALEDLvz+/XsBsEJs4OvXr/O/ffv2Hx8GqYEqxwSf3z3/
-        f29X0/8726qw4vv7umCGBCC5SgGqnYEBJAlSiGwjMgYZ8ObeCQxxuKtAHHwGgDQjuwiEQS4GyRFlADYM
-        U0+xAaDwoMgAEEYxAJt/cWF4OCAb8PjYTAyFuPCzcyshMQEzAJQe0BXhwx9f3UcNg+eXNmAowoUfHpr4
-        //Pnz/fhsQDyD77UiI5BYQV0fgHYACCjAWQIqRhvBqMjYGAAAOYZve9tQhviAAAAAElFTkSuQmCC
-</value>
-  </data>
   <data name="saveRoomChangesCtrlSToolStripMenuItem.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO

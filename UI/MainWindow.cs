@@ -111,14 +111,15 @@ namespace MinishMaker.UI
 		}
 
         #region MenuBarButtons
-        private void OpenButtonClick( object sender, EventArgs e )
-		{
-			LoadRom();
-		}
 
-		private void SelectProjectButtonClick( object sender, EventArgs e )
+        private void NewProjectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            NewProject();
+        }
+
+        private void OpenProjectToolStripMenuItem_Click( object sender, EventArgs e )
 		{
-			SelectProject();
+            OpenProject();
 		}
 
         private void saveAllChangesCtrlSToolStripMenuItem_Click(object sender, EventArgs e)
@@ -176,7 +177,7 @@ namespace MinishMaker.UI
         #region ToolStripButtons
         private void openToolStripButton_Click( object sender, EventArgs e )
 		{
-			LoadRom();
+			OpenProject();
 		}
 
 	    private void saveToolStripButton_Click(object sender, EventArgs e)
@@ -214,69 +215,71 @@ namespace MinishMaker.UI
 		{
 
 		}
-	    #endregion
+        #endregion
 
-        private void LoadRom()
-		{
-			OpenFileDialog ofd = new OpenFileDialog
-			{
-				Filter = "GBA ROMs|*.gba|All Files|*.*",
-				Title = "Select TMC ROM"
-			};
+        #region ProjectManagement
 
-			if( ofd.ShowDialog() != DialogResult.OK )
-			{
-				return;
-			}
+        private void NewProject()
+        {
+            OpenFileDialog ofd = new OpenFileDialog
+            {
+                Filter = "GBA ROMs|*.gba|All Files|*.*",
+                Title = "Select TMC ROM"
+            };
 
-			try
-			{
-				ROM_ = new ROM( ofd.FileName );
-			}
-			catch( Exception e )
-			{
-				Console.WriteLine( e );
-				throw;
-			}
+            if (ofd.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
 
-			if( ROM.Instance.version.Equals( RegionVersion.None ) )
-			{
-				MessageBox.Show( "Invalid TMC ROM. Please Open a valid ROM.", "Incorrect ROM", MessageBoxButtons.OK );
-				statusText.Text = "Unable to determine ROM.";
-				return;
-			}
-            
-			if(project_== null)
-			{
-				project_ = new Project();
-			}
+            try
+            {
+                ROM_ = new ROM(ofd.FileName);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
 
-			project_.sourcePath = ROM.Instance.path;
-			var st = "Loaded: " + ROM.Instance.path;
+            if (ROM.Instance.version.Equals(RegionVersion.None))
+            {
+                MessageBox.Show("Invalid TMC ROM. Please Open a valid ROM.", "Incorrect ROM", MessageBoxButtons.OK);
+                statusText.Text = "Unable to determine ROM.";
+                return;
+            }
 
-			if(project_.projectPath!=null)
-			{
+            if (project_ == null)
+            {
+                project_ = new Project();
+            }
 
-				project_.LoadProject();//load first as rooms or areas could be added at some point
-				mapGridBox.Image = new Bitmap(1,1); //reset some things on loading a rom
-				bottomTileGridBox.Image = new Bitmap(1,1);
-				topTileGridBox.Image = new Bitmap(1, 1);
-				currentRoom = null;
-				currentArea = -1;
-				selectedTileData = -1;
-				selectedLayer = 2; 
-				pendingRomChanges = new List<Change>();
-				LoadMaps();
-			}
-			else
-			{
-				st+=", also select a project folder.";
-			}
+            project_.sourcePath = ROM.Instance.path;
+            var st = "Loaded: " + ROM.Instance.path;
+
+            if (project_.projectPath != null)
+            {
+
+                project_.LoadProject();//load first as rooms or areas could be added at some point
+                mapGridBox.Image = new Bitmap(1, 1); //reset some things on loading a rom
+                bottomTileGridBox.Image = new Bitmap(1, 1);
+                topTileGridBox.Image = new Bitmap(1, 1);
+                currentRoom = null;
+                currentArea = -1;
+                selectedTileData = -1;
+                selectedLayer = 2;
+                pendingRomChanges = new List<Change>();
+                LoadMaps();
+            }
+            else
+            {
+                st += ", also select a project folder.";
+            }
 
             statusText.Text = st;
-		}
+        }
 
-		private void SelectProject()
+		private void OpenProject()
 		{
 			FolderBrowserDialog fbd = new FolderBrowserDialog()
 			{
@@ -316,30 +319,6 @@ namespace MinishMaker.UI
 			}
 		}
 
-		private void LoadMaps()
-		{
-			mapManager_ = new MapManager();
-
-			roomTreeView.Nodes.Clear();
-			// Set up room list
-			roomTreeView.BeginUpdate();
-			int subsection = 0;
-
-			foreach( MapManager.Area area in mapManager_.MapAreas )
-			{
-				roomTreeView.Nodes.Add( "Area " + StringUtil.AsStringHex2( area.Index ) );
-
-				foreach( Room room in area.Rooms )
-				{
-					roomTreeView.Nodes[subsection].Nodes.Add( "Room " + StringUtil.AsStringHex2( room.Index ) );
-				}
-
-				subsection++;
-			}
-
-			roomTreeView.EndUpdate();
-		}
-
         private void BuildProject()
         {
             if (Project.Instance == null)
@@ -357,6 +336,32 @@ namespace MinishMaker.UI
             // TODO check for build completing correctly, probably needs deeper integration with ColorzCore
 
             
+        }
+
+        #endregion
+
+        private void LoadMaps()
+        {
+            mapManager_ = new MapManager();
+
+            roomTreeView.Nodes.Clear();
+            // Set up room list
+            roomTreeView.BeginUpdate();
+            int subsection = 0;
+
+            foreach (MapManager.Area area in mapManager_.MapAreas)
+            {
+                roomTreeView.Nodes.Add("Area " + StringUtil.AsStringHex2(area.Index));
+
+                foreach (Room room in area.Rooms)
+                {
+                    roomTreeView.Nodes[subsection].Nodes.Add("Room " + StringUtil.AsStringHex2(room.Index));
+                }
+
+                subsection++;
+            }
+
+            roomTreeView.EndUpdate();
         }
 
         private void OpenChestEditor()
