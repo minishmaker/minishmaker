@@ -8,15 +8,19 @@ using MinishMaker.Core;
 using MinishMaker.Utilities;
 using System.Drawing;
 using MinishMaker.Core.ChangeTypes;
+using Microsoft.WindowsAPICodePack.Dialogs;
+
 
 namespace MinishMaker.UI
 {
 	public partial class MainWindow : Form
 	{
 		private ROM ROM_;
+	    
         private Project project_;
 		private MapManager mapManager_;
-		private ChestEditorWindow chestEditor = null;
+	    private NewProjectWindow newProjectWindow = null;
+        private ChestEditorWindow chestEditor = null;
 		private MetaTileEditor metatileEditor = null;
 		private AreaEditor areaEditor = null;
 
@@ -221,10 +225,17 @@ namespace MinishMaker.UI
 
         private void NewProject()
         {
+            if (newProjectWindow != null)
+                return;
+
+            newProjectWindow = new NewProjectWindow();
+            newProjectWindow.FormClosed += OnNewProjectWindowClosed;
+            newProjectWindow.Show();
+            /*
             OpenFileDialog ofd = new OpenFileDialog
             {
                 Filter = "GBA ROMs|*.gba|All Files|*.*",
-                Title = "Select TMC ROM"
+                Title = "Select Base TMC ROM"
             };
 
             if (ofd.ShowDialog() != DialogResult.OK)
@@ -246,6 +257,18 @@ namespace MinishMaker.UI
             {
                 MessageBox.Show("Invalid TMC ROM. Please Open a valid ROM.", "Incorrect ROM", MessageBoxButtons.OK);
                 statusText.Text = "Unable to determine ROM.";
+                return;
+            }
+
+            CommonOpenFileDialog fbd = new CommonOpenFileDialog()
+            {
+
+                IsFolderPicker = true,
+                Title = "Select a project root folder"
+            };
+
+            if (fbd.ShowDialog() != CommonFileDialogResult.Ok)
+            {
                 return;
             }
 
@@ -276,18 +299,29 @@ namespace MinishMaker.UI
                 st += ", also select a project folder.";
             }
 
-            statusText.Text = st;
+            statusText.Text = st;*/
         }
+
+	    private void OnNewProjectWindowClosed(object sender, FormClosedEventArgs e)
+	    {
+	        if (newProjectWindow.project != null)
+	            project_ = newProjectWindow.project;
+	        else
+	            statusText.Text = "Project creaton aborted.";
+	        newProjectWindow = null;
+	    }
 
 		private void OpenProject()
 		{
-			FolderBrowserDialog fbd = new FolderBrowserDialog()
+
+		    CommonOpenFileDialog fbd = new CommonOpenFileDialog()
 			{
-				ShowNewFolderButton = true,
-				Description = "Select project root folder."
+
+				IsFolderPicker = true,
+                Title = "Select project root folder"
 			};
 
-			if( fbd.ShowDialog() != DialogResult.OK )
+			if( fbd.ShowDialog() != CommonFileDialogResult.Ok )
 			{
 				return;
 			}
@@ -297,7 +331,7 @@ namespace MinishMaker.UI
 				project_ = new Project();
 			}
 
-			project_.projectPath =  fbd.SelectedPath;
+			project_.projectPath =  fbd.FileName;
 
 			if(project_.sourcePath!=null)
 			{

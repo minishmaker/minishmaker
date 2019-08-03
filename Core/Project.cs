@@ -33,12 +33,25 @@ namespace MinishMaker.Core
 
         //public MapManager mapManager;
 
+        public string projectName;
         public string sourcePath;
-        public string exportPath;
         public string projectPath;
 
 		private List<Change> loadedChanges;
 		private StreamWriter mainWriter;
+
+        public Project(string name, string baseRom, string projectFolder)
+        {
+            // Create mode
+            projectName = name;
+            projectPath = projectFolder;
+        }
+
+        public Project(string projectFile)
+        {
+            // Load mode
+            
+        }
 
         public Project()
         {
@@ -74,7 +87,7 @@ namespace MinishMaker.Core
 			return data;
 		}
 
-		public void CreateProject(string directory)
+		public void CreateProject(string sourceROM, string directory)
 		{
 			if(!File.Exists(projectPath+"/Main.event"))
 			{
