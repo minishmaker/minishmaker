@@ -12,6 +12,21 @@
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>0.4.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -41,11 +56,10 @@
     <Win32Resource>
     </Win32Resource>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>MinishMaker.Program</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="GBHL, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Resources\GBHL.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -59,7 +73,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\ChangeTypes\AreaInfoChange.cs" />
+    <Compile Include="Core\ChangeTypes\Bg1DataChange.cs" />
+    <Compile Include="Core\ChangeTypes\Bg2MetaTileSetChange.cs" />
+    <Compile Include="Core\ChangeTypes\Bg2DataChange.cs" />
+    <Compile Include="Core\ChangeTypes\ChestDataChange.cs" />
+    <Compile Include="Core\ChangeTypes\Bg1MetaTileSetChange.cs" />
+    <Compile Include="Core\ChangeTypes\Change.cs" />
+    <Compile Include="Core\ChangeTypes\RoomMetadataChange.cs" />
     <Compile Include="Core\Project.cs" />
+    <Compile Include="UI\AreaEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\AreaEditor.Designer.cs">
+      <DependentUpon>AreaEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\ChestEditorWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -105,6 +133,9 @@
     <Compile Include="Utilities\Reader.cs" />
     <Compile Include="Utilities\StringUtil.cs" />
     <Compile Include="Utilities\Writer.cs" />
+    <EmbeddedResource Include="UI\AreaEditor.resx">
+      <DependentUpon>AreaEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\GridBox.resx">
       <DependentUpon>GridBox.cs</DependentUpon>
     </EmbeddedResource>
@@ -147,5 +178,21 @@
   <ItemGroup>
     <Folder Include="Resources\" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Vendor\ColorzCore\ColorzCore\ColorzCore.csproj">
+      <Project>{b98f7ccf-9caa-406e-88d7-2040fa99f631}</Project>
+      <Name>ColorzCore</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy /y /d /s "$(ProjectDir)Vendor\Language Raws" "$(TargetDir)Language Raws\"</PostBuildEvent>
+  </PropertyGroup>
 </Project>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,9 +14,15 @@ namespace MinishMaker.Core
 		byte[] metaTileSetData;
 		bool isBg1;
 
-		public MetaTileSet( AddrData addrData, bool isBg1 )
+		public MetaTileSet( AddrData addrData, bool isBg1, string filePath )
 		{
-			metaTileSetData = DataHelper.GetData( addrData );
+			metaTileSetData = Project.Instance.GetSavedData(filePath, true, addrData.size);
+
+			if(metaTileSetData == null)
+			{
+				metaTileSetData = DataHelper.GetData( addrData );
+			}
+
 			this.isBg1 = isBg1;
 		}
 
@@ -92,6 +99,21 @@ namespace MinishMaker.Core
 			metaTileSetData[tileStart+5]=tileInfo[5];
 			metaTileSetData[tileStart+6]=tileInfo[6];
 			metaTileSetData[tileStart+7]=tileInfo[7];
+		}
+
+		public long GetCompressedMetaTileSet(ref byte[] outdata)
+		{
+			var compressed = new byte[metaTileSetData.Length];
+			long totalSize = 0;
+			MemoryStream ous = new MemoryStream( compressed );
+			totalSize = DataHelper.Compress(metaTileSetData, ous, false);
+
+			outdata = new byte[totalSize];
+			Array.Copy(compressed,outdata,totalSize);
+
+            totalSize |= 0x80000000;
+
+			return totalSize;
 		}
 	}
 }

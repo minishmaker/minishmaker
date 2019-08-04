@@ -1,4 +1,5 @@
 ﻿using MinishMaker.Core;
+using MinishMaker.Core.ChangeTypes;
 using MinishMaker.Utilities;
 using System;
 using System.Collections.Generic;
@@ -19,15 +20,29 @@ namespace MinishMaker.UI
 		byte[] currentTileInfo = new byte[8];
 		int pnum = 0;
 		int currentLayer = 1;
+		public int currentArea=-1;
 		bool vFlip = false;
 		bool hFlip = false;
 
 		public MetaTileEditor()
 		{
 			InitializeComponent();
+			selectedMetaGridBox.Click+= selectedMetaTileBox_Click;
+			tLPalette.KeyDown +=EnterUnfocus;
+			tRPalette.KeyDown +=EnterUnfocus;
+			bLPalette.KeyDown +=EnterUnfocus;
+			bRPalette.KeyDown +=EnterUnfocus;
 		}
 
 		//control functions start here
+		private void EnterUnfocus(object sender, KeyEventArgs e)
+		{
+			if(e.KeyCode==Keys.Enter)
+			{
+				HiddenLabel.Focus();
+			}
+		}
+
 		private void tileSetGridBox_Click( object sender, EventArgs e )
 		{
 			if( tileSetGridBox.Image == null )
@@ -53,9 +68,9 @@ namespace MinishMaker.UI
 
 			var enlarged = Magnify( metaTiles[currentLayer - 1], new Rectangle( xpos * 16, ypos * 16, 16, 16 ), 4 );
 
-			var room = ((MainWindow)Application.OpenForms[0]).currentRoom;
+			var room = MapManager.Instance.MapAreas.Single(a=>a.Index==currentArea).Rooms.First();
 
-			currentTileInfo = room.GetMetaTileData(metaTileGridBox.SelectedIndex, currentLayer );
+			currentTileInfo = room.GetMetaTileData(metaTileGridBox.SelectedIndex, currentLayer);
 
 			if(currentTileInfo ==null)
 				return;
@@ -83,7 +98,7 @@ namespace MinishMaker.UI
 
 			pnum -= 1;
 
-			var room = ((MainWindow)Application.OpenForms[0]).currentRoom;
+			var room = MapManager.Instance.MapAreas.Single(a=>a.Index==currentArea).Rooms.First();
 			DrawTileset( room.tileSet, room.palettes );
 
 			if( pnum == 0 )
@@ -101,7 +116,7 @@ namespace MinishMaker.UI
 
 			pnum += 1;
 
-			var room = ((MainWindow)Application.OpenForms[0]).currentRoom;
+			var room = MapManager.Instance.MapAreas.Single(a=>a.Index==currentArea).Rooms.First();
 			DrawTileset( room.tileSet, room.palettes );
 
 			if( pnum == 15 )
@@ -161,7 +176,7 @@ namespace MinishMaker.UI
 
 		private Bitmap DrawTile()
 		{
-			var room = ((MainWindow)Application.OpenForms[0]).currentRoom;
+			var room = MapManager.Instance.MapAreas.Single(a=>a.Index==currentArea).Rooms.First();
 			var b = new Bitmap( 8, 8 );
 			var tnum = tileSetGridBox.SelectedIndex;
 
@@ -200,13 +215,17 @@ namespace MinishMaker.UI
 			if(metaTileGridBox.SelectedIndex == -1)
 				return;
 
-			var room = ((MainWindow)Application.OpenForms[0]).currentRoom;
-			room.SetMetaTileData(currentTileInfo, metaTileGridBox.SelectedIndex, currentLayer-1);
+			var room = MapManager.Instance.MapAreas.Single(a=>a.Index==currentArea).Rooms.First();
+			room.SetMetaTileData(currentTileInfo, metaTileGridBox.SelectedIndex, currentLayer);
 			var image = metaTiles[currentLayer-1];
 			int x = metaTileGridBox.SelectedIndex % 16;
 			int y = metaTileGridBox.SelectedIndex / 16;
 			MetaTileSet.DrawTileData(ref image,currentTileInfo,new Point(x*16,y*16),room.tileSet,room.palettes,currentLayer==1,true);
 			metaTileGridBox.Image=image;
+			if(currentLayer==1)
+				MainWindow.AddPendingChange(new Bg1MetaTileSetChange(currentArea));
+			if(currentLayer==2)
+				MainWindow.AddPendingChange(new Bg2MetaTileSetChange(currentArea));
 		}
 
 		private void selectedMetaTileBox_Click( object sender, EventArgs e )
@@ -241,10 +260,10 @@ namespace MinishMaker.UI
 			byte highByte= (byte)(tileSetGridBox.SelectedIndex >> 8); //trim first 8 bits
 
 			if(hFlip)
-				highByte+=(1<<3);
+				highByte+=(1<<2);
 
 			if(vFlip)
-				highByte+=(1<<4);
+				highByte+=(1<<3);
 
 			currentTileInfo[loc]= lowByte;
 
@@ -331,7 +350,7 @@ namespace MinishMaker.UI
 
 			int palnum = data >> 12;//last 4 bits
 
-			var room = ((MainWindow)Application.OpenForms[0]).currentRoom;
+			var room = MapManager.Instance.MapAreas.Single(a=>a.Index==currentArea).Rooms.First();
 			var b = new Bitmap( 8, 8 );
 
 			if( currentLayer == 1 )
