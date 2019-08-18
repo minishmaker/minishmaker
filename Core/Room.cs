@@ -425,12 +425,14 @@ namespace MinishMaker.Core
 					try
 					{
 						if( pos != 0xFFFF )
-						{
-							bg1MetaTiles.DrawMetaTile( ref bg1, new Point( i * 16, j * 16 ), tset, pset, pos, true );
-							bg2MetaTiles.DrawMetaTile( ref bg2, new Point( i * 16, j * 16 ), tset, pset, pos, true );
+						{	if(bg1Exists)
+								bg1MetaTiles.DrawMetaTile( ref bg1, new Point( i * 16, j * 16 ), tset, pset, pos, true );
+
+							if(bg2Exists)
+								bg2MetaTiles.DrawMetaTile( ref bg2, new Point( i * 16, j * 16 ), tset, pset, pos, true );
 						}
 					}
-					catch( Exception )
+					catch( ArgumentException )
 					{
 						Debug.WriteLine( "end of metatile file: " + (pos % 256).Hex() + "|" + (pos / 256).Hex() );
 						Debug.WriteLine( "" );
@@ -461,11 +463,16 @@ namespace MinishMaker.Core
 
 		public byte[] GetMetaTileData(int tileNum, int layer)
 		{
+			
 			switch(layer)
 			{
 				case 1:
+					if(!this.bg1Exists)
+						return null;
 					return bg1MetaTiles.GetTileInfo(tileNum);
 				case 2:
+					if(!this.bg2Exists)
+						return null;
 					return bg2MetaTiles.GetTileInfo(tileNum);
 				default:			
 					return null;
