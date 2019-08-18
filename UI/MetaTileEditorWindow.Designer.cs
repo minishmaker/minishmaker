@@ -106,7 +106,7 @@
 			this.tileSetPanel.Controls.Add(this.tileSetGridBox);
 			this.tileSetPanel.Location = new System.Drawing.Point(413, 12);
 			this.tileSetPanel.Name = "tileSetPanel";
-			this.tileSetPanel.Size = new System.Drawing.Size(147, 240);
+			this.tileSetPanel.Size = new System.Drawing.Size(256, 256);
 			this.tileSetPanel.TabIndex = 2;
 			// 
 			// tileSetGridBox
@@ -408,7 +408,7 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(566, 262);
+			this.ClientSize = new System.Drawing.Size(675, 275);
 			this.Controls.Add(this.HiddenLabel);
 			this.Controls.Add(this.mTId);
 			this.Controls.Add(this.sTId);
