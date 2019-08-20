@@ -640,6 +640,10 @@ namespace MinishMaker.UI
             if(currentRoom == null)
                 return;
 
+			var xspot=mapGridBox.HoverIndex%currentRoom.roomSize.X;
+			int yspot=mapGridBox.HoverIndex/currentRoom.roomSize.X;
+			xLabel.Text="X:"+xspot.Hex();
+			yLabel.Text="Y:"+yspot.Hex();
 
 	        if (e.Button == MouseButtons.Left)
 	        {

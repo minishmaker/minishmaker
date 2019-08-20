@@ -21,6 +21,10 @@ namespace MinishMaker.Core
 			get { return tset;}
 		}
 
+		public Point roomSize
+		{
+			get{return new Point(metadata.TileWidth,metadata.TileHeight);}
+		}
 		private PaletteSet pset;
 		public Color[][] palettes
 		{
