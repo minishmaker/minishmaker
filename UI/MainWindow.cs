@@ -307,7 +307,7 @@ namespace MinishMaker.UI
 	        if (newProjectWindow.project != null)
 	            project_ = newProjectWindow.project;
 	        else
-	            statusText.Text = "Project creaton aborted.";
+	            statusText.Text = "Project creation aborted.";
 	        newProjectWindow = null;
 	    }
 
