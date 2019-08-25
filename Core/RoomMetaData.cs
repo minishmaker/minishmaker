@@ -274,7 +274,7 @@ namespace MinishMaker.Core
 				}
 
                 data.CopyTo(bg1RoomData, 0);
-                return true;
+                return !bg1Use20344B0;
 			}
 			return false;
 		}
