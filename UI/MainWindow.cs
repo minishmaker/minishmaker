@@ -19,6 +19,7 @@ namespace MinishMaker.UI
 		private ChestEditorWindow chestEditor = null;
 		private MetaTileEditor metatileEditor = null;
 		private AreaEditor areaEditor = null;
+		private EnemyPlacementEditor enemyPlacementEditor = null;
 
 		private Bitmap[] mapLayers;
 		private Bitmap[] tileMaps;
@@ -165,6 +166,11 @@ namespace MinishMaker.UI
 	    {
             OpenAreaEditor();
 	    }
+
+		private void enemyPlacementEditorToolStripMenuItem_Click( object sender, EventArgs e )
+		{
+			OpenEnemyPlacementEditor();
+		}
 
         private void AboutButtonClick( object sender, EventArgs e )
 		{
@@ -423,15 +429,32 @@ namespace MinishMaker.UI
 	            areaEditor.LoadArea(currentArea);
 	        }
 
-	        areaEditor.FormClosed += new FormClosedEventHandler(onAreaEditorClose);
+	        areaEditor.FormClosed += new FormClosedEventHandler(OnAreaEditorClose);
 	        areaEditorToolStripMenuItem.Checked = true;
 	        areaEditor.Show();
         }
 
-		void onAreaEditorClose(object sender, FormClosedEventArgs e)
+		private void OnAreaEditorClose(object sender, FormClosedEventArgs e)
 		{
 			areaEditor = null;
 			areaEditorToolStripMenuItem.Checked = false;
+		}
+
+		private void OpenEnemyPlacementEditor()
+		{
+			if(enemyPlacementEditorToolStripMenuItem.Checked)
+				return; // dont open a second one
+
+			enemyPlacementEditor = new EnemyPlacementEditor();
+			enemyPlacementEditor.FormClosed += new FormClosedEventHandler(OnEnemyPlacementEditorClose);
+	        enemyPlacementEditorToolStripMenuItem.Checked = true;
+	        enemyPlacementEditor.Show();
+		}
+
+		private void OnEnemyPlacementEditorClose(object sender, FormClosedEventArgs e)
+		{
+			enemyPlacementEditor = null;
+			enemyPlacementEditorToolStripMenuItem.Checked = false;
 		}
 
         private void roomTreeView_NodeMouseDoubleClick( object sender, TreeNodeMouseClickEventArgs e )
@@ -482,6 +505,11 @@ namespace MinishMaker.UI
 				if(areaEditor != null&& currentArea != prevArea)//still in the same area? dont reload
 				{
 					areaEditor.LoadArea(areaIndex);
+				}
+
+				if(enemyPlacementEditor != null)
+				{
+					enemyPlacementEditor.LoadData();
 				}
             }
 		}
@@ -708,5 +736,5 @@ namespace MinishMaker.UI
 		{
 			MessageBox.Show( info, title, MessageBoxButtons.OK );
 		}
-    }
+	}
 }

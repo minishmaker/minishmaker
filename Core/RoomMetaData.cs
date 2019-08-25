@@ -58,6 +58,12 @@ namespace MinishMaker.Core
 			get { return chestInformation;}
 		}
 
+		private List<EnemyData> enemyPlacementInformation = new List<EnemyData>();
+		public List<EnemyData> EnemyPlacementInfo
+		{
+			get { return enemyPlacementInformation;}
+		}
+
 		private AddrData? bg2RoomDataAddr;
 		private AddrData bg2MetaTilesAddr;
 
@@ -113,6 +119,35 @@ namespace MinishMaker.Core
 				this.chestLocation = chestLocation;
 				this.unknown = other;
 			}
+		}
+
+		public struct EnemyData
+		{
+			public byte objectType; 
+			public byte objectSub; //?
+			public byte id;
+			public byte subId;
+			public ushort unknown1; //?
+			public ushort unknown2; //?
+			public ushort xpos;
+			public ushort ypos;
+			public ushort unknown3; //?
+			public ushort unknown4; //?
+
+			public EnemyData(byte oType, byte oSub, byte id, byte subId, ushort u1, ushort u2, ushort xpos, ushort ypos, ushort u3, ushort u4)
+			{
+				this.objectType= oType;
+				this.objectSub = oSub;
+				this.id = id;
+				this.subId = subId;
+				this.unknown1 = u1;
+				this.unknown2 = u2;
+				this.xpos = xpos;
+				this.ypos = ypos;
+				this.unknown3 = u3;
+				this.unknown4 = u4;
+			}
+
 		}
 
 		public RoomMetaData( int areaIndex, int roomIndex )
@@ -178,7 +213,51 @@ namespace MinishMaker.Core
             int roomEntityTableAddrLoc = areaEntityTableAddr + (roomIndex << 2);
             int roomEntityTableAddr =r.ReadAddr(roomEntityTableAddrLoc);
 
-            //4 byte chunks, 1-3 are unknown use, 4th seems to be chests
+            //4 byte chunks, 1-2 are unknown use, 3rd seems to be mostly enemies. 4th seems to be mostly chests
+			string enemyDataPath = roomPath + "/" + DataType.enemyPlacementData +"Dat.bin";
+			if (File.Exists(enemyDataPath))
+            {
+                byte[] data = File.ReadAllBytes(enemyDataPath);
+                int index = 0;
+                while (index < data.Length && (TileEntityType)data[index] != TileEntityType.None && data[index]!=0xFF)
+                {
+                    var objectType = data[index];
+                    var objectSub = data[index + 1];
+                    var id = data[index + 2];
+                    var subid = data[index + 3];
+					var unknown1 = (ushort)(data[index + 4] | (data[index+5]<<8));
+					var unknown2 = (ushort)(data[index + 6] | (data[index+7]<<8));
+					var locX = (ushort)(data[index + 8] | (data[index+9]<<8));
+					var locY = (ushort)(data[index + 10] | (data[index+11]<<8));
+					var unknown3 = (ushort)(data[index + 12] | (data[index+13]<<8));
+					var unknown4 = (ushort)(data[index + 14] | (data[index+15]<<8));
+                    enemyPlacementInformation.Add(new EnemyData(objectType,objectSub,id,subid,unknown1,unknown2,locX,locY,unknown3,unknown4));
+                    index += 16;
+                }
+            } 
+            else
+            {
+                int chestTableAddr = r.ReadAddr(roomEntityTableAddr+8);
+
+                var data = r.ReadBytes(16, chestTableAddr);
+
+                while ((TileEntityType)data[0] != TileEntityType.None && data[0]!=0xFF) //ends on type 0
+                {
+                    var objectType = data[0];
+                    var objectSub = data[ 1];
+                    var id = data[2];
+                    var subid = data[3];
+					var unknown1 = (ushort)(data[4] | (data[5]<<8));
+					var unknown2 = (ushort)(data[6] | (data[7]<<8));
+					var locX = (ushort)(data[8] | (data[9]<<8));
+					var locY = (ushort)(data[10] | (data[11]<<8));
+					var unknown3 = (ushort)(data[12] | (data[13]<<8));
+					var unknown4 = (ushort)(data[14] | (data[15]<<8));
+                    enemyPlacementInformation.Add(new EnemyData(objectType,objectSub,id,subid,unknown1,unknown2,locX,locY,unknown3,unknown4));
+                    data = r.ReadBytes(16);
+                }
+            }
+
             string chestDataPath = roomPath + "/" + DataType.chestData +"Dat.bin";
             if (File.Exists(chestDataPath))
             {
@@ -186,6 +265,7 @@ namespace MinishMaker.Core
                 int index = 0;
                 while (index < data.Length && (TileEntityType)data[index] != TileEntityType.None)
                 {
+					
                     var type = data[index];
                     var id = data[index + 1];
                     var item = data[index + 2];
@@ -198,7 +278,7 @@ namespace MinishMaker.Core
             } 
             else
             {
-                int chestTableAddr = r.ReadAddr(roomEntityTableAddr + 12);
+                int chestTableAddr = r.ReadAddr(roomEntityTableAddr+12);
 
                 var data = r.ReadBytes(8, chestTableAddr);
 
@@ -345,14 +425,6 @@ namespace MinishMaker.Core
 
 		public long GetChestData(ref byte[] outdata )
 		{
-            //var size = (chestInformation.Count*8)+8;
-            string chestDataPath = roomPath + "/" + DataType.chestData+"Dat.bin";
-            if (File.Exists(chestDataPath))
-            {
-                outdata = File.ReadAllBytes(chestDataPath);
-                return outdata.Length;
-            }
-
             outdata = new byte[chestInformation.Count*8+8];
 
 			for(int i = 0; i< chestInformation.Count; i++)
@@ -392,6 +464,42 @@ namespace MinishMaker.Core
         {
             chestInformation.Remove(data);
         }
+
+		public long GetEnemyPlacementData(ref byte[] data)
+		{
+			var outdata = new byte[enemyPlacementInformation.Count*16+16];
+
+			for(int i = 0; i< enemyPlacementInformation.Count; i++)
+			{
+				var index = i*16;
+				var currentData = enemyPlacementInformation[i];
+				outdata[index] = currentData.objectType;
+				outdata[index+1] = currentData.objectSub;
+				outdata[index+2] = currentData.id;
+				outdata[index+3] = currentData.subId;
+				outdata[index+4] = (byte)(currentData.unknown1 & 0xff);
+				outdata[index+5] = (byte)(currentData.unknown1 >> 8);
+				outdata[index+6] = (byte)(currentData.unknown2 & 0xff);
+				outdata[index+7] = (byte)(currentData.unknown2 >> 8);
+				outdata[index+8] = (byte)(currentData.xpos & 0xff);
+				outdata[index+9] = (byte)(currentData.xpos >> 8);
+				outdata[index+10] = (byte)(currentData.ypos & 0xff);
+				outdata[index+11] = (byte)(currentData.ypos >> 8);
+				outdata[index+12] = (byte)(currentData.unknown3 & 0xff);
+				outdata[index+13] = (byte)(currentData.unknown3 >> 8);
+				outdata[index+14] = (byte)(currentData.unknown4 & 0xff);
+				outdata[index+15] = (byte)(currentData.unknown4 >> 8);
+
+				if(i == enemyPlacementInformation.Count-1)// add ending 0's
+				{
+					outdata[index+16] = 0xFF;
+					for(int j= 1; j<16;j++)
+						outdata[index+16+j]=0;
+				}
+			}
+			data = outdata;
+			return outdata.Length;
+		}
 
         //To be changed as actual data gets changed and tested
         public int GetPointerLoc(DataType type, int areaIndex, int roomIndex)
@@ -451,6 +559,7 @@ namespace MinishMaker.Core
 					break;
 
 				case DataType.chestData:
+				case DataType.enemyPlacementData:
 					int areaEntityTableAddrLoc = header.AreaMetadataBase + (areaIndex << 2);
 					int areaEntityTableAddr = r.ReadAddr(areaEntityTableAddrLoc);
 
@@ -458,7 +567,12 @@ namespace MinishMaker.Core
 					int roomEntityTableAddr = r.ReadAddr(roomEntityTableAddrLoc);
 
 					//4 byte chunks, 1-3 are unknown use, 4th seems to be chests
-					retAddr = roomEntityTableAddr + 0x0C;
+					var offset = 0;
+					if(type == DataType.chestData)
+						offset = 0x0C;
+					if(type == DataType.enemyPlacementData)
+						offset = 0x08;
+					retAddr = roomEntityTableAddr + offset;
 
                     Console.WriteLine(retAddr);
 					break;

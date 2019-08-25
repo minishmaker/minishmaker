@@ -373,6 +373,8 @@ namespace MinishMaker.Core
 					return bg1MetaTiles.GetCompressedMetaTileSet(ref data);
 				case DataType.bg2MetaTileSet:
 					return bg2MetaTiles.GetCompressedMetaTileSet(ref data);
+				case DataType.enemyPlacementData:
+					return metadata.GetEnemyPlacementData(ref data);
                 default:
                     return 0;
             }
@@ -464,6 +466,11 @@ namespace MinishMaker.Core
         {
             metadata.RemoveChestData(data);
         }
+
+		public List<EnemyData> GetEnemyPlacementData()
+		{
+			return metadata.EnemyPlacementInfo;
+		}
 
 		public byte[] GetMetaTileData(int tileNum, int layer)
 		{

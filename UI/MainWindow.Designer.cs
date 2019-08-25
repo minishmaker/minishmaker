@@ -66,6 +66,7 @@ namespace MinishMaker.UI
 			this.mapPanel = new System.Windows.Forms.Panel();
 			this.yLabel = new System.Windows.Forms.Label();
 			this.xLabel = new System.Windows.Forms.Label();
+			this.enemyPlacementEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.mapGridBox = new MinishMaker.UI.GridBox();
 			this.topTileGridBox = new MinishMaker.UI.GridBox();
 			this.bottomTileGridBox = new MinishMaker.UI.GridBox();
@@ -189,7 +190,8 @@ namespace MinishMaker.UI
 			this.windowToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.chestEditorStripMenuItem,
             this.metatileEditorToolStripMenuItem,
-            this.areaEditorToolStripMenuItem});
+            this.areaEditorToolStripMenuItem,
+            this.enemyPlacementEditorToolStripMenuItem});
 			this.windowToolStripMenuItem.Name = "windowToolStripMenuItem";
 			this.windowToolStripMenuItem.Size = new System.Drawing.Size(63, 20);
 			this.windowToolStripMenuItem.Text = "Window";
@@ -199,7 +201,7 @@ namespace MinishMaker.UI
 			this.chestEditorStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("chestEditorStripMenuItem.Image")));
 			this.chestEditorStripMenuItem.Name = "chestEditorStripMenuItem";
 			this.chestEditorStripMenuItem.ShowShortcutKeys = false;
-			this.chestEditorStripMenuItem.Size = new System.Drawing.Size(151, 22);
+			this.chestEditorStripMenuItem.Size = new System.Drawing.Size(203, 22);
 			this.chestEditorStripMenuItem.Text = "Chest Editor";
 			this.chestEditorStripMenuItem.Click += new System.EventHandler(this.chestEditorStripMenuItem_Click);
 			// 
@@ -207,7 +209,7 @@ namespace MinishMaker.UI
 			// 
 			this.metatileEditorToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("metatileEditorToolStripMenuItem.Image")));
 			this.metatileEditorToolStripMenuItem.Name = "metatileEditorToolStripMenuItem";
-			this.metatileEditorToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
+			this.metatileEditorToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
 			this.metatileEditorToolStripMenuItem.Text = "Metatile Editor";
 			this.metatileEditorToolStripMenuItem.Click += new System.EventHandler(this.metatileEditorToolStripMenuItem_Click);
 			// 
@@ -215,7 +217,7 @@ namespace MinishMaker.UI
 			// 
 			this.areaEditorToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("areaEditorToolStripMenuItem.Image")));
 			this.areaEditorToolStripMenuItem.Name = "areaEditorToolStripMenuItem";
-			this.areaEditorToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
+			this.areaEditorToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
 			this.areaEditorToolStripMenuItem.Text = "Area Editor";
 			this.areaEditorToolStripMenuItem.Click += new System.EventHandler(this.areaEditorToolStripMenuItem_Click);
 			// 
@@ -415,6 +417,13 @@ namespace MinishMaker.UI
 			this.xLabel.TabIndex = 12;
 			this.xLabel.Text = "X:";
 			// 
+			// enemyPlacementEditorToolStripMenuItem
+			// 
+			this.enemyPlacementEditorToolStripMenuItem.Name = "enemyPlacementEditorToolStripMenuItem";
+			this.enemyPlacementEditorToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+			this.enemyPlacementEditorToolStripMenuItem.Text = "Enemy Placement Editor";
+			this.enemyPlacementEditorToolStripMenuItem.Click += new System.EventHandler(this.enemyPlacementEditorToolStripMenuItem_Click);
+			// 
 			// mapGridBox
 			// 
 			this.mapGridBox.AllowMultiSelection = false;
@@ -558,6 +567,7 @@ namespace MinishMaker.UI
         private System.Windows.Forms.ToolStripButton areaToolStripButton;
 		private System.Windows.Forms.Label yLabel;
 		private System.Windows.Forms.Label xLabel;
+		private System.Windows.Forms.ToolStripMenuItem enemyPlacementEditorToolStripMenuItem;
 	}
 }
 
