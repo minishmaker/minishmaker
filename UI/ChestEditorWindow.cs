@@ -329,7 +329,9 @@ namespace MinishMaker.UI
 			var chest = chestDataList[chestIndex];
 			try
 			{
-				ushort location = (ushort)(Convert.ToByte(xPosition.Text,16) + (Convert.ToByte(yPosition.Text,16)<<6));
+				var lowLoc = Convert.ToByte(xPosition.Text,16);
+				var hiLoc = Convert.ToByte(yPosition.Text,16);
+				ushort location = (ushort)(lowLoc+(hiLoc<<6));
 
 				if(location == chest.chestLocation)
 					return;
@@ -342,7 +344,7 @@ namespace MinishMaker.UI
 			{
 				var yPos = (chest.chestLocation>>6);
 				var xPos = (chest.chestLocation- (yPos<<6));
-				xPosition.Text = xPos.ToString();
+				xPosition.Text = xPos.Hex();
 			}
 			chestDataList[chestIndex] = chest;
 		}
@@ -355,7 +357,9 @@ namespace MinishMaker.UI
 			var chest = chestDataList[chestIndex];
 			try
 			{
-				ushort location = (ushort)(Convert.ToByte(xPosition.Text) + (Convert.ToByte(yPosition.Text)<<6));
+				var lowLoc = Convert.ToByte(xPosition.Text,16);
+				var hiLoc = Convert.ToByte(yPosition.Text,16);
+				ushort location = (ushort)(lowLoc + (hiLoc<<6));
 
 				if(location == chest.chestLocation)
 					return;
@@ -367,7 +371,7 @@ namespace MinishMaker.UI
 			catch
 			{
 				var yPos = (chest.chestLocation>>6);
-				yPosition.Text = yPos.ToString();
+				yPosition.Text = yPos.Hex();
 			}
 			
 			chestDataList[chestIndex] = chest;
