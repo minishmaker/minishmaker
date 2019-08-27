@@ -43,6 +43,8 @@ namespace MinishMaker.UI
 				yPosition.Enabled = false;
 				nextButton.Enabled = false;
 				prevButton.Enabled = false;
+				newButton.Enabled = false;
+				removeButton.Enabled = false;
 			}
 		}
 
@@ -52,6 +54,7 @@ namespace MinishMaker.UI
 											 
 			prevButton.Enabled = false;
 			nextButton.Enabled = false;
+			newButton.Enabled = true;
 
 			if(data.Count == 0)
 			{
@@ -64,7 +67,7 @@ namespace MinishMaker.UI
 				xPosition.Enabled = false;
 				yPosition.Enabled = false;
 				nextButton.Enabled = false;
-				newButton.Visible = true;
+				removeButton.Enabled = false;
 			}
             else
             {
@@ -75,7 +78,7 @@ namespace MinishMaker.UI
                 itemAmount.Enabled = true;
                 xPosition.Enabled = true;
                 yPosition.Enabled = true;
-				
+				removeButton.Enabled = true;
                 chestIndex = 0;
 
                 LoadChestData(0);
@@ -174,6 +177,8 @@ namespace MinishMaker.UI
             MainWindow.AddPendingChange(new ChestDataChange(MainWindow.currentArea, MainWindow.currentRoom.Index));
             MainWindow.currentRoom.RemoveChestData(chestDataList[chestIndex]);
 
+			newButton.Enabled=true;
+
             if (chestDataList.Count <= 0)
             {
                 chestIndex = -1;
@@ -186,7 +191,7 @@ namespace MinishMaker.UI
                 yPosition.Enabled = false;
                 nextButton.Enabled = false;
                 prevButton.Enabled = false;
-                newButton.Visible = true;
+				removeButton.Enabled = false;
             }
 
             if (chestIndex >= chestDataList.Count)
@@ -220,6 +225,7 @@ namespace MinishMaker.UI
             else
             {
                 indexLabel.Text = "";
+				((MainWindow)Application.OpenForms[0]).HighlightChest(-1,-1);
             }
         }
 
@@ -238,9 +244,9 @@ namespace MinishMaker.UI
                 ushort chestPos = chestData.chestLocation;
 				int yPos = chestPos>>6;
 				int xPos = chestPos - (yPos<<6);
-                xPosition.Text = xPos.ToString();
-                yPosition.Text = yPos.ToString();
-
+                xPosition.Text = xPos.Hex();
+                yPosition.Text = yPos.Hex();
+				((MainWindow)Application.OpenForms[0]).HighlightChest(xPos,yPos);
                 itemName.Enabled = true;
                 kinstoneType.Enabled = true;
                 itemAmount.Enabled = true;
@@ -256,7 +262,7 @@ namespace MinishMaker.UI
                 itemAmount.Text = "0";
                 xPosition.Text = "0";
                 yPosition.Text = "0";
-
+				((MainWindow)Application.OpenForms[0]).HighlightChest(-1,-1);
                 itemName.Enabled = false;
 				kinstoneType.Enabled = false;
 				itemAmount.Enabled = false;
@@ -323,7 +329,7 @@ namespace MinishMaker.UI
 			var chest = chestDataList[chestIndex];
 			try
 			{
-				ushort location = (ushort)(Convert.ToByte(xPosition.Text) + (Convert.ToByte(yPosition.Text)<<6));
+				ushort location = (ushort)(Convert.ToByte(xPosition.Text,16) + (Convert.ToByte(yPosition.Text,16)<<6));
 
 				if(location == chest.chestLocation)
 					return;

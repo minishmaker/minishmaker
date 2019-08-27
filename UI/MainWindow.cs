@@ -386,6 +386,7 @@ namespace MinishMaker.UI
 	    {
 	        chestEditor = null;
 	        chestEditorStripMenuItem.Checked = false;
+			HighlightChest(-1,-1);
 	    }
 
 	    private void OpenMetatileEditor()
@@ -455,6 +456,7 @@ namespace MinishMaker.UI
 		{
 			enemyPlacementEditor = null;
 			enemyPlacementEditorToolStripMenuItem.Checked = false;
+			HighlightEnemy(-1,-1);
 		}
 
         private void roomTreeView_NodeMouseDoubleClick( object sender, TreeNodeMouseClickEventArgs e )
@@ -482,6 +484,7 @@ namespace MinishMaker.UI
                 topTileGridBox.Image = tileMaps[0];
 
                 mapGridBox.Selectable = true;
+				mapGridBox.SelectedIndex = -1;
                 bottomTileGridBox.Selectable = true;
                 topTileGridBox.Selectable = true;
 
@@ -588,6 +591,18 @@ namespace MinishMaker.UI
 		{
 			if(!pendingRomChanges.Any(x=>x.Compare(change))) //change does not yet exist
 				pendingRomChanges.Add(change);
+		}
+
+		public void HighlightChest(int tileX, int tileY)
+		{
+			mapGridBox.chestHighlightPoint = new Point(tileX,tileY);
+			mapGridBox.Invalidate();
+		}
+
+		public void HighlightEnemy(int pixelX, int pixelY)
+		{
+			mapGridBox.enemyHighlightPoint = new Point(pixelX,pixelY);
+			mapGridBox.Invalidate();
 		}
 
 	    private void UpdateViewLayer(ViewLayer layer)

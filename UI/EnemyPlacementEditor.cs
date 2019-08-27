@@ -71,6 +71,7 @@ namespace MinishMaker.UI
 				posY.Text = "0";
 				unknown3.Text = "0";
 				unknown4.Text = "0";
+				((MainWindow)Application.OpenForms[0]).HighlightEnemy(-1,-1);
 				return;
 			}
 
@@ -82,6 +83,7 @@ namespace MinishMaker.UI
 				subId.Enabled=false;
 				posX.Enabled=false;
 				posY.Enabled=false;
+				((MainWindow)Application.OpenForms[0]).HighlightEnemy(-1,-1);
 			}
 			else
 			{		
@@ -89,6 +91,7 @@ namespace MinishMaker.UI
 				subId.Enabled=true;
 				posX.Enabled=true;
 				posY.Enabled=true;
+				((MainWindow)Application.OpenForms[0]).HighlightEnemy(enemy.xpos,enemy.ypos);
 			}
 
 			objectType.Text = enemy.objectType.Hex();
