@@ -375,6 +375,8 @@ namespace MinishMaker.Core
 					return bg2MetaTiles.GetCompressedMetaTileSet(ref data);
 				case DataType.enemyPlacementData:
 					return metadata.GetEnemyPlacementData(ref data);
+				case DataType.warpData:
+					return metadata.GetWarpData(ref data);
                 default:
                     return 0;
             }
@@ -470,6 +472,11 @@ namespace MinishMaker.Core
 		public List<EnemyData> GetEnemyPlacementData()
 		{
 			return metadata.EnemyPlacementInfo;
+		}
+
+		public List<WarpData> GetWarpData()
+		{
+			return metadata.WarpInformation;
 		}
 
 		public byte[] GetMetaTileData(int tileNum, int layer)

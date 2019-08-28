@@ -262,7 +262,7 @@ namespace MinishMaker.UI
 				(keysShown.Checked	?0x2:0) +
 				(redName.Checked	?0x4:0) +
 				(dungeonMap.Checked ?0x8:0) +
-				(unknown1			  *0x0) +
+				(unknown1			  *0x10) +
 				(moleCave.Checked	?0x20:0) +
 				(unknown2			  *0x40) +
 				(canFlute.Checked&&ROM.Instance.version!=RegionVersion.EU?0x80:0);

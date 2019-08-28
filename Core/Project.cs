@@ -22,7 +22,8 @@ namespace MinishMaker.Core
 		bg2MetaTileSet,
         chestData,
 		areaInfo,
-		enemyPlacementData
+		enemyPlacementData,
+		warpData
 	}
 
     /// <summary>
@@ -258,6 +259,8 @@ namespace MinishMaker.Core
 					return new ChestDataChange( area, room );
 				case DataType.enemyPlacementData:
 					return new EnemyPlacementDataChange(area, room);
+				case DataType.warpData:
+					return new WarpDataChange(area, room);
 				default:
 					Debug.WriteLine("unknown file found of type: "+type);
 					return null;

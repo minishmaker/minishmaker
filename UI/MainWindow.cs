@@ -20,6 +20,7 @@ namespace MinishMaker.UI
 		private MetaTileEditor metatileEditor = null;
 		private AreaEditor areaEditor = null;
 		private EnemyPlacementEditor enemyPlacementEditor = null;
+		private WarpEditor warpEditor = null;
 
 		private Bitmap[] mapLayers;
 		private Bitmap[] tileMaps;
@@ -170,6 +171,11 @@ namespace MinishMaker.UI
 		private void enemyPlacementEditorToolStripMenuItem_Click( object sender, EventArgs e )
 		{
 			OpenEnemyPlacementEditor();
+		}
+
+		private void warpEditorToolStripMenuItem_Click( object sender, EventArgs e )
+		{
+			OpenWarpEditor();
 		}
 
         private void AboutButtonClick( object sender, EventArgs e )
@@ -459,6 +465,24 @@ namespace MinishMaker.UI
 			HighlightEnemy(-1,-1);
 		}
 
+		private void OpenWarpEditor()
+		{
+			if(warpEditorToolStripMenuItem.Checked)
+				return; // dont open a second one
+
+			warpEditor = new WarpEditor();
+			warpEditor.FormClosed += new FormClosedEventHandler(OnWarpEditorClose);
+	        warpEditorToolStripMenuItem.Checked = true;
+	        warpEditor.Show();
+		}
+
+		private void OnWarpEditorClose(object sender, FormClosedEventArgs e)
+		{
+			warpEditor = null;
+			warpEditorToolStripMenuItem.Checked = false;
+			HighlightWarp(-1,-1);
+		}
+
         private void roomTreeView_NodeMouseDoubleClick( object sender, TreeNodeMouseClickEventArgs e )
 		{
 			if( e.Node.Parent != null )
@@ -513,6 +537,11 @@ namespace MinishMaker.UI
 				if(enemyPlacementEditor != null)
 				{
 					enemyPlacementEditor.LoadData();
+				}
+
+				if(warpEditor != null)
+				{
+					warpEditor.LoadData();
 				}
             }
 		}
@@ -602,6 +631,12 @@ namespace MinishMaker.UI
 		public void HighlightEnemy(int pixelX, int pixelY)
 		{
 			mapGridBox.enemyHighlightPoint = new Point(pixelX,pixelY);
+			mapGridBox.Invalidate();
+		}
+
+		public void HighlightWarp(int pixelX, int pixelY)
+		{
+			mapGridBox.warpHighlightPoint = new Point(pixelX,pixelY);
 			mapGridBox.Invalidate();
 		}
 

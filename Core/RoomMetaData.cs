@@ -64,6 +64,12 @@ namespace MinishMaker.Core
 			get { return enemyPlacementInformation;}
 		}
 
+		private List<WarpData> warpInformation = new List<WarpData>();
+		public List<WarpData> WarpInformation
+		{
+			get { return warpInformation;}
+		}
+
 		private AddrData? bg2RoomDataAddr;
 		private AddrData bg2MetaTilesAddr;
 
@@ -118,6 +124,40 @@ namespace MinishMaker.Core
 				this.itemSubNumber = itemSubNumber;
 				this.chestLocation = chestLocation;
 				this.unknown = other;
+			}
+		}
+
+
+		public struct WarpData
+		{
+			public ushort warpType;	//2
+			public ushort warpXPixel;//4
+			public ushort warpYPixel;//6
+			public ushort destXPixel;//8
+			public ushort destYPixel;//10 A
+			public byte warpVar;//11 B
+			public byte destArea;//12 C
+			public byte destRoom;//13 D
+			public byte exitHeight;//14 E
+			public byte transitionType;//15 F
+			public byte facing;//16 10
+			public ushort soundId;//18 12
+			//2 byte padding 20 14
+			public WarpData(byte[] data, int offset)
+			{
+				warpType =		(ushort)(data[0+offset]+(data[1+offset]<<8));
+				warpXPixel =	(ushort)(data[2+offset]+(data[3+offset]<<8));
+				warpYPixel =	(ushort)(data[4+offset]+(data[5+offset]<<8));
+				destXPixel =	(ushort)(data[6+offset]+(data[7+offset]<<8));
+				destYPixel =	(ushort)(data[8+offset]+(data[9+offset]<<8));
+				warpVar =				data[10+offset];
+				destArea =				data[11+offset];
+				destRoom =				data[12+offset];
+				exitHeight =			data[13+offset];
+				transitionType =		data[14+offset];
+				facing =				data[15+offset];
+				soundId =		(ushort)(data[16+offset]+(data[17+offset]<<8));
+
 			}
 		}
 
@@ -214,6 +254,7 @@ namespace MinishMaker.Core
             int roomEntityTableAddr =r.ReadAddr(roomEntityTableAddrLoc);
 
             //4 byte chunks, 1-2 are unknown use, 3rd seems to be mostly enemies. 4th seems to be mostly chests
+			//Enemies
 			string enemyDataPath = roomPath + "/" + DataType.enemyPlacementData +"Dat.bin";
 			if (File.Exists(enemyDataPath))
             {
@@ -258,6 +299,7 @@ namespace MinishMaker.Core
                 }
             }
 
+			//Chests
             string chestDataPath = roomPath + "/" + DataType.chestData +"Dat.bin";
             if (File.Exists(chestDataPath))
             {
@@ -294,6 +336,37 @@ namespace MinishMaker.Core
                     data = r.ReadBytes(8);
                 }
             }
+
+			//Warps
+			string warpDataPath = roomPath + "/" + DataType.warpData +"Dat.bin";
+			if (File.Exists(warpDataPath))
+            {
+                byte[] data = File.ReadAllBytes(warpDataPath);
+                int index = 0;
+                while (index < data.Length && (data[index]+(data[index+1]<<8))!=0xFFFF)
+                {
+                    warpInformation.Add(new WarpData(data, index));
+                    index += 20;
+                }
+            } 
+            else
+            {
+				int areaWarpTableAddrLoc = header.warpInformationTableLoc + (areaIndex << 2);
+				int areaWarpTableAddr = r.ReadAddr(areaWarpTableAddrLoc);
+
+				int roomWarpTableAddrLoc = areaWarpTableAddr + (roomIndex << 2);
+				int roomWarpTableAddr =r.ReadAddr(roomWarpTableAddrLoc);
+
+                var data = r.ReadBytes(20, roomWarpTableAddr);
+
+                while (data[0]!=0xFF) //ends on type FFFF
+                {
+                    warpInformation.Add(new WarpData(data,0));
+                    data = r.ReadBytes(20);
+                }
+            }
+
+
 		}
 
 		public TileSet GetTileSet()
@@ -501,6 +574,47 @@ namespace MinishMaker.Core
 			return outdata.Length;
 		}
 
+		public long GetWarpData(ref byte[] data)
+		{
+			var outdata = new byte[warpInformation.Count*20+20];
+
+			for(int i = 0; i< warpInformation.Count; i++)
+			{
+				var index = i*20;
+				var currentData = warpInformation[i];
+				outdata[index+0] = (byte)(currentData.warpType & 0xff);
+				outdata[index+1] = (byte)(currentData.warpType >> 8);
+				outdata[index+2] = (byte)(currentData.warpXPixel & 0xff);
+				outdata[index+3] = (byte)(currentData.warpXPixel >> 8);
+				outdata[index+4] = (byte)(currentData.warpYPixel & 0xff);
+				outdata[index+5] = (byte)(currentData.warpYPixel >> 8);
+				outdata[index+6] = (byte)(currentData.destXPixel & 0xff);
+				outdata[index+7] = (byte)(currentData.destXPixel >> 8);
+				outdata[index+8] = (byte)(currentData.destYPixel & 0xff);
+				outdata[index+9] = (byte)(currentData.destYPixel >> 8);
+				outdata[index+10] = currentData.warpVar;
+				outdata[index+11] = currentData.destArea;
+				outdata[index+12] = currentData.destRoom;
+				outdata[index+13] = currentData.exitHeight;
+				outdata[index+14] = currentData.transitionType;
+				outdata[index+15] = currentData.facing;
+				outdata[index+16] = (byte)(currentData.soundId & 0xff);
+				outdata[index+17] = (byte)(currentData.soundId >> 8);
+				outdata[index+18] = 0;
+				outdata[index+19] = 0;//padding
+
+				if(i == warpInformation.Count-1)// add ending 0's
+				{
+					outdata[index+16] = 0xFF;
+					outdata[index+17] = 0xFF;
+					for(int j= 2; j<20;j++)
+						outdata[index+20+j]=0;
+				}
+			}
+			data = outdata;
+			return outdata.Length;
+		}
+
         //To be changed as actual data gets changed and tested
         public int GetPointerLoc(DataType type, int areaIndex, int roomIndex)
 		{
@@ -575,6 +689,14 @@ namespace MinishMaker.Core
 					retAddr = roomEntityTableAddr + offset;
 
                     Console.WriteLine(retAddr);
+					break;
+
+				case DataType.warpData:
+					int areaWarpTableAddrLoc = header.warpInformationTableLoc + (areaIndex << 2);
+					int areaWarpTableAddr = r.ReadAddr(areaWarpTableAddrLoc);
+
+					int roomWarpTableAddrLoc = areaWarpTableAddr + (roomIndex << 2);
+					retAddr = roomWarpTableAddrLoc;
 					break;
 
 				default:
