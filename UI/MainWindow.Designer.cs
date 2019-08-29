@@ -33,7 +33,7 @@ namespace MinishMaker.UI
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
 			this.menuStrip = new System.Windows.Forms.MenuStrip();
 			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.selectRomToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.newProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.openProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.saveRoomChangesCtrlSToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.buildProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -101,60 +101,63 @@ namespace MinishMaker.UI
 			// fileToolStripMenuItem
 			// 
 			this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.selectRomToolStripMenuItem,
+            this.newProjectToolStripMenuItem,
             this.openProjectToolStripMenuItem,
             this.saveRoomChangesCtrlSToolStripMenuItem,
             this.buildProjectToolStripMenuItem,
             this.exitToolStripMenuItem});
-			this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-			this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
-			this.fileToolStripMenuItem.Text = "File";
-			// 
-			// selectRomToolStripMenuItem
-			// 
-			this.selectRomToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("selectRomToolStripMenuItem.Image")));
-			this.selectRomToolStripMenuItem.Name = "selectRomToolStripMenuItem";
-			this.selectRomToolStripMenuItem.ShowShortcutKeys = false;
-			this.selectRomToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
-			this.selectRomToolStripMenuItem.Text = "Select ROM";
-			this.selectRomToolStripMenuItem.Click += new System.EventHandler(this.OpenButtonClick);
-			// 
-			// openProjectToolStripMenuItem
-			// 
-			this.openProjectToolStripMenuItem.Name = "openProjectToolStripMenuItem";
-			this.openProjectToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-			this.openProjectToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
-			this.openProjectToolStripMenuItem.Text = "Open Project";
-			this.openProjectToolStripMenuItem.Click += new System.EventHandler(this.SelectProjectButtonClick);
-			// 
-			// saveRoomChangesCtrlSToolStripMenuItem
-			// 
-			this.saveRoomChangesCtrlSToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("saveRoomChangesCtrlSToolStripMenuItem.Image")));
-			this.saveRoomChangesCtrlSToolStripMenuItem.Name = "saveRoomChangesCtrlSToolStripMenuItem";
-			this.saveRoomChangesCtrlSToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-			this.saveRoomChangesCtrlSToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
-			this.saveRoomChangesCtrlSToolStripMenuItem.Text = "Save Project";
-			this.saveRoomChangesCtrlSToolStripMenuItem.Click += new System.EventHandler(this.saveAllChangesCtrlSToolStripMenuItem_Click);
-			// 
-			// buildProjectToolStripMenuItem
-			// 
-			this.buildProjectToolStripMenuItem.Name = "buildProjectToolStripMenuItem";
-			this.buildProjectToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.B)));
-			this.buildProjectToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
-			this.buildProjectToolStripMenuItem.Text = "Build Project";
-			this.buildProjectToolStripMenuItem.Click += new System.EventHandler(this.BuildProjectToolStripMenuItem_Click);
-			// 
-			// exitToolStripMenuItem
-			// 
-			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-			this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-			this.exitToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
-			this.exitToolStripMenuItem.Text = "Exit";
-			this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitButtonClick);
-			// 
-			// viewToolStripMenuItem
-			// 
-			this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+            this.fileToolStripMenuItem.Text = "File";
+            // 
+            // newProjectToolStripMenuItem
+            // 
+            this.newProjectToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("newProjectToolStripMenuItem.Image")));
+            this.newProjectToolStripMenuItem.Name = "newProjectToolStripMenuItem";
+            this.newProjectToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
+            this.newProjectToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.newProjectToolStripMenuItem.Text = "New Project";
+            this.newProjectToolStripMenuItem.Click += new System.EventHandler(this.NewProjectToolStripMenuItem_Click);
+            // 
+            // openProjectToolStripMenuItem
+            // 
+            this.openProjectToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("openProjectToolStripMenuItem.Image")));
+            this.openProjectToolStripMenuItem.Name = "openProjectToolStripMenuItem";
+            this.openProjectToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+            this.openProjectToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.openProjectToolStripMenuItem.Text = "Open Project";
+            this.openProjectToolStripMenuItem.Click += new System.EventHandler(this.OpenProjectToolStripMenuItem_Click);
+            // 
+            // saveRoomChangesCtrlSToolStripMenuItem
+            // 
+            this.saveRoomChangesCtrlSToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("saveRoomChangesCtrlSToolStripMenuItem.Image")));
+            this.saveRoomChangesCtrlSToolStripMenuItem.Name = "saveRoomChangesCtrlSToolStripMenuItem";
+            this.saveRoomChangesCtrlSToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+            this.saveRoomChangesCtrlSToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.saveRoomChangesCtrlSToolStripMenuItem.Text = "Save Project";
+            this.saveRoomChangesCtrlSToolStripMenuItem.Click += new System.EventHandler(this.saveAllChangesCtrlSToolStripMenuItem_Click);
+            // 
+            // buildProjectToolStripMenuItem
+            // 
+            this.buildProjectToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("buildProjectToolStripMenuItem.Image")));
+            this.buildProjectToolStripMenuItem.Name = "buildProjectToolStripMenuItem";
+            this.buildProjectToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.B)));
+            this.buildProjectToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.buildProjectToolStripMenuItem.Text = "Build Project";
+            this.buildProjectToolStripMenuItem.Click += new System.EventHandler(this.BuildProjectToolStripMenuItem_Click);
+            // 
+            // exitToolStripMenuItem
+            // 
+            this.exitToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("exitToolStripMenuItem.Image")));
+            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+            this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.exitToolStripMenuItem.Text = "Exit";
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitButtonClick);
+            // 
+            // viewToolStripMenuItem
+            // 
+            this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.topLayerToolStripMenuItem,
             this.bottomLayerToolStripMenuItem,
             this.bothLayersToolStripMenuItem});
@@ -540,7 +543,6 @@ namespace MinishMaker.UI
 
         private System.Windows.Forms.MenuStrip menuStrip;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem selectRomToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.StatusStrip bottomStatusStrip;
         private System.Windows.Forms.ToolStripStatusLabel statusText;
@@ -570,14 +572,15 @@ namespace MinishMaker.UI
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripButton chestToolStripButton;
         private System.Windows.Forms.ToolStripButton metatileToolStripButton;
+		private System.Windows.Forms.ToolStripMenuItem newProjectToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem openProjectToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem buildProjectToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem areaEditorToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem enemyPlacementEditorToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem warpEditorToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton areaToolStripButton;
 		private System.Windows.Forms.Label yLabel;
 		private System.Windows.Forms.Label xLabel;
-		private System.Windows.Forms.ToolStripMenuItem enemyPlacementEditorToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem warpEditorToolStripMenuItem;
-	}
+    }
 }
 
