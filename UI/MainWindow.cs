@@ -194,6 +194,16 @@ namespace MinishMaker.UI
             OpenAreaEditor();
 	    }
 
+        private void enemyPlacementToolStripButton_Click(object sender, EventArgs e)
+        {
+            OpenEnemyPlacementEditor();
+        }
+
+        private void warpToolStripButton_Click(object sender, EventArgs e)
+        {
+            OpenWarpEditor();
+        }
+
         #endregion
 
         #region OtherInteractions
