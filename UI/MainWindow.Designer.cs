@@ -434,6 +434,7 @@ namespace MinishMaker.UI
             this.mapPanel.Controls.Add(this.mapGridBox);
             this.mapPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.mapPanel.Location = new System.Drawing.Point(150, 49);
+            this.mapPanel.MinimumSize = new System.Drawing.Size(256, 256);
             this.mapPanel.Name = "mapPanel";
             this.mapPanel.Size = new System.Drawing.Size(853, 610);
             this.mapPanel.TabIndex = 10;
@@ -443,6 +444,7 @@ namespace MinishMaker.UI
             this.mapGridBox.AllowMultiSelection = false;
             this.mapGridBox.BoxSize = new System.Drawing.Size(16, 16);
             this.mapGridBox.CanvasSize = new System.Drawing.Size(128, 128);
+            this.mapGridBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.mapGridBox.HoverBox = true;
             this.mapGridBox.HoverColor = System.Drawing.Color.White;
             this.mapGridBox.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
@@ -452,7 +454,7 @@ namespace MinishMaker.UI
             this.mapGridBox.SelectedIndex = -1;
             this.mapGridBox.SelectionColor = System.Drawing.Color.Red;
             this.mapGridBox.SelectionRectangle = new System.Drawing.Rectangle(-1, 0, 1, 1);
-            this.mapGridBox.Size = new System.Drawing.Size(128, 128);
+            this.mapGridBox.Size = new System.Drawing.Size(853, 610);
             this.mapGridBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.mapGridBox.TabIndex = 10;
             this.mapGridBox.TabStop = false;

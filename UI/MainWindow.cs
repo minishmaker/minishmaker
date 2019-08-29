@@ -14,10 +14,9 @@ using Microsoft.WindowsAPICodePack.Dialogs;
 namespace MinishMaker.UI
 {
 	public partial class MainWindow : Form
-	{
-		private ROM ROM_;
-	    
+	{   
         private Project project_;
+
 		private MapManager mapManager_;
 	    private NewProjectWindow newProjectWindow = null;
         private ChestEditorWindow chestEditor = null;
@@ -66,6 +65,7 @@ namespace MinishMaker.UI
 		{
 			InitializeComponent();
 
+            /*
 			var exeFolder = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).Substring(6);
 			if(File.Exists(exeFolder+"/Settings.cfg"))
 			{
@@ -74,30 +74,7 @@ namespace MinishMaker.UI
 
 				var romFile = settings.Single(x=>x.Contains("romFile")).Split('=')[1];
 				var projectFolder = settings.Single(x=>x.Contains("projectFolder")).Split('=')[1];
-				var allFound = true;
-				if(!Directory.Exists(projectFolder))
-				{
-					allFound = false;
-				}
-				else
-				{
-					project_.projectPath = projectFolder;
-				}
-				
-				if(!File.Exists(romFile))
-				{
-					allFound = false;
-				}
-				else
-				{
-					project_.sourcePath = romFile;
-					ROM_ = new ROM( romFile );
-				}
 
-				if(!allFound)
-				{
-					return;
-				}
 				mapGridBox.Image = new Bitmap(1,1); //reset some things on loading a rom
 				bottomTileGridBox.Image = new Bitmap(1,1);
 				topTileGridBox.Image = new Bitmap(1, 1);
@@ -112,6 +89,7 @@ namespace MinishMaker.UI
 				var pName = new DirectoryInfo(projectFolder).Name;
 				statusText.Text = "Opened last project: "+pName;
 			}
+            */
 		}
 
         #region MenuBarButtons
@@ -305,7 +283,13 @@ namespace MinishMaker.UI
 	    private void OnNewProjectWindowClosed(object sender, FormClosedEventArgs e)
 	    {
 	        if (newProjectWindow.project != null)
-	            project_ = newProjectWindow.project;
+            {
+                project_ = newProjectWindow.project;
+                if (project_.Loaded)
+                    LoadProjectData();
+                else
+                    statusText.Text = "Could not load project.";
+            }
 	        else
 	            statusText.Text = "Project creation aborted.";
 	        newProjectWindow = null;
@@ -313,45 +297,40 @@ namespace MinishMaker.UI
 
 		private void OpenProject()
 		{
+            OpenFileDialog ofd = new OpenFileDialog
+            {
+                Filter = "Minish Maker Project|*.mmproj|All Files|*.*",
+                Title = "Select Project File"
+            };
 
-		    CommonOpenFileDialog fbd = new CommonOpenFileDialog()
-			{
-
-				IsFolderPicker = true,
-                Title = "Select project root folder"
-			};
-
-			if( fbd.ShowDialog() != CommonFileDialogResult.Ok )
-			{
-				return;
-			}
+            if (ofd.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
 
 			if(project_== null)
 			{
-				project_ = new Project();
+				project_ = new Project(ofd.FileName);
 			}
 
-			project_.projectPath =  fbd.FileName;
-
-			if(project_.sourcePath!=null)
-			{
-				statusText.Text = "Project opened";
-				project_.LoadProject();//load first as rooms or areas could be added at some point
-				mapGridBox.Image = new Bitmap(1,1); //reset some things on loading a rom
-				bottomTileGridBox.Image = new Bitmap(1,1);
-				topTileGridBox.Image = new Bitmap(1, 1);
-				currentRoom = null;
-				currentArea = -1;
-				selectedTileData = -1;
-				selectedLayer = 2; 
-				pendingRomChanges = new List<Change>();
-				LoadMaps();
-			}
-			else
-			{
-				statusText.Text ="Folder selected, select a ROM file.";
-			}
+			if(project_.Loaded)
+            {
+                LoadProjectData();
+            }
 		}
+
+        private void LoadProjectData()
+        {
+            mapGridBox.Image = new Bitmap(1, 1); //reset some things on loading a rom
+            bottomTileGridBox.Image = new Bitmap(1, 1);
+            topTileGridBox.Image = new Bitmap(1, 1);
+            currentRoom = null;
+            currentArea = -1;
+            selectedTileData = -1;
+            selectedLayer = 2;
+            pendingRomChanges = new List<Change>();
+            LoadMaps();
+        }
 
         private void BuildProject()
         {
@@ -365,11 +344,15 @@ namespace MinishMaker.UI
             if (project_.BuildProject())
             {
                 MessageBox.Show("Build Completed!");
-                statusText.Text = "Build Completed. Output file: " + project_.projectPath + "\\build.gba";
+                statusText.Text = "Build Completed. Output file: " + project_.projectPath + "\\" + project_.projectName + ".gba";
+            }
+            else
+            {
+                MessageBox.Show("There was a problem building the project.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                statusText.Text = "Failed to build project.";
             }
             // TODO check for build completing correctly, probably needs deeper integration with ColorzCore
-
-            
+   
         }
 
         #endregion

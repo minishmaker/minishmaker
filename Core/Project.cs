@@ -30,30 +30,67 @@ namespace MinishMaker.Core
     public class Project
     {
         public static Project Instance;
+        public bool Loaded { get; private set; }
 
         //public MapManager mapManager;
+        public string projectName { get; private set; }
+        public string projectPath { get; private set; }
 
-        public string projectName;
-        public string sourcePath;
-        public string projectPath;
-
-		private List<Change> loadedChanges;
+        private List<Change> loadedChanges;
 		private StreamWriter mainWriter;
+        private ROM ROM_;
 
+        // Create mode
         public Project(string name, string baseRom, string projectFolder)
         {
-            // Create mode
+            Instance = this;
+
             projectName = name;
             projectPath = projectFolder;
+
+            // Double check directory
+            if (!Directory.Exists(projectPath))
+            {
+                Directory.CreateDirectory(projectPath);
+            }
+
+            // Copy ROM
+            byte[] copy = File.ReadAllBytes(baseRom);
+            File.WriteAllBytes(projectPath + "/baserom.gba", copy);
+
+            // Create project file data
+            var lines = new String[2];
+            lines[0] = "projectName=" + projectName;
+            lines[1] = "baseROM=" + "baserom.gba";
+            File.WriteAllLines(projectPath + "/" + projectName + ".mmproj", lines);
+
+            ROM_ = new ROM(projectPath + "/baserom.gba");
+
+            loadedChanges = new List<Change>();
+            LoadProject();
         }
 
         public Project(string projectFile)
         {
+            Instance = this;
+
             // Load mode
-            
+            if (!File.Exists(projectFile))
+                throw new FileNotFoundException("Project file not found.");
+
+            var settings = File.ReadLines(projectFile).ToList();
+
+            projectName = settings.Single(x => x.Contains("projectName")).Split('=')[1];
+
+            projectPath = Path.GetDirectoryName(projectFile);
+
+            ROM_ = new ROM(projectPath + "/baserom.gba");
+
+            loadedChanges = new List<Change>();
+            LoadProject();
         }
 
-        public Project()
+        /*public Project()
         {
 			loadedChanges = new List<Change>();
             Instance = this;
@@ -64,7 +101,7 @@ namespace MinishMaker.Core
             //exportPath = projectPath + "/mc-hack.gba";
             //mapManager = manager;
             //LoadProject();
-        }
+        }*/
 
 		public byte[] GetSavedData(string path, bool compressed, int size = 0x2000)
 		{
@@ -103,8 +140,6 @@ namespace MinishMaker.Core
 			mainSets = mainSets.Select(s => s.Substring(4)).ToList();
 		}
 
-
-
 		private void AddLoadedChange(Change change)
 		{
 			if(!loadedChanges.Any(x=>x.Compare(change)))
@@ -115,11 +150,13 @@ namespace MinishMaker.Core
 
         public void LoadProject()
         {
+            /*
 			var exeFolder = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).Substring(6);
 			var lines = new string[2];
 			lines[0] = "romFile="+sourcePath;
 			lines[1] = "projectFolder="+projectPath;
 			File.WriteAllLines(exeFolder+"\\Settings.cfg",lines);
+            */
 
 			loadedChanges.Clear();
 			var pos = ROM.Instance.romData.Length-1;
@@ -128,11 +165,6 @@ namespace MinishMaker.Core
 			{
 				pos--;
 			}
-
-            if (!Directory.Exists(projectPath))
-            {
-                Directory.CreateDirectory(projectPath);
-            }
 
 			if(!File.Exists(projectPath+"/Main.event"))
 			{
@@ -226,6 +258,8 @@ namespace MinishMaker.Core
 			{
 				CleanIncludes(mainSets);
 			}
+
+            Loaded = true;
         }
 
 		private void CleanIncludes(List<string> remaining)
@@ -303,15 +337,25 @@ namespace MinishMaker.Core
 
         public bool BuildProject()
         {
-            if (!File.Exists(sourcePath) || !Directory.Exists(projectPath))
+            // Double check
+            if (!File.Exists(projectPath+"/baserom.gba") || !Directory.Exists(projectPath))
                 return false;
 
-            byte[] copy = File.ReadAllBytes(sourcePath);
-            File.WriteAllBytes(projectPath+"/build.gba", copy);
+            string outputROM = projectPath + "/" + projectName + ".gba";
 
-            String[] args = new[] {"A","FE8","-input:"+projectPath+"/Main.event","-output:"+ projectPath + "/build.gba"};
-            ColorzCore.Program.Main(args);
-            return true;
+            // Set up new copy of ROM
+            byte[] copy = File.ReadAllBytes(projectPath+"/baserom.gba");
+            File.WriteAllBytes(outputROM, copy);
+
+
+            // TODO better integration to colorzcore
+            String[] args = new[] {"A", "FE8", "-input:" + projectPath + "/Main.event", "-output:" + outputROM};
+            int exitcode = ColorzCore.Program.Main(args);
+
+            if (exitcode == 0)
+                return true;
+            else
+                return false;
         }
     }
 }
