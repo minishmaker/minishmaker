@@ -605,8 +605,8 @@ namespace MinishMaker.Core
 
 				if(i == warpInformation.Count-1)// add ending 0's
 				{
-					outdata[index+16] = 0xFF;
-					outdata[index+17] = 0xFF;
+					outdata[index+20] = 0xFF;
+					outdata[index+21] = 0xFF;
 					for(int j= 2; j<20;j++)
 						outdata[index+20+j]=0;
 				}

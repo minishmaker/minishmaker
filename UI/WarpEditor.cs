@@ -565,8 +565,8 @@ namespace MinishMaker.UI
 
 			MainWindow.AddPendingChange(new WarpDataChange(MainWindow.currentArea, MainWindow.currentRoom.Index));
 			var data = new byte[20] {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-			warpDataList.Add(new WarpData(data,0)); //add an empty warp
-			warpIndex = warpDataList.Count()-1;
+			warpDataList.Insert(warpIndex+1,new WarpData(data,0)); //add an empty warp
+			warpIndex +=1;
 			SetData();
 		}
 
