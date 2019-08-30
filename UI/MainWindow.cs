@@ -308,7 +308,10 @@ namespace MinishMaker.UI
             {
                 project_ = newProjectWindow.project;
                 if (project_.Loaded)
+                {
                     LoadProjectData();
+                    statusText.Text = "Created new project: " + project_.projectPath + "/" + project_.projectName + ".mmproj";
+                }
                 else
                     statusText.Text = "Could not load project.";
             }
