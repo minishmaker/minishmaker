@@ -204,11 +204,11 @@
   </data>
   <data name="warpEditorToolStripMenuItem.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAACzSURBVDhPjZPBDYQwDAT95HlfyqAFWrmWaIm6QBNpo3VwBEjDObZ3yOeC57/E9YVjXTqce9gH
-        M649Gt5rkrEhoWo4t1/D59rpAg1BAfqqXQBJwNU0YFHXHXFJF/DS0MO+PPYJJwEHFyjsi9UsCXxJPc6g
-        OTPVpYDfNwFnz5Q38KVqBg8BaMklHnYBdRJUyyMu5UzuIQB9BXQzDwP9JHDJLOC1SALQdb03g2z5j9SX
-        3oiIuAFdU7McP/Sr+gAAAABJRU5ErkJggg==
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAALNJREFUOE+N
+        k8ENhDAMBP3keV/KoAVauZZoibpAE2mjdXAESMM5tnfI54Lnv8T1hWNdOpx72Aczrj0a3muSsSGhaji3
+        X8Pn2ukCDUEB+qpdAEnA1TRgUdcdcUkX8NLQw7489gknAQcXKOyL1SwJfEk9zqA5M9WlgN83AWfPlDfw
+        pWoGDwFoySUedgF1ElTLIy7lTO4hAH0FdDMPA/0kcMks4LVIAtB1vTeDbPmP1JfeiIi4AV1Tsxw/9Kv6
+        AAAAAElFTkSuQmCC
 </value>
   </data>
   <metadata name="bottomStatusStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">

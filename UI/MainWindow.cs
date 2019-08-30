@@ -339,6 +339,8 @@ namespace MinishMaker.UI
             {
                 LoadProjectData();
             }
+
+            statusText.Text = "Loaded: " + ofd.FileName;
 		}
 
         private void LoadProjectData()
