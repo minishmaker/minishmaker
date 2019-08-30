@@ -297,7 +297,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 262);
+            this.ClientSize = new System.Drawing.Size(292, 242);
             this.Controls.Add(this.enemyId);
             this.Controls.Add(this.unknown4);
             this.Controls.Add(this.label9);
@@ -323,7 +323,10 @@
             this.Controls.Add(this.newButton);
             this.Controls.Add(this.prevButton);
             this.Controls.Add(this.nextButton);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "EnemyPlacementEditor";
             this.Text = "EnemyPlacementEditor";
             this.ResumeLayout(false);

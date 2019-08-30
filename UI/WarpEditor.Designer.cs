@@ -511,7 +511,10 @@
             this.Controls.Add(this.prevButton);
             this.Controls.Add(this.nextButton);
             this.Controls.Add(this.indexLabel);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "WarpEditor";
             this.Text = "WarpEditor";
             this.borderPanel.ResumeLayout(false);
