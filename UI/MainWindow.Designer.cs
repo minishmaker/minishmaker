@@ -51,6 +51,8 @@ namespace MinishMaker.UI
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bottomStatusStrip = new System.Windows.Forms.StatusStrip();
+            this.statusXposText = new System.Windows.Forms.ToolStripStatusLabel();
+            this.statusYposText = new System.Windows.Forms.ToolStripStatusLabel();
             this.statusText = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.openToolStripButton = new System.Windows.Forms.ToolStripButton();
@@ -71,8 +73,6 @@ namespace MinishMaker.UI
             this.bottomTileGridBox = new MinishMaker.UI.GridBox();
             this.mapPanel = new System.Windows.Forms.Panel();
             this.mapGridBox = new MinishMaker.UI.GridBox();
-            this.statusXposText = new System.Windows.Forms.ToolStripStatusLabel();
-            this.statusYposText = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStrip.SuspendLayout();
             this.bottomStatusStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
@@ -255,7 +255,7 @@ namespace MinishMaker.UI
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.AboutButtonClick);
             // 
@@ -270,6 +270,22 @@ namespace MinishMaker.UI
             this.bottomStatusStrip.Size = new System.Drawing.Size(1284, 22);
             this.bottomStatusStrip.TabIndex = 7;
             this.bottomStatusStrip.Text = "bottomStatusStrip";
+            // 
+            // statusXposText
+            // 
+            this.statusXposText.AutoSize = false;
+            this.statusXposText.Name = "statusXposText";
+            this.statusXposText.Size = new System.Drawing.Size(29, 17);
+            this.statusXposText.Text = "X:00";
+            this.statusXposText.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // statusYposText
+            // 
+            this.statusYposText.AutoSize = false;
+            this.statusYposText.Name = "statusYposText";
+            this.statusYposText.Size = new System.Drawing.Size(29, 17);
+            this.statusYposText.Text = "Y:00";
+            this.statusYposText.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // statusText
             // 
@@ -480,10 +496,14 @@ namespace MinishMaker.UI
             // 
             // mapPanel
             // 
+            this.mapPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.mapPanel.AutoScroll = true;
+            this.mapPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.mapPanel.Controls.Add(this.mapGridBox);
-            this.mapPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.mapPanel.Location = new System.Drawing.Point(150, 49);
+            this.mapPanel.MinimumSize = new System.Drawing.Size(256, 256);
             this.mapPanel.Name = "mapPanel";
             this.mapPanel.Size = new System.Drawing.Size(853, 610);
             this.mapPanel.TabIndex = 10;
@@ -492,7 +512,7 @@ namespace MinishMaker.UI
             // 
             this.mapGridBox.AllowMultiSelection = false;
             this.mapGridBox.BoxSize = new System.Drawing.Size(16, 16);
-            this.mapGridBox.CanvasSize = new System.Drawing.Size(128, 128);
+            this.mapGridBox.CanvasSize = new System.Drawing.Size(256, 256);
             this.mapGridBox.HoverBox = true;
             this.mapGridBox.HoverColor = System.Drawing.Color.White;
             this.mapGridBox.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
@@ -502,28 +522,12 @@ namespace MinishMaker.UI
             this.mapGridBox.SelectedIndex = -1;
             this.mapGridBox.SelectionColor = System.Drawing.Color.Red;
             this.mapGridBox.SelectionRectangle = new System.Drawing.Rectangle(-1, 0, 1, 1);
-            this.mapGridBox.Size = new System.Drawing.Size(128, 128);
+            this.mapGridBox.Size = new System.Drawing.Size(256, 256);
             this.mapGridBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.mapGridBox.TabIndex = 10;
             this.mapGridBox.TabStop = false;
             this.mapGridBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.mapGridBox_MouseDown);
             this.mapGridBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.mapGridBox_MouseMove);
-            // 
-            // statusXposText
-            // 
-            this.statusXposText.AutoSize = false;
-            this.statusXposText.Name = "statusXposText";
-            this.statusXposText.Size = new System.Drawing.Size(29, 17);
-            this.statusXposText.Text = "X:00";
-            this.statusXposText.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // statusYposText
-            // 
-            this.statusYposText.AutoSize = false;
-            this.statusYposText.Name = "statusYposText";
-            this.statusYposText.Size = new System.Drawing.Size(29, 17);
-            this.statusYposText.Text = "Y:00";
-            this.statusYposText.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // MainWindow
             // 
@@ -531,9 +535,9 @@ namespace MinishMaker.UI
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1284, 681);
-            this.Controls.Add(this.mapPanel);
-            this.Controls.Add(this.tilePanel);
             this.Controls.Add(this.roomPanel);
+            this.Controls.Add(this.tilePanel);
+            this.Controls.Add(this.mapPanel);
             this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.bottomStatusStrip);
             this.Controls.Add(this.menuStrip);

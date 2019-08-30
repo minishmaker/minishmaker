@@ -53,6 +53,8 @@
             // 
             // panel1
             // 
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.AutoScroll = true;
             this.panel1.BackColor = System.Drawing.Color.White;
             this.panel1.Controls.Add(this.areaLayout);
@@ -64,9 +66,10 @@
             // areaLayout
             // 
             this.areaLayout.BackColor = System.Drawing.Color.Transparent;
+            this.areaLayout.Dock = System.Windows.Forms.DockStyle.Fill;
             this.areaLayout.Location = new System.Drawing.Point(0, 0);
             this.areaLayout.Name = "areaLayout";
-            this.areaLayout.Size = new System.Drawing.Size(50, 50);
+            this.areaLayout.Size = new System.Drawing.Size(400, 400);
             this.areaLayout.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.areaLayout.TabIndex = 9;
             this.areaLayout.TabStop = false;
