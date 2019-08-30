@@ -59,20 +59,20 @@ namespace MinishMaker.UI
             this.chestToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.metatileToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.areaToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.enemyPlacementToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.warpToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.roomPanel = new System.Windows.Forms.Panel();
             this.roomTreeView = new System.Windows.Forms.TreeView();
             this.tilePanel = new System.Windows.Forms.Panel();
             this.tileTabControl = new System.Windows.Forms.TabControl();
             this.topTileTab = new System.Windows.Forms.TabPage();
+            this.topTileGridBox = new MinishMaker.UI.GridBox();
             this.bottomTileTab = new System.Windows.Forms.TabPage();
+            this.bottomTileGridBox = new MinishMaker.UI.GridBox();
             this.mapPanel = new System.Windows.Forms.Panel();
+            this.mapGridBox = new MinishMaker.UI.GridBox();
             this.yLabel = new System.Windows.Forms.Label();
             this.xLabel = new System.Windows.Forms.Label();
-            this.enemyPlacementToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this.warpToolStripButton = new System.Windows.Forms.ToolStripButton();
-            this.mapGridBox = new MinishMaker.UI.GridBox();
-            this.topTileGridBox = new MinishMaker.UI.GridBox();
-            this.bottomTileGridBox = new MinishMaker.UI.GridBox();
             this.menuStrip.SuspendLayout();
             this.bottomStatusStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
@@ -80,11 +80,11 @@ namespace MinishMaker.UI
             this.tilePanel.SuspendLayout();
             this.tileTabControl.SuspendLayout();
             this.topTileTab.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.topTileGridBox)).BeginInit();
             this.bottomTileTab.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bottomTileGridBox)).BeginInit();
             this.mapPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mapGridBox)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.topTileGridBox)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bottomTileGridBox)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip
@@ -255,7 +255,7 @@ namespace MinishMaker.UI
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.AboutButtonClick);
             // 
@@ -350,6 +350,28 @@ namespace MinishMaker.UI
             this.areaToolStripButton.Text = "Area Editor";
             this.areaToolStripButton.Click += new System.EventHandler(this.areaToolStripButton_Click);
             // 
+            // enemyPlacementToolStripButton
+            // 
+            this.enemyPlacementToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.enemyPlacementToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("enemyPlacementToolStripButton.Image")));
+            this.enemyPlacementToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.enemyPlacementToolStripButton.Name = "enemyPlacementToolStripButton";
+            this.enemyPlacementToolStripButton.Size = new System.Drawing.Size(23, 22);
+            this.enemyPlacementToolStripButton.Text = "toolStripButton1";
+            this.enemyPlacementToolStripButton.ToolTipText = "Enemy Placement Editor";
+            this.enemyPlacementToolStripButton.Click += new System.EventHandler(this.enemyPlacementToolStripButton_Click);
+            // 
+            // warpToolStripButton
+            // 
+            this.warpToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.warpToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("warpToolStripButton.Image")));
+            this.warpToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.warpToolStripButton.Name = "warpToolStripButton";
+            this.warpToolStripButton.Size = new System.Drawing.Size(23, 22);
+            this.warpToolStripButton.Text = "toolStripButton2";
+            this.warpToolStripButton.ToolTipText = "Warp Editor";
+            this.warpToolStripButton.Click += new System.EventHandler(this.warpEditorToolStripMenuItem_Click);
+            // 
             // roomPanel
             // 
             this.roomPanel.Controls.Add(this.roomTreeView);
@@ -402,6 +424,26 @@ namespace MinishMaker.UI
             this.topTileTab.Text = "Top Tiles";
             this.topTileTab.UseVisualStyleBackColor = true;
             // 
+            // topTileGridBox
+            // 
+            this.topTileGridBox.AllowMultiSelection = false;
+            this.topTileGridBox.BoxSize = new System.Drawing.Size(16, 16);
+            this.topTileGridBox.CanvasSize = new System.Drawing.Size(128, 128);
+            this.topTileGridBox.HoverBox = true;
+            this.topTileGridBox.HoverColor = System.Drawing.Color.White;
+            this.topTileGridBox.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+            this.topTileGridBox.Location = new System.Drawing.Point(0, 0);
+            this.topTileGridBox.Name = "topTileGridBox";
+            this.topTileGridBox.Selectable = false;
+            this.topTileGridBox.SelectedIndex = -1;
+            this.topTileGridBox.SelectionColor = System.Drawing.Color.Red;
+            this.topTileGridBox.SelectionRectangle = new System.Drawing.Rectangle(-1, 0, 1, 1);
+            this.topTileGridBox.Size = new System.Drawing.Size(128, 128);
+            this.topTileGridBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.topTileGridBox.TabIndex = 12;
+            this.topTileGridBox.TabStop = false;
+            this.topTileGridBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.topTileGridBox_MouseDown);
+            // 
             // bottomTileTab
             // 
             this.bottomTileTab.AutoScroll = true;
@@ -414,6 +456,26 @@ namespace MinishMaker.UI
             this.bottomTileTab.Text = "Bottom Tiles";
             this.bottomTileTab.UseVisualStyleBackColor = true;
             // 
+            // bottomTileGridBox
+            // 
+            this.bottomTileGridBox.AllowMultiSelection = false;
+            this.bottomTileGridBox.BoxSize = new System.Drawing.Size(16, 16);
+            this.bottomTileGridBox.CanvasSize = new System.Drawing.Size(128, 128);
+            this.bottomTileGridBox.HoverBox = true;
+            this.bottomTileGridBox.HoverColor = System.Drawing.Color.White;
+            this.bottomTileGridBox.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+            this.bottomTileGridBox.Location = new System.Drawing.Point(0, 0);
+            this.bottomTileGridBox.Name = "bottomTileGridBox";
+            this.bottomTileGridBox.Selectable = false;
+            this.bottomTileGridBox.SelectedIndex = -1;
+            this.bottomTileGridBox.SelectionColor = System.Drawing.Color.Red;
+            this.bottomTileGridBox.SelectionRectangle = new System.Drawing.Rectangle(-1, 0, 1, 1);
+            this.bottomTileGridBox.Size = new System.Drawing.Size(128, 128);
+            this.bottomTileGridBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.bottomTileGridBox.TabIndex = 11;
+            this.bottomTileGridBox.TabStop = false;
+            this.bottomTileGridBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.bottomTileGridBox_MouseDown);
+            // 
             // mapPanel
             // 
             this.mapPanel.AutoScroll = true;
@@ -423,46 +485,6 @@ namespace MinishMaker.UI
             this.mapPanel.Name = "mapPanel";
             this.mapPanel.Size = new System.Drawing.Size(853, 610);
             this.mapPanel.TabIndex = 10;
-            // 
-            // yLabel
-            // 
-            this.yLabel.AutoSize = true;
-            this.yLabel.Location = new System.Drawing.Point(322, 33);
-            this.yLabel.Name = "yLabel";
-            this.yLabel.Size = new System.Drawing.Size(17, 13);
-            this.yLabel.TabIndex = 11;
-            this.yLabel.Text = "Y:";
-            // 
-            // xLabel
-            // 
-            this.xLabel.AutoSize = true;
-            this.xLabel.Location = new System.Drawing.Point(270, 33);
-            this.xLabel.Name = "xLabel";
-            this.xLabel.Size = new System.Drawing.Size(17, 13);
-            this.xLabel.TabIndex = 12;
-            this.xLabel.Text = "X:";
-            // 
-            // enemyPlacementToolStripButton
-            // 
-            this.enemyPlacementToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.enemyPlacementToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("enemyPlacementToolStripButton.Image")));
-            this.enemyPlacementToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.enemyPlacementToolStripButton.Name = "enemyPlacementToolStripButton";
-            this.enemyPlacementToolStripButton.Size = new System.Drawing.Size(23, 22);
-            this.enemyPlacementToolStripButton.Text = "toolStripButton1";
-            this.enemyPlacementToolStripButton.ToolTipText = "Enemy Placement Editor";
-            this.enemyPlacementToolStripButton.Click += new System.EventHandler(this.enemyPlacementToolStripButton_Click);
-            // 
-            // warpToolStripButton
-            // 
-            this.warpToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.warpToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("warpToolStripButton.Image")));
-            this.warpToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.warpToolStripButton.Name = "warpToolStripButton";
-            this.warpToolStripButton.Size = new System.Drawing.Size(23, 22);
-            this.warpToolStripButton.Text = "toolStripButton2";
-            this.warpToolStripButton.ToolTipText = "Warp Editor";
-            this.warpToolStripButton.Click += new System.EventHandler(this.warpEditorToolStripMenuItem_Click);
             // 
             // mapGridBox
             // 
@@ -485,45 +507,23 @@ namespace MinishMaker.UI
             this.mapGridBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.mapGridBox_MouseDown);
             this.mapGridBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.mapGridBox_MouseMove);
             // 
-            // topTileGridBox
+            // yLabel
             // 
-            this.topTileGridBox.AllowMultiSelection = false;
-            this.topTileGridBox.BoxSize = new System.Drawing.Size(16, 16);
-            this.topTileGridBox.CanvasSize = new System.Drawing.Size(128, 128);
-            this.topTileGridBox.HoverBox = true;
-            this.topTileGridBox.HoverColor = System.Drawing.Color.White;
-            this.topTileGridBox.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-            this.topTileGridBox.Location = new System.Drawing.Point(0, 0);
-            this.topTileGridBox.Name = "topTileGridBox";
-            this.topTileGridBox.Selectable = false;
-            this.topTileGridBox.SelectedIndex = -1;
-            this.topTileGridBox.SelectionColor = System.Drawing.Color.Red;
-            this.topTileGridBox.SelectionRectangle = new System.Drawing.Rectangle(-1, 0, 1, 1);
-            this.topTileGridBox.Size = new System.Drawing.Size(128, 128);
-            this.topTileGridBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.topTileGridBox.TabIndex = 12;
-            this.topTileGridBox.TabStop = false;
-            this.topTileGridBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.topTileGridBox_MouseDown);
+            this.yLabel.AutoSize = true;
+            this.yLabel.Location = new System.Drawing.Point(322, 33);
+            this.yLabel.Name = "yLabel";
+            this.yLabel.Size = new System.Drawing.Size(17, 13);
+            this.yLabel.TabIndex = 11;
+            this.yLabel.Text = "Y:";
             // 
-            // bottomTileGridBox
+            // xLabel
             // 
-            this.bottomTileGridBox.AllowMultiSelection = false;
-            this.bottomTileGridBox.BoxSize = new System.Drawing.Size(16, 16);
-            this.bottomTileGridBox.CanvasSize = new System.Drawing.Size(128, 128);
-            this.bottomTileGridBox.HoverBox = true;
-            this.bottomTileGridBox.HoverColor = System.Drawing.Color.White;
-            this.bottomTileGridBox.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-            this.bottomTileGridBox.Location = new System.Drawing.Point(0, 0);
-            this.bottomTileGridBox.Name = "bottomTileGridBox";
-            this.bottomTileGridBox.Selectable = false;
-            this.bottomTileGridBox.SelectedIndex = -1;
-            this.bottomTileGridBox.SelectionColor = System.Drawing.Color.Red;
-            this.bottomTileGridBox.SelectionRectangle = new System.Drawing.Rectangle(-1, 0, 1, 1);
-            this.bottomTileGridBox.Size = new System.Drawing.Size(128, 128);
-            this.bottomTileGridBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.bottomTileGridBox.TabIndex = 11;
-            this.bottomTileGridBox.TabStop = false;
-            this.bottomTileGridBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.bottomTileGridBox_MouseDown);
+            this.xLabel.AutoSize = true;
+            this.xLabel.Location = new System.Drawing.Point(270, 33);
+            this.xLabel.Name = "xLabel";
+            this.xLabel.Size = new System.Drawing.Size(17, 13);
+            this.xLabel.TabIndex = 12;
+            this.xLabel.Text = "X:";
             // 
             // MainWindow
             // 
@@ -555,13 +555,13 @@ namespace MinishMaker.UI
             this.tileTabControl.ResumeLayout(false);
             this.topTileTab.ResumeLayout(false);
             this.topTileTab.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.topTileGridBox)).EndInit();
             this.bottomTileTab.ResumeLayout(false);
             this.bottomTileTab.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.bottomTileGridBox)).EndInit();
             this.mapPanel.ResumeLayout(false);
             this.mapPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.mapGridBox)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.topTileGridBox)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.bottomTileGridBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

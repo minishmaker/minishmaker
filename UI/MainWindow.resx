@@ -205,10 +205,10 @@
   <data name="warpEditorToolStripMenuItem.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAACySURBVDhPrZO7DcNADEM1gkuXKTNGRsgoGSkjZZx0DnjAE3iyrjAQA4TPIvlw/oWO174dnd73
-        PdX5U9nD0ve5DdU5SoiXK4xrZp2fAEzp87idtAKeAFqzfcp+O57TebqFWibsEKAJoOhByiuP9RJAmbD7
-        ktbKaT4AlK4ANBsAaJisPUS58/IhOsCDXpYoSvL+9xoxuKbsqhmdp++gmqgCPD8APqzy7bvoTX+kqwtX
-        RUT8APuH10Q4vbA5AAAAAElFTkSuQmCC
+        YQUAAACzSURBVDhPjZPBDYQwDAT95HlfyqAFWrmWaIm6QBNpo3VwBEjDObZ3yOeC57/E9YVjXTqce9gH
+        M649Gt5rkrEhoWo4t1/D59rpAg1BAfqqXQBJwNU0YFHXHXFJF/DS0MO+PPYJJwEHFyjsi9UsCXxJPc6g
+        OTPVpYDfNwFnz5Q38KVqBg8BaMklHnYBdRJUyyMu5UzuIQB9BXQzDwP9JHDJLOC1SALQdb03g2z5j9SX
+        3oiIuAFdU7McP/Sr+gAAAABJRU5ErkJggg==
 </value>
   </data>
   <metadata name="bottomStatusStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
@@ -276,10 +276,10 @@
   <data name="warpToolStripButton.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAACySURBVDhPrZO7DcNADEM1gkuXKTNGRsgoGSkjZZx0DnjA
-        E3iyrjAQA4TPIvlw/oWO174dnd73PdX5U9nD0ve5DdU5SoiXK4xrZp2fAEzp87idtAKeAFqzfcp+O57T
-        ebqFWibsEKAJoOhByiuP9RJAmbD7ktbKaT4AlK4ANBsAaJisPUS58/IhOsCDXpYoSvL+9xoxuKbsqhmd
-        p++gmqgCPD8APqzy7bvoTX+kqwtXRUT8APuH10Q4vbA5AAAAAElFTkSuQmCC
+        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAACzSURBVDhPjZPBDYQwDAT95HlfyqAFWrmWaIm6QBNpo3Vw
+        BEjDObZ3yOeC57/E9YVjXTqce9gHM649Gt5rkrEhoWo4t1/D59rpAg1BAfqqXQBJwNU0YFHXHXFJF/DS
+        0MO+PPYJJwEHFyjsi9UsCXxJPc6gOTPVpYDfNwFnz5Q38KVqBg8BaMklHnYBdRJUyyMu5UzuIQB9BXQz
+        DwP9JHDJLOC1SALQdb03g2z5j9SX3oiIuAFdU7McP/Sr+gAAAABJRU5ErkJggg==
 </value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
