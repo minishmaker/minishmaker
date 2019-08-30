@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace MinishMaker.Core.ChangeTypes
 {
-	public class EnemyPlacementDataChange :Change
+	public class List3DataChange :Change
 	{
-		public EnemyPlacementDataChange(int areaId, int roomId):base(areaId, roomId, DataType.enemyPlacementData)
+		public List3DataChange(int areaId, int roomId):base(areaId, roomId, DataType.list3Data)
 		{
 		}
 

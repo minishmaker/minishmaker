@@ -32,8 +32,9 @@ namespace MinishMaker.UI
 
 		private Pen chestPen = new Pen(Color.Yellow,2);
 		public Point chestHighlightPoint= new Point(-1,-1);
-		public Point enemyHighlightPoint= new Point(-1,-1);
+		public Point listObjectHighlightPoint= new Point(-1,-1);
 		public Point warpHighlightPoint= new Point(-1,-1);
+
         public GridBox()
         {
             InitializeComponent();
@@ -148,10 +149,10 @@ namespace MinishMaker.UI
                         e.Graphics.DrawRectangle(chestPen, chestHighlightPoint.X*16+2, chestHighlightPoint.Y*16+2, 12, 12);
 					}
 
-					if(enemyHighlightPoint.X!=-1)
+					if(listObjectHighlightPoint.X!=-1)
 					{
-						e.Graphics.DrawLine(selectionPen, enemyHighlightPoint.X-5, enemyHighlightPoint.Y-5, enemyHighlightPoint.X+5, enemyHighlightPoint.Y+5);
-						e.Graphics.DrawLine(selectionPen, enemyHighlightPoint.X+5, enemyHighlightPoint.Y-5, enemyHighlightPoint.X-5, enemyHighlightPoint.Y+5);
+						e.Graphics.DrawLine(selectionPen, listObjectHighlightPoint.X-5, listObjectHighlightPoint.Y-5, listObjectHighlightPoint.X+5, listObjectHighlightPoint.Y+5);
+						e.Graphics.DrawLine(selectionPen, listObjectHighlightPoint.X+5, listObjectHighlightPoint.Y-5, listObjectHighlightPoint.X-5, listObjectHighlightPoint.Y+5);
 					}
 
 					if(warpHighlightPoint.X!=-1)

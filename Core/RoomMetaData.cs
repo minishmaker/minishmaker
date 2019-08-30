@@ -58,16 +58,28 @@ namespace MinishMaker.Core
 			get { return chestInformation;}
 		}
 
-		private List<EnemyData> enemyPlacementInformation = new List<EnemyData>();
-		public List<EnemyData> EnemyPlacementInfo
-		{
-			get { return enemyPlacementInformation;}
-		}
-
 		private List<WarpData> warpInformation = new List<WarpData>();
 		public List<WarpData> WarpInformation
 		{
 			get { return warpInformation;}
+		}
+
+		private List<ObjectData> list1Information = new List<ObjectData>();
+		public List<ObjectData> List1Information
+		{
+			get { return list1Information;}
+		}
+
+		private List<ObjectData> list2Information = new List<ObjectData>();
+		public List<ObjectData> List2Information
+		{
+			get { return list2Information;}
+		}
+
+		private List<ObjectData> list3Information = new List<ObjectData>();
+		public List<ObjectData> List3Information
+		{
+			get { return list3Information;}
 		}
 
 		private AddrData? bg2RoomDataAddr;
@@ -127,6 +139,37 @@ namespace MinishMaker.Core
 			}
 		}
 
+		public struct ObjectData
+		{
+			public byte objectType;
+			public byte objectSub;
+			public byte objectId;
+			public byte d1item;
+			public byte d2itemSub;
+			public byte d3;
+			public byte d4;
+			public byte d5;
+			public ushort pixelX;
+			public ushort pixelY;
+			public ushort flag1;
+			public ushort flag2;
+
+			public ObjectData(byte[] data, int index)
+			{
+				objectType = data[index+0];
+				objectSub = data[index+1];
+				objectId = data[index+2];
+				d1item = data[index+3];
+				d2itemSub = data[index+4];
+				d3 = data[index+5];
+				d4 = data[index+6];
+				d5 = data[index+7];
+				pixelX = (ushort)(data[index+8]+(data[index+9]<<8));
+				pixelY = (ushort)(data[index+10]+(data[index+11]<<8));
+				flag1 = (ushort)(data[index+12]+(data[index+13]<<8));
+				flag2 = (ushort)(data[index+14]+(data[index+15]<<8));
+			}
+		}
 
 		public struct WarpData
 		{
@@ -159,35 +202,6 @@ namespace MinishMaker.Core
 				soundId =		(ushort)(data[16+offset]+(data[17+offset]<<8));
 
 			}
-		}
-
-		public struct EnemyData
-		{
-			public byte objectType; 
-			public byte objectSub; //?
-			public byte id;
-			public byte subId;
-			public ushort unknown1; //?
-			public ushort unknown2; //?
-			public ushort xpos;
-			public ushort ypos;
-			public ushort unknown3; //?
-			public ushort unknown4; //?
-
-			public EnemyData(byte oType, byte oSub, byte id, byte subId, ushort u1, ushort u2, ushort xpos, ushort ypos, ushort u3, ushort u4)
-			{
-				this.objectType= oType;
-				this.objectSub = oSub;
-				this.id = id;
-				this.subId = subId;
-				this.unknown1 = u1;
-				this.unknown2 = u2;
-				this.xpos = xpos;
-				this.ypos = ypos;
-				this.unknown3 = u3;
-				this.unknown4 = u4;
-			}
-
 		}
 
 		public RoomMetaData( int areaIndex, int roomIndex )
@@ -253,120 +267,51 @@ namespace MinishMaker.Core
             int roomEntityTableAddrLoc = areaEntityTableAddr + (roomIndex << 2);
             int roomEntityTableAddr =r.ReadAddr(roomEntityTableAddrLoc);
 
-            //4 byte chunks, 1-2 are unknown use, 3rd seems to be mostly enemies. 4th seems to be mostly chests
-			//Enemies
-			string enemyDataPath = roomPath + "/" + DataType.enemyPlacementData +"Dat.bin";
-			if (File.Exists(enemyDataPath))
+			int areaWarpTableAddrLoc = header.warpInformationTableLoc + (areaIndex << 2);
+			int areaWarpTableAddr = r.ReadAddr(areaWarpTableAddrLoc);
+
+			int roomWarpTableAddrLoc = areaWarpTableAddr + (roomIndex << 2);
+
+			LoadGroup(r,roomEntityTableAddr,0xFF,DataType.list1Data,0x10,List1Binding);
+			LoadGroup(r,roomEntityTableAddr+4,0xFF,DataType.list2Data,0x10,List2Binding);
+			LoadGroup(r,roomEntityTableAddr+8,0xFF,DataType.list3Data,0x10,List3Binding);
+
+			LoadGroup(r,roomEntityTableAddr+12,0x0,DataType.chestData,0x08,ChestBinding);
+			//technically not a group but should work with the function
+			LoadGroup(r, roomWarpTableAddrLoc, 0xFF, DataType.warpData, 20, WarpBinding);
+		}
+
+		public void LoadGroup(Reader r, int addr, byte terminator, DataType dataType, int size, Action<byte[], int> bindingFunc )
+		{
+			string dataPath = roomPath + "/" + dataType +"Dat.bin";
+            if (File.Exists(dataPath))
             {
-                byte[] data = File.ReadAllBytes(enemyDataPath);
+                byte[] data = File.ReadAllBytes(dataPath);
                 int index = 0;
-                while (index < data.Length && (TileEntityType)data[index] != TileEntityType.None && data[index]!=0xFF)
+
+                while (index < data.Length && data[index] != terminator)
                 {
-                    var objectType = data[index];
-                    var objectSub = data[index + 1];
-                    var id = data[index + 2];
-                    var subid = data[index + 3];
-					var unknown1 = (ushort)(data[index + 4] | (data[index+5]<<8));
-					var unknown2 = (ushort)(data[index + 6] | (data[index+7]<<8));
-					var locX = (ushort)(data[index + 8] | (data[index+9]<<8));
-					var locY = (ushort)(data[index + 10] | (data[index+11]<<8));
-					var unknown3 = (ushort)(data[index + 12] | (data[index+13]<<8));
-					var unknown4 = (ushort)(data[index + 14] | (data[index+15]<<8));
-                    enemyPlacementInformation.Add(new EnemyData(objectType,objectSub,id,subid,unknown1,unknown2,locX,locY,unknown3,unknown4));
-                    index += 16;
+					bindingFunc(data,index);
+                    index += size;
                 }
             } 
             else
             {
-                int chestTableAddr = r.ReadAddr(roomEntityTableAddr+8);
+                int tableAddr = r.ReadAddr(addr);
 
-                var data = r.ReadBytes(16, chestTableAddr);
+				if(tableAddr==0)
+				{
+					return;
+				}
 
-                while ((TileEntityType)data[0] != TileEntityType.None && data[0]!=0xFF) //ends on type 0
+                var data = r.ReadBytes(size, tableAddr);
+
+                while (data[0] != terminator)
                 {
-                    var objectType = data[0];
-                    var objectSub = data[ 1];
-                    var id = data[2];
-                    var subid = data[3];
-					var unknown1 = (ushort)(data[4] | (data[5]<<8));
-					var unknown2 = (ushort)(data[6] | (data[7]<<8));
-					var locX = (ushort)(data[8] | (data[9]<<8));
-					var locY = (ushort)(data[10] | (data[11]<<8));
-					var unknown3 = (ushort)(data[12] | (data[13]<<8));
-					var unknown4 = (ushort)(data[14] | (data[15]<<8));
-                    enemyPlacementInformation.Add(new EnemyData(objectType,objectSub,id,subid,unknown1,unknown2,locX,locY,unknown3,unknown4));
-                    data = r.ReadBytes(16);
+                    bindingFunc(data,0);
+                    data = r.ReadBytes(size);
                 }
             }
-
-			//Chests
-            string chestDataPath = roomPath + "/" + DataType.chestData +"Dat.bin";
-            if (File.Exists(chestDataPath))
-            {
-                byte[] data = File.ReadAllBytes(chestDataPath);
-                int index = 0;
-                while (index < data.Length && (TileEntityType)data[index] != TileEntityType.None)
-                {
-					
-                    var type = data[index];
-                    var id = data[index + 1];
-                    var item = data[index + 2];
-                    var subNum = data[index + 3];
-                    ushort loc = (ushort)(data[index + 4] | (data[index + 5] << 8));
-                    ushort other = (ushort)(data[index + 6] | (data[index + 7] << 8));
-                    chestInformation.Add(new ChestData(type, id, item, subNum, loc, other));
-                    index += 8;
-                }
-            } 
-            else
-            {
-                int chestTableAddr = r.ReadAddr(roomEntityTableAddr+12);
-
-                var data = r.ReadBytes(8, chestTableAddr);
-
-                while ((TileEntityType)data[0] != TileEntityType.None) //ends on type 0
-                {
-                    var type = data[0];
-                    var id = data[1];
-                    var item = data[2];
-                    var subNum = data[3];
-                    ushort loc = (ushort)(data[4] | (data[5] << 8));
-                    ushort other = (ushort)(data[6] | (data[7] << 8));
-                    chestInformation.Add(new ChestData(type, id, item, subNum, loc, other));
-                    data = r.ReadBytes(8);
-                }
-            }
-
-			//Warps
-			string warpDataPath = roomPath + "/" + DataType.warpData +"Dat.bin";
-			if (File.Exists(warpDataPath))
-            {
-                byte[] data = File.ReadAllBytes(warpDataPath);
-                int index = 0;
-                while (index < data.Length && (data[index]+(data[index+1]<<8))!=0xFFFF)
-                {
-                    warpInformation.Add(new WarpData(data, index));
-                    index += 20;
-                }
-            } 
-            else
-            {
-				int areaWarpTableAddrLoc = header.warpInformationTableLoc + (areaIndex << 2);
-				int areaWarpTableAddr = r.ReadAddr(areaWarpTableAddrLoc);
-
-				int roomWarpTableAddrLoc = areaWarpTableAddr + (roomIndex << 2);
-				int roomWarpTableAddr =r.ReadAddr(roomWarpTableAddrLoc);
-
-                var data = r.ReadBytes(20, roomWarpTableAddr);
-
-                while (data[0]!=0xFF) //ends on type FFFF
-                {
-                    warpInformation.Add(new WarpData(data,0));
-                    data = r.ReadBytes(20);
-                }
-            }
-
-
 		}
 
 		public TileSet GetTileSet()
@@ -538,36 +483,50 @@ namespace MinishMaker.Core
             chestInformation.Remove(data);
         }
 
-		public long GetEnemyPlacementData(ref byte[] data)
+		public long GetList1Data(ref byte[] data)
 		{
-			var outdata = new byte[enemyPlacementInformation.Count*16+16];
+			return GetListData(ref data, list1Information);
+		}
 
-			for(int i = 0; i< enemyPlacementInformation.Count; i++)
+		public long GetList2Data(ref byte[] data)
+		{
+			return GetListData(ref data, list2Information);
+		}
+
+		public long GetList3Data(ref byte[] data)
+		{
+			return GetListData(ref data, list3Information);
+		}
+
+		public long GetListData(ref byte[] data, List<ObjectData> list)
+		{
+			var outdata = new byte[list.Count*16+1];
+
+			for(int i = 0; i< list.Count; i++)
 			{
 				var index = i*16;
-				var currentData = enemyPlacementInformation[i];
-				outdata[index] = currentData.objectType;
-				outdata[index+1] = currentData.objectSub;
-				outdata[index+2] = currentData.id;
-				outdata[index+3] = currentData.subId;
-				outdata[index+4] = (byte)(currentData.unknown1 & 0xff);
-				outdata[index+5] = (byte)(currentData.unknown1 >> 8);
-				outdata[index+6] = (byte)(currentData.unknown2 & 0xff);
-				outdata[index+7] = (byte)(currentData.unknown2 >> 8);
-				outdata[index+8] = (byte)(currentData.xpos & 0xff);
-				outdata[index+9] = (byte)(currentData.xpos >> 8);
-				outdata[index+10] = (byte)(currentData.ypos & 0xff);
-				outdata[index+11] = (byte)(currentData.ypos >> 8);
-				outdata[index+12] = (byte)(currentData.unknown3 & 0xff);
-				outdata[index+13] = (byte)(currentData.unknown3 >> 8);
-				outdata[index+14] = (byte)(currentData.unknown4 & 0xff);
-				outdata[index+15] = (byte)(currentData.unknown4 >> 8);
+				var currentData = list[i];
+				
+				outdata[index++] = currentData.objectType;
+				outdata[index++] = currentData.objectSub;
+				outdata[index++] = currentData.objectId;
+				outdata[index++] = currentData.d1item;
+				outdata[index++] = currentData.d2itemSub;
+				outdata[index++] = currentData.d3;
+				outdata[index++] = currentData.d4;
+				outdata[index++] = currentData.d5;
+				outdata[index++] = (byte)(currentData.pixelX & 0xff);
+				outdata[index++] = (byte)(currentData.pixelX >> 8);
+				outdata[index++] = (byte)(currentData.pixelY & 0xff);
+				outdata[index++] = (byte)(currentData.pixelY >> 8);
+				outdata[index++] = (byte)(currentData.flag1 & 0xff);
+				outdata[index++] = (byte)(currentData.flag1 >> 8);
+				outdata[index++] = (byte)(currentData.flag2 & 0xff);
+				outdata[index++] = (byte)(currentData.flag2 >> 8);
 
-				if(i == enemyPlacementInformation.Count-1)// add ending 0's
+				if(i == list.Count-1)// add ending 0's
 				{
-					outdata[index+16] = 0xFF;
-					for(int j= 1; j<16;j++)
-						outdata[index+16+j]=0;
+					outdata[index] = 0xFF;
 				}
 			}
 			data = outdata;
@@ -614,6 +573,7 @@ namespace MinishMaker.Core
 			data = outdata;
 			return outdata.Length;
 		}
+
 
         //To be changed as actual data gets changed and tested
         public int GetPointerLoc(DataType type, int areaIndex, int roomIndex)
@@ -673,7 +633,9 @@ namespace MinishMaker.Core
 					break;
 
 				case DataType.chestData:
-				case DataType.enemyPlacementData:
+				case DataType.list1Data:
+				case DataType.list2Data:
+				case DataType.list3Data:
 					int areaEntityTableAddrLoc = header.AreaMetadataBase + (areaIndex << 2);
 					int areaEntityTableAddr = r.ReadAddr(areaEntityTableAddrLoc);
 
@@ -682,10 +644,14 @@ namespace MinishMaker.Core
 
 					//4 byte chunks, 1-3 are unknown use, 4th seems to be chests
 					var offset = 0;
+					if(type == DataType.list1Data)
+						offset = 0x00;
+					if(type == DataType.list2Data)
+						offset = 0x04;
+					if(type == DataType.list3Data)
+						offset = 0x08;
 					if(type == DataType.chestData)
 						offset = 0x0C;
-					if(type == DataType.enemyPlacementData)
-						offset = 0x08;
 					retAddr = roomEntityTableAddr + offset;
 
                     Console.WriteLine(retAddr);
@@ -704,6 +670,38 @@ namespace MinishMaker.Core
 			}
 
 			return retAddr;
+		}
+
+		//bindings for data to usable structs
+		private void ChestBinding(byte[] data, int startIndex)
+		{
+			var type = data[startIndex];
+            var id = data[startIndex + 1];
+            var item = data[startIndex + 2];
+            var subNum = data[startIndex + 3];
+            ushort loc = (ushort)(data[startIndex + 4] | (data[startIndex + 5] << 8));
+            ushort other = (ushort)(data[startIndex + 6] | (data[startIndex + 7] << 8));
+            chestInformation.Add(new ChestData(type, id, item, subNum, loc, other));
+		}
+
+		private void List1Binding(byte[] data, int startIndex)
+		{
+			list1Information.Add(new ObjectData(data,startIndex));
+		}
+
+		private void List2Binding(byte[] data, int startIndex)
+		{
+			list2Information.Add(new ObjectData(data,startIndex));
+		}
+
+		private void List3Binding(byte[] data, int startIndex)
+		{
+			list3Information.Add(new ObjectData(data,startIndex));
+		}
+
+		private void WarpBinding(byte[] data, int startIndex)
+		{
+			warpInformation.Add(new WarpData(data, startIndex));
 		}
 
 		//dont have any good names for these 3

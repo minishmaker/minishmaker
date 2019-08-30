@@ -90,7 +90,9 @@
     <Compile Include="Core\ChangeTypes\ChestDataChange.cs" />
     <Compile Include="Core\ChangeTypes\Bg1MetaTileSetChange.cs" />
     <Compile Include="Core\ChangeTypes\Change.cs" />
-    <Compile Include="Core\ChangeTypes\EnemyPlacementDataChange.cs" />
+    <Compile Include="Core\ChangeTypes\List2DataChange.cs" />
+    <Compile Include="Core\ChangeTypes\List3DataChange.cs" />
+    <Compile Include="Core\ChangeTypes\List1DataChange.cs" />
     <Compile Include="Core\ChangeTypes\RoomMetadataChange.cs" />
     <Compile Include="Core\ChangeTypes\WarpDataChange.cs" />
     <Compile Include="Core\Project.cs" />
@@ -106,12 +108,6 @@
     <Compile Include="UI\ChestEditorWindow.Designer.cs">
       <DependentUpon>ChestEditorWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\EnemyPlacementEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\EnemyPlacementEditor.Designer.cs">
-      <DependentUpon>EnemyPlacementEditor.cs</DependentUpon>
-    </Compile>
     <Compile Include="UI\GridBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -123,6 +119,12 @@
     </Compile>
     <Compile Include="UI\MetaTileEditorWindow.Designer.cs">
       <DependentUpon>MetaTileEditorWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\ObjectPlacementEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\ObjectPlacementEditor.Designer.cs">
+      <DependentUpon>ObjectPlacementEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\WarpEditor.cs">
       <SubType>Form</SubType>
@@ -166,9 +168,6 @@
     <EmbeddedResource Include="UI\AreaEditor.resx">
       <DependentUpon>AreaEditor.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\EnemyPlacementEditor.resx">
-      <DependentUpon>EnemyPlacementEditor.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="UI\GridBox.resx">
       <DependentUpon>GridBox.cs</DependentUpon>
     </EmbeddedResource>
@@ -194,6 +193,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\MetaTileEditorWindow.resx">
       <DependentUpon>MetaTileEditorWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\ObjectPlacementEditor.resx">
+      <DependentUpon>ObjectPlacementEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\WarpEditor.resx">
       <DependentUpon>WarpEditor.cs</DependentUpon>

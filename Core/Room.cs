@@ -373,10 +373,15 @@ namespace MinishMaker.Core
 					return bg1MetaTiles.GetCompressedMetaTileSet(ref data);
 				case DataType.bg2MetaTileSet:
 					return bg2MetaTiles.GetCompressedMetaTileSet(ref data);
-				case DataType.enemyPlacementData:
-					return metadata.GetEnemyPlacementData(ref data);
+				case DataType.list1Data:
+					return metadata.GetList1Data(ref data);
+				case DataType.list2Data:
+					return metadata.GetList2Data(ref data);
+				case DataType.list3Data:
+					return metadata.GetList3Data(ref data);
 				case DataType.warpData:
 					return metadata.GetWarpData(ref data);
+				
                 default:
                     return 0;
             }
@@ -469,9 +474,19 @@ namespace MinishMaker.Core
             metadata.RemoveChestData(data);
         }
 
-		public List<EnemyData> GetEnemyPlacementData()
+		public List<ObjectData> GetList1Data()
 		{
-			return metadata.EnemyPlacementInfo;
+			return metadata.List1Information;
+		}
+
+		public List<ObjectData> GetList2Data()
+		{
+			return metadata.List2Information;
+		}
+
+		public List<ObjectData> GetList3Data()
+		{
+			return metadata.List3Information;
 		}
 
 		public List<WarpData> GetWarpData()

@@ -22,7 +22,9 @@ namespace MinishMaker.Core
 		bg2MetaTileSet,
         chestData,
 		areaInfo,
-		enemyPlacementData,
+		list1Data,
+		list2Data,
+		list3Data,
 		warpData
 	}
 
@@ -304,8 +306,12 @@ namespace MinishMaker.Core
 					return new Bg2MetaTileSetChange( area );
 				case DataType.chestData:
 					return new ChestDataChange( area, room );
-				case DataType.enemyPlacementData:
-					return new EnemyPlacementDataChange(area, room);
+				case DataType.list1Data:
+					return new List1DataChange(area, room);
+				case DataType.list2Data:
+					return new List2DataChange(area, room);
+				case DataType.list3Data:
+					return new List3DataChange(area, room);
 				case DataType.warpData:
 					return new WarpDataChange(area, room);
 				default:
