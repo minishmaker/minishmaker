@@ -71,8 +71,8 @@ namespace MinishMaker.UI
             this.bottomTileGridBox = new MinishMaker.UI.GridBox();
             this.mapPanel = new System.Windows.Forms.Panel();
             this.mapGridBox = new MinishMaker.UI.GridBox();
-            this.yLabel = new System.Windows.Forms.Label();
-            this.xLabel = new System.Windows.Forms.Label();
+            this.statusXposText = new System.Windows.Forms.ToolStripStatusLabel();
+            this.statusYposText = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStrip.SuspendLayout();
             this.bottomStatusStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
@@ -255,13 +255,15 @@ namespace MinishMaker.UI
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.AboutButtonClick);
             // 
             // bottomStatusStrip
             // 
             this.bottomStatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.statusXposText,
+            this.statusYposText,
             this.statusText});
             this.bottomStatusStrip.Location = new System.Drawing.Point(0, 659);
             this.bottomStatusStrip.Name = "bottomStatusStrip";
@@ -507,23 +509,21 @@ namespace MinishMaker.UI
             this.mapGridBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.mapGridBox_MouseDown);
             this.mapGridBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.mapGridBox_MouseMove);
             // 
-            // yLabel
+            // statusXposText
             // 
-            this.yLabel.AutoSize = true;
-            this.yLabel.Location = new System.Drawing.Point(322, 33);
-            this.yLabel.Name = "yLabel";
-            this.yLabel.Size = new System.Drawing.Size(17, 13);
-            this.yLabel.TabIndex = 11;
-            this.yLabel.Text = "Y:";
+            this.statusXposText.AutoSize = false;
+            this.statusXposText.Name = "statusXposText";
+            this.statusXposText.Size = new System.Drawing.Size(29, 17);
+            this.statusXposText.Text = "X:00";
+            this.statusXposText.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // xLabel
+            // statusYposText
             // 
-            this.xLabel.AutoSize = true;
-            this.xLabel.Location = new System.Drawing.Point(270, 33);
-            this.xLabel.Name = "xLabel";
-            this.xLabel.Size = new System.Drawing.Size(17, 13);
-            this.xLabel.TabIndex = 12;
-            this.xLabel.Text = "X:";
+            this.statusYposText.AutoSize = false;
+            this.statusYposText.Name = "statusYposText";
+            this.statusYposText.Size = new System.Drawing.Size(29, 17);
+            this.statusYposText.Text = "Y:00";
+            this.statusYposText.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // MainWindow
             // 
@@ -531,8 +531,6 @@ namespace MinishMaker.UI
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1284, 681);
-            this.Controls.Add(this.xLabel);
-            this.Controls.Add(this.yLabel);
             this.Controls.Add(this.mapPanel);
             this.Controls.Add(this.tilePanel);
             this.Controls.Add(this.roomPanel);
@@ -607,10 +605,10 @@ namespace MinishMaker.UI
 		private System.Windows.Forms.ToolStripMenuItem enemyPlacementEditorToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem warpEditorToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton areaToolStripButton;
-		private System.Windows.Forms.Label yLabel;
-		private System.Windows.Forms.Label xLabel;
         private System.Windows.Forms.ToolStripButton enemyPlacementToolStripButton;
         private System.Windows.Forms.ToolStripButton warpToolStripButton;
+        private System.Windows.Forms.ToolStripStatusLabel statusXposText;
+        private System.Windows.Forms.ToolStripStatusLabel statusYposText;
     }
 }
 

@@ -8,7 +8,6 @@ using MinishMaker.Core;
 using MinishMaker.Utilities;
 using System.Drawing;
 using MinishMaker.Core.ChangeTypes;
-using Microsoft.WindowsAPICodePack.Dialogs;
 
 
 namespace MinishMaker.UI
@@ -756,9 +755,9 @@ namespace MinishMaker.UI
                 return;
 
 			var xspot=mapGridBox.HoverIndex%currentRoom.roomSize.X;
-			int yspot=mapGridBox.HoverIndex/currentRoom.roomSize.X;
-			xLabel.Text="X:"+xspot.Hex();
-			yLabel.Text="Y:"+yspot.Hex();
+			var yspot=mapGridBox.HoverIndex/currentRoom.roomSize.X;
+			statusXposText.Text="X:"+xspot.Hex().PadLeft(2, '0');
+            statusYposText.Text="Y:"+yspot.Hex().PadLeft(2, '0');
 
 	        if (e.Button == MouseButtons.Left)
 	        {
