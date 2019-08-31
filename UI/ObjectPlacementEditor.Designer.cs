@@ -354,6 +354,7 @@
 			this.objectIdValue.Size = new System.Drawing.Size(23, 20);
 			this.objectIdValue.TabIndex = 58;
 			this.objectIdValue.Text = "FF";
+			this.objectIdValue.TextChanged += new System.EventHandler(this.objectIdValue_TextChanged);
 			// 
 			// label8
 			// 

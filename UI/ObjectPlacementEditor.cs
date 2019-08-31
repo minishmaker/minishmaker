@@ -64,6 +64,7 @@ namespace MinishMaker.UI
 			if(currentList.Count==0)
 			{
 				indexLabel.Text = "0";
+				objectIdValue.Enabled=false;
 				objectTypeBox.Enabled = false;
 				objectIdBox.Enabled = false;
 				data1Box.Enabled = false;
@@ -104,6 +105,7 @@ namespace MinishMaker.UI
 
 			removeButton.Enabled = currentList.Count!=0;
 			objectTypeBox.Enabled = true;
+			objectIdValue.Enabled= true;
 			objectIdBox.Enabled = true;
 			data1Box.Enabled = true;
 			data2Box.Enabled = true;
@@ -145,18 +147,10 @@ namespace MinishMaker.UI
 			else if(trueType==9)
 			{
 				objectIdBox.Enabled = false;
-				data1Box.Enabled = false;
-				data2Box.Enabled = false;
-				data3Box.Enabled = false;
-				data4Box.Enabled = false;
-				data5Box.Enabled = false;
-				posXBox.Enabled = false;
-				posYBox.Enabled = false;
-				flag1Box.Enabled = false;
-				flag2Box.Enabled = false;
 			}
 			else
 			{
+				objectIdValue.Enabled = false;
 				objectIdBox.Enabled = false;
 				data1Box.Enabled = false;
 				data2Box.Enabled = false;
@@ -405,6 +399,26 @@ namespace MinishMaker.UI
 				obj.objectId = newVal;
 				currentList[objectIndex] = obj;
 				AddChange();
+				SetData();
+			}
+			catch
+			{
+				SetData();
+			}
+		}
+
+		private void objectIdValue_TextChanged( object sender, EventArgs e )
+		{
+			if(!shouldTrigger)
+				return;
+			try
+			{
+				var newVal = Convert.ToByte(objectIdValue.Text,16);
+				var obj = currentList[objectIndex];
+				obj.objectId = newVal;
+				currentList[objectIndex] = obj;
+				AddChange();
+				SetData();
 			}
 			catch
 			{
