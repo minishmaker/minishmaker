@@ -344,7 +344,10 @@ namespace MinishMaker.Core
 			}
 
 			if(!loadedChanges.Any(x=>x.Compare(change))) //change not yet already written
+			{ 
 				mainWriter.WriteLine("#include \"./Areas"+change.GetFolderLocation()+"/"+fileName+"\"");
+				loadedChanges.Add(change);
+			}
         }
 
         public bool BuildProject()
