@@ -105,6 +105,7 @@ namespace MinishMaker.UI
 
 			removeButton.Enabled = currentList.Count!=0;
 			objectTypeBox.Enabled = true;
+			objectTypeValue.Enabled = true;
 			objectIdValue.Enabled= true;
 			objectIdBox.Enabled = true;
 			data1Box.Enabled = true;
@@ -116,6 +117,8 @@ namespace MinishMaker.UI
 			posYBox.Enabled = true;
 			flag1Box.Enabled = true;
 			flag2Box.Enabled = true;
+			unknownBox.Enabled = true;
+			
 
 			var currentObject = currentList[objectIndex];
 			((MainWindow)Application.OpenForms[0]).HighlightListObject(currentObject.pixelX,currentObject.pixelY);
@@ -144,23 +147,9 @@ namespace MinishMaker.UI
 				objectIdBox.DataSource = Enum.GetValues(typeof(NPCTypes));
 				objectIdBox.SelectedItem = (NPCTypes)currentObject.objectId;
 			}
-			else if(trueType==9)
-			{
-				objectIdBox.Enabled = false;
-			}
 			else
 			{
-				objectIdValue.Enabled = false;
 				objectIdBox.Enabled = false;
-				data1Box.Enabled = false;
-				data2Box.Enabled = false;
-				data3Box.Enabled = false;
-				data4Box.Enabled = false;
-				data5Box.Enabled = false;
-				posXBox.Enabled = false;
-				posYBox.Enabled = false;
-				flag1Box.Enabled = false;
-				flag2Box.Enabled = false;
 			}
 
 			objectTypeBox.SelectedItem = (ObjectCategories)currentObject.objectType;
@@ -433,6 +422,43 @@ namespace MinishMaker.UI
 			try
 			{
 				var newVal = (byte)(int)objectTypeBox.SelectedItem;
+				var obj = currentList[objectIndex];
+				obj.objectType = newVal;
+				currentList[objectIndex] = obj;
+				AddChange();
+				SetData();
+			}
+			catch
+			{
+				SetData();
+			}
+		}
+
+		private void unknownBox_TextChanged( object sender, EventArgs e )
+		{
+			if(!shouldTrigger)
+				return;
+			try
+			{
+				var newVal = Convert.ToByte(unknownBox.Text,16);
+				var obj = currentList[objectIndex];
+				obj.objectSub = newVal;
+				currentList[objectIndex] = obj;
+				AddChange();
+			}
+			catch
+			{
+				SetData();
+			}
+		}
+
+		private void objectTypeValue_TextChanged( object sender, EventArgs e )
+		{
+			if(!shouldTrigger)
+				return;
+			try
+			{
+				var newVal = Convert.ToByte(objectTypeValue.Text,16);
 				var obj = currentList[objectIndex];
 				obj.objectType = newVal;
 				currentList[objectIndex] = obj;
