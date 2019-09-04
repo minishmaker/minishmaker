@@ -208,7 +208,7 @@ namespace MinishMaker.Core
 							var entry = mainSets.SingleOrDefault(x=>file.Contains(x));
 							if(entry !=null)
 							{
-								mainSets.Remove(file);
+								mainSets.Remove(entry);
 							}
 							else
 							{ 
@@ -240,7 +240,7 @@ namespace MinishMaker.Core
 								var entry = mainSets.SingleOrDefault(x=>file.Contains(x));
 								if(entry!=null)
 								{
-									mainSets.Remove(file);
+									mainSets.Remove(entry);
 								}
 								else
 								{ 
@@ -272,15 +272,16 @@ namespace MinishMaker.Core
 
 			foreach(var line in remaining)
 			{
-				var pos = text.IndexOf(line);
+				var newline = line.Replace("\\","/");
+				var pos = text.IndexOf(newline);
 				if(pos == -1)
 				{
 					Debug.WriteLine("Didnt find include line: "+ line);
 				}
 				else
 				{
-					var length = line.Length+9; //#include + space
-					text.Remove(pos-9,length);
+					var length = newline.Length+14; //#include(8) + space(1) + ""(2) + \r\n(4)
+					text=text.Remove(pos-13,length);
 				}
 
 				File.WriteAllText(projectPath+"/Main.event",text);
