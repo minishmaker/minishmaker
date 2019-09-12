@@ -55,7 +55,7 @@ namespace MinishMaker.Core
             pixels[(x * 4) + (y * bd.Stride) + 0] = c.B; //B
             pixels[(x * 4) + (y * bd.Stride) + 1] = c.G; //G
             pixels[(x * 4) + (y * bd.Stride) + 2] = c.R; //R
-            pixels[(x * 4) + (y * bd.Stride) + 3] = 255; //A
+            pixels[(x * 4) + (y * bd.Stride) + 3] = c.A; //A
         }
 
         //draws a quarter tile
