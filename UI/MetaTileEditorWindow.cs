@@ -28,9 +28,21 @@ namespace MinishMaker.UI
 		{
 			InitializeComponent();
 			selectedMetaGridBox.Click+= selectedMetaTileBox_Click;
+			tLPalette.KeyDown +=EnterUnfocus;
+			tRPalette.KeyDown +=EnterUnfocus;
+			bLPalette.KeyDown +=EnterUnfocus;
+			bRPalette.KeyDown +=EnterUnfocus;
 		}
 
 		//control functions start here
+		private void EnterUnfocus(object sender, KeyEventArgs e)
+		{
+			if(e.KeyCode==Keys.Enter)
+			{
+				HiddenLabel.Focus();
+			}
+		}
+
 		private void tileSetGridBox_Click( object sender, EventArgs e )
 		{
 			if( tileSetGridBox.Image == null )
@@ -277,13 +289,13 @@ namespace MinishMaker.UI
 
 		public void DrawTileset( TileSet tset, Color[][] palettes )
 		{
-			tileset[0] = new Bitmap( 128, 0x200 ); //0x200 * 8 /16 = 0x200 * 0.5
-			tileset[1] = new Bitmap( 128, 0x200 );
+			tileset[0] = new Bitmap( 256, 0x100 ); //0x200 * 8 /16 = 0x200 * 0.5
+			tileset[1] = new Bitmap( 256, 0x100 );
 
 			for( int tnum = 0; tnum < 0x400; tnum++ )
 			{
-				var xpos = tnum % 0x10; //tiles
-				var ypos = (tnum - xpos) / 0x10; //tiles
+				var xpos = tnum % 0x20; //tiles
+				var ypos = (tnum - xpos) / 0x20; //tiles
 				ypos *= 8; //pixels
 				xpos *= 8; //pixels
 				tset.DrawQuarterTile( ref tileset[0], new Point( xpos, ypos ), tnum + 0x200, palettes[pnum], false, false, true );

@@ -60,6 +60,16 @@
     <StartupObject>MinishMaker.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.WindowsAPICodePack-Core.1.1.0.2\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.Shell, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.WindowsAPICodePack-Shell.1.1.0.0\lib\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.ShellExtensions, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.WindowsAPICodePack-Shell.1.1.0.0\lib\Microsoft.WindowsAPICodePack.ShellExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -80,7 +90,18 @@
     <Compile Include="Core\ChangeTypes\ChestDataChange.cs" />
     <Compile Include="Core\ChangeTypes\Bg1MetaTileSetChange.cs" />
     <Compile Include="Core\ChangeTypes\Change.cs" />
+    <Compile Include="Core\ChangeTypes\List2DataChange.cs" />
+    <Compile Include="Core\ChangeTypes\List3DataChange.cs" />
+    <Compile Include="Core\ChangeTypes\List1DataChange.cs" />
+    <Compile Include="Core\ChangeTypes\RoomMetadataChange.cs" />
+    <Compile Include="Core\ChangeTypes\WarpDataChange.cs" />
     <Compile Include="Core\Project.cs" />
+    <Compile Include="UI\AreaEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\AreaEditor.Designer.cs">
+      <DependentUpon>AreaEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\ChestEditorWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -98,6 +119,24 @@
     </Compile>
     <Compile Include="UI\MetaTileEditorWindow.Designer.cs">
       <DependentUpon>MetaTileEditorWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\ObjectPlacementEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\ObjectPlacementEditor.Designer.cs">
+      <DependentUpon>ObjectPlacementEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\WarpEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\WarpEditor.Designer.cs">
+      <DependentUpon>WarpEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\NewProjectWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\NewProjectWindow.Designer.cs">
+      <DependentUpon>NewProjectWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Utilities\DataHelper.cs" />
     <Compile Include="Core\MapManager.cs" />
@@ -126,6 +165,9 @@
     <Compile Include="Utilities\Reader.cs" />
     <Compile Include="Utilities\StringUtil.cs" />
     <Compile Include="Utilities\Writer.cs" />
+    <EmbeddedResource Include="UI\AreaEditor.resx">
+      <DependentUpon>AreaEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\GridBox.resx">
       <DependentUpon>GridBox.cs</DependentUpon>
     </EmbeddedResource>
@@ -152,6 +194,16 @@
     <EmbeddedResource Include="UI\MetaTileEditorWindow.resx">
       <DependentUpon>MetaTileEditorWindow.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\ObjectPlacementEditor.resx">
+      <DependentUpon>ObjectPlacementEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\WarpEditor.resx">
+      <DependentUpon>WarpEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\NewProjectWindow.resx">
+      <DependentUpon>NewProjectWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

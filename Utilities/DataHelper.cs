@@ -42,7 +42,7 @@ namespace MinishMaker.Core
 		private static byte[] GetUncompressed( int addr, int size )
 		{
 			var r = ROM.Instance.reader;
-			return r.ReadBytes( size << 2, 0 );
+			return r.ReadBytes( size << 2, addr );
 		}
 
 		private static int Unwrap( byte[] data )

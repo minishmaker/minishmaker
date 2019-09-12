@@ -200,9 +200,8 @@
             this.indexLabel.AutoSize = true;
             this.indexLabel.Location = new System.Drawing.Point(35, 16);
             this.indexLabel.Name = "indexLabel";
-            this.indexLabel.Size = new System.Drawing.Size(19, 13);
+            this.indexLabel.Size = new System.Drawing.Size(0, 13);
             this.indexLabel.TabIndex = 16;
-            this.indexLabel.Text = "";
             // 
             // nextButton
             // 
@@ -269,7 +268,10 @@
             this.Controls.Add(this.entityId);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.entityType);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "ChestEditorWindow";
             this.Text = "ChestEditor";
             this.ResumeLayout(false);

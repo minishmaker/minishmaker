@@ -21,6 +21,10 @@ namespace MinishMaker.Core
 			get { return tset;}
 		}
 
+		public Point roomSize
+		{
+			get{return new Point(metadata.TileWidth,metadata.TileHeight);}
+		}
 		private PaletteSet pset;
 		public Color[][] palettes
 		{
@@ -369,6 +373,15 @@ namespace MinishMaker.Core
 					return bg1MetaTiles.GetCompressedMetaTileSet(ref data);
 				case DataType.bg2MetaTileSet:
 					return bg2MetaTiles.GetCompressedMetaTileSet(ref data);
+				case DataType.list1Data:
+					return metadata.GetList1Data(ref data);
+				case DataType.list2Data:
+					return metadata.GetList2Data(ref data);
+				case DataType.list3Data:
+					return metadata.GetList3Data(ref data);
+				case DataType.warpData:
+					return metadata.GetWarpData(ref data);
+				
                 default:
                     return 0;
             }
@@ -425,12 +438,14 @@ namespace MinishMaker.Core
 					try
 					{
 						if( pos != 0xFFFF )
-						{
-							bg1MetaTiles.DrawMetaTile( ref bg1, new Point( i * 16, j * 16 ), tset, pset, pos, true );
-							bg2MetaTiles.DrawMetaTile( ref bg2, new Point( i * 16, j * 16 ), tset, pset, pos, true );
+						{	if(bg1Exists)
+								bg1MetaTiles.DrawMetaTile( ref bg1, new Point( i * 16, j * 16 ), tset, pset, pos, true );
+
+							if(bg2Exists)
+								bg2MetaTiles.DrawMetaTile( ref bg2, new Point( i * 16, j * 16 ), tset, pset, pos, true );
 						}
 					}
-					catch( Exception )
+					catch( ArgumentException )
 					{
 						Debug.WriteLine( "end of metatile file: " + (pos % 256).Hex() + "|" + (pos / 256).Hex() );
 						Debug.WriteLine( "" );
@@ -459,13 +474,38 @@ namespace MinishMaker.Core
             metadata.RemoveChestData(data);
         }
 
+		public List<ObjectData> GetList1Data()
+		{
+			return metadata.List1Information;
+		}
+
+		public List<ObjectData> GetList2Data()
+		{
+			return metadata.List2Information;
+		}
+
+		public List<ObjectData> GetList3Data()
+		{
+			return metadata.List3Information;
+		}
+
+		public List<WarpData> GetWarpData()
+		{
+			return metadata.WarpInformation;
+		}
+
 		public byte[] GetMetaTileData(int tileNum, int layer)
 		{
+			
 			switch(layer)
 			{
 				case 1:
+					if(!this.bg1Exists)
+						return null;
 					return bg1MetaTiles.GetTileInfo(tileNum);
 				case 2:
+					if(!this.bg2Exists)
+						return null;
 					return bg2MetaTiles.GetTileInfo(tileNum);
 				default:			
 					return null;
@@ -482,6 +522,25 @@ namespace MinishMaker.Core
 				case 2:
 					bg2MetaTiles.SetTileInfo(data, tileNum);
 					break;
+			}
+		}
+
+		public Rectangle GetMapRect(int areaIndex)
+		{
+			if(metadata==null)
+			{
+				metadata = new RoomMetaData( areaIndex, this.Index );
+			}
+
+			return new Rectangle(new Point(metadata.mapPosX,metadata.mapPosY),new Size(metadata.TileWidth,metadata.TileHeight));
+		}
+
+		public void SetMapPosition(int x, int y)
+		{
+			if(x>0 &&y>0 && x<0x10000 &&y<0x10000)
+			{
+				metadata.mapPosX = x;
+				metadata.mapPosY = y;
 			}
 		}
 	}

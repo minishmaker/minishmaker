@@ -18,7 +18,7 @@ namespace MinishMaker.UI
         private Color hoverColor = Color.White;
         private Color selectedColor = Color.Red;
         private Size selectionSize = new Size(16, 16);
-        private int selectedIndex = 0;
+        private int selectedIndex = -1;
         public bool canSelect = true;
         public bool canHover = true;
         private bool allowMultiSelection = false;
@@ -30,6 +30,10 @@ namespace MinishMaker.UI
         private Pen selectionPen = new Pen(Color.Red, 2);
         private InterpolationMode mode = InterpolationMode.NearestNeighbor;
 
+		private Pen chestPen = new Pen(Color.Yellow,2);
+		public Point chestHighlightPoint= new Point(-1,-1);
+		public Point listObjectHighlightPoint= new Point(-1,-1);
+		public Point warpHighlightPoint= new Point(-1,-1);
 
         public GridBox()
         {
@@ -134,11 +138,28 @@ namespace MinishMaker.UI
                         Point p = GetIndexPoint(selectedIndex);
                         e.Graphics.DrawRectangle(selectionPen, p.X, p.Y, selectionSize.Width, selectionSize.Height);
                     }
-                    else
-                    {
-                        Point p = GetIndexPoint(selectedIndex);
-                        e.Graphics.DrawRectangle(selectionPen, p.X, p.Y, selectionSize.Width * selectionRectangle.Width, selectionSize.Height * selectionRectangle.Height);
-                    }
+                    //else
+                    //{
+                    //    Point p = GetIndexPoint(selectedIndex);
+                    //    e.Graphics.DrawRectangle(selectionPen, p.X, p.Y, selectionSize.Width * selectionRectangle.Width, selectionSize.Height * selectionRectangle.Height);
+                    //}
+
+					if(chestHighlightPoint.X!=-1)
+					{
+                        e.Graphics.DrawRectangle(chestPen, chestHighlightPoint.X*16+2, chestHighlightPoint.Y*16+2, 12, 12);
+					}
+
+					if(listObjectHighlightPoint.X!=-1)
+					{
+						e.Graphics.DrawLine(selectionPen, listObjectHighlightPoint.X-5, listObjectHighlightPoint.Y-5, listObjectHighlightPoint.X+5, listObjectHighlightPoint.Y+5);
+						e.Graphics.DrawLine(selectionPen, listObjectHighlightPoint.X+5, listObjectHighlightPoint.Y-5, listObjectHighlightPoint.X-5, listObjectHighlightPoint.Y+5);
+					}
+
+					if(warpHighlightPoint.X!=-1)
+					{
+						e.Graphics.DrawLine(selectionPen, warpHighlightPoint.X-15, warpHighlightPoint.Y, warpHighlightPoint.X+15, warpHighlightPoint.Y);
+						e.Graphics.DrawLine(selectionPen, warpHighlightPoint.X, warpHighlightPoint.Y-15, warpHighlightPoint.X, warpHighlightPoint.Y+15);
+					}
                 }
 
                 if (canHover)
