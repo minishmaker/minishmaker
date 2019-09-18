@@ -66,7 +66,6 @@
             // areaLayout
             // 
             this.areaLayout.BackColor = System.Drawing.Color.Transparent;
-            this.areaLayout.Dock = System.Windows.Forms.DockStyle.Fill;
             this.areaLayout.Location = new System.Drawing.Point(0, 0);
             this.areaLayout.Name = "areaLayout";
             this.areaLayout.Size = new System.Drawing.Size(400, 400);
@@ -244,6 +243,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(424, 500);
             this.Controls.Add(this.areaNameId);
             this.Controls.Add(this.label1);
