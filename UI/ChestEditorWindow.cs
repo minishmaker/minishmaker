@@ -253,6 +253,7 @@ namespace MinishMaker.UI
                 xPosition.Enabled = true;
                 yPosition.Enabled = true;
                 entityId.Enabled = true;
+                unknown.Text = chestData.unknown.Hex();
             }
 			else
 			{
@@ -456,5 +457,30 @@ namespace MinishMaker.UI
 				itemAmount.Show();
 			}
 		}
+
+        private void unknown_LostFocus(object sender, EventArgs e)
+        {
+            if (!unknown.IsHandleCreated)
+                return;
+
+            var chest = chestDataList[chestIndex];
+            try
+            {
+                var extraval = Convert.ToByte(unknown.Text);
+
+                if (extraval == chest.itemSubNumber)
+                    return;
+
+                MainWindow.AddPendingChange(new ChestDataChange(MainWindow.currentArea, MainWindow.currentRoom.Index));
+
+                chest.unknown = extraval;
+            }
+            catch
+            {
+                unknown.Text = chest.unknown.Hex();
+            }
+
+            chestDataList[chestIndex] = chest;
+        }
     }
 }
