@@ -122,7 +122,7 @@ namespace MinishMaker.UI
 				prevButton.Enabled = false;
 				nextButton.Enabled = false;
 
-				newButton.Enabled = false;
+				newButton.Enabled = true;
 				removeButton.Enabled = false;
 
 				ControlBorderPanel(false);
@@ -562,6 +562,10 @@ namespace MinishMaker.UI
 			{
 				return;
 			}
+
+
+            if (warpDataList.Count == 0)
+                warpIndex = -1;
 
 			MainWindow.AddPendingChange(new WarpDataChange(MainWindow.currentArea, MainWindow.currentRoom.Index));
 			var data = new byte[20] {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
