@@ -807,6 +807,9 @@ namespace MinishMaker.UI
 
         private void WriteTile (Point p, int pos, int tileData, int layer)
         {
+            if (p.X < 0 || p.Y < 0 || p.X > currentRoom.roomSize.X * 16 || p.Y > currentRoom.roomSize.Y * 16)
+                return;
+
             if (layer == 1 && currentRoom.Bg1Exists)
             {
                 currentRoom.DrawTile(ref mapLayers[0], p, currentArea, selectedLayer, tileData);
