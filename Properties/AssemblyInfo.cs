@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -8,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Minish Maker")]
 [assembly: AssemblyDescription("Level editor for The Legend of Zelda: The Minish Cap")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Team MinishMaker")]
+[assembly: AssemblyCompany("Team Minish Maker")]
 [assembly: AssemblyProduct("Minish Maker")]
 [assembly: AssemblyCopyright("Copyright © 2019 Team MinishMaker")]
 [assembly: AssemblyTrademark("")]
@@ -32,5 +33,27 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("0.5.0")]
+[assembly: AssemblyFileVersion("0.5.0")]
+
+namespace MinishMaker.Properties
+{
+    public static class AssemblyInfo
+    {
+        /// <summary> Gets the git hash value from the assembly
+        /// or null if it cannot be found. </summary>
+        public static string GetGitHash()
+        {
+            var asm = typeof(AssemblyInfo).Assembly;
+            var attrs = asm.GetCustomAttributes<AssemblyMetadataAttribute>();
+            return attrs.FirstOrDefault(a => a.Key == "GitHash")?.Value;
+        }
+
+        public static string GetGitTag()
+        {
+            var asm = typeof(AssemblyInfo).Assembly;
+            var attrs = asm.GetCustomAttributes<AssemblyMetadataAttribute>();
+            return attrs.FirstOrDefault(a => a.Key == "GitTag")?.Value;
+        }
+    }
+}

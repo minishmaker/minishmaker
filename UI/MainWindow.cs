@@ -8,6 +8,7 @@ using MinishMaker.Core;
 using MinishMaker.Utilities;
 using System.Drawing;
 using MinishMaker.Core.ChangeTypes;
+using MinishMaker.Properties;
 
 
 namespace MinishMaker.UI
@@ -64,10 +65,10 @@ namespace MinishMaker.UI
             Bottom
         }
 
-        public MainWindow()
+		public MainWindow()
         {
             InitializeComponent();
-
+            UpdateWindowTitle();
             /*
 			var exeFolder = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).Substring(6);
 			if(File.Exists(exeFolder+"/Settings.cfg"))
@@ -93,6 +94,15 @@ namespace MinishMaker.UI
 				statusText.Text = "Opened last project: "+pName;
 			}
             */
+        }
+
+        private void UpdateWindowTitle()
+        {
+#if DEBUG
+            this.Text = $"{ProductName} {AssemblyInfo.GetGitTag()} DEBUG-{AssemblyInfo.GetGitHash()}";
+#else
+            this.Text = $"{ProductName} {AssemblyInfo.GetGitTag()}";
+#endif
         }
 
         #region MenuBarButtons
@@ -162,18 +172,18 @@ namespace MinishMaker.UI
             OpenObjectPlacementEditor();
         }
 
-        private void AboutButtonClick(object sender, EventArgs e)
-        {
-            Form aboutWindow = new AboutWindow();
-            aboutWindow.Show();
-        }
-        #endregion
+        private void AboutButtonClick( object sender, EventArgs e )
+		{
+			Form aboutWindow = new AboutWindow();
+			aboutWindow.Show();
+		}
+#endregion
 
-        #region ToolStripButtons
-        private void openToolStripButton_Click(object sender, EventArgs e)
-        {
-            OpenProject();
-        }
+#region ToolStripButtons
+        private void openToolStripButton_Click( object sender, EventArgs e )
+		{
+			OpenProject();
+		}
 
         private void saveToolStripButton_Click(object sender, EventArgs e)
         {
@@ -205,9 +215,9 @@ namespace MinishMaker.UI
             OpenWarpEditor();
         }
 
-        #endregion
+#endregion
 
-        #region OtherInteractions
+#region OtherInteractions
 
         // Other interactions
         private void tileTabControl_SelectedIndexChanged(object sender, EventArgs e)
@@ -219,10 +229,10 @@ namespace MinishMaker.UI
         private void MainWindow_DragDrop(object sender, DragEventArgs e)
         {
 
-        }
-        #endregion
+		}
+#endregion
 
-        #region ProjectManagement
+#region ProjectManagement
 
         private void NewProject()
         {
@@ -404,7 +414,7 @@ namespace MinishMaker.UI
 
         }
 
-        #endregion
+#endregion
 
         private void LoadMaps()
         {
@@ -859,9 +869,9 @@ namespace MinishMaker.UI
                 }
             }
         }
-        #endregion
+#endregion
 
-        #region TilesetInteraction	  
+#region TilesetInteraction	  
         private void bottomTileGridBox_MouseDown(object sender, MouseEventArgs e)
         {
             if (currentRoom == null)
@@ -881,7 +891,7 @@ namespace MinishMaker.UI
             selectedLayer = 1;
             selectedTileData = topTileGridBox.SelectedIndex;
         }
-        #endregion
+#endregion
 
         private void WriteTile(Point p, int pos, int tileData, int layer)
         {
