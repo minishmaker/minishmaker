@@ -126,6 +126,12 @@
     <Compile Include="UI\ObjectPlacementEditor.Designer.cs">
       <DependentUpon>ObjectPlacementEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\RenameWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\RenameWindow.Designer.cs">
+      <DependentUpon>RenameWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\WarpEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -197,6 +203,9 @@
     <EmbeddedResource Include="UI\ObjectPlacementEditor.resx">
       <DependentUpon>ObjectPlacementEditor.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\RenameWindow.resx">
+      <DependentUpon>RenameWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\WarpEditor.resx">
       <DependentUpon>WarpEditor.cs</DependentUpon>
     </EmbeddedResource>
@@ -217,9 +226,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="Vendor\ColorzCore\ColorzCore\ColorzCore.csproj">
       <Project>{b98f7ccf-9caa-406e-88d7-2040fa99f631}</Project>
@@ -232,6 +239,11 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\StandardNames.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

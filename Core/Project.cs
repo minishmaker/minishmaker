@@ -4,6 +4,7 @@ using MinishMaker.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -43,6 +44,7 @@ namespace MinishMaker.Core
         private List<Change> loadedChanges;
 		private StreamWriter mainWriter;
         private ROM ROM_;
+		public Dictionary<Tuple<int,int> , string> roomNames = new Dictionary<Tuple<int, int>, string>();
 
         // Create mode
         public Project(string name, string baseRom, string projectFolder)
@@ -51,6 +53,11 @@ namespace MinishMaker.Core
 
             projectName = name;
             projectPath = projectFolder;
+			var exeFolder = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).Substring(6);
+			
+			roomNames.Clear();
+			var baseNames = File.ReadAllLines(exeFolder + "\\Resources\\StandardNames.txt");
+            LoadRoomNames(baseNames);
 
             // Double check directory
             if (!Directory.Exists(projectPath))
@@ -63,10 +70,18 @@ namespace MinishMaker.Core
             File.WriteAllBytes(projectPath + "/baserom.gba", copy);
 
             // Create project file data
-            var lines = new String[2];
-            lines[0] = "projectName=" + projectName;
-            lines[1] = "baseROM=" + "baserom.gba";
-            File.WriteAllLines(projectPath + "/" + projectName + ".mmproj", lines);
+			var sb = new StringBuilder();
+			sb.AppendLine("projectName=" + projectName);
+			sb.AppendLine("baseROM=" + "baserom.gba");
+
+            foreach (string line in baseNames)
+			{
+				sb.AppendLine(line);
+			}
+
+            
+
+            File.WriteAllText(projectPath + "/" + projectName + ".mmproj", sb.ToString());
 
             ROM_ = new ROM(projectPath + "/baserom.gba");
 
@@ -74,6 +89,24 @@ namespace MinishMaker.Core
             LoadProject();
         }
 
+
+        public void CreateProjectFile()
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("projectName=" + projectName);
+            sb.AppendLine("baseROM=" + "baserom.gba");
+
+            foreach (KeyValuePair<Tuple<int,int>,string> set in roomNames)
+            {
+                var area = set.Key.Item1.Hex();
+                var room = set.Key.Item2.Hex();
+                var name = set.Value;
+
+                sb.AppendLine("roomName=" + area + "," + room + "," + name);
+            }
+
+            File.WriteAllText(projectPath + "/" + projectName + ".mmproj", sb.ToString());
+        }
         public Project(string projectFile)
         {
             Instance = this;
@@ -87,6 +120,15 @@ namespace MinishMaker.Core
             projectName = settings.Single(x => x.Contains("projectName")).Split('=')[1];
 
             projectPath = Path.GetDirectoryName(projectFile);
+
+            var nameSets = settings.Where(x => x.Split('=')[0] == "roomName").ToArray();
+            if (nameSets.Length == 0)
+            {
+                var exeFolder = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).Substring(6);
+                nameSets = File.ReadAllLines(exeFolder + "\\Resources\\StandardNames.txt");
+            }
+
+            LoadRoomNames(nameSets);
 
             ROM_ = new ROM(projectPath + "/baserom.gba");
 
@@ -373,5 +415,70 @@ namespace MinishMaker.Core
             else
                 return false;
         }
+
+		private void LoadRoomNames(string[] nameSets)
+		{ 
+			foreach(string nameSet in nameSets)
+			{ 
+				var parts = nameSet.Split('=');
+				var areaId = -1;
+				var roomId = -1;
+                var roomName = "";
+				var valParts = parts[1].Split(',');
+
+				if(parts.Length!=2)
+				{ 
+					throw new Exception("Invalid line: "+nameSet);
+				}
+
+                if (valParts.Length == 3)
+                {
+                    var success = false;
+
+                    success = Int32.TryParse(valParts[0].TrimStart(' ').TrimEnd(' '),NumberStyles.HexNumber, CultureInfo.InvariantCulture, out areaId);
+                    if(!success)
+				    { 
+				    	throw new Exception("Invalid area value on line: "+nameSet);
+				    }
+                    var roomval = valParts[1].TrimStart(' ').TrimEnd(' ');
+                    var neg = false;
+
+                    if (roomval.Contains('-')) //because none of the parsers can do negatives on hex value conversion
+                    {
+                        neg = true;
+                        roomval = roomval.TrimStart('-');
+                    }
+
+                    success = Int32.TryParse(roomval, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out roomId);
+                    if (!success)
+                    {
+                        throw new Exception("Invalid room value on line: " + nameSet);
+                    }
+
+                    if (neg)
+                    {
+                        roomId *= -1;
+                    }
+                    roomName = valParts[2].TrimStart(' ').TrimEnd(' ');
+                }
+                else if (valParts.Length > 3)
+                {
+                    throw new Exception("Too many values on line: " + nameSet);
+                }
+                else
+                {
+                    throw new Exception("Too few values on line: " + nameSet);
+                }
+
+				var keyTupple = new Tuple<int,int>(areaId,roomId);
+
+                if (roomNames.ContainsKey(keyTupple))
+                {
+                    throw new Exception("A name for this room already exists: 1:" + roomNames[keyTupple] +" | 2:"+ roomName);
+                }
+
+				roomNames.Add(keyTupple,roomName);
+			}
+		}
     }
 }
