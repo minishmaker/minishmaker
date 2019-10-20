@@ -223,6 +223,7 @@
     <EmbeddedResource Include="UI\NewProjectWindow.resx">
       <DependentUpon>NewProjectWindow.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include=".editorconfig" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -266,11 +267,9 @@
       <TagFile>$(IntermediateOutputPath)gittag</TagFile>
       <VerFile>$(IntermediateOutputPath)gitver</VerFile>
     </PropertyGroup>
-
     <!-- write the hash to the temp file.-->
     <Exec Command="git -C $(ProjectDir) describe --abbrev=0 --tags &gt; $(TagFile)" />
     <Exec Command="git -C $(ProjectDir) rev-parse --short HEAD &gt; $(VerFile)" />
-
     <!-- read the version into the GitVersion itemGroup-->
     <ReadLinesFromFile File="$(VerFile)">
       <Output TaskParameter="Lines" ItemName="GitVersion" />
@@ -284,7 +283,7 @@
     </PropertyGroup>
     <PropertyGroup>
       <BuildTag>@(GitTag)</BuildTag>
-    </PropertyGroup>      
+    </PropertyGroup>
   </Target>
   <Target Name="WriteGitHash" BeforeTargets="CoreCompile">
     <!-- names the obj/.../CustomAssemblyInfo.cs file -->

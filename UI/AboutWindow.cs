@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using MinishMaker.Properties;
 
 namespace MinishMaker.UI
 {
@@ -15,6 +16,15 @@ namespace MinishMaker.UI
         public AboutWindow()
         {
             InitializeComponent();
+
+            // This is lazy, do something nicer later
+            label1.Text = $"{ProductName}" +
+                $"\n{AssemblyInfo.GetGitTag()}" +
+                "\n\nDeveloped by" +
+                "\nMikesky" +
+                "\nwjg999" +
+                "\nBerylliosis" +
+                "\n\n Game research by ppltoast and Leonarth";
         }
 
         private void linkLabel1_Click(object sender, EventArgs e)
