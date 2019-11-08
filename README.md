@@ -6,7 +6,7 @@
 
 Minish Maker is a level editor for The Legend of Zelda: The Minish Cap.
 
-Current version: 0.4.0a
+Current version: 0.5.0a
 
 The project is still in early development and will not see a full release for a while.
 However, prerelease binaries will be made available as each featureset is implemented.
