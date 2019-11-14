@@ -559,64 +559,7 @@ namespace MinishMaker.UI
                 int roomIndex = Convert.ToInt32(e.Node.Name, 16);
                 statusRoomIdText.Text = "Room Id:" + roomIndex.Hex().PadLeft(2, '0'); ;
                 statusAreaIdText.Text = "Area Id:" + areaIndex.Hex().PadLeft(2, '0'); ;
-                var prevArea = currentArea; //changed in next line so hold temporarily
-                var room = FindRoom(areaIndex, roomIndex);
-
-                currentRoom = room;
-
-                mapLayers = room.DrawRoom(areaIndex, true, true);
-
-                selectedTileData = -1;
-                tileTabControl.SelectedIndex = 1; // Reset to bg2
-
-                //0= bg1 (treetops and such)
-                //1= bg2 (flooring)
-                mapGridBox.Image = OverlayImage(mapLayers[1], mapLayers[0]);
-                tileMaps = room.DrawTilesetImages(16, currentArea);
-                bottomTileGridBox.Image = tileMaps[1];
-                topTileGridBox.Image = tileMaps[0];
-
-                mapGridBox.Selectable = true;
-                mapGridBox.SelectedIndex = -1;
-                bottomTileGridBox.Selectable = true;
-                topTileGridBox.Selectable = true;
-
-                if (chestEditor != null)
-                {
-                    var chestData = currentRoom.GetChestData();
-                    chestEditor.SetData(chestData);
-                }
-
-                if (metatileEditor != null)
-                {
-                    metatileEditor.currentArea = currentArea;
-                    room = MapManager.Instance.MapAreas.Single(a => a.Index == currentArea).Rooms.First();
-                    if (!room.Loaded)
-                    {
-                        room.LoadRoom(currentArea);
-                    }
-                    metatileEditor.RedrawTiles(currentRoom);
-                }
-
-                if (areaEditor != null && currentArea != prevArea)//still in the same area? dont reload
-                {
-                    areaEditor.LoadArea(areaIndex);
-                }
-
-                /*if(enemyPlacementEditor != null)
-				{
-					enemyPlacementEditor.LoadData();
-				}*/
-
-                if (warpEditor != null)
-                {
-                    warpEditor.LoadData();
-                }
-
-                if (objectPlacementEditor != null)
-                {
-                    objectPlacementEditor.LoadData();
-                }
+                ChangeRoom(areaIndex, roomIndex);
             }
         }
 
@@ -711,8 +654,7 @@ namespace MinishMaker.UI
         private Room FindRoom(int areaIndex, int roomIndex)
         {
             int foundIndex = 0;
-
-            currentArea = areaIndex;
+			
             for (int i = 0; i < mapManager_.MapAreas.Count; i++)
             {
                 if (mapManager_.MapAreas[i].Index == areaIndex)
@@ -942,6 +884,84 @@ namespace MinishMaker.UI
         {
            var node = roomTreeView.SelectedNode;
             RoomRenameContext(node);
+        }
+
+        public void ChangeRoom( int areaId, int roomId )
+        {
+            statusRoomIdText.Text = "Room Id:" + roomId.Hex().PadLeft( 2, '0' );
+            statusAreaIdText.Text = "Area Id:" + areaId.Hex().PadLeft( 2, '0' );
+            
+            var isDifferentArea = currentArea!=areaId;
+            var room = FindRoom( areaId, roomId );
+            currentArea = areaId;
+            currentRoom = room;
+            
+            mapLayers = room.DrawRoom( areaId, true, true );
+            
+            selectedTileData = -1;
+            tileTabControl.SelectedIndex = 1; // Reset to bg2
+            
+            //0= bg1 (treetops and such)
+            //1= bg2 (flooring)
+            mapGridBox.Image = OverlayImage( mapLayers[1], mapLayers[0] );
+            tileMaps = room.DrawTilesetImages( 16, currentArea );
+            bottomTileGridBox.Image = tileMaps[1];
+            topTileGridBox.Image = tileMaps[0];
+            
+            mapGridBox.Selectable = true;
+            mapGridBox.SelectedIndex = -1;
+            bottomTileGridBox.Selectable = true;
+            topTileGridBox.Selectable = true;
+            
+            if( chestEditor != null )
+            {
+            	var chestData = currentRoom.GetChestData();
+            	chestEditor.SetData( chestData );
+            }
+            
+            if( metatileEditor != null )
+            {
+            	metatileEditor.currentArea = currentArea;
+            	room = MapManager.Instance.MapAreas.Single( a => a.Index == currentArea ).Rooms.First();
+            	if( !room.Loaded )
+            	{
+            		room.LoadRoom( currentArea );
+            	}
+            	metatileEditor.RedrawTiles( currentRoom );
+            }
+            
+            if( areaEditor != null && isDifferentArea )//still in the same area? dont reload
+            {
+            	areaEditor.LoadArea( areaId );
+            }
+            
+            /*if(enemyPlacementEditor != null)
+            {
+            	enemyPlacementEditor.LoadData();
+            }*/
+            
+            if( warpEditor != null )
+            {
+            	warpEditor.LoadData();
+            }
+            
+            if( objectPlacementEditor != null )
+            {
+            	objectPlacementEditor.LoadData();
+            }
+        }
+
+        public bool RoomExists( int areaId, int roomId )
+        {
+            try
+            {
+                FindRoom( areaId, roomId );
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

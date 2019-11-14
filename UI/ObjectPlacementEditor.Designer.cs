@@ -65,6 +65,8 @@
 			this.nextListButton = new System.Windows.Forms.Button();
 			this.objectTypeBox = new System.Windows.Forms.ComboBox();
 			this.objectTypeValue = new System.Windows.Forms.TextBox();
+			this.copyButton = new System.Windows.Forms.Button();
+			this.pasteButton = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// indexLabel
@@ -426,11 +428,35 @@
 			this.objectTypeValue.Text = "FF";
 			this.objectTypeValue.TextChanged += new System.EventHandler(this.objectTypeValue_TextChanged);
 			// 
+			// copyButton
+			// 
+			this.copyButton.Enabled = false;
+			this.copyButton.Location = new System.Drawing.Point(103, 188);
+			this.copyButton.Name = "copyButton";
+			this.copyButton.Size = new System.Drawing.Size(52, 20);
+			this.copyButton.TabIndex = 66;
+			this.copyButton.Text = "Copy";
+			this.copyButton.UseVisualStyleBackColor = true;
+			this.copyButton.Click += new System.EventHandler(this.copyButton_Click);
+			// 
+			// pasteButton
+			// 
+			this.pasteButton.Enabled = false;
+			this.pasteButton.Location = new System.Drawing.Point(167, 188);
+			this.pasteButton.Name = "pasteButton";
+			this.pasteButton.Size = new System.Drawing.Size(52, 20);
+			this.pasteButton.TabIndex = 67;
+			this.pasteButton.Text = "Paste";
+			this.pasteButton.UseVisualStyleBackColor = true;
+			this.pasteButton.Click += new System.EventHandler(this.pasteButton_Click);
+			// 
 			// ObjectPlacementEditor
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(284, 211);
+			this.Controls.Add(this.pasteButton);
+			this.Controls.Add(this.copyButton);
 			this.Controls.Add(this.objectTypeValue);
 			this.Controls.Add(this.objectTypeBox);
 			this.Controls.Add(this.label9);
@@ -516,5 +542,7 @@
 		private System.Windows.Forms.Button nextListButton;
 		private System.Windows.Forms.ComboBox objectTypeBox;
 		private System.Windows.Forms.TextBox objectTypeValue;
+		private System.Windows.Forms.Button copyButton;
+		private System.Windows.Forms.Button pasteButton;
 	}
 }

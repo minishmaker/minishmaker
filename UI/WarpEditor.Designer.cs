@@ -70,6 +70,7 @@
             this.blockImage = new System.Windows.Forms.PictureBox();
             this.label13 = new System.Windows.Forms.Label();
             this.areaPanel = new System.Windows.Forms.Panel();
+            this.travelButton = new System.Windows.Forms.Button();
             this.borderPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.blockImage)).BeginInit();
             this.areaPanel.SuspendLayout();
@@ -480,6 +481,16 @@
             this.areaPanel.Name = "areaPanel";
             this.areaPanel.Size = new System.Drawing.Size(109, 62);
             this.areaPanel.TabIndex = 60;
+            //
+            // travelButton
+            // 
+            this.travelButton.Location = new System.Drawing.Point(163, 223);
+            this.travelButton.Name = "travelButton";
+            this.travelButton.Size = new System.Drawing.Size(57, 20);
+            this.travelButton.TabIndex = 61;
+            this.travelButton.Text = "To room";
+            this.travelButton.UseVisualStyleBackColor = true;
+            this.travelButton.Click += new System.EventHandler(this.travelButton_Click);
             // 
             // WarpEditor
             // 
@@ -487,6 +498,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(261, 252);
             this.Controls.Add(this.areaPanel);
+            this.Controls.Add(this.travelButton);
             this.Controls.Add(this.borderPanel);
             this.Controls.Add(this.soundId);
             this.Controls.Add(this.label12);
@@ -570,5 +582,6 @@
 		private System.Windows.Forms.Label label13;
 		private System.Windows.Forms.Panel areaPanel;
 		private System.Windows.Forms.PictureBox blockImage;
+		private System.Windows.Forms.Button travelButton;
 	}
 }
