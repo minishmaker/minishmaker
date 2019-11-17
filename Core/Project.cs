@@ -217,15 +217,24 @@ namespace MinishMaker.Core
 				var file = File.Create(projectPath+"/Main.event");
 				using( StreamWriter s = new StreamWriter( file ) )
 				{
-					s.WriteLine("ORG "+(pos+1));
+					s.WriteLine("ORG " + (pos + 1));
+					s.WriteLine("#include \"./Patches.event\"");
 				}
+				file.Dispose();
+			}
+
+			if (!File.Exists(projectPath + "/Patches.event"))
+			{
+				var file = File.Create(projectPath + "/Patches.event");
 				file.Dispose();
 			}
 
 			var mainSets = File.ReadAllLines(projectPath+"/Main.event").ToList();
 			mainSets[0]= "ORG "+(pos+1);
+			mainSets[1]= "#include \"./Patches.event\""; 
 			File.WriteAllLines(projectPath+"/Main.event",mainSets);
 			mainSets.RemoveAt(0);
+			mainSets.RemoveAt(0); //2nd time to remove 2 lines
 			StartSave();
 			
 			mainSets = mainSets.Select(s => s.Substring(11).TrimEnd('\"').Replace('/','\\')).ToList();

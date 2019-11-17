@@ -340,6 +340,21 @@ namespace MinishMaker.UI
             if (renameWindow != null)
                 renameWindow.Close();
 
+            if (chestEditor != null)
+                chestEditor.Close();
+
+            if (areaEditor != null)
+                areaEditor.Close();
+
+            if (metatileEditor != null)
+                metatileEditor.Close();
+
+            if (objectPlacementEditor != null)
+                objectPlacementEditor.Close();
+
+            if (warpEditor != null)
+                warpEditor.Close();
+
             if (project_ == null)
             {
                 project_ = new Project(ofd.FileName);
@@ -436,7 +451,10 @@ namespace MinishMaker.UI
         private void OpenChestEditor()
         {
             if (chestEditorStripMenuItem.Checked)
+            {
+                chestEditor.Focus();
                 return; // dont open a second one
+            }
 
             chestEditor = new ChestEditorWindow();
 
@@ -465,7 +483,10 @@ namespace MinishMaker.UI
         private void OpenMetatileEditor()
         {
             if (metatileEditorToolStripMenuItem.Checked)
+            {
+                metatileEditor.Focus();
                 return; // dont open a second one
+            }
 
             metatileEditor = new MetaTileEditor();
 
@@ -494,7 +515,10 @@ namespace MinishMaker.UI
         private void OpenAreaEditor()
         {
             if (areaEditorToolStripMenuItem.Checked)
+            {
+                areaEditor.Focus();
                 return;
+            }
 
             areaEditor = new AreaEditor();
 
@@ -517,7 +541,10 @@ namespace MinishMaker.UI
         private void OpenWarpEditor()
         {
             if (warpEditorToolStripMenuItem.Checked)
+            { 
+                warpEditor.Focus();
                 return; // dont open a second one
+            }
 
             warpEditor = new WarpEditor();
             warpEditor.FormClosed += new FormClosedEventHandler(OnWarpEditorClose);
@@ -535,7 +562,10 @@ namespace MinishMaker.UI
         private void OpenObjectPlacementEditor()
         {
             if (objectPlacementEditorToolStripMenuItem.Checked)
+            { 
+                objectPlacementEditor.Focus();
                 return; // dont open a second one
+            }
 
             objectPlacementEditor = new ObjectPlacementEditor();
             objectPlacementEditor.FormClosed += new FormClosedEventHandler(OnObjectPlacementEditorClose);

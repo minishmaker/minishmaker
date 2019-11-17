@@ -461,13 +461,10 @@ namespace MinishMaker.Core
 				low = (byte)(data.unknown-(high<<8));
 				outdata[index+6] = low;
 				outdata[index+7] = high;
-
-				if(i == chestInformation.Count-1)// add ending 0's
-				{
-					for(int j= 0; j<8;j++)
-						outdata[index+8+j]=0;
-				}
 			}
+
+			for (int j = 0; j < 8; j++)
+				outdata[outdata.Length - 8 + j] = 0;
 
             return outdata.Length;
 		}
@@ -523,12 +520,10 @@ namespace MinishMaker.Core
 				outdata[index++] = (byte)(currentData.flag1 >> 8);
 				outdata[index++] = (byte)(currentData.flag2 & 0xff);
 				outdata[index++] = (byte)(currentData.flag2 >> 8);
-
-				if(i == list.Count-1)// add ending 0's
-				{
-					outdata[index] = 0xFF;
-				}
 			}
+
+			outdata[outdata.Length-1] = 0xFF;
+            
 			data = outdata;
 			return outdata.Length;
 		}
@@ -561,15 +556,13 @@ namespace MinishMaker.Core
 				outdata[index+17] = (byte)(currentData.soundId >> 8);
 				outdata[index+18] = 0;
 				outdata[index+19] = 0;//padding
-
-				if(i == warpInformation.Count-1)// add ending 0's
-				{
-					outdata[index+20] = 0xFF;
-					outdata[index+21] = 0xFF;
-					for(int j= 2; j<20;j++)
-						outdata[index+20+j]=0;
-				}
 			}
+
+			outdata[outdata.Length - 20] = 0xFF;
+			outdata[outdata.Length - 19] = 0xFF;
+			for (int j = 2; j < 20; j++)
+				outdata[outdata.Length - 20 + j] = 0;
+            
 			data = outdata;
 			return outdata.Length;
 		}
