@@ -381,7 +381,11 @@ namespace MinishMaker.Core
 					return metadata.GetList3Data(ref data);
 				case DataType.warpData:
 					return metadata.GetWarpData(ref data);
-				
+				case DataType.bg1MetaTileType:
+					return bg1MetaTiles.GetCompressedMetaTileTypes(ref data);
+				case DataType.bg2MetaTileType:
+					return bg2MetaTiles.GetCompressedMetaTileTypes(ref data);
+
                 default:
                     return 0;
             }
@@ -494,7 +498,7 @@ namespace MinishMaker.Core
 			return metadata.WarpInformation;
 		}
 
-		public byte[] GetMetaTileData(int tileNum, int layer)
+		public byte[] GetMetaTileData(ref byte[] tileType,int tileNum, int layer)
 		{
 			
 			switch(layer)
@@ -502,25 +506,29 @@ namespace MinishMaker.Core
 				case 1:
 					if(!this.bg1Exists)
 						return null;
+					tileType = bg1MetaTiles.GetTileTypeInfo(tileNum);
+
 					return bg1MetaTiles.GetTileInfo(tileNum);
 				case 2:
 					if(!this.bg2Exists)
 						return null;
+					tileType = bg2MetaTiles.GetTileTypeInfo(tileNum);
+
 					return bg2MetaTiles.GetTileInfo(tileNum);
 				default:			
 					return null;
 			}
 		}
 
-		public void SetMetaTileData(byte[] data,int tileNum, int layer)
+		public void SetMetaTileData(byte[] data,byte[] typeData, int tileNum, int layer)
 		{
 			switch(layer)
 			{
 				case 1:
-					bg1MetaTiles.SetTileInfo(data, tileNum);
+					bg1MetaTiles.SetTileInfo(data, typeData, tileNum);
 					break;
 				case 2:
-					bg2MetaTiles.SetTileInfo(data, tileNum);
+					bg2MetaTiles.SetTileInfo(data, typeData, tileNum);
 					break;
 			}
 		}

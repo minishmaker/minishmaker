@@ -88,6 +88,9 @@ namespace MinishMaker.Core
 		private AddrData? bg1RoomDataAddr;
 		private AddrData bg1MetaTilesAddr;
 
+		private AddrData metaTileTypeAddr1;
+		private AddrData metaTileTypeAddr2;
+
 		private bool chestDataLarger = false;
 		public bool ChestDataLarger
 		{
@@ -336,7 +339,7 @@ namespace MinishMaker.Core
 		{
 			if( bg2RoomDataAddr != null )
 			{
-				bg2MetaTiles = new MetaTileSet( bg2MetaTilesAddr, false, areaPath+"/"+DataType.bg2MetaTileSet+"Dat.bin" );
+				bg2MetaTiles = new MetaTileSet( bg2MetaTilesAddr, metaTileTypeAddr2, false, areaPath, 2);
 
                 byte[] data = null;
                 string bg2Path = roomPath + "/" + DataType.bg2Data+"Dat.bin";
@@ -368,7 +371,7 @@ namespace MinishMaker.Core
 
 				if( !bg1Use20344B0 )
                 {
-					bg1MetaTiles = new MetaTileSet( bg1MetaTilesAddr , true, areaPath+"/"+DataType.bg1MetaTileSet+"Dat.bin" );
+					bg1MetaTiles = new MetaTileSet( bg1MetaTilesAddr, metaTileTypeAddr1 , true, areaPath, 1 );
 				}
 
                 data.CopyTo(bg1RoomData, 0);
@@ -594,6 +597,8 @@ namespace MinishMaker.Core
 
 				case DataType.bg1MetaTileSet:
 				case DataType.bg2MetaTileSet:
+				case DataType.bg1MetaTileType:
+				case DataType.bg2MetaTileType:
 					int metaTileSetsAddrLoc = r.ReadAddr( header.globalMetaTileSetTableLoc + (areaIndex << 2) );
 					//retAddr = metaTileSetsAddrLoc;
 					r.SetPosition(metaTileSetsAddrLoc);
@@ -604,6 +609,14 @@ namespace MinishMaker.Core
 					if(type == DataType.bg2MetaTileSet)
 					{
 						ParseData(r, Meta2Check);
+					}
+					if(type == DataType.bg1MetaTileType)
+					{
+						ParseData(r, Type1Check);
+					}
+					if(type == DataType.bg2MetaTileType)
+					{
+						ParseData(r, Type2Check);
 					}
 					retAddr = (int)r.Position-12; //step back 12 bytes as the bg was found after reading
 					break;
@@ -724,12 +737,14 @@ namespace MinishMaker.Core
 					this.bg1MetaTilesAddr = data;
 					Debug.WriteLine( data.src.Hex() + " bg1" );
 					break;
-				//case 0x0202AEB4:
-				//ret[8] = source; //not handled
-				//break;
-				//case 0x02010654:
-				//ret[9] = source; //not handled
-				//break;
+				case 0x0202AEB4:
+					this.metaTileTypeAddr2 = data;
+					Debug.WriteLine( data.src.Hex() + " type2" );
+					break;
+				case 0x02010654:
+					this.metaTileTypeAddr1 = data;
+					Debug.WriteLine( data.src.Hex() + " type1" );
+					break;
 				default:
 					Debug.Write( "Unhandled metatile addr: " );
 					Debug.Write( data.src.Hex() + "->" + data.dest.Hex() );
@@ -800,11 +815,35 @@ namespace MinishMaker.Core
 			return true;
 		}
 
-		private bool Meta2Check(AddrData data)
+		private bool Type1Check(AddrData data)
+		{
+			switch(data.dest)
+			{
+				case 0x02010654:
+					return false;
+				default:
+					break;
+			}
+			return true;
+		}
+		
+				private bool Meta2Check(AddrData data)
 		{
 			switch(data.dest)
 			{
 				case 0x0202CEB4:
+					return false;
+				default:
+					break;
+			}
+			return true;
+		}
+
+		private bool Type2Check(AddrData data)
+		{
+			switch(data.dest)
+			{
+				case 0x0202AEB4:
 					return false;
 				default:
 					break;

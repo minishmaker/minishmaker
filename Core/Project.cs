@@ -26,7 +26,9 @@ namespace MinishMaker.Core
 		list1Data,
 		list2Data,
 		list3Data,
-		warpData
+		warpData,
+		bg1MetaTileType,
+		bg2MetaTileType,
 	}
 
     /// <summary>
@@ -366,6 +368,10 @@ namespace MinishMaker.Core
 					return new List3DataChange(area, room);
 				case DataType.warpData:
 					return new WarpDataChange(area, room);
+				case DataType.bg1MetaTileType:
+					return new Bg1MetaTileTypeChange(area);
+				case DataType.bg2MetaTileType:
+					return new Bg2MetaTileTypeChange(area);
 				default:
 					Debug.WriteLine("unknown file found of type: "+type);
 					return null;

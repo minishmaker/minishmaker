@@ -18,6 +18,7 @@ namespace MinishMaker.UI
 		Bitmap[] tileset = new Bitmap[2];
 		Bitmap[] metaTiles = new Bitmap[2];
 		byte[] currentTileInfo = new byte[8];
+		byte[] currentTileType = new byte[2];
 		int pnum = 0;
 		int currentLayer = 1;
 		public int currentArea=-1;
@@ -32,6 +33,7 @@ namespace MinishMaker.UI
 			tRPalette.KeyDown +=EnterUnfocus;
 			bLPalette.KeyDown +=EnterUnfocus;
 			bRPalette.KeyDown +=EnterUnfocus;
+			mTType.KeyDown	  +=EnterUnfocus;
 		}
 
 		//control functions start here
@@ -70,23 +72,27 @@ namespace MinishMaker.UI
 
 			var room = MapManager.Instance.MapAreas.Single(a=>a.Index==currentArea).Rooms.First();
 
-			currentTileInfo = room.GetMetaTileData(metaTileGridBox.SelectedIndex, currentLayer);
-
+			currentTileInfo = room.GetMetaTileData(ref currentTileType, metaTileGridBox.SelectedIndex, currentLayer);
+			
 			if(currentTileInfo ==null)
 				return;
 
+			tileChange.Enabled = true;
+			mTType.Enabled = true;
+
 			mTId.Text = metaTileGridBox.SelectedIndex.Hex();
+			mTType.Text = (currentTileType[1]*0x100+currentTileType[0]).Hex();
 
 			tId1.Text		= (currentTileInfo[0]+(currentTileInfo[1]<<8) & 0x3ff).Hex();	//first 10 bits of 1st byte
 			tLPalette.Text	= (currentTileInfo[1] >> 4).Hex();		//last 4 bits of 2nd byte
 
-			tId2.Text		= (currentTileInfo[2]+(currentTileInfo[3]<<8) & 0x3ff).Hex();	//first 10 bits of 3st byte
+			tId2.Text		= (currentTileInfo[2]+(currentTileInfo[3]<<8) & 0x3ff).Hex();	//first 10 bits of 3th byte
 			tRPalette.Text	= (currentTileInfo[3] >> 4).Hex();		//last 4 bits of 4th byte
 
-			tId3.Text		= (currentTileInfo[4]+(currentTileInfo[5]<<8) & 0x3ff).Hex();	//first 10 bits of 5st byte
+			tId3.Text		= (currentTileInfo[4]+(currentTileInfo[5]<<8) & 0x3ff).Hex();	//first 10 bits of 5th byte
 			bLPalette.Text	= (currentTileInfo[5] >> 4).Hex();		//last 4 bits of 6th byte
 
-			tId4.Text		= (currentTileInfo[6]+(currentTileInfo[7]<<8) & 0x3ff).Hex();	//first 10 bits of 7st byte
+			tId4.Text		= (currentTileInfo[6]+(currentTileInfo[7]<<8) & 0x3ff).Hex();	//first 10 bits of 7th byte
 			bRPalette.Text	= (currentTileInfo[7] >> 4).Hex();		//last 4 bits of 8th byte
 
 			selectedMetaGridBox.Image = enlarged;
@@ -210,22 +216,57 @@ namespace MinishMaker.UI
 			PaletteChange( 6, bRPalette );
 		}
 
+		private void mTType_LostFocus( object sender, EventArgs e)
+		{
+			try
+			{
+				var value = Convert.ToInt16( mTType.Text, 16 );
+				byte b0 = (byte)(value & 0xff); //low
+				byte b1 = (byte)(value >> 8); //high
+				currentTileType = new byte[2]{ b0, b1 };
+			}
+			catch
+			{
+				mTType.Text = (currentTileType[1]*0x100+currentTileType[0]).Hex();
+			}
+		}
+
 		private void tileChange_Click( object sender, EventArgs e )
 		{
 			if(metaTileGridBox.SelectedIndex == -1)
 				return;
 
 			var room = MapManager.Instance.MapAreas.Single(a=>a.Index==currentArea).Rooms.First();
-			room.SetMetaTileData(currentTileInfo, metaTileGridBox.SelectedIndex, currentLayer);
+			byte[] metatypes = new byte[2];
+			var metadata = room.GetMetaTileData(ref metatypes, metaTileGridBox.SelectedIndex, currentLayer);
+			var hasTypeChange = !metatypes.SequenceEqual(currentTileType);
+			var hasInfoChange = !metadata.SequenceEqual(currentTileInfo);
+
+			if(hasTypeChange || hasInfoChange)
+			{
+				room.SetMetaTileData(currentTileInfo, currentTileType, metaTileGridBox.SelectedIndex, currentLayer);
+			}
+
+			if(hasInfoChange)
+			{
+				if(currentLayer==1)
+					MainWindow.AddPendingChange(new Bg1MetaTileSetChange(currentArea));
+				if(currentLayer==2)
+					MainWindow.AddPendingChange(new Bg2MetaTileSetChange(currentArea));
+			} 
+			if(hasTypeChange)
+			{
+				if(currentLayer==1)
+					MainWindow.AddPendingChange(new Bg1MetaTileTypeChange(currentArea));
+				if(currentLayer==2)
+					MainWindow.AddPendingChange(new Bg2MetaTileTypeChange(currentArea));
+			}
+
 			var image = metaTiles[currentLayer-1];
 			int x = metaTileGridBox.SelectedIndex % 16;
 			int y = metaTileGridBox.SelectedIndex / 16;
 			MetaTileSet.DrawTileData(ref image,currentTileInfo,new Point(x*16,y*16),room.tileSet,room.palettes,currentLayer==1,true);
 			metaTileGridBox.Image=image;
-			if(currentLayer==1)
-				MainWindow.AddPendingChange(new Bg1MetaTileSetChange(currentArea));
-			if(currentLayer==2)
-				MainWindow.AddPendingChange(new Bg2MetaTileSetChange(currentArea));
 		}
 
 		private void selectedMetaTileBox_Click( object sender, EventArgs e )
@@ -277,6 +318,8 @@ namespace MinishMaker.UI
 		//utility functions start here
 		public void RedrawTiles( Room room )
 		{
+			mTType.Enabled=false;
+			tileChange.Enabled=false;
 			metaTiles = room.DrawTilesetImages( 16, 0 ); //areaindex currently unused because what even is swaptiles
 			DrawTileset( room.tileSet, room.palettes );
 			metaTileGridBox.Image = metaTiles[currentLayer - 1];

@@ -12,17 +12,38 @@ namespace MinishMaker.Core
 	public class MetaTileSet
 	{
 		byte[] metaTileSetData;
+		byte[] metaTileTypeData;
 		bool isBg1;
 
-		public MetaTileSet( AddrData addrData, bool isBg1, string filePath )
+		public MetaTileSet( AddrData addrData, AddrData metaTypes, bool isBg1, string filePath, int enumType )
 		{
-			metaTileSetData = Project.Instance.GetSavedData(filePath, true, addrData.size);
+			var setPath = filePath;
+			var typePath = filePath;
+			if(enumType==1)
+			{
+				setPath+="/"+DataType.bg1MetaTileSet+"Dat.bin";
+				typePath+="/"+DataType.bg1MetaTileType+"Dat.bin";
+			}
+
+			if(enumType==2)
+			{
+				setPath+="/"+DataType.bg2MetaTileSet+"Dat.bin";
+				typePath+="/"+DataType.bg2MetaTileType+"Dat.bin";
+			}
+
+			metaTileSetData = Project.Instance.GetSavedData(setPath, true, addrData.size);
+			metaTileTypeData = Project.Instance.GetSavedData(typePath, true, metaTypes.size);
 
 			if(metaTileSetData == null)
 			{
 				metaTileSetData = DataHelper.GetData( addrData );
 			}
-
+			if(metaTileTypeData == null)
+			{
+				metaTileTypeData = DataHelper.GetData( metaTypes );
+			}
+			Console.WriteLine("types"+metaTileTypeData.Length);
+			Console.WriteLine("tiles"+metaTileSetData.Length);
 			this.isBg1 = isBg1;
 		}
 
@@ -85,7 +106,21 @@ namespace MinishMaker.Core
 			}
 		}
 
-		public void SetTileInfo(byte[] tileInfo, int tileNum)
+		public byte[] GetTileTypeInfo( int tileNum )
+		{
+			try
+			{
+				byte[] tileData = new byte[2];
+				Array.Copy(metaTileTypeData, tileNum << 1, tileData, 0, 2);
+				return tileData;
+			}
+			catch
+			{
+				return null; 
+			}
+		}
+
+		public void SetTileInfo(byte[] tileInfo, byte[] tileType, int tileNum)
 		{
 			if(tileInfo.Length!=8)
 				return;
@@ -99,6 +134,13 @@ namespace MinishMaker.Core
 			metaTileSetData[tileStart+5]=tileInfo[5];
 			metaTileSetData[tileStart+6]=tileInfo[6];
 			metaTileSetData[tileStart+7]=tileInfo[7];
+
+			if(tileType.Length!=2)
+				return;
+			
+			tileStart = tileNum<<1;
+			metaTileTypeData[tileStart]  =tileType[0];
+			metaTileTypeData[tileStart+1]=tileType[1];
 		}
 
 		public long GetCompressedMetaTileSet(ref byte[] outdata)
@@ -107,6 +149,21 @@ namespace MinishMaker.Core
 			long totalSize = 0;
 			MemoryStream ous = new MemoryStream( compressed );
 			totalSize = DataHelper.Compress(metaTileSetData, ous, false);
+
+			outdata = new byte[totalSize];
+			Array.Copy(compressed,outdata,totalSize);
+
+            totalSize |= 0x80000000;
+
+			return totalSize;
+		}
+
+		public long GetCompressedMetaTileTypes(ref byte[] outdata)
+		{
+			var compressed = new byte[metaTileTypeData.Length];
+			long totalSize = 0;
+			MemoryStream ous = new MemoryStream( compressed );
+			totalSize = DataHelper.Compress(metaTileTypeData, ous, false);
 
 			outdata = new byte[totalSize];
 			Array.Copy(compressed,outdata,totalSize);
