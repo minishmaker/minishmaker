@@ -191,7 +191,7 @@ namespace MinishMaker.UI
 				tnum += 0x200;
 			}
 
-			room.tileSet.DrawQuarterTile( ref b, new Point( 0, 0 ), tnum, room.palettes[pnum], this.hFlip, this.vFlip, true );
+			room.tileSet.DrawQuarterTile( ref b, new Point( 0, 0 ), tnum, room.palettes, pnum, this.hFlip, this.vFlip, true );
 			var enlarged = Magnify( b, new Rectangle( 0, 0, 8, 8 ), 4 );
 			return enlarged;
 		}
@@ -330,7 +330,7 @@ namespace MinishMaker.UI
             selectedMetaGridBox.Selectable = true;
 		}
 
-		public void DrawTileset( TileSet tset, Color[][] palettes )
+		public void DrawTileset( TileSet tset, Color[] palettes )
 		{
 			tileset[0] = new Bitmap( 256, 0x100 ); //0x200 * 8 /16 = 0x200 * 0.5
 			tileset[1] = new Bitmap( 256, 0x100 );
@@ -341,8 +341,8 @@ namespace MinishMaker.UI
 				var ypos = (tnum - xpos) / 0x20; //tiles
 				ypos *= 8; //pixels
 				xpos *= 8; //pixels
-				tset.DrawQuarterTile( ref tileset[0], new Point( xpos, ypos ), tnum + 0x200, palettes[pnum], false, false, true );
-				tset.DrawQuarterTile( ref tileset[1], new Point( xpos, ypos ), tnum, palettes[pnum], false, false, true );
+				tset.DrawQuarterTile( ref tileset[0], new Point( xpos, ypos ), tnum + 0x200, palettes, pnum, false, false, true );
+				tset.DrawQuarterTile( ref tileset[1], new Point( xpos, ypos ), tnum, palettes, pnum, false, false, true );
 			}
 		}
 
@@ -401,7 +401,7 @@ namespace MinishMaker.UI
 				tnum += 0x200;
 			}
 
-			room.tileSet.DrawQuarterTile( ref b, new Point( 0, 0 ), tnum, room.palettes[palnum], hflip, vflip, true );
+			room.tileSet.DrawQuarterTile( ref b, new Point( 0, 0 ), tnum, room.palettes, palnum, hflip, vflip, true );
 			var enlarged = Magnify( b, new Rectangle( 0, 0, 8, 8 ), 4 );
 			return enlarged;
 		}

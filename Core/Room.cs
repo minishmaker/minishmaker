@@ -26,7 +26,7 @@ namespace MinishMaker.Core
 			get{return new Point(metadata.TileWidth,metadata.TileHeight);}
 		}
 		private PaletteSet pset;
-		public Color[][] palettes
+		public Color[] palettes
 		{
 			get { return pset.Palettes;}
 		}
@@ -184,7 +184,7 @@ namespace MinishMaker.Core
 					bool hflip = (data & 0x400) != 0;
 					bool vflip = (data & 0x800) != 0;
 
-					tset.DrawQuarterTile( ref b, new Point( i * 8, j * 8 ), tnum, pset.Palettes[pnum], hflip, vflip, overwrite );
+					tset.DrawQuarterTile( ref b, new Point( i * 8, j * 8 ), tnum, pset.Palettes, pnum, hflip, vflip, overwrite );
 				}
 			}
 		}

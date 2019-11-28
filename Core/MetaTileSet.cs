@@ -63,7 +63,7 @@ namespace MinishMaker.Core
 
 		}
 
-		public static void DrawTileData( ref Bitmap b, byte[] tileData, Point p, TileSet tset, Color[][] palettes, bool isBg1, bool overwrite )
+		public static void DrawTileData( ref Bitmap b, byte[] tileData, Point p, TileSet tset, Color[] palettes, bool isBg1, bool overwrite )
 		{
 			if( tileData.Length == 0 )
 				throw new ArgumentNullException( "metaTileData", "Cannot draw empty metatile." );
@@ -86,7 +86,7 @@ namespace MinishMaker.Core
 					bool vflip = ((data >> 11) & 1) == 1;//is bit 12 set
 					int pnum = data >> 12;//last 4 bits
 
-					tset.DrawQuarterTile( ref b, new Point( p.X + (x * 8), p.Y + (y * 8) ), tnum, palettes[pnum], hflip, vflip, overwrite );
+					tset.DrawQuarterTile( ref b, new Point( p.X + (x * 8), p.Y + (y * 8) ), tnum, palettes, pnum, hflip, vflip, overwrite );
 				}
 			}
 		}
