@@ -35,7 +35,7 @@ namespace MinishMaker.UI
         private int selectedLayer = 2; //start with bg2
         private static List<Change> pendingRomChanges;
         private Point lastTilePos;
-        private ViewLayer viewLayer = 0;
+        private ViewLayer viewLayer = ViewLayer.Both;
 
         struct RepointData
         {
@@ -993,5 +993,39 @@ namespace MinishMaker.UI
                 return false;
             }
         }
-    }
+
+		private void ResizeRoom()
+		{
+			if(currentRoom==null)
+				return;
+			
+			using(var dimPrompt = new ResizeDialog(currentRoom.roomSize))
+			{
+				if (dimPrompt.ShowDialog() != DialogResult.OK)
+				{
+					return;
+				}
+				
+				var dimensions = dimPrompt.GetDims();
+				
+				if(dimensions.X == currentRoom.roomSize.X && dimensions.Y == currentRoom.roomSize.Y)// no changes
+					return;
+
+				//if above minimum
+				if(dimensions.X<15||dimensions.Y<10)
+				{
+					Notify("Make sure the room is at least 15 by 10.","Invalid room size");
+				}
+
+				currentRoom.ResizeRoom(currentArea, dimensions.X, dimensions.Y);
+				mapLayers= currentRoom.DrawRoom(currentArea, true, true);
+				UpdateViewLayer(viewLayer);
+			}
+		}
+
+		private void resizeRoomToolStripMenuItem_Click( object sender, EventArgs e )
+		{
+			ResizeRoom();
+		}
+	}
 }

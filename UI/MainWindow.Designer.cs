@@ -78,6 +78,7 @@ namespace MinishMaker.UI
             this.topTileGridBox = new MinishMaker.UI.GridBox();
             this.bottomTileGridBox = new MinishMaker.UI.GridBox();
             this.mapGridBox = new MinishMaker.UI.GridBox();
+			this.resizeRoomToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.bottomStatusStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
@@ -99,7 +100,8 @@ namespace MinishMaker.UI
             this.fileToolStripMenuItem,
             this.viewToolStripMenuItem,
             this.windowToolStripMenuItem,
-            this.helpToolStripMenuItem});
+            this.helpToolStripMenuItem,
+			this.resizeRoomToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
             this.menuStrip.Size = new System.Drawing.Size(1284, 24);
@@ -568,6 +570,13 @@ namespace MinishMaker.UI
             this.mapGridBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.mapGridBox_MouseDown);
             this.mapGridBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.mapGridBox_MouseMove);
             // 
+			// resizeRoomToolStripMenuItem
+			// 
+			this.resizeRoomToolStripMenuItem.Name = "resizeRoomToolStripMenuItem";
+			this.resizeRoomToolStripMenuItem.Size = new System.Drawing.Size(83, 20);
+			this.resizeRoomToolStripMenuItem.Text = "Resize room";
+			this.resizeRoomToolStripMenuItem.Click += new System.EventHandler(this.resizeRoomToolStripMenuItem_Click);
+			// 
             // MainWindow
             // 
             this.AllowDrop = true;
@@ -657,6 +666,7 @@ namespace MinishMaker.UI
         private System.Windows.Forms.ToolStripStatusLabel statusAreaIdText;
         private System.Windows.Forms.ContextMenuStrip nodeContextMenu;
         private System.Windows.Forms.ToolStripMenuItem renameToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem resizeRoomToolStripMenuItem;
     }
 }
 

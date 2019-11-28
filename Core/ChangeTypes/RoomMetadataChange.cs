@@ -25,15 +25,15 @@ namespace MinishMaker.Core.ChangeTypes
 			var pointerLoc = room.GetPointerLoc(changeType, areaId);
 
 			var sb = new StringBuilder();
-			var rect = room.GetMapRect(areaId);
-			rect.X*=16;//offset the read at >>4
-			rect.Y*=16;
-			var metaBytes =new byte[] { (byte)(rect.X&0xff), (byte)(rect.X>>8), (byte)(rect.Y&0xff), (byte)(rect.Y>>8)};
+			byte[] data = new byte[10];
+			room.GetSaveData(ref data,this.changeType);
+
 			sb.AppendLine("PUSH"); //save cursor location
 			sb.AppendLine("ORG "+pointerLoc); //go to the area info
 			sb.AppendLine("#incbin \"./"+changeType.ToString()+"Dat.bin\""); //write the area info bytes
 			sb.AppendLine("POP"); //return to cursor location
-			binDat = metaBytes;
+			binDat = data;
+
 			return sb.ToString();
 		}
 

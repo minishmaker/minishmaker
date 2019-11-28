@@ -228,6 +228,10 @@ namespace MinishMaker.Core
 			if (!File.Exists(projectPath + "/Patches.event"))
 			{
 				var file = File.Create(projectPath + "/Patches.event");
+				using( StreamWriter s = new StreamWriter( file ) )
+				{
+					s.WriteLine("//dummy");
+				}
 				file.Dispose();
 			}
 

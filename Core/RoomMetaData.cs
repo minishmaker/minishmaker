@@ -12,25 +12,9 @@ namespace MinishMaker.Core
 	public class RoomMetaData
 	{
 		private int width, height;
-		public int mapPosX, mapPosY;
+		public int mapPosX, mapPosY, tileSetOffset;
 
 		public int PixelWidth
-		{
-			get
-			{
-				return width * 16;
-			}
-		}
-
-		public int PixelHeight
-		{
-			get
-			{
-				return height * 16;
-			}
-		}
-
-		public int TileWidth
 		{
 			get
 			{
@@ -38,11 +22,27 @@ namespace MinishMaker.Core
 			}
 		}
 
-		public int TileHeight
+		public int PixelHeight
 		{
 			get
 			{
 				return height;
+			}
+		}
+
+		public int TileWidth
+		{
+			get
+			{
+				return width /16;
+			}
+		}
+
+		public int TileHeight
+		{
+			get
+			{
+				return height /16;
 			}
 		}
 		
@@ -222,28 +222,43 @@ namespace MinishMaker.Core
 
 			int areaRMDTableLoc = r.ReadAddr( header.MapHeaderBase + (areaIndex << 2) );
 			int roomMetaDataTableLoc = areaRMDTableLoc + (roomIndex * 0x0A);
-			
+
 			if(File.Exists(roomPath+ "/" + DataType.roomMetaData +"Dat.bin"))
 			{
 				var data = File.ReadAllBytes(roomPath+ "/" + DataType.roomMetaData +"Dat.bin");
-				this.mapPosX = (data[0]+(data[1]<<8))>>4;
-				this.mapPosY = (data[2]+(data[3]<<8))>>4;
-				r.SetPosition(roomMetaDataTableLoc+4);
+				this.mapPosX = (data[0]+(data[1]<<8)) >> 4;
+				this.mapPosY = (data[2]+(data[3]<<8)) >> 4;	
+
+				if(data.Length==4) //backwards compatibility because WHY DIDNT I SAVE IT ALL AT FIRST
+				{ 
+					this.width   = r.ReadUInt16();
+					this.height  = r.ReadUInt16();
+					tileSetOffset = r.ReadUInt16(); 
+				}
+				else
+				{
+					this.width   = (data[4]+(data[5]<<8));
+					this.height  = (data[6]+(data[7]<<8));
+					tileSetOffset= (data[8]+(data[9]<<8));
+				}
+				r.SetPosition(roomMetaDataTableLoc+8);
 			}
 			else
 			{
-				this.mapPosX = r.ReadUInt16( roomMetaDataTableLoc )>>4;
-				this.mapPosY = r.ReadUInt16()>>4;
+				this.mapPosX = r.ReadUInt16( roomMetaDataTableLoc ) >> 4;
+				this.mapPosY = r.ReadUInt16() >> 4;
+				this.width   = r.ReadUInt16();
+				this.height  = r.ReadUInt16();
+				tileSetOffset = r.ReadUInt16(); 
 			}
 			
-			this.width = r.ReadUInt16() >> 4; //bytes 5+6 pixels/16 = tiles
-			this.height = r.ReadUInt16() >> 4;                          //bytes 7+8 pixels/16 = tiles
+			
 
 			//get addr of TPA data
-			int tileSetOffset = r.ReadUInt16() << 2;                    //bytes 9+10
+			                   //bytes 9+10
 
 			int areaTileSetTableLoc = r.ReadAddr( header.globalTileSetTableLoc + (areaIndex << 2) );
-			int roomTileSetLoc = r.ReadAddr( areaTileSetTableLoc + tileSetOffset );
+			int roomTileSetLoc = r.ReadAddr( areaTileSetTableLoc + (tileSetOffset << 2 ));
 
 			r.SetPosition( roomTileSetLoc );
 
@@ -588,10 +603,9 @@ namespace MinishMaker.Core
 
 				case DataType.tileSet:
 					//get addr of TPA data
-					int tileSetOffset = r.ReadUInt16(roomMetaDataTableLoc+8) << 2;                    //bytes 9+10
 
 					int areaTileSetTableLoc = r.ReadAddr( header.globalTileSetTableLoc + (areaIndex << 2) );
-					int roomTileSetAddrLoc = areaTileSetTableLoc + tileSetOffset;
+					int roomTileSetAddrLoc = areaTileSetTableLoc + (tileSetOffset << 2);
 					retAddr = roomTileSetAddrLoc;
 					break;
 
@@ -849,6 +863,12 @@ namespace MinishMaker.Core
 					break;
 			}
 			return true;
+		}
+
+		public void SetRoomSize(int xdim, int ydim)
+		{
+			this.width  = xdim<<4;
+			this.height = ydim<<4;
 		}
 	}
 }
