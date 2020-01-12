@@ -26,7 +26,7 @@ namespace MinishMaker.Core
 			get{return new Point(metadata.TileWidth,metadata.TileHeight);}
 		}
 		private PaletteSet pset;
-		public Color[][] palettes
+		public Color[] palettes
 		{
 			get { return pset.Palettes;}
 		}
@@ -184,7 +184,7 @@ namespace MinishMaker.Core
 					bool hflip = (data & 0x400) != 0;
 					bool vflip = (data & 0x800) != 0;
 
-					tset.DrawQuarterTile( ref b, new Point( i * 8, j * 8 ), tnum, pset.Palettes[pnum], hflip, vflip, overwrite );
+					tset.DrawQuarterTile( ref b, new Point( i * 8, j * 8 ), tnum, pset.Palettes, pnum, hflip, vflip, overwrite );
 				}
 			}
 		}
@@ -381,7 +381,12 @@ namespace MinishMaker.Core
 					return metadata.GetList3Data(ref data);
 				case DataType.warpData:
 					return metadata.GetWarpData(ref data);
-				
+				case DataType.bg1MetaTileType:
+					return bg1MetaTiles.GetCompressedMetaTileTypes(ref data);
+				case DataType.bg2MetaTileType:
+					return bg2MetaTiles.GetCompressedMetaTileTypes(ref data);
+				case DataType.roomMetaData:
+					return GetMetadata(ref data);
                 default:
                     return 0;
             }
@@ -494,7 +499,7 @@ namespace MinishMaker.Core
 			return metadata.WarpInformation;
 		}
 
-		public byte[] GetMetaTileData(int tileNum, int layer)
+		public byte[] GetMetaTileData(ref byte[] tileType,int tileNum, int layer)
 		{
 			
 			switch(layer)
@@ -502,25 +507,29 @@ namespace MinishMaker.Core
 				case 1:
 					if(!this.bg1Exists)
 						return null;
+					tileType = bg1MetaTiles.GetTileTypeInfo(tileNum);
+
 					return bg1MetaTiles.GetTileInfo(tileNum);
 				case 2:
 					if(!this.bg2Exists)
 						return null;
+					tileType = bg2MetaTiles.GetTileTypeInfo(tileNum);
+
 					return bg2MetaTiles.GetTileInfo(tileNum);
 				default:			
 					return null;
 			}
 		}
 
-		public void SetMetaTileData(byte[] data,int tileNum, int layer)
+		public void SetMetaTileData(byte[] data,byte[] typeData, int tileNum, int layer)
 		{
 			switch(layer)
 			{
 				case 1:
-					bg1MetaTiles.SetTileInfo(data, tileNum);
+					bg1MetaTiles.SetTileInfo(data, typeData, tileNum);
 					break;
 				case 2:
-					bg2MetaTiles.SetTileInfo(data, tileNum);
+					bg2MetaTiles.SetTileInfo(data, typeData, tileNum);
 					break;
 			}
 		}
@@ -542,6 +551,87 @@ namespace MinishMaker.Core
 				metadata.mapPosX = x;
 				metadata.mapPosY = y;
 			}
+		}
+
+		public void ResizeRoom(int areaIndex, int xdim, int ydim)
+		{
+			var oldSize = this.roomSize.X * this.roomSize.Y * 2;
+			var newSize = xdim * ydim * 2;
+			//var differenceX = xdim - this.roomSize.X;
+			var differenceY = ydim - this.roomSize.Y;
+			var bg1New = new byte[newSize];
+			var bg2New = new byte[newSize];
+			var lowestY = this.roomSize.Y<ydim ? this.roomSize.Y : ydim;
+			var lowestX = this.roomSize.X<xdim ? this.roomSize.X : xdim;
+
+			for(int i = 0; i<lowestY; i++)
+			{
+				var src = i * this.roomSize.X * 2;
+				var dest = i * xdim * 2;
+				if(Bg1Exists)
+				{
+					Array.Copy(bg1RoomData, src, bg1New, dest, lowestX * 2);
+				}
+				if(Bg2Exists)
+				{
+					Array.Copy(bg2RoomData, src, bg2New, dest, lowestX * 2);
+				}
+			}
+
+			if(differenceY>0)
+			{
+				for(int i = 0; i<differenceY; i++)
+				{
+					for(int j = 0; j<xdim*2; j++)
+					{
+						var pos = (this.roomSize.Y+i) * xdim * 2 + j;
+						if(Bg1Exists)
+						{
+							bg1New.SetValue((byte)0, pos);
+						}
+						if(Bg2Exists)
+						{ 
+							bg2New.SetValue((byte)0, pos);
+						}
+					}
+				}
+			}
+
+			if(Bg1Exists)
+			{
+				bg1RoomData = bg1New;
+				MainWindow.AddPendingChange(new ChangeTypes.Bg1DataChange(areaIndex, this.Index));
+			}
+
+			if(Bg2Exists)
+			{
+				bg2RoomData = bg2New;
+				MainWindow.AddPendingChange(new ChangeTypes.Bg2DataChange(areaIndex, this.Index));
+			}
+
+			metadata.SetRoomSize(xdim,ydim);
+			MainWindow.AddPendingChange(new ChangeTypes.RoomMetadataChange(areaIndex, this.Index));
+		}
+
+		public long GetMetadata(ref byte[] data)
+		{
+			var mapX = metadata.mapPosX * 16;
+			var mapY = metadata.mapPosY * 16;
+
+			data=new byte[] { 
+				(byte)(mapX&0xff), 
+				(byte)(mapX>>8), 
+				(byte)(mapY&0xff), 
+				(byte)(mapY>>8),
+				(byte)(metadata.PixelWidth&0xff), 
+				(byte)(metadata.PixelWidth>>8), 
+				(byte)(metadata.PixelHeight&0xff), 
+				(byte)(metadata.PixelHeight>>8),
+				(byte)(metadata.tileSetOffset&0xff),
+				(byte)(metadata.tileSetOffset>>8)
+				};
+			
+			return 10;
 		}
 	}
 }

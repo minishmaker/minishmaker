@@ -46,7 +46,7 @@ namespace MinishMaker.UI
 
 			prevButton.Enabled = false;
 			nextButton.Enabled = false;
-
+			travelButton.Enabled = false;
 			newButton.Enabled = false;
 			removeButton.Enabled = false;
 
@@ -106,6 +106,7 @@ namespace MinishMaker.UI
 			if( warpDataList.Count == 0 )
 			{
 				indexLabel.Text = "0";
+				travelButton.Enabled = false;
 				warpTypeBox.Enabled = false;
 				transitionTypeBox.Enabled = false;
 				facingBox.Enabled = false;
@@ -230,6 +231,7 @@ namespace MinishMaker.UI
 			destY.Text = warp.destYPixel.Hex();
 			destArea.Text = warp.destArea.Hex();
 			destRoom.Text = warp.destRoom.Hex();
+			travelButton.Enabled = ((MainWindow)Application.OpenForms[0]).RoomExists(warp.destArea,warp.destRoom);
 			exitHeight.Text = warp.exitHeight.Hex();
 			soundId.Text = warp.soundId.Hex();
 
@@ -437,11 +439,13 @@ namespace MinishMaker.UI
 
 			try
 			{
-				var newVal = Convert.ToByte(destArea.Text,16);;
+				var newVal = Convert.ToByte(destArea.Text,16);
+				var room = Convert.ToByte(destRoom.Text,16);
 				var warp = warpDataList[warpIndex];
 				warp.destArea = newVal;
 				warpDataList[warpIndex] = warp;
 				MainWindow.AddPendingChange(new WarpDataChange(MainWindow.currentArea, MainWindow.currentRoom.Index));
+				travelButton.Enabled = ((MainWindow)Application.OpenForms[0]).RoomExists(newVal,room);
 			}
 			catch
 			{
@@ -457,10 +461,12 @@ namespace MinishMaker.UI
 			try
 			{
 				var newVal = Convert.ToByte(destRoom.Text,16);
+				var area = Convert.ToByte(destArea.Text,16);
 				var warp = warpDataList[warpIndex];
 				warp.destRoom = newVal;
 				warpDataList[warpIndex] = warp;
 				MainWindow.AddPendingChange(new WarpDataChange(MainWindow.currentArea, MainWindow.currentRoom.Index));
+				travelButton.Enabled = ((MainWindow)Application.OpenForms[0]).RoomExists(area,newVal);
 			}
 			catch
 			{
@@ -601,6 +607,20 @@ namespace MinishMaker.UI
 		{
 			warpIndex -=1;
 			SetData();
+		}
+
+		private void travelButton_Click( object sender, EventArgs e )
+		{
+			try
+			{
+				var areaId = Convert.ToByte(destArea.Text,16);
+				var roomId = Convert.ToByte(destRoom.Text,16);
+				((MainWindow)Application.OpenForms[0]).ChangeRoom(areaId, roomId);
+			}
+			catch
+			{
+				SetData();
+			}
 		}
 	}
 }

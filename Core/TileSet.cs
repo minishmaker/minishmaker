@@ -59,7 +59,7 @@ namespace MinishMaker.Core
         }
 
         //draws a quarter tile
-        public void DrawQuarterTile(ref Bitmap tileImg, Point p, int tnum, Color[] pal, bool hflip, bool vflip, bool overwrite)
+        public void DrawQuarterTile(ref Bitmap tileImg, Point p, int tnum, Color[] pal, int pnum, bool hflip, bool vflip, bool overwrite)
         {
             byte[] data = new byte[0x20];
             Array.Copy(tilesetData, tnum * 0x20, data, 0, 0x20);
@@ -80,8 +80,8 @@ namespace MinishMaker.Core
                         int colorData = data[dataPos];
                         int data1 = hflip ? colorData >> 4 : colorData & 0x0F; // /16 for last 4 bits or & 15 for the first 4 bits
                         int data2 = hflip ? colorData & 0x0F : colorData >> 4;
-                        Color color1 = pal[data1];
-                        Color color2 = pal[data2];
+                        Color color1 = pal[data1 + pnum*16];
+                        Color color2 = pal[data2 + pnum*16];
 
 
                         if (color1.A > 0)//if see through dont draw white

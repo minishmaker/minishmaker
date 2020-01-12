@@ -61,6 +61,7 @@
             this.sTId = new System.Windows.Forms.TextBox();
             this.mTId = new System.Windows.Forms.TextBox();
             this.HiddenLabel = new System.Windows.Forms.Label();
+			this.mTType = new System.Windows.Forms.TextBox();
             this.metaTileSetPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.metaTileGridBox)).BeginInit();
             this.tileSetPanel.SuspendLayout();
@@ -389,7 +390,7 @@
             // mTId
             // 
             this.mTId.Enabled = false;
-            this.mTId.Location = new System.Drawing.Point(53, 76);
+			this.mTId.Location = new System.Drawing.Point(35, 76);
             this.mTId.MaxLength = 3;
             this.mTId.Name = "mTId";
             this.mTId.Size = new System.Drawing.Size(25, 20);
@@ -404,11 +405,23 @@
             this.HiddenLabel.Size = new System.Drawing.Size(0, 13);
             this.HiddenLabel.TabIndex = 27;
             // 
+            // mTType
+            // 
+            this.mTType.Enabled = false;
+            this.mTType.Location = new System.Drawing.Point(68, 76);
+            this.mTType.MaxLength = 3;
+            this.mTType.Name = "mTType";
+            this.mTType.Size = new System.Drawing.Size(25, 20);
+            this.mTType.TabIndex = 28;
+            this.mTType.Text = "FFF";
+            this.mTType.LostFocus += new System.EventHandler(mTType_LostFocus);
+            // 
             // MetaTileEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(675, 275);
+			this.Controls.Add(this.mTType);
             this.Controls.Add(this.HiddenLabel);
             this.Controls.Add(this.mTId);
             this.Controls.Add(this.sTId);
@@ -492,5 +505,6 @@
         private GridBox tileSetGridBox;
         private GridBox selectedMetaGridBox;
 		private System.Windows.Forms.Label HiddenLabel;
+		private System.Windows.Forms.TextBox mTType;
 	}
 }

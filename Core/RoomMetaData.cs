@@ -12,25 +12,9 @@ namespace MinishMaker.Core
 	public class RoomMetaData
 	{
 		private int width, height;
-		public int mapPosX, mapPosY;
+		public int mapPosX, mapPosY, tileSetOffset;
 
 		public int PixelWidth
-		{
-			get
-			{
-				return width * 16;
-			}
-		}
-
-		public int PixelHeight
-		{
-			get
-			{
-				return height * 16;
-			}
-		}
-
-		public int TileWidth
 		{
 			get
 			{
@@ -38,11 +22,27 @@ namespace MinishMaker.Core
 			}
 		}
 
-		public int TileHeight
+		public int PixelHeight
 		{
 			get
 			{
 				return height;
+			}
+		}
+
+		public int TileWidth
+		{
+			get
+			{
+				return width /16;
+			}
+		}
+
+		public int TileHeight
+		{
+			get
+			{
+				return height /16;
 			}
 		}
 		
@@ -87,6 +87,9 @@ namespace MinishMaker.Core
 
 		private AddrData? bg1RoomDataAddr;
 		private AddrData bg1MetaTilesAddr;
+
+		private AddrData metaTileTypeAddr1;
+		private AddrData metaTileTypeAddr2;
 
 		private bool chestDataLarger = false;
 		public bool ChestDataLarger
@@ -219,28 +222,43 @@ namespace MinishMaker.Core
 
 			int areaRMDTableLoc = r.ReadAddr( header.MapHeaderBase + (areaIndex << 2) );
 			int roomMetaDataTableLoc = areaRMDTableLoc + (roomIndex * 0x0A);
-			
+
 			if(File.Exists(roomPath+ "/" + DataType.roomMetaData +"Dat.bin"))
 			{
 				var data = File.ReadAllBytes(roomPath+ "/" + DataType.roomMetaData +"Dat.bin");
-				this.mapPosX = (data[0]+(data[1]<<8))>>4;
-				this.mapPosY = (data[2]+(data[3]<<8))>>4;
-				r.SetPosition(roomMetaDataTableLoc+4);
+				this.mapPosX = (data[0]+(data[1]<<8)) >> 4;
+				this.mapPosY = (data[2]+(data[3]<<8)) >> 4;	
+
+				if(data.Length==4) //backwards compatibility because WHY DIDNT I SAVE IT ALL AT FIRST
+				{ 
+					this.width   = r.ReadUInt16();
+					this.height  = r.ReadUInt16();
+					tileSetOffset = r.ReadUInt16(); 
+				}
+				else
+				{
+					this.width   = (data[4]+(data[5]<<8));
+					this.height  = (data[6]+(data[7]<<8));
+					tileSetOffset= (data[8]+(data[9]<<8));
+				}
+				r.SetPosition(roomMetaDataTableLoc+8);
 			}
 			else
 			{
-				this.mapPosX = r.ReadUInt16( roomMetaDataTableLoc )>>4;
-				this.mapPosY = r.ReadUInt16()>>4;
+				this.mapPosX = r.ReadUInt16( roomMetaDataTableLoc ) >> 4;
+				this.mapPosY = r.ReadUInt16() >> 4;
+				this.width   = r.ReadUInt16();
+				this.height  = r.ReadUInt16();
+				tileSetOffset = r.ReadUInt16(); 
 			}
 			
-			this.width = r.ReadUInt16() >> 4; //bytes 5+6 pixels/16 = tiles
-			this.height = r.ReadUInt16() >> 4;                          //bytes 7+8 pixels/16 = tiles
+			
 
 			//get addr of TPA data
-			int tileSetOffset = r.ReadUInt16() << 2;                    //bytes 9+10
+			                   //bytes 9+10
 
 			int areaTileSetTableLoc = r.ReadAddr( header.globalTileSetTableLoc + (areaIndex << 2) );
-			int roomTileSetLoc = r.ReadAddr( areaTileSetTableLoc + tileSetOffset );
+			int roomTileSetLoc = r.ReadAddr( areaTileSetTableLoc + (tileSetOffset << 2 ));
 
 			r.SetPosition( roomTileSetLoc );
 
@@ -336,7 +354,7 @@ namespace MinishMaker.Core
 		{
 			if( bg2RoomDataAddr != null )
 			{
-				bg2MetaTiles = new MetaTileSet( bg2MetaTilesAddr, false, areaPath+"/"+DataType.bg2MetaTileSet+"Dat.bin" );
+				bg2MetaTiles = new MetaTileSet( bg2MetaTilesAddr, metaTileTypeAddr2, false, areaPath, 2);
 
                 byte[] data = null;
                 string bg2Path = roomPath + "/" + DataType.bg2Data+"Dat.bin";
@@ -368,7 +386,7 @@ namespace MinishMaker.Core
 
 				if( !bg1Use20344B0 )
                 {
-					bg1MetaTiles = new MetaTileSet( bg1MetaTilesAddr , true, areaPath+"/"+DataType.bg1MetaTileSet+"Dat.bin" );
+					bg1MetaTiles = new MetaTileSet( bg1MetaTilesAddr, metaTileTypeAddr1 , true, areaPath, 1 );
 				}
 
                 data.CopyTo(bg1RoomData, 0);
@@ -461,13 +479,10 @@ namespace MinishMaker.Core
 				low = (byte)(data.unknown-(high<<8));
 				outdata[index+6] = low;
 				outdata[index+7] = high;
-
-				if(i == chestInformation.Count-1)// add ending 0's
-				{
-					for(int j= 0; j<8;j++)
-						outdata[index+8+j]=0;
-				}
 			}
+
+			for (int j = 0; j < 8; j++)
+				outdata[outdata.Length - 8 + j] = 0;
 
             return outdata.Length;
 		}
@@ -523,12 +538,10 @@ namespace MinishMaker.Core
 				outdata[index++] = (byte)(currentData.flag1 >> 8);
 				outdata[index++] = (byte)(currentData.flag2 & 0xff);
 				outdata[index++] = (byte)(currentData.flag2 >> 8);
-
-				if(i == list.Count-1)// add ending 0's
-				{
-					outdata[index] = 0xFF;
-				}
 			}
+
+			outdata[outdata.Length-1] = 0xFF;
+            
 			data = outdata;
 			return outdata.Length;
 		}
@@ -561,15 +574,13 @@ namespace MinishMaker.Core
 				outdata[index+17] = (byte)(currentData.soundId >> 8);
 				outdata[index+18] = 0;
 				outdata[index+19] = 0;//padding
-
-				if(i == warpInformation.Count-1)// add ending 0's
-				{
-					outdata[index+20] = 0xFF;
-					outdata[index+21] = 0xFF;
-					for(int j= 2; j<20;j++)
-						outdata[index+20+j]=0;
-				}
 			}
+
+			outdata[outdata.Length - 20] = 0xFF;
+			outdata[outdata.Length - 19] = 0xFF;
+			for (int j = 2; j < 20; j++)
+				outdata[outdata.Length - 20 + j] = 0;
+            
 			data = outdata;
 			return outdata.Length;
 		}
@@ -592,15 +603,16 @@ namespace MinishMaker.Core
 
 				case DataType.tileSet:
 					//get addr of TPA data
-					int tileSetOffset = r.ReadUInt16(roomMetaDataTableLoc+8) << 2;                    //bytes 9+10
 
 					int areaTileSetTableLoc = r.ReadAddr( header.globalTileSetTableLoc + (areaIndex << 2) );
-					int roomTileSetAddrLoc = areaTileSetTableLoc + tileSetOffset;
+					int roomTileSetAddrLoc = areaTileSetTableLoc + (tileSetOffset << 2);
 					retAddr = roomTileSetAddrLoc;
 					break;
 
 				case DataType.bg1MetaTileSet:
 				case DataType.bg2MetaTileSet:
+				case DataType.bg1MetaTileType:
+				case DataType.bg2MetaTileType:
 					int metaTileSetsAddrLoc = r.ReadAddr( header.globalMetaTileSetTableLoc + (areaIndex << 2) );
 					//retAddr = metaTileSetsAddrLoc;
 					r.SetPosition(metaTileSetsAddrLoc);
@@ -611,6 +623,14 @@ namespace MinishMaker.Core
 					if(type == DataType.bg2MetaTileSet)
 					{
 						ParseData(r, Meta2Check);
+					}
+					if(type == DataType.bg1MetaTileType)
+					{
+						ParseData(r, Type1Check);
+					}
+					if(type == DataType.bg2MetaTileType)
+					{
+						ParseData(r, Type2Check);
 					}
 					retAddr = (int)r.Position-12; //step back 12 bytes as the bg was found after reading
 					break;
@@ -731,12 +751,14 @@ namespace MinishMaker.Core
 					this.bg1MetaTilesAddr = data;
 					Debug.WriteLine( data.src.Hex() + " bg1" );
 					break;
-				//case 0x0202AEB4:
-				//ret[8] = source; //not handled
-				//break;
-				//case 0x02010654:
-				//ret[9] = source; //not handled
-				//break;
+				case 0x0202AEB4:
+					this.metaTileTypeAddr2 = data;
+					Debug.WriteLine( data.src.Hex() + " type2" );
+					break;
+				case 0x02010654:
+					this.metaTileTypeAddr1 = data;
+					Debug.WriteLine( data.src.Hex() + " type1" );
+					break;
 				default:
 					Debug.Write( "Unhandled metatile addr: " );
 					Debug.Write( data.src.Hex() + "->" + data.dest.Hex() );
@@ -807,7 +829,19 @@ namespace MinishMaker.Core
 			return true;
 		}
 
-		private bool Meta2Check(AddrData data)
+		private bool Type1Check(AddrData data)
+		{
+			switch(data.dest)
+			{
+				case 0x02010654:
+					return false;
+				default:
+					break;
+			}
+			return true;
+		}
+		
+				private bool Meta2Check(AddrData data)
 		{
 			switch(data.dest)
 			{
@@ -817,6 +851,24 @@ namespace MinishMaker.Core
 					break;
 			}
 			return true;
+		}
+
+		private bool Type2Check(AddrData data)
+		{
+			switch(data.dest)
+			{
+				case 0x0202AEB4:
+					return false;
+				default:
+					break;
+			}
+			return true;
+		}
+
+		public void SetRoomSize(int xdim, int ydim)
+		{
+			this.width  = xdim<<4;
+			this.height = ydim<<4;
 		}
 	}
 }

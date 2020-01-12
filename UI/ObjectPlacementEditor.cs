@@ -21,6 +21,7 @@ namespace MinishMaker.UI
 		private List<List<ObjectData>> lists = new List<List<ObjectData>>();
 		private List<ObjectData> currentList;
 		private bool shouldTrigger = false;
+		private ObjectData? copy = null;
 
 		public ObjectPlacementEditor()
 		{
@@ -64,6 +65,8 @@ namespace MinishMaker.UI
 			if(currentList.Count==0)
 			{
 				indexLabel.Text = "0";
+				copyButton.Enabled = false;
+				pasteButton.Enabled = false;
 				objectIdValue.Enabled=false;
 				objectTypeBox.Enabled = false;
 				objectIdBox.Enabled = false;
@@ -104,6 +107,8 @@ namespace MinishMaker.UI
 			prevButton.Enabled = objectIndex!=0;
 
 			removeButton.Enabled = currentList.Count!=0;
+			copyButton.Enabled = true;
+			pasteButton.Enabled = copy.HasValue;
 			objectTypeBox.Enabled = true;
 			objectTypeValue.Enabled = true;
 			objectIdValue.Enabled= true;
@@ -497,6 +502,50 @@ namespace MinishMaker.UI
 			listIndex +=1;
 			objectIndex = 0;
 			currentList = lists[listIndex];
+			SetData();
+		}
+
+		private void copyButton_Click( object sender, EventArgs e )
+		{
+			var currentObject = currentList[objectIndex];
+			copy = new ObjectData()
+			{ 
+				d1item = currentObject.d1item, 
+				d2itemSub = currentObject.d2itemSub,
+				d3=currentObject.d3,
+				d4=currentObject.d4,
+				d5=currentObject.d5,
+				flag1=currentObject.flag1,
+				flag2=currentObject.flag2,
+				objectId=currentObject.objectId,
+				objectSub=currentObject.objectSub,
+				objectType=currentObject.objectType,
+				pixelX=currentObject.pixelX,
+				pixelY=currentObject.pixelY
+			};
+			pasteButton.Enabled=true;
+		}
+
+		private void pasteButton_Click( object sender, EventArgs e )
+		{
+			var cop = copy.Value;
+			var newObj = new ObjectData()
+			{ 
+				d1item = cop.d1item, 
+				d2itemSub = cop.d2itemSub,
+				d3=cop.d3,
+				d4=cop.d4,
+				d5=cop.d5,
+				flag1=cop.flag1,
+				flag2=cop.flag2,
+				objectId=cop.objectId,
+				objectSub=cop.objectSub,
+				objectType=cop.objectType,
+				pixelX=cop.pixelX,
+				pixelY=cop.pixelY
+			};
+			currentList[objectIndex] = newObj;
+			AddChange();
 			SetData();
 		}
 	}
