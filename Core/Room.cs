@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
-using MinishMaker.UI;
 using MinishMaker.Utilities;
 using static MinishMaker.Core.RoomMetaData;
 
@@ -74,7 +73,7 @@ namespace MinishMaker.Core
 
             if (!bg1Exists && !bg2Exists)
             {
-                MainWindow.Notify("No layers exist for this room, the room is highly likely invalid.", "Invalid Room");
+                throw new RoomException("No layers exist for this room, the room is highly likely invalid.");
             }
 
             Loaded = true; //do not load data a 2nd time for this room
@@ -164,7 +163,7 @@ namespace MinishMaker.Core
             }
             if (badTiles > 0)
             {
-                MainWindow.Notify("Found " + badTiles + " bad tiles while trying to draw them, the room may be unused.", "Bad Tiles");
+                throw new RoomException("Found " + badTiles + " bad tiles while trying to draw them, the room may be unused.");
             }
         }
 
@@ -634,5 +633,12 @@ namespace MinishMaker.Core
 
             return 10;
         }
+    }
+
+    public class RoomException : Exception
+    {
+        public RoomException() { }
+        public RoomException(string message) : base(message) { }
+        public RoomException(string message, Exception inner) : base(message, inner) { }
     }
 }

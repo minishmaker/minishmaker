@@ -20,7 +20,6 @@ namespace MinishMaker.UI
         private ChestEditorWindow chestEditor = null;
         private MetaTileEditor metatileEditor = null;
         private AreaEditor areaEditor = null;
-        //private EnemyPlacementEditor enemyPlacementEditor = null;
         private WarpEditor warpEditor = null;
         private ObjectPlacementEditor objectPlacementEditor = null;
         private RenameWindow renameWindow = null;
@@ -898,7 +897,7 @@ namespace MinishMaker.UI
             UpdateViewLayer(viewLayer);
         }
 
-        public static void Notify(string info, string title)
+        public void Notify(string info, string title)
         {
             MessageBox.Show(info, title, MessageBoxButtons.OK);
         }
@@ -916,10 +915,21 @@ namespace MinishMaker.UI
 
             var isDifferentArea = currentArea != areaId;
             var room = FindRoom(areaId, roomId);
+            
+
+            try
+            {
+                mapLayers = room.DrawRoom(areaId, true, true);
+            }
+            catch (PaletteException exception)
+            {
+                Notify(exception.Message, "Invalid Room");
+                statusText.Text = "Room load aborted.";
+                return;
+            }
+
             currentArea = areaId;
             currentRoom = room;
-
-            mapLayers = room.DrawRoom(areaId, true, true);
 
             selectedTileData = -1;
             tileTabControl.SelectedIndex = 1; // Reset to bg2

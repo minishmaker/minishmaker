@@ -1,5 +1,5 @@
-﻿using System.Drawing;
-using MinishMaker.UI;
+﻿using System;
+using System.Drawing;
 
 namespace MinishMaker.Core
 {
@@ -77,8 +77,7 @@ namespace MinishMaker.Core
             {
                 if (p >= 16)
                 {
-                    MainWindow.Notify("The room attempted to load more than 16 palettes, the room is highly likely invalid.", "Invalid Room");
-                    break;
+                    throw new PaletteException("The room attempted to load more than 16 palettes, the room is highly likely invalid.");
                 }
                 for (int i = 0; i < 0x10; i++)
                 {
@@ -95,5 +94,12 @@ namespace MinishMaker.Core
             return palettes;
 
         }
+    }
+
+    public class PaletteException : Exception
+    {
+        public PaletteException() { }
+        public PaletteException(string message) : base(message) { }
+        public PaletteException(string message, Exception inner) : base(message, inner) { }
     }
 }
