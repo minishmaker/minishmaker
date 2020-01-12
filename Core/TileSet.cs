@@ -22,19 +22,19 @@ namespace MinishMaker.Core
         public TileSet(List<AddrData> tileSetAddrs)
         {
             byte[] tilesetData = new byte[0x10000];
-			using( MemoryStream ms = new MemoryStream( tilesetData ) )
-			{
-				using( BinaryWriter bw = new BinaryWriter( ms ) )
-				{
-					for( int i = 0; i < tileSetAddrs.Count; i++ )
-					{
-						ms.Seek( tileSetAddrs[i].dest, SeekOrigin.Begin );
-						byte[] data = DataHelper.GetData( tileSetAddrs[i] );
-						bw.Write( data );
-					}
-					this.tilesetData = tilesetData;
-				}
-			}
+            using (MemoryStream ms = new MemoryStream(tilesetData))
+            {
+                using (BinaryWriter bw = new BinaryWriter(ms))
+                {
+                    for (int i = 0; i < tileSetAddrs.Count; i++)
+                    {
+                        ms.Seek(tileSetAddrs[i].dest, SeekOrigin.Begin);
+                        byte[] data = DataHelper.GetData(tileSetAddrs[i]);
+                        bw.Write(data);
+                    }
+                    this.tilesetData = tilesetData;
+                }
+            }
         }
 
         public TileSet(byte[] data)
@@ -80,8 +80,8 @@ namespace MinishMaker.Core
                         int colorData = data[dataPos];
                         int data1 = hflip ? colorData >> 4 : colorData & 0x0F; // /16 for last 4 bits or & 15 for the first 4 bits
                         int data2 = hflip ? colorData & 0x0F : colorData >> 4;
-                        Color color1 = pal[data1 + pnum*16];
-                        Color color2 = pal[data2 + pnum*16];
+                        Color color1 = pal[data1 + pnum * 16];
+                        Color color2 = pal[data2 + pnum * 16];
 
 
                         if (color1.A > 0)//if see through dont draw white
@@ -94,19 +94,19 @@ namespace MinishMaker.Core
                         }
                         if (color2.A > 0)//if see through dont draw white
                         {
-                            SetPixel(posX+1, posY, color2, ref bd);
+                            SetPixel(posX + 1, posY, color2, ref bd);
                         }
                         else if (overwrite)
                         {
-                            SetPixel(posX+1, posY, Color.Transparent, ref bd);
+                            SetPixel(posX + 1, posY, Color.Transparent, ref bd);
                         }
                         dataPos++;
                     }
-                   
+
                 }
             }
             tileImg.UnlockBits(bd);
-                    
+
         }
     }
 }

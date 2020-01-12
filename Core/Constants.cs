@@ -4,172 +4,172 @@ using System.Reflection;
 
 namespace MinishMaker.Core
 {
-	public enum RegionVersion
-	{
-		EU,
-		JP,
-		US,
-		None
-	}
+    public enum RegionVersion
+    {
+        EU,
+        JP,
+        US,
+        None
+    }
 
-	public struct HeaderData
-	{
-		public int MapHeaderBase;
-		// Name on this is gonna have to change sometime
-		public int AreaMetadataBase;
+    public struct HeaderData
+    {
+        public int MapHeaderBase;
+        // Name on this is gonna have to change sometime
+        public int AreaMetadataBase;
 
-		//added for now, change names to whatever you want
-		public int tileOffset;
-		public int paletteSetTableLoc;
-		public int chunk0TableLoc;
-		public int area1Chunk0TableLoc;
-		public int chunk1TableLoc;
-		public int chunk2TableLoc;
-		public int swapBase;
-		public int paletteChangeBase;
-		public int area1SwapBase;
-		public int globalTileSetTableLoc;
-		public int gfxSourceBase;
-		public int globalMetaTileSetTableLoc;
-		public int globalTileDataTableLoc;
-		public int areaInformationTableLoc;
-		public int warpInformationTableLoc;
+        //added for now, change names to whatever you want
+        public int tileOffset;
+        public int paletteSetTableLoc;
+        public int chunk0TableLoc;
+        public int area1Chunk0TableLoc;
+        public int chunk1TableLoc;
+        public int chunk2TableLoc;
+        public int swapBase;
+        public int paletteChangeBase;
+        public int area1SwapBase;
+        public int globalTileSetTableLoc;
+        public int gfxSourceBase;
+        public int globalMetaTileSetTableLoc;
+        public int globalTileDataTableLoc;
+        public int areaInformationTableLoc;
+        public int warpInformationTableLoc;
 
-		public HeaderData( int map, int area, int tileOffset, int paletteSetTableLoc, int c0TableLoc, int a1C0TableLoc, int c1TableLoc, int c2TableLoc, int swapBase, int paletteChangeBase, int area1SwapBase, int globalTileSetTableLoc, int gfxSourceBase, int globalMetaTileSetTableLoc, int globalTileDataTableLoc, int areaInformationTableLoc, int warpInformationTableLoc)
-		{
-			this.MapHeaderBase = map;
-			this.AreaMetadataBase = area;
-			this.tileOffset = tileOffset;
-			this.paletteSetTableLoc = paletteSetTableLoc;
-			this.chunk0TableLoc = c0TableLoc; //looks like each next chunkTable is a 0x16 further (eu and us), not adding because of possible jp
-			this.area1Chunk0TableLoc = a1C0TableLoc;
-			this.chunk1TableLoc = c1TableLoc; //c0+ 0x16
-			this.chunk2TableLoc = c2TableLoc; //c0+ 0x32
-			this.swapBase = swapBase;
-			this.paletteChangeBase = paletteChangeBase;
-			this.area1SwapBase = area1SwapBase; //above -0x140?
-			this.globalTileSetTableLoc = globalTileSetTableLoc;
-			this.gfxSourceBase = gfxSourceBase;
-			this.globalMetaTileSetTableLoc = globalMetaTileSetTableLoc;
-			this.globalTileDataTableLoc = globalTileDataTableLoc;
-			this.areaInformationTableLoc = areaInformationTableLoc;
-			this.warpInformationTableLoc = warpInformationTableLoc;
-		}
-	}
+        public HeaderData(int map, int area, int tileOffset, int paletteSetTableLoc, int c0TableLoc, int a1C0TableLoc, int c1TableLoc, int c2TableLoc, int swapBase, int paletteChangeBase, int area1SwapBase, int globalTileSetTableLoc, int gfxSourceBase, int globalMetaTileSetTableLoc, int globalTileDataTableLoc, int areaInformationTableLoc, int warpInformationTableLoc)
+        {
+            this.MapHeaderBase = map;
+            this.AreaMetadataBase = area;
+            this.tileOffset = tileOffset;
+            this.paletteSetTableLoc = paletteSetTableLoc;
+            this.chunk0TableLoc = c0TableLoc; //looks like each next chunkTable is a 0x16 further (eu and us), not adding because of possible jp
+            this.area1Chunk0TableLoc = a1C0TableLoc;
+            this.chunk1TableLoc = c1TableLoc; //c0+ 0x16
+            this.chunk2TableLoc = c2TableLoc; //c0+ 0x32
+            this.swapBase = swapBase;
+            this.paletteChangeBase = paletteChangeBase;
+            this.area1SwapBase = area1SwapBase; //above -0x140?
+            this.globalTileSetTableLoc = globalTileSetTableLoc;
+            this.gfxSourceBase = gfxSourceBase;
+            this.globalMetaTileSetTableLoc = globalMetaTileSetTableLoc;
+            this.globalTileDataTableLoc = globalTileDataTableLoc;
+            this.areaInformationTableLoc = areaInformationTableLoc;
+            this.warpInformationTableLoc = warpInformationTableLoc;
+        }
+    }
 
-	public enum TileEntityType
-	{
-		None = 0x00,
-		TestA = 0x01,
-		Chest = 0x02,
-		BigChest = 0x03,
-		TestB = 0x04,
-		TestC = 0x05,
-		
-	}
+    public enum TileEntityType
+    {
+        None = 0x00,
+        TestA = 0x01,
+        Chest = 0x02,
+        BigChest = 0x03,
+        TestB = 0x04,
+        TestC = 0x05,
 
-	public enum EnemyTypes
-	{
-		Octorok = 0x00,
-		Chuchu = 0x01,
-		Leever = 0x02,
-		Peahat = 0x03,
-		Rollobite = 0x04,
-		Darknut = 0x05,
-		MinishNut = 0x06,
-		Beetle = 0x07,
-		Keese = 0x08,
-		DoorMimic = 0x09,
-		RockChuchu = 0x0A,
-		SpinyChuchu = 0x0B,
-		Chick = 0x0C,
-		Moldorm = 0x0D,
-		MoldWorm = 0x0F,
-		Sluggula = 0x10,
-		Pesto = 0x11,
-		PuffStool = 0x12,
-		BigGreenChu = 0x13,
-		LikeLike = 0x14,
-		SpearMoblin = 0x15,
-		DekuScrub = 0x16,
-		RupeeLike = 0x17,
-		Madderpillar = 0x18,
-		GiantRaindrop = 0x19,
-		Wallmaster = 0x1A,
-		BombPeahat = 0x1B,
-		Spark = 0x1C,
-		Chaser = 0x1D,
-		SpikedBeetle = 0x1E,
-		BlueTrap = 0x1F,
-		Helmasaur = 0x20,
-		Boulder = 0x21,
-		BobOmb = 0x22,
-		Floormaster = 0x23,
-		Gleerok = 0x24,
-		VaatiHandEyes = 0x25,
-		Tektite = 0x26,
-		NormalWizrobe = 0x27,
-		FireWizrobe = 0x28,
-		IceWizrobe = 0x29,
-		Armos = 0x2A,
-		Eyegore = 0x2B,
-		Rope = 0x2C,
-		Smallpesto = 0x2D,
-		AcroBandits = 0x2E,
-		GreenTrap = 0x2F,
-		Keaton = 0x30,
-		Crow = 0x31,
-		Mulldozer = 0x32,
-		Bombarossa = 0x33,
-		Bubble = 0x34,
-		SpinyBeetle = 0x35,
-		Mazaal = 0x36,
-		MazaalPillar = 0x37,
-		BigOctorok = 0x39,
-		FlyingPot = 0x3A,
-		Gibdo = 0x3B,
-		GoldOctorock = 0x3C,
-		GoldTektite = 0x3D,
-		GoldRope = 0x3E,
-		CloudPiranha = 0x3F,
-		ScissorsBeetle = 0x40,
-		Cucco = 0x41,
-		Stalfos = 0x42,
-		Skull = 0x43,
-		RedCrow = 0x45,
-		BowMoblin = 0x46,
-		Lakitu = 0x47,
-		BallAndChainSoldier = 0x4C,
-		Ghini = 0x4E,
-		BonkTree = 0x65,
-	}
+    }
 
-	public enum KinstoneType
-	{
-		UnTyped,
+    public enum EnemyTypes
+    {
+        Octorok = 0x00,
+        Chuchu = 0x01,
+        Leever = 0x02,
+        Peahat = 0x03,
+        Rollobite = 0x04,
+        Darknut = 0x05,
+        MinishNut = 0x06,
+        Beetle = 0x07,
+        Keese = 0x08,
+        DoorMimic = 0x09,
+        RockChuchu = 0x0A,
+        SpinyChuchu = 0x0B,
+        Chick = 0x0C,
+        Moldorm = 0x0D,
+        MoldWorm = 0x0F,
+        Sluggula = 0x10,
+        Pesto = 0x11,
+        PuffStool = 0x12,
+        BigGreenChu = 0x13,
+        LikeLike = 0x14,
+        SpearMoblin = 0x15,
+        DekuScrub = 0x16,
+        RupeeLike = 0x17,
+        Madderpillar = 0x18,
+        GiantRaindrop = 0x19,
+        Wallmaster = 0x1A,
+        BombPeahat = 0x1B,
+        Spark = 0x1C,
+        Chaser = 0x1D,
+        SpikedBeetle = 0x1E,
+        BlueTrap = 0x1F,
+        Helmasaur = 0x20,
+        Boulder = 0x21,
+        BobOmb = 0x22,
+        Floormaster = 0x23,
+        Gleerok = 0x24,
+        VaatiHandEyes = 0x25,
+        Tektite = 0x26,
+        NormalWizrobe = 0x27,
+        FireWizrobe = 0x28,
+        IceWizrobe = 0x29,
+        Armos = 0x2A,
+        Eyegore = 0x2B,
+        Rope = 0x2C,
+        Smallpesto = 0x2D,
+        AcroBandits = 0x2E,
+        GreenTrap = 0x2F,
+        Keaton = 0x30,
+        Crow = 0x31,
+        Mulldozer = 0x32,
+        Bombarossa = 0x33,
+        Bubble = 0x34,
+        SpinyBeetle = 0x35,
+        Mazaal = 0x36,
+        MazaalPillar = 0x37,
+        BigOctorok = 0x39,
+        FlyingPot = 0x3A,
+        Gibdo = 0x3B,
+        GoldOctorock = 0x3C,
+        GoldTektite = 0x3D,
+        GoldRope = 0x3E,
+        CloudPiranha = 0x3F,
+        ScissorsBeetle = 0x40,
+        Cucco = 0x41,
+        Stalfos = 0x42,
+        Skull = 0x43,
+        RedCrow = 0x45,
+        BowMoblin = 0x46,
+        Lakitu = 0x47,
+        BallAndChainSoldier = 0x4C,
+        Ghini = 0x4E,
+        BonkTree = 0x65,
+    }
 
-		YellowTornadoProng = 0x65,
-		YellowTornadoSpike = 0x66,
-		YellowTornadoChaotic = 0x67,
-		//68 and 69 are repeats of above
+    public enum KinstoneType
+    {
+        UnTyped,
 
-		YellowTotemProng = 0x6A,
-		YellowTotemWave = 0x6B,
-		YellowTotemZigZag = 0x6C,
+        YellowTornadoProng = 0x65,
+        YellowTornadoSpike = 0x66,
+        YellowTornadoChaotic = 0x67,
+        //68 and 69 are repeats of above
 
-		YellowCrown = 0x6D,
+        YellowTotemProng = 0x6A,
+        YellowTotemWave = 0x6B,
+        YellowTotemZigZag = 0x6C,
 
-		RedSpike = 0x6E,
-		RedCrack = 0x6F,
-		RedProng = 0x70,
+        YellowCrown = 0x6D,
 
-		BlueL = 0x71,
-		BlueS = 0x72,
+        RedSpike = 0x6E,
+        RedCrack = 0x6F,
+        RedProng = 0x70,
 
-		GreenSpike = 0x73,
-		GreenSquare = 0x74,
-		GreenSplit = 0x75,
-	}
+        BlueL = 0x71,
+        BlueS = 0x72,
+
+        GreenSpike = 0x73,
+        GreenSquare = 0x74,
+        GreenSplit = 0x75,
+    }
 
     public enum ItemType
     {
@@ -289,321 +289,321 @@ namespace MinishMaker.Core
         LongSpin = 0x75
     }
 
-	public enum Object6Types
-	{
-		Item = 0x00,
-		//EnemyDeathAnimation = 0x01,
-		FakeItem = 0x02,
-		PressureSwitch = 0x03,
-		//0x04,
-		Pot = 0x05,
-		//EzloShrinkAnimation - 0x06,
-		PushRock = 0x07,
-		DungeonDoor = 0x08,
-		//0x09,
-		KeyBlock = 0x0A,
-		//0x0B,
-		//SecretAnimation = 0x0C,
-		Skull = 0x0D,
-		FallingTile = 0x0E,
-		//Explosion = 0x0F,
-		//WarpEffect = 0x10,
-		//VanishingRock = 0x11,
-		BigRockDoor = 0x12,
-		MinecartTrack = 0x13,
-		Lilypad = 0x14,
-		//weird sprite = 0x15,
-		MovingPlatform = 0x16,
-		//TinyWhitePuff = 0x17,
-		BlueMask = 0x18,
-		//Crash = 0x19,////
-		BouncingItem = 0x1A,
-		//GreatFairyWings = 0x1B,
-		//MailSign = 0x1C,
-		//0x1D,
-		DiggingDirt = 0x1E,
-		//VanishingBush = 0x1F,
-		//Explosion2 = 0x20,
-		YellowDust = 0x21,
-		//Gacha = 0x22,
-		ArrowEye = 0x23,
-		ClonePressureSwitch = 0x24,
-		//DWSBarrel = 0x25,
-		//shadow/cobweb = 0x26,
-		PushableStatue = 0x27,
-		//0x28,
-		AmbientClouds = 0x29,
-		//Fire = 0x2A,
-		//Dot = 0x2B,
-		GrowingVine = 0x2C,
-		//Smoke = 0x2D,
-		PushableBoulder = 0x2E,
-		//placedTile? = 0x2F,
-		//floating item? = 0x30,
-		FrozeDecoration = 0x31,
-		Mushroom = 0x32,
-		WaterBarrier = 0x33,
-		//0x34,
-		//gacha animation = 0x35,
-		//0x36,
-		//0x37,
-		MinishPot = 0x38,
-		BigKeyDoor = 0x39,
-		//triangle transition = 0x3A,
-		//minish portal sprites = 0x3B,
-		//link falling = 0x3C,
-		//dark transition = 0x3D,
-		//minish town+ portal = 0x3E,
-		BigLeaf = 0x3F,
-		//0x40,
-		Ladder = 0x41,
-		//0x42,
-		//0x43,
-		//0x44,
-		//0x45,
-		BookLadder = 0x46,
-		//0x47,
-		//0x48,
-		//0x49,
-		//0x4A,
-		//chuchu animation = 0x4B,
-		PushableFurniture = 0x4C,
-		NonPushableFurniture = 0x4D,
-		MinishDoor = 0x4E,
-		//top door sprites = 0x4F,
-		BigRockDecoration = 0x50,
-		BigRock = 0x51,
-		//0x52,
-		//bush thrown = 0x53,
-		PullHandle = 0x54,
-		//0x55,
-		//bubble? = 0x56,
-		//0x57,
-		//some red thing = 0x58,
-		LavaPlatform = 0x59,
-		Paper = 0x5A,
-		//sleep sprites = 0x5B,
-		WallMask = 0x5C,
-		Door = 0x5D,
-		WhirlWind = 0x5E,
-		PushStaircase = 0x5F,
-		Manual = 0x60,
-		//0x61,
-		Twig = 0x62,
-		//rupee/heart item drops = 0x63,
-		//lightning = 0x64,
-		//wooden piece = 0x65,
-		//0x66,
-		//lava stuff = 0x67,
-		//bottle spill = 0x68,
-		//0x69,
-		//some items? = 0x6A,
-		//0x6B,
-		DungeonDoor2 = 0x6C,
-		RockPillar = 0x6D,
-		//0x6E,
-		MinishHouseDoor = 0x6F,
-		//swamp splash = 0x70,
-		TombStone = 0x71,
-		StoneTablet = 0x72,
-		MinishLilypad = 0x73,
-		//0x74,
-		//minish transform sprites = 0x75,
-		//0x76,
-		Bell = 0x77,
-		BigFlower = 0x78,
-		//floating minish letters = 0x79,
-		//weird glow = 0x7A,
-		PushableLever = 0x7B,
-		BigShoe = 0x7C,
-		//breaking animation = 0x7D,
-		//7E,
-		//picolite flower blooming = 0x7F,
-		Board = 0x80,
-		//small fence = 0x81,
-		BigTornado = 0x82,
-		BigPusshableLever = 0x83,
-		IceBlock = 0x84,
-		IceChunk = 0x85,
-		//clover = 0x86,
-		//fireball = 0x87,
-		GiantBook = 0x88,
-		//swamp boss death = 0x89,
-		Furniture2 = 0x8A,
-		DoubleBookshelf = 0x8B,
-		Book = 0x8C,
-		//0x8D,
-		//black screen earthquake = 0x8E,
-		WaterElementIceBlock = 0x8F,
-		//water element without ice = 0x90,
-		//0x91,
-		BreadFurnace = 0x92,
-		Lamp = 0x93,
-		WindySign = 0x94,
-		//ocarina bird = 0x95,
-		//gold key stuff = 0x96,
-		// ^ = 0x97,
-		//0x98,
-		//0x99,
-		GiantAcorn = 0x9A,
-		//0x9B,
-		PegasusTree = 0x9C,
-		ItemSwitch = 0x9D,
-		TreeThorns = 0x9E,
-		SmallWindTurbine = 0x9F,
-		AngryStatue = 0xA0,
-		Door2 = 0xA1,
-		//bounce noise = 0xA2,
-		//secret opening = 0xA3,
-		GlowingDecor = 0xA4,
-		FireballChain = 0xA5,
-		//0xA6,
-		//cloneswitch2? = 0xA7,
-		//0xA8,
-		//spawn animation = 0xA9,
-		//waterfall cave opening = 0xAA,
-		//0xAB,
-		//link walks to object = 0xAC,
-		//bg3 stuff = 0xAD,
-		//blocks pushed = 0xAE,
-		//0xAF,
-		//0xB0,
-		//jail wall = 0xB1,
-		//0xB2,
-		//kinstone shiny animation = 0xB3,
-		//japanese titlescreen subs = 0xB4,
-		//move screen to pos = 0xB5,
-		//0xB6,
-		PushDrop = 0xB7,
-		SkyWarp = 0xB8,
-		//0xB9,
-		//0xBA,
-		//0xBB,
-		//darkness? = 0xBC,
-		//title screen = 0xBD,
-		SmallWindmill = 0xBE,
-		//0xBF,
-		//0xC0,
-		//link item get anim = 0xC1,
-		//0xC2,
-		//0xC3,
-		Fog = 0xC4
-	}
+    public enum Object6Types
+    {
+        Item = 0x00,
+        //EnemyDeathAnimation = 0x01,
+        FakeItem = 0x02,
+        PressureSwitch = 0x03,
+        //0x04,
+        Pot = 0x05,
+        //EzloShrinkAnimation - 0x06,
+        PushRock = 0x07,
+        DungeonDoor = 0x08,
+        //0x09,
+        KeyBlock = 0x0A,
+        //0x0B,
+        //SecretAnimation = 0x0C,
+        Skull = 0x0D,
+        FallingTile = 0x0E,
+        //Explosion = 0x0F,
+        //WarpEffect = 0x10,
+        //VanishingRock = 0x11,
+        BigRockDoor = 0x12,
+        MinecartTrack = 0x13,
+        Lilypad = 0x14,
+        //weird sprite = 0x15,
+        MovingPlatform = 0x16,
+        //TinyWhitePuff = 0x17,
+        BlueMask = 0x18,
+        //Crash = 0x19,////
+        BouncingItem = 0x1A,
+        //GreatFairyWings = 0x1B,
+        //MailSign = 0x1C,
+        //0x1D,
+        DiggingDirt = 0x1E,
+        //VanishingBush = 0x1F,
+        //Explosion2 = 0x20,
+        YellowDust = 0x21,
+        //Gacha = 0x22,
+        ArrowEye = 0x23,
+        ClonePressureSwitch = 0x24,
+        //DWSBarrel = 0x25,
+        //shadow/cobweb = 0x26,
+        PushableStatue = 0x27,
+        //0x28,
+        AmbientClouds = 0x29,
+        //Fire = 0x2A,
+        //Dot = 0x2B,
+        GrowingVine = 0x2C,
+        //Smoke = 0x2D,
+        PushableBoulder = 0x2E,
+        //placedTile? = 0x2F,
+        //floating item? = 0x30,
+        FrozeDecoration = 0x31,
+        Mushroom = 0x32,
+        WaterBarrier = 0x33,
+        //0x34,
+        //gacha animation = 0x35,
+        //0x36,
+        //0x37,
+        MinishPot = 0x38,
+        BigKeyDoor = 0x39,
+        //triangle transition = 0x3A,
+        //minish portal sprites = 0x3B,
+        //link falling = 0x3C,
+        //dark transition = 0x3D,
+        //minish town+ portal = 0x3E,
+        BigLeaf = 0x3F,
+        //0x40,
+        Ladder = 0x41,
+        //0x42,
+        //0x43,
+        //0x44,
+        //0x45,
+        BookLadder = 0x46,
+        //0x47,
+        //0x48,
+        //0x49,
+        //0x4A,
+        //chuchu animation = 0x4B,
+        PushableFurniture = 0x4C,
+        NonPushableFurniture = 0x4D,
+        MinishDoor = 0x4E,
+        //top door sprites = 0x4F,
+        BigRockDecoration = 0x50,
+        BigRock = 0x51,
+        //0x52,
+        //bush thrown = 0x53,
+        PullHandle = 0x54,
+        //0x55,
+        //bubble? = 0x56,
+        //0x57,
+        //some red thing = 0x58,
+        LavaPlatform = 0x59,
+        Paper = 0x5A,
+        //sleep sprites = 0x5B,
+        WallMask = 0x5C,
+        Door = 0x5D,
+        WhirlWind = 0x5E,
+        PushStaircase = 0x5F,
+        Manual = 0x60,
+        //0x61,
+        Twig = 0x62,
+        //rupee/heart item drops = 0x63,
+        //lightning = 0x64,
+        //wooden piece = 0x65,
+        //0x66,
+        //lava stuff = 0x67,
+        //bottle spill = 0x68,
+        //0x69,
+        //some items? = 0x6A,
+        //0x6B,
+        DungeonDoor2 = 0x6C,
+        RockPillar = 0x6D,
+        //0x6E,
+        MinishHouseDoor = 0x6F,
+        //swamp splash = 0x70,
+        TombStone = 0x71,
+        StoneTablet = 0x72,
+        MinishLilypad = 0x73,
+        //0x74,
+        //minish transform sprites = 0x75,
+        //0x76,
+        Bell = 0x77,
+        BigFlower = 0x78,
+        //floating minish letters = 0x79,
+        //weird glow = 0x7A,
+        PushableLever = 0x7B,
+        BigShoe = 0x7C,
+        //breaking animation = 0x7D,
+        //7E,
+        //picolite flower blooming = 0x7F,
+        Board = 0x80,
+        //small fence = 0x81,
+        BigTornado = 0x82,
+        BigPusshableLever = 0x83,
+        IceBlock = 0x84,
+        IceChunk = 0x85,
+        //clover = 0x86,
+        //fireball = 0x87,
+        GiantBook = 0x88,
+        //swamp boss death = 0x89,
+        Furniture2 = 0x8A,
+        DoubleBookshelf = 0x8B,
+        Book = 0x8C,
+        //0x8D,
+        //black screen earthquake = 0x8E,
+        WaterElementIceBlock = 0x8F,
+        //water element without ice = 0x90,
+        //0x91,
+        BreadFurnace = 0x92,
+        Lamp = 0x93,
+        WindySign = 0x94,
+        //ocarina bird = 0x95,
+        //gold key stuff = 0x96,
+        // ^ = 0x97,
+        //0x98,
+        //0x99,
+        GiantAcorn = 0x9A,
+        //0x9B,
+        PegasusTree = 0x9C,
+        ItemSwitch = 0x9D,
+        TreeThorns = 0x9E,
+        SmallWindTurbine = 0x9F,
+        AngryStatue = 0xA0,
+        Door2 = 0xA1,
+        //bounce noise = 0xA2,
+        //secret opening = 0xA3,
+        GlowingDecor = 0xA4,
+        FireballChain = 0xA5,
+        //0xA6,
+        //cloneswitch2? = 0xA7,
+        //0xA8,
+        //spawn animation = 0xA9,
+        //waterfall cave opening = 0xAA,
+        //0xAB,
+        //link walks to object = 0xAC,
+        //bg3 stuff = 0xAD,
+        //blocks pushed = 0xAE,
+        //0xAF,
+        //0xB0,
+        //jail wall = 0xB1,
+        //0xB2,
+        //kinstone shiny animation = 0xB3,
+        //japanese titlescreen subs = 0xB4,
+        //move screen to pos = 0xB5,
+        //0xB6,
+        PushDrop = 0xB7,
+        SkyWarp = 0xB8,
+        //0xB9,
+        //0xBA,
+        //0xBB,
+        //darkness? = 0xBC,
+        //title screen = 0xBD,
+        SmallWindmill = 0xBE,
+        //0xBF,
+        //0xC0,
+        //link item get anim = 0xC1,
+        //0xC2,
+        //0xC3,
+        Fog = 0xC4
+    }
 
-	public enum NPCTypes
-	{
-		Gentari = 0x01,
-		Festari = 0x02,
-		ForestMinish = 0x03,
-		Postman = 0x04,
-		//Companion = 0x05,
-		People = 0x06,
-		People2 = 0x07,
-		Soldier = 0x08,
-		//broken = 0x09,
-		Stamp = 0x0A,
-		RedServant = 0x0B,
-		//0C,
-		Wheaton = 0x0D,
-		Pita = 0x0E,
-		MinishEzlo = 0x0F,
-		Postbox = 0x10,
-		Beedle = 0x11,
-		Brocco = 0x12,
-		People3 = 0x13,
-		Pina = 0x14,
-		Soldier2 = 0x15,
-		BlueServant = 0x16,
-		Din = 0x17,
-		Nayru = 0x18,
-		Farore = 0x19,
-		Sturgeon = 0x1A,
-		Tinglets = 0x1B,
-		Stockwell = 0x1C,
-		Talon = 0x1D,
-		Malon = 0x1E,
-		Epona = 0x1F,
-		EponaWagon = 0x20,
-		Ghosts = 0x21,
-		Smith = 0x22,
-		//broken = 0x23
-		King = 0x24,
-		Minister = 0x25,
-		Soldier3 = 0x26,
-		//NSFWHero = 0x27,
-		Zelda = 0x28,
-		Mutoh = 0x29,
-		Mack = 0x2A,
-		CastorTotem = 0x2B,
-		Cats = 0x2C,
-		MountainMinish = 0x2D,
-		//ZeldaCompanion = 0x2E,
-		Melari = 0x2F,
-		BladeBrothers = 0x30,
-		Cow = 0x31,
-		Goron = 0x32,
-		GoronMerchant = 0x33,
-		Gorman = 0x34,
-		Dogs = 0x35,
-		Syrup = 0x36,
-		Rem = 0x37,
-		TownMinish = 0x38,
-		Librari = 0x39,
-		Percy = 0x3A,
-		//3B,
-		Moblin = 0x3C,
-		Clerks = 0x3D,
-		Farmers = 0x3E,
-		Rlovs = 0x3F,
-		Dampe = 0x40,
-		DrLeft = 0x41,
-		GhostKing = 0x42,
-		Gina = 0x43,
-		Simon = 0x44,
-		Anju = 0x45,
-		Mama = 0x46,
-		Emma = 0x47,
-		Teachers = 0x48,
-		WindTribe = 0x49,
-		Gregal = 0x4A,
-		Mayor = 0x4B,
-		//wtf 0x4C,
-		Ezlo = 0x4D,
-		//0x4E,
-		DryingRacks = 0x4F,
-		PicolyteBottles = 0x50,
-		//0x52,
-		HurdyGurdy = 0x53,
-		Cucco = 0x54,
-		Chick = 0x55,
-		//0x56,
-		Phonograph = 0x57,
-	}
+    public enum NPCTypes
+    {
+        Gentari = 0x01,
+        Festari = 0x02,
+        ForestMinish = 0x03,
+        Postman = 0x04,
+        //Companion = 0x05,
+        People = 0x06,
+        People2 = 0x07,
+        Soldier = 0x08,
+        //broken = 0x09,
+        Stamp = 0x0A,
+        RedServant = 0x0B,
+        //0C,
+        Wheaton = 0x0D,
+        Pita = 0x0E,
+        MinishEzlo = 0x0F,
+        Postbox = 0x10,
+        Beedle = 0x11,
+        Brocco = 0x12,
+        People3 = 0x13,
+        Pina = 0x14,
+        Soldier2 = 0x15,
+        BlueServant = 0x16,
+        Din = 0x17,
+        Nayru = 0x18,
+        Farore = 0x19,
+        Sturgeon = 0x1A,
+        Tinglets = 0x1B,
+        Stockwell = 0x1C,
+        Talon = 0x1D,
+        Malon = 0x1E,
+        Epona = 0x1F,
+        EponaWagon = 0x20,
+        Ghosts = 0x21,
+        Smith = 0x22,
+        //broken = 0x23
+        King = 0x24,
+        Minister = 0x25,
+        Soldier3 = 0x26,
+        //NSFWHero = 0x27,
+        Zelda = 0x28,
+        Mutoh = 0x29,
+        Mack = 0x2A,
+        CastorTotem = 0x2B,
+        Cats = 0x2C,
+        MountainMinish = 0x2D,
+        //ZeldaCompanion = 0x2E,
+        Melari = 0x2F,
+        BladeBrothers = 0x30,
+        Cow = 0x31,
+        Goron = 0x32,
+        GoronMerchant = 0x33,
+        Gorman = 0x34,
+        Dogs = 0x35,
+        Syrup = 0x36,
+        Rem = 0x37,
+        TownMinish = 0x38,
+        Librari = 0x39,
+        Percy = 0x3A,
+        //3B,
+        Moblin = 0x3C,
+        Clerks = 0x3D,
+        Farmers = 0x3E,
+        Rlovs = 0x3F,
+        Dampe = 0x40,
+        DrLeft = 0x41,
+        GhostKing = 0x42,
+        Gina = 0x43,
+        Simon = 0x44,
+        Anju = 0x45,
+        Mama = 0x46,
+        Emma = 0x47,
+        Teachers = 0x48,
+        WindTribe = 0x49,
+        Gregal = 0x4A,
+        Mayor = 0x4B,
+        //wtf 0x4C,
+        Ezlo = 0x4D,
+        //0x4E,
+        DryingRacks = 0x4F,
+        PicolyteBottles = 0x50,
+        //0x52,
+        HurdyGurdy = 0x53,
+        Cucco = 0x54,
+        Chick = 0x55,
+        //0x56,
+        Phonograph = 0x57,
+    }
 
 
-	public enum ObjectCategories
-	{
-		Enemy = 0x03,
-		Object = 0x06,
-		NPC = 0x07,
-		Event = 0x09,
-		Enemy2 = 0x13,
-		Object2 = 0x16
-	}
+    public enum ObjectCategories
+    {
+        Enemy = 0x03,
+        Object = 0x06,
+        NPC = 0x07,
+        Event = 0x09,
+        Enemy2 = 0x13,
+        Object2 = 0x16
+    }
 
     public class Header
-	{
-		// Will fill out when relevant, only need EU for now
-		private readonly HeaderData[] headerTable = new HeaderData[]
-		{   //             MAP     , ENTITY?,	TILEOFFSET	PALETTESET	CHUNK0		CHUNK0AREA1	CHUNK1		CHUNK2		SWAP		PALETTECHANGE	AREA1SWAP	TILESET		GFXSOURCE	METATILE	TILEDATA	AREADATA	WARP
-            new HeaderData(0x11D95C, 0x0D4828,  0x5A23D0,   0xFED88,    0x107AEC,   0x1077AC,   0x107B02,   0x107B18,   0x107B5C,   0x107940,       0x107800,   0x101BC8,   0x323FEC,   0x1027F8,   0x1070E4,	0x127468,	0x139EDC),
-			new HeaderData(0x11DED8, 0x0D4E9C,	0x5A2B20,	0xFF500,	0x10805C,	0x107D18,	0x108072,	0x108088,	0x1080CC,	0x107EAC,		0x107D6C,	0x102134,	0x324710,	0x102D64,	0x107650,	0x1279F4,	0x13A41C),
-			new HeaderData(0x11E214, 0x0D50FC,	0x5A2E80,	0xFF850,	0x108398,	0x108050,	0x1083AE,	0x1083C4,	0x108408,	0x1081E4,		0x1080A4,	0x10246C,	0x324AE4,	0x10309C,	0x107988,	0x127D30,	0x13A7F0)
-		};
+    {
+        // Will fill out when relevant, only need EU for now
+        private readonly HeaderData[] headerTable = new HeaderData[]
+        {   //             MAP     , ENTITY?,	TILEOFFSET	PALETTESET	CHUNK0		CHUNK0AREA1	CHUNK1		CHUNK2		SWAP		PALETTECHANGE	AREA1SWAP	TILESET		GFXSOURCE	METATILE	TILEDATA	AREADATA	WARP
+            new HeaderData(0x11D95C, 0x0D4828,  0x5A23D0,   0xFED88,    0x107AEC,   0x1077AC,   0x107B02,   0x107B18,   0x107B5C,   0x107940,       0x107800,   0x101BC8,   0x323FEC,   0x1027F8,   0x1070E4,   0x127468,   0x139EDC),
+            new HeaderData(0x11DED8, 0x0D4E9C,  0x5A2B20,   0xFF500,    0x10805C,   0x107D18,   0x108072,   0x108088,   0x1080CC,   0x107EAC,       0x107D6C,   0x102134,   0x324710,   0x102D64,   0x107650,   0x1279F4,   0x13A41C),
+            new HeaderData(0x11E214, 0x0D50FC,  0x5A2E80,   0xFF850,    0x108398,   0x108050,   0x1083AE,   0x1083C4,   0x108408,   0x1081E4,       0x1080A4,   0x10246C,   0x324AE4,   0x10309C,   0x107988,   0x127D30,   0x13A7F0)
+        };
 
-		public HeaderData GetHeaderAddresses( RegionVersion region )
-		{
-			return headerTable[(int)region];
-		}
-	}
+        public HeaderData GetHeaderAddresses(RegionVersion region)
+        {
+            return headerTable[(int)region];
+        }
+    }
 }

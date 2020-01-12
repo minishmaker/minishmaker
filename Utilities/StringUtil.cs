@@ -4,7 +4,7 @@ using System.Linq;
 namespace MinishMaker.Utilities
 {
     class StringUtil
-    {   
+    {
         // Convert values to hex strings
         public static string AsStringHex(int val, int spacing)
         {
