@@ -1,18 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Data.Odbc;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using MinishMaker.Core;
-using System.IO;
-using System.Windows.Shell;
-
 
 namespace MinishMaker.UI
 {

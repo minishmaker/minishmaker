@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using System.Drawing;
 using MinishMaker.Core;
 using MinishMaker.Utilities;
-using System.Drawing;
 using MinishMaker.Core.ChangeTypes;
 using MinishMaker.Properties;
 

@@ -1,15 +1,12 @@
-﻿using MinishMaker.Core.ChangeTypes;
-using MinishMaker.UI;
-using MinishMaker.Utilities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-
+using MinishMaker.Core.ChangeTypes;
+using MinishMaker.Utilities;
 
 namespace MinishMaker.Core
 {

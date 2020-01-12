@@ -1,10 +1,6 @@
-﻿using MinishMaker.Utilities;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using MinishMaker.Utilities;
 using static MinishMaker.Core.RoomMetaData;
 
 namespace MinishMaker.Core

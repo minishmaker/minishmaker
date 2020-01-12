@@ -1,7 +1,6 @@
-﻿using System;
-using System.Diagnostics;
-using MinishMaker.Utilities;
+﻿using System.Diagnostics;
 using System.IO;
+using MinishMaker.Utilities;
 
 namespace MinishMaker.Core
 {

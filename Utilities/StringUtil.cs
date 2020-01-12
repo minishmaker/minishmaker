@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-namespace MinishMaker.Utilities
+﻿namespace MinishMaker.Utilities
 {
     class StringUtil
     {

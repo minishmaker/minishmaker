@@ -1,8 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Reflection;
-
-namespace MinishMaker.Core
+﻿namespace MinishMaker.Core
 {
     public enum RegionVersion
     {

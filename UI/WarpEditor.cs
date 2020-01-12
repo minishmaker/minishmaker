@@ -1,14 +1,9 @@
-﻿using MinishMaker.Core.ChangeTypes;
-using MinishMaker.Utilities;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using MinishMaker.Core.ChangeTypes;
+using MinishMaker.Utilities;
 using static MinishMaker.Core.RoomMetaData;
 
 namespace MinishMaker.UI
