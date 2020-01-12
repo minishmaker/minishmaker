@@ -32,7 +32,6 @@ namespace MinishMaker.UI
         public static int currentArea = -1;
         private int selectedTileData = -1;
         private int selectedLayer = 2; //start with bg2
-        private static List<Change> pendingRomChanges;
         private Point lastTilePos;
         private ViewLayer viewLayer = ViewLayer.Both;
 
@@ -385,7 +384,6 @@ namespace MinishMaker.UI
             currentArea = -1;
             selectedTileData = -1;
             selectedLayer = 2;
-            pendingRomChanges = new List<Change>();
             LoadMaps();
         }
 
@@ -729,25 +727,12 @@ namespace MinishMaker.UI
                 return;
 
             Project.Instance.StartSave();
-
-            while (pendingRomChanges.Count > 0)
-            {
-                Change data = pendingRomChanges.ElementAt(0);
-                Project.Instance.SaveChange(data);
-                pendingRomChanges.RemoveAt(0);
-            }
-
+            Project.Instance.Save();
             Project.Instance.EndSave();
 
             Project.Instance.CreateProjectFile();
 
             MessageBox.Show("Project Saved");
-        }
-
-        public static void AddPendingChange(Change change)
-        {
-            if (!pendingRomChanges.Any(x => x.Compare(change))) //change does not yet exist
-                pendingRomChanges.Add(change);
         }
 
         public void HighlightChest(int tileX, int tileY)
@@ -899,12 +884,12 @@ namespace MinishMaker.UI
             if (layer == 1 && currentRoom.Bg1Exists)
             {
                 currentRoom.DrawTile(ref mapLayers[0], p, currentArea, selectedLayer, tileData);
-                AddPendingChange(new Bg1DataChange(currentArea, currentRoom.Index));
+                Project.Instance.AddPendingChange(new Bg1DataChange(currentArea, currentRoom.Index));
             }
             else if (layer == 2 && currentRoom.Bg2Exists)
             {
                 currentRoom.DrawTile(ref mapLayers[1], p, currentArea, selectedLayer, tileData);
-                AddPendingChange(new Bg2DataChange(currentArea, currentRoom.Index));
+                Project.Instance.AddPendingChange(new Bg2DataChange(currentArea, currentRoom.Index));
             }
 
             currentRoom.SetTileData(selectedLayer, pos * 2, selectedTileData);

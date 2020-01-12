@@ -245,16 +245,16 @@ namespace MinishMaker.UI
             if (hasInfoChange)
             {
                 if (currentLayer == 1)
-                    MainWindow.AddPendingChange(new Bg1MetaTileSetChange(currentArea));
+                    Project.Instance.AddPendingChange(new Bg1MetaTileSetChange(currentArea));
                 if (currentLayer == 2)
-                    MainWindow.AddPendingChange(new Bg2MetaTileSetChange(currentArea));
+                    Project.Instance.AddPendingChange(new Bg2MetaTileSetChange(currentArea));
             }
             if (hasTypeChange)
             {
                 if (currentLayer == 1)
-                    MainWindow.AddPendingChange(new Bg1MetaTileTypeChange(currentArea));
+                    Project.Instance.AddPendingChange(new Bg1MetaTileTypeChange(currentArea));
                 if (currentLayer == 2)
-                    MainWindow.AddPendingChange(new Bg2MetaTileTypeChange(currentArea));
+                    Project.Instance.AddPendingChange(new Bg2MetaTileTypeChange(currentArea));
             }
 
             var image = metaTiles[currentLayer - 1];

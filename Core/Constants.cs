@@ -590,7 +590,7 @@
     public class Header
     {
         // Will fill out when relevant, only need EU for now
-        private readonly HeaderData[] headerTable = new HeaderData[]
+        private readonly HeaderData[] headerTable = 
         {   //             MAP     , ENTITY?,	TILEOFFSET	PALETTESET	CHUNK0		CHUNK0AREA1	CHUNK1		CHUNK2		SWAP		PALETTECHANGE	AREA1SWAP	TILESET		GFXSOURCE	METATILE	TILEDATA	AREADATA	WARP
             new HeaderData(0x11D95C, 0x0D4828,  0x5A23D0,   0xFED88,    0x107AEC,   0x1077AC,   0x107B02,   0x107B18,   0x107B5C,   0x107940,       0x107800,   0x101BC8,   0x323FEC,   0x1027F8,   0x1070E4,   0x127468,   0x139EDC),
             new HeaderData(0x11DED8, 0x0D4E9C,  0x5A2B20,   0xFF500,    0x10805C,   0x107D18,   0x108072,   0x108088,   0x1080CC,   0x107EAC,       0x107D6C,   0x102134,   0x324710,   0x102D64,   0x107650,   0x1279F4,   0x13A41C),

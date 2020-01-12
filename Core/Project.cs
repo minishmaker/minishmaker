@@ -29,7 +29,7 @@ namespace MinishMaker.Core
     }
 
     /// <summary>
-    /// Stores configuration for a minishmaker project
+    /// Stores configuration for a Minish Maker project
     /// </summary>
     public class Project
     {
@@ -41,6 +41,7 @@ namespace MinishMaker.Core
         public string projectPath { get; private set; }
 
         private List<Change> loadedChanges;
+        private List<Change> pendingRomChanges;
         private StreamWriter mainWriter;
         private ROM ROM_;
         public Dictionary<Tuple<int, int>, string> roomNames = new Dictionary<Tuple<int, int>, string>();
@@ -85,6 +86,7 @@ namespace MinishMaker.Core
             ROM_ = new ROM(projectPath + "/baserom.gba");
 
             loadedChanges = new List<Change>();
+            pendingRomChanges = new List<Change>();
             LoadProject();
         }
 
@@ -132,6 +134,7 @@ namespace MinishMaker.Core
             ROM_ = new ROM(projectPath + "/baserom.gba");
 
             loadedChanges = new List<Change>();
+            pendingRomChanges = new List<Change>();
             LoadProject();
         }
 
@@ -379,15 +382,36 @@ namespace MinishMaker.Core
                     return null;
             }
         }
+
+        public void AddPendingChange(Change change)
+        {
+            if (!pendingRomChanges.Any(x => x.Compare(change))) //change does not yet exist
+            {
+                pendingRomChanges.Add(change);
+            }
+        }
+
         public void StartSave()
         {
             mainWriter = File.AppendText(projectPath + "/Main.event");
+        }
+
+        public void Save()
+        {
+            while (pendingRomChanges.Count > 0)
+            {
+                Change data = pendingRomChanges.ElementAt(0);
+                SaveChange(data);
+                pendingRomChanges.RemoveAt(0);
+            }
         }
 
         public void EndSave()
         {
             mainWriter.Dispose();
         }
+
+
 
         public void SaveChange(Change change)
         {

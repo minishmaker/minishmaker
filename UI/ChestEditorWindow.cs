@@ -146,7 +146,7 @@ namespace MinishMaker.UI
 
             indexLabel.Text = StringUtil.AsStringHex2(chestIndex);
 
-            MainWindow.AddPendingChange(new ChestDataChange(MainWindow.currentArea, MainWindow.currentRoom.Index));
+            Project.Instance.AddPendingChange(new ChestDataChange(MainWindow.currentArea, MainWindow.currentRoom.Index));
             MainWindow.currentRoom.AddChestData(new ChestData(0x02, 0, 0, 0, 0, 0));
             LoadChestData(chestIndex);
 
@@ -166,7 +166,7 @@ namespace MinishMaker.UI
                 return;
             }
 
-            MainWindow.AddPendingChange(new ChestDataChange(MainWindow.currentArea, MainWindow.currentRoom.Index));
+            Project.Instance.AddPendingChange(new ChestDataChange(MainWindow.currentArea, MainWindow.currentRoom.Index));
             MainWindow.currentRoom.RemoveChestData(chestDataList[chestIndex]);
 
             newButton.Enabled = true;
@@ -278,7 +278,7 @@ namespace MinishMaker.UI
                 if (type == chest.type)
                     return;
 
-                MainWindow.AddPendingChange(new ChestDataChange(MainWindow.currentArea, MainWindow.currentRoom.Index));
+                Project.Instance.AddPendingChange(new ChestDataChange(MainWindow.currentArea, MainWindow.currentRoom.Index));
 
                 chest.type = type;
             }
@@ -303,7 +303,7 @@ namespace MinishMaker.UI
                 if (chestId == chest.chestId)
                     return;
 
-                MainWindow.AddPendingChange(new ChestDataChange(MainWindow.currentArea, MainWindow.currentRoom.Index));
+                Project.Instance.AddPendingChange(new ChestDataChange(MainWindow.currentArea, MainWindow.currentRoom.Index));
 
                 chest.chestId = chestId;
             }
@@ -329,7 +329,7 @@ namespace MinishMaker.UI
                 if (location == chest.chestLocation)
                     return;
 
-                MainWindow.AddPendingChange(new ChestDataChange(MainWindow.currentArea, MainWindow.currentRoom.Index));
+                Project.Instance.AddPendingChange(new ChestDataChange(MainWindow.currentArea, MainWindow.currentRoom.Index));
 
                 chest.chestLocation = location;
             }
@@ -357,7 +357,7 @@ namespace MinishMaker.UI
                 if (location == chest.chestLocation)
                     return;
 
-                MainWindow.AddPendingChange(new ChestDataChange(MainWindow.currentArea, MainWindow.currentRoom.Index));
+                Project.Instance.AddPendingChange(new ChestDataChange(MainWindow.currentArea, MainWindow.currentRoom.Index));
 
                 chest.chestLocation = location;
             }
@@ -382,7 +382,7 @@ namespace MinishMaker.UI
             if (type == chest.itemSubNumber)
                 return;
 
-            MainWindow.AddPendingChange(new ChestDataChange(MainWindow.currentArea, MainWindow.currentRoom.Index));
+            Project.Instance.AddPendingChange(new ChestDataChange(MainWindow.currentArea, MainWindow.currentRoom.Index));
 
             itemAmount.Text = type.ToString();
             chest.itemSubNumber = type;
@@ -403,7 +403,7 @@ namespace MinishMaker.UI
                 if (type == chest.itemSubNumber)
                     return;
 
-                MainWindow.AddPendingChange(new ChestDataChange(MainWindow.currentArea, MainWindow.currentRoom.Index));
+                Project.Instance.AddPendingChange(new ChestDataChange(MainWindow.currentArea, MainWindow.currentRoom.Index));
 
                 chest.itemSubNumber = type;
                 kinstoneType.SelectedValue = (KinstoneType)type;
@@ -428,7 +428,7 @@ namespace MinishMaker.UI
             if ((int)value == chest.itemId)
                 return;
 
-            MainWindow.AddPendingChange(new ChestDataChange(MainWindow.currentArea, MainWindow.currentRoom.Index));
+            Project.Instance.AddPendingChange(new ChestDataChange(MainWindow.currentArea, MainWindow.currentRoom.Index));
 
             chest.itemId = (byte)value;
             chestDataList[chestIndex] = chest;
@@ -463,7 +463,7 @@ namespace MinishMaker.UI
                 if (extraval == chest.itemSubNumber)
                     return;
 
-                MainWindow.AddPendingChange(new ChestDataChange(MainWindow.currentArea, MainWindow.currentRoom.Index));
+                Project.Instance.AddPendingChange(new ChestDataChange(MainWindow.currentArea, MainWindow.currentRoom.Index));
 
                 chest.unknown = extraval;
             }

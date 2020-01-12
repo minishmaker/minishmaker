@@ -243,7 +243,7 @@ namespace MinishMaker.UI
                 var room = MapManager.Instance.FindRoom(currentArea, selectedRoomRect);
                 room.SetMapPosition(x, y);
 
-                MainWindow.AddPendingChange(new RoomMetadataChange(currentArea, selectedRoomRect));//TODO
+                Project.Instance.AddPendingChange(new RoomMetadataChange(currentArea, selectedRoomRect));//TODO
 
             }
         }
@@ -277,7 +277,7 @@ namespace MinishMaker.UI
             var spot = maps.IndexOf(ar);
             ar.areaInfo = data;
             maps[spot] = ar;
-            MainWindow.AddPendingChange(new AreaInfoChange(currentArea));
+            Project.Instance.AddPendingChange(new AreaInfoChange(currentArea));
         }
     }
 }

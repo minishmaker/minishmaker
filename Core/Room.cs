@@ -601,17 +601,17 @@ namespace MinishMaker.Core
             if (Bg1Exists)
             {
                 bg1RoomData = bg1New;
-                MainWindow.AddPendingChange(new ChangeTypes.Bg1DataChange(areaIndex, this.Index));
+                Project.Instance.AddPendingChange(new ChangeTypes.Bg1DataChange(areaIndex, this.Index));
             }
 
             if (Bg2Exists)
             {
                 bg2RoomData = bg2New;
-                MainWindow.AddPendingChange(new ChangeTypes.Bg2DataChange(areaIndex, this.Index));
+                Project.Instance.AddPendingChange(new ChangeTypes.Bg2DataChange(areaIndex, this.Index));
             }
 
             metadata.SetRoomSize(xdim, ydim);
-            MainWindow.AddPendingChange(new ChangeTypes.RoomMetadataChange(areaIndex, this.Index));
+            Project.Instance.AddPendingChange(new ChangeTypes.RoomMetadataChange(areaIndex, this.Index));
         }
 
         public long GetMetadata(ref byte[] data)

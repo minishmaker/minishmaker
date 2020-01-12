@@ -481,7 +481,7 @@ namespace MinishMaker.UI
             else
                 change = new List3DataChange(MainWindow.currentArea, MainWindow.currentRoom.Index);
 
-            MainWindow.AddPendingChange(change);
+            Project.Instance.AddPendingChange(change);
         }
 
         private void prevListButton_Click(object sender, EventArgs e)
