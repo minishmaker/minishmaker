@@ -1,7 +1,6 @@
-﻿using System;
-using System.Diagnostics;
-using MinishMaker.Utilities;
+﻿using System.Diagnostics;
 using System.IO;
+using MinishMaker.Utilities;
 
 namespace MinishMaker.Core
 {
@@ -13,7 +12,7 @@ namespace MinishMaker.Core
         public readonly byte[] romData;
         public readonly Reader reader;
 
-        public RegionVersion version { get; private set;  } = RegionVersion.None;
+        public RegionVersion version { get; private set; } = RegionVersion.None;
         public HeaderData headers { get; private set; }
 
 
@@ -79,7 +78,7 @@ namespace MinishMaker.Core
             // Determine game region and if valid ROM
             byte[] regionBytes = reader.ReadBytes(4, 0xAC);
             string region = System.Text.Encoding.UTF8.GetString(regionBytes);
-            Debug.WriteLine("Region detected: "+region);
+            Debug.WriteLine("Region detected: " + region);
 
             if (region == "BZMP")
             {

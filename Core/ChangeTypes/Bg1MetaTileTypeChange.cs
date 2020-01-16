@@ -4,9 +4,9 @@ using MinishMaker.Utilities;
 
 namespace MinishMaker.Core.ChangeTypes
 {
-    public class Bg1MetaTileSetChange : Change
+    public class Bg1MetaTileTypeChange : Change
     {
-        public Bg1MetaTileSetChange(int areaId) : base(areaId, 0, DataType.bg1MetaTileSet)
+        public Bg1MetaTileTypeChange(int areaId) : base(areaId, 0, DataType.bg1MetaTileType)
         {
         }
 

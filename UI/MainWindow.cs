@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using System.Drawing;
 using MinishMaker.Core;
 using MinishMaker.Utilities;
-using System.Drawing;
 using MinishMaker.Core.ChangeTypes;
+using MinishMaker.Properties;
 
 
 namespace MinishMaker.UI
@@ -21,7 +20,6 @@ namespace MinishMaker.UI
         private ChestEditorWindow chestEditor = null;
         private MetaTileEditor metatileEditor = null;
         private AreaEditor areaEditor = null;
-        //private EnemyPlacementEditor enemyPlacementEditor = null;
         private WarpEditor warpEditor = null;
         private ObjectPlacementEditor objectPlacementEditor = null;
         private RenameWindow renameWindow = null;
@@ -33,9 +31,8 @@ namespace MinishMaker.UI
         public static int currentArea = -1;
         private int selectedTileData = -1;
         private int selectedLayer = 2; //start with bg2
-        private static List<Change> pendingRomChanges;
         private Point lastTilePos;
-        private ViewLayer viewLayer = 0;
+        private ViewLayer viewLayer = ViewLayer.Both;
 
         struct RepointData
         {
@@ -67,7 +64,7 @@ namespace MinishMaker.UI
         public MainWindow()
         {
             InitializeComponent();
-
+            UpdateWindowTitle();
             /*
 			var exeFolder = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).Substring(6);
 			if(File.Exists(exeFolder+"/Settings.cfg"))
@@ -93,6 +90,15 @@ namespace MinishMaker.UI
 				statusText.Text = "Opened last project: "+pName;
 			}
             */
+        }
+
+        private void UpdateWindowTitle()
+        {
+#if DEBUG
+            this.Text = $"{ProductName} {AssemblyInfo.GetGitTag()} DEBUG-{AssemblyInfo.GetGitHash()}";
+#else
+            this.Text = $"{ProductName} {AssemblyInfo.GetGitTag()}";
+#endif
         }
 
         #region MenuBarButtons
@@ -340,6 +346,21 @@ namespace MinishMaker.UI
             if (renameWindow != null)
                 renameWindow.Close();
 
+            if (chestEditor != null)
+                chestEditor.Close();
+
+            if (areaEditor != null)
+                areaEditor.Close();
+
+            if (metatileEditor != null)
+                metatileEditor.Close();
+
+            if (objectPlacementEditor != null)
+                objectPlacementEditor.Close();
+
+            if (warpEditor != null)
+                warpEditor.Close();
+
             if (project_ == null)
             {
                 project_ = new Project(ofd.FileName);
@@ -362,7 +383,6 @@ namespace MinishMaker.UI
             currentArea = -1;
             selectedTileData = -1;
             selectedLayer = 2;
-            pendingRomChanges = new List<Change>();
             LoadMaps();
         }
 
@@ -436,7 +456,10 @@ namespace MinishMaker.UI
         private void OpenChestEditor()
         {
             if (chestEditorStripMenuItem.Checked)
+            {
+                chestEditor.Focus();
                 return; // dont open a second one
+            }
 
             chestEditor = new ChestEditorWindow();
 
@@ -465,7 +488,10 @@ namespace MinishMaker.UI
         private void OpenMetatileEditor()
         {
             if (metatileEditorToolStripMenuItem.Checked)
+            {
+                metatileEditor.Focus();
                 return; // dont open a second one
+            }
 
             metatileEditor = new MetaTileEditor();
 
@@ -494,7 +520,10 @@ namespace MinishMaker.UI
         private void OpenAreaEditor()
         {
             if (areaEditorToolStripMenuItem.Checked)
+            {
+                areaEditor.Focus();
                 return;
+            }
 
             areaEditor = new AreaEditor();
 
@@ -517,7 +546,10 @@ namespace MinishMaker.UI
         private void OpenWarpEditor()
         {
             if (warpEditorToolStripMenuItem.Checked)
+            {
+                warpEditor.Focus();
                 return; // dont open a second one
+            }
 
             warpEditor = new WarpEditor();
             warpEditor.FormClosed += new FormClosedEventHandler(OnWarpEditorClose);
@@ -535,7 +567,10 @@ namespace MinishMaker.UI
         private void OpenObjectPlacementEditor()
         {
             if (objectPlacementEditorToolStripMenuItem.Checked)
+            {
+                objectPlacementEditor.Focus();
                 return; // dont open a second one
+            }
 
             objectPlacementEditor = new ObjectPlacementEditor();
             objectPlacementEditor.FormClosed += new FormClosedEventHandler(OnObjectPlacementEditorClose);
@@ -559,64 +594,7 @@ namespace MinishMaker.UI
                 int roomIndex = Convert.ToInt32(e.Node.Name, 16);
                 statusRoomIdText.Text = "Room Id:" + roomIndex.Hex().PadLeft(2, '0'); ;
                 statusAreaIdText.Text = "Area Id:" + areaIndex.Hex().PadLeft(2, '0'); ;
-                var prevArea = currentArea; //changed in next line so hold temporarily
-                var room = FindRoom(areaIndex, roomIndex);
-
-                currentRoom = room;
-
-                mapLayers = room.DrawRoom(areaIndex, true, true);
-
-                selectedTileData = -1;
-                tileTabControl.SelectedIndex = 1; // Reset to bg2
-
-                //0= bg1 (treetops and such)
-                //1= bg2 (flooring)
-                mapGridBox.Image = OverlayImage(mapLayers[1], mapLayers[0]);
-                tileMaps = room.DrawTilesetImages(16, currentArea);
-                bottomTileGridBox.Image = tileMaps[1];
-                topTileGridBox.Image = tileMaps[0];
-
-                mapGridBox.Selectable = true;
-                mapGridBox.SelectedIndex = -1;
-                bottomTileGridBox.Selectable = true;
-                topTileGridBox.Selectable = true;
-
-                if (chestEditor != null)
-                {
-                    var chestData = currentRoom.GetChestData();
-                    chestEditor.SetData(chestData);
-                }
-
-                if (metatileEditor != null)
-                {
-                    metatileEditor.currentArea = currentArea;
-                    room = MapManager.Instance.MapAreas.Single(a => a.Index == currentArea).Rooms.First();
-                    if (!room.Loaded)
-                    {
-                        room.LoadRoom(currentArea);
-                    }
-                    metatileEditor.RedrawTiles(currentRoom);
-                }
-
-                if (areaEditor != null && currentArea != prevArea)//still in the same area? dont reload
-                {
-                    areaEditor.LoadArea(areaIndex);
-                }
-
-                /*if(enemyPlacementEditor != null)
-				{
-					enemyPlacementEditor.LoadData();
-				}*/
-
-                if (warpEditor != null)
-                {
-                    warpEditor.LoadData();
-                }
-
-                if (objectPlacementEditor != null)
-                {
-                    objectPlacementEditor.LoadData();
-                }
+                ChangeRoom(areaIndex, roomIndex);
             }
         }
 
@@ -712,7 +690,6 @@ namespace MinishMaker.UI
         {
             int foundIndex = 0;
 
-            currentArea = areaIndex;
             for (int i = 0; i < mapManager_.MapAreas.Count; i++)
             {
                 if (mapManager_.MapAreas[i].Index == areaIndex)
@@ -749,25 +726,12 @@ namespace MinishMaker.UI
                 return;
 
             Project.Instance.StartSave();
-
-            while (pendingRomChanges.Count > 0)
-            {
-                Change data = pendingRomChanges.ElementAt(0);
-                Project.Instance.SaveChange(data);
-                pendingRomChanges.RemoveAt(0);
-            }
-
+            Project.Instance.Save();
             Project.Instance.EndSave();
 
             Project.Instance.CreateProjectFile();
 
             MessageBox.Show("Project Saved");
-        }
-
-        public static void AddPendingChange(Change change)
-        {
-            if (!pendingRomChanges.Any(x => x.Compare(change))) //change does not yet exist
-                pendingRomChanges.Add(change);
         }
 
         public void HighlightChest(int tileX, int tileY)
@@ -919,12 +883,12 @@ namespace MinishMaker.UI
             if (layer == 1 && currentRoom.Bg1Exists)
             {
                 currentRoom.DrawTile(ref mapLayers[0], p, currentArea, selectedLayer, tileData);
-                AddPendingChange(new Bg1DataChange(currentArea, currentRoom.Index));
+                Project.Instance.AddPendingChange(new Bg1DataChange(currentArea, currentRoom.Index));
             }
             else if (layer == 2 && currentRoom.Bg2Exists)
             {
                 currentRoom.DrawTile(ref mapLayers[1], p, currentArea, selectedLayer, tileData);
-                AddPendingChange(new Bg2DataChange(currentArea, currentRoom.Index));
+                Project.Instance.AddPendingChange(new Bg2DataChange(currentArea, currentRoom.Index));
             }
 
             currentRoom.SetTileData(selectedLayer, pos * 2, selectedTileData);
@@ -933,15 +897,138 @@ namespace MinishMaker.UI
             UpdateViewLayer(viewLayer);
         }
 
-        public static void Notify(string info, string title)
+        public void Notify(string info, string title)
         {
             MessageBox.Show(info, title, MessageBoxButtons.OK);
         }
 
         private void RenameToolStripMenuItem_Click(object sender, EventArgs e)
         {
-           var node = roomTreeView.SelectedNode;
+            var node = roomTreeView.SelectedNode;
             RoomRenameContext(node);
+        }
+
+        public void ChangeRoom(int areaId, int roomId)
+        {
+            statusRoomIdText.Text = "Room Id:" + roomId.Hex().PadLeft(2, '0');
+            statusAreaIdText.Text = "Area Id:" + areaId.Hex().PadLeft(2, '0');
+
+            var isDifferentArea = currentArea != areaId;
+            var room = FindRoom(areaId, roomId);
+            
+
+            try
+            {
+                mapLayers = room.DrawRoom(areaId, true, true);
+            }
+            catch (PaletteException exception)
+            {
+                Notify(exception.Message, "Invalid Room");
+                statusText.Text = "Room load aborted.";
+                return;
+            }
+
+            currentArea = areaId;
+            currentRoom = room;
+
+            selectedTileData = -1;
+            tileTabControl.SelectedIndex = 1; // Reset to bg2
+
+            //0= bg1 (treetops and such)
+            //1= bg2 (flooring)
+            mapGridBox.Image = OverlayImage(mapLayers[1], mapLayers[0]);
+            tileMaps = room.DrawTilesetImages(16, currentArea);
+            bottomTileGridBox.Image = tileMaps[1];
+            topTileGridBox.Image = tileMaps[0];
+
+            mapGridBox.Selectable = true;
+            mapGridBox.SelectedIndex = -1;
+            bottomTileGridBox.Selectable = true;
+            topTileGridBox.Selectable = true;
+
+            if (chestEditor != null)
+            {
+                var chestData = currentRoom.GetChestData();
+                chestEditor.SetData(chestData);
+            }
+
+            if (metatileEditor != null)
+            {
+                metatileEditor.currentArea = currentArea;
+                room = MapManager.Instance.MapAreas.Single(a => a.Index == currentArea).Rooms.First();
+                if (!room.Loaded)
+                {
+                    room.LoadRoom(currentArea);
+                }
+                metatileEditor.RedrawTiles(currentRoom);
+            }
+
+            if (areaEditor != null && isDifferentArea)//still in the same area? dont reload
+            {
+                areaEditor.LoadArea(areaId);
+            }
+
+            /*if(enemyPlacementEditor != null)
+            {
+            	enemyPlacementEditor.LoadData();
+            }*/
+
+            if (warpEditor != null)
+            {
+                warpEditor.LoadData();
+            }
+
+            if (objectPlacementEditor != null)
+            {
+                objectPlacementEditor.LoadData();
+            }
+        }
+
+        public bool RoomExists(int areaId, int roomId)
+        {
+            try
+            {
+                FindRoom(areaId, roomId);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private void ResizeRoom()
+        {
+            if (currentRoom == null)
+                return;
+
+            using (var dimPrompt = new ResizeDialog(currentRoom.roomSize))
+            {
+                if (dimPrompt.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+
+                var dimensions = dimPrompt.GetDims();
+
+                if (dimensions.X == currentRoom.roomSize.X && dimensions.Y == currentRoom.roomSize.Y)// no changes
+                    return;
+
+                //if above minimum
+                if (dimensions.X < 15 || dimensions.Y < 10)
+                {
+                    Notify("Make sure the room is at least 15 by 10.", "Invalid room size");
+                }
+
+                currentRoom.ResizeRoom(currentArea, dimensions.X, dimensions.Y);
+                mapLayers = currentRoom.DrawRoom(currentArea, true, true);
+                UpdateViewLayer(viewLayer);
+            }
+        }
+
+        private void resizeRoomToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ResizeRoom();
         }
     }
 }

@@ -1,13 +1,6 @@
-﻿using MinishMaker.Core;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 using System.Windows.Forms;
+using MinishMaker.Core;
 
 namespace MinishMaker.UI
 {
@@ -15,7 +8,7 @@ namespace MinishMaker.UI
     {
         int areaId = -1;
         int roomId = -1;
- 
+
         public RenameWindow()
         {
             InitializeComponent();
@@ -45,7 +38,7 @@ namespace MinishMaker.UI
             {
                 p.roomNames[areaKey] = areaName;
             }
-            else 
+            else
             {
                 p.roomNames.Add(areaKey, areaName);
             }
@@ -59,7 +52,7 @@ namespace MinishMaker.UI
                 p.roomNames.Add(roomKey, roomName);
             }
 
-            ((MainWindow)Application.OpenForms[0]).ChangeNodeName(areaId + "",areaName,roomId + "", roomName);
+            ((MainWindow)Application.OpenForms[0]).ChangeNodeName(areaId + "", areaName, roomId + "", roomName);
 
             this.Close();
         }

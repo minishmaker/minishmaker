@@ -85,8 +85,10 @@
   <ItemGroup>
     <Compile Include="Core\ChangeTypes\AreaInfoChange.cs" />
     <Compile Include="Core\ChangeTypes\Bg1DataChange.cs" />
+    <Compile Include="Core\ChangeTypes\Bg1MetaTileTypeChange.cs" />
     <Compile Include="Core\ChangeTypes\Bg2MetaTileSetChange.cs" />
     <Compile Include="Core\ChangeTypes\Bg2DataChange.cs" />
+    <Compile Include="Core\ChangeTypes\Bg2MetaTileTypeChange.cs" />
     <Compile Include="Core\ChangeTypes\ChestDataChange.cs" />
     <Compile Include="Core\ChangeTypes\Bg1MetaTileSetChange.cs" />
     <Compile Include="Core\ChangeTypes\Change.cs" />
@@ -131,6 +133,12 @@
     </Compile>
     <Compile Include="UI\RenameWindow.Designer.cs">
       <DependentUpon>RenameWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\ResizeDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\ResizeDialog.Designer.cs">
+      <DependentUpon>ResizeDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\WarpEditor.cs">
       <SubType>Form</SubType>
@@ -206,12 +214,16 @@
     <EmbeddedResource Include="UI\RenameWindow.resx">
       <DependentUpon>RenameWindow.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\ResizeDialog.resx">
+      <DependentUpon>ResizeDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\WarpEditor.resx">
       <DependentUpon>WarpEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\NewProjectWindow.resx">
       <DependentUpon>NewProjectWindow.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include=".editorconfig" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -249,4 +261,51 @@
   <PropertyGroup>
     <PostBuildEvent>xcopy /y /d /s "$(ProjectDir)Vendor\Language Raws" "$(TargetDir)Language Raws\"</PostBuildEvent>
   </PropertyGroup>
+  <Target Name="GetGitHash" BeforeTargets="WriteGitHash" Condition="'$(BuildHash)' == ''">
+    <PropertyGroup>
+      <!-- temp file for the git version (lives in "obj" folder)-->
+      <TagFile>$(IntermediateOutputPath)gittag</TagFile>
+      <VerFile>$(IntermediateOutputPath)gitver</VerFile>
+    </PropertyGroup>
+    <!-- write the hash to the temp file.-->
+    <Exec Command="git -C $(ProjectDir) describe --abbrev=0 --tags &gt; $(TagFile)" />
+    <Exec Command="git -C $(ProjectDir) rev-parse --short HEAD &gt; $(VerFile)" />
+    <!-- read the version into the GitVersion itemGroup-->
+    <ReadLinesFromFile File="$(VerFile)">
+      <Output TaskParameter="Lines" ItemName="GitVersion" />
+    </ReadLinesFromFile>
+    <ReadLinesFromFile File="$(TagFile)">
+      <Output TaskParameter="Lines" ItemName="GitTag" />
+    </ReadLinesFromFile>
+    <!-- Set the BuildHash property to contain the GitVersion, if it wasn't already set.-->
+    <PropertyGroup>
+      <BuildHash>@(GitVersion)</BuildHash>
+    </PropertyGroup>
+    <PropertyGroup>
+      <BuildTag>@(GitTag)</BuildTag>
+    </PropertyGroup>
+  </Target>
+  <Target Name="WriteGitHash" BeforeTargets="CoreCompile">
+    <!-- names the obj/.../CustomAssemblyInfo.cs file -->
+    <PropertyGroup>
+      <CustomAssemblyInfoFile>$(IntermediateOutputPath)CustomAssemblyInfo.cs</CustomAssemblyInfoFile>
+    </PropertyGroup>
+    <!-- includes the CustomAssemblyInfo for compilation into your project -->
+    <ItemGroup>
+      <Compile Include="$(CustomAssemblyInfoFile)" />
+    </ItemGroup>
+    <!-- defines the AssemblyMetadata attribute that will be written -->
+    <ItemGroup>
+      <AssemblyAttributes Include="AssemblyMetadata">
+        <_Parameter1>GitHash</_Parameter1>
+        <_Parameter2>$(BuildHash)</_Parameter2>
+      </AssemblyAttributes>
+      <AssemblyAttributes Include="AssemblyMetadata">
+        <_Parameter1>GitTag</_Parameter1>
+        <_Parameter2>$(BuildTag)</_Parameter2>
+      </AssemblyAttributes>
+    </ItemGroup>
+    <!-- writes the attribute to the customAssemblyInfo file -->
+    <WriteCodeFragment Language="C#" OutputFile="$(CustomAssemblyInfoFile)" AssemblyAttributes="@(AssemblyAttributes)" />
+  </Target>
 </Project>
