@@ -249,10 +249,7 @@ namespace MinishMaker.Core
                 tileSetOffset = r.ReadUInt16();
             }
 
-
-
             //get addr of TPA data
-            //bytes 9+10
 
             int areaTileSetTableLoc = r.ReadAddr(header.globalTileSetTableLoc + (areaIndex << 2));
             int roomTileSetLoc = r.ReadAddr(areaTileSetTableLoc + (tileSetOffset << 2));
@@ -331,20 +328,17 @@ namespace MinishMaker.Core
 
         public TileSet GetTileSet()
         {
-            string tilesetPath = roomPath + "/" + (int)DataType.tileSet;
-            if (File.Exists(tilesetPath))
-            {
-                return new TileSet(File.ReadAllBytes(tilesetPath));
-            }
-            else
-            {
-                return new TileSet(tileSetAddrs);
-            }
+            return new TileSet(tileSetAddrs, roomPath);
         }
 
         public PaletteSet GetPaletteSet()
         {
             return new PaletteSet(paletteSetID);
+        }
+
+        public int GetPaletteSetID()
+        {
+            return paletteSetID;
         }
 
         public bool GetBG2Data(ref byte[] bg2RoomData, ref MetaTileSet bg2MetaTiles)
@@ -598,12 +592,29 @@ namespace MinishMaker.Core
                     retAddr = roomMetaDataTableLoc;
                     break;
 
-                case DataType.tileSet:
+                case DataType.bg1TileSet:
+                case DataType.bg2TileSet:
+                case DataType.commonTileSet:
                     //get addr of TPA data
 
                     int areaTileSetTableLoc = r.ReadAddr(header.globalTileSetTableLoc + (areaIndex << 2));
-                    int roomTileSetAddrLoc = areaTileSetTableLoc + (tileSetOffset << 2);
-                    retAddr = roomTileSetAddrLoc;
+                    int roomTileSetLoc = r.ReadAddr(areaTileSetTableLoc + (tileSetOffset << 2));
+
+                    r.SetPosition(roomTileSetLoc);
+
+                    if (type == DataType.bg1TileSet)
+                    {
+                        ParseData(r, Tile1Check);
+                    }
+                    if (type == DataType.bg2TileSet)
+                    {
+                        ParseData(r, Tile2Check);
+                    }
+                    if (type == DataType.commonTileSet)
+                    {
+                        ParseData(r, TileCommonCheck);
+                    }
+                    retAddr = (int)r.Position - 12;
                     break;
 
                 case DataType.bg1MetaTileSet:
@@ -860,6 +871,21 @@ namespace MinishMaker.Core
                     break;
             }
             return true;
+        }
+
+        private bool Tile1Check(AddrData data)
+        {
+            return data.dest != 0;
+        }
+
+        private bool Tile2Check(AddrData data)
+        {
+            return data.dest != 0x8000;
+        }
+
+        private bool TileCommonCheck(AddrData data)
+        {
+            return data.dest != 0x4000;
         }
 
         public void SetRoomSize(int xdim, int ydim)

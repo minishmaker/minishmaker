@@ -17,8 +17,10 @@ namespace MinishMaker.Core
             get { return tilesetData.Length / 0x20; }
         }
 
-        public TileSet(List<AddrData> tileSetAddrs)
+        public TileSet(List<AddrData> tileSetAddrs, String roomPath)
         {
+
+            string[] files = { roomPath + DataType.bg1TileSet + "Dat.bin", roomPath + DataType.commonTileSet + "Dat.bin", roomPath + DataType.bg2TileSet + "Dat.bin" };
             byte[] tilesetData = new byte[0x10000];
             using (MemoryStream ms = new MemoryStream(tilesetData))
             {
@@ -26,8 +28,17 @@ namespace MinishMaker.Core
                 {
                     for (int i = 0; i < tileSetAddrs.Count; i++)
                     {
-                        ms.Seek(tileSetAddrs[i].dest, SeekOrigin.Begin);
-                        byte[] data = DataHelper.GetData(tileSetAddrs[i]);
+                        var counter = tileSetAddrs[i].dest / 0x4000;
+                        byte[] data;
+                        if (File.Exists(files[counter]))
+                        {
+                            data = File.ReadAllBytes(files[counter]);
+                        }
+                        else
+                        {
+                            ms.Seek(tileSetAddrs[i].dest, SeekOrigin.Begin);
+                            data = DataHelper.GetData(tileSetAddrs[i]);
+                        }
                         bw.Write(data);
                     }
                     this.tilesetData = tilesetData;
@@ -81,6 +92,10 @@ namespace MinishMaker.Core
                         Color color1 = pal[data1 + pnum * 16];
                         Color color2 = pal[data2 + pnum * 16];
 
+                        if (data1 == 0)
+                            color1 = Color.Transparent;
+                        if (data2 == 0)
+                            color2 = Color.Transparent;
 
                         if (color1.A > 0)//if see through dont draw white
                         {
@@ -105,6 +120,46 @@ namespace MinishMaker.Core
             }
             tileImg.UnlockBits(bd);
 
+        }
+
+        //0 bg1, 1 common, 2 bg2
+        public enum TileSetDataType
+        {
+            BG1 = 0,
+            COMMON = 1,
+            BG2 = 2,
+        }
+
+        public void SetTileSetData(TileSetDataType tsetType, byte[] data)
+        {
+            var dataOffset = (int)tsetType * 0x4000;
+            using (MemoryStream ms = new MemoryStream(tilesetData))
+            {
+                using (BinaryWriter bw = new BinaryWriter(ms))
+                {
+                    ms.Seek(dataOffset, SeekOrigin.Begin);
+                    bw.Write(data);
+                }
+            }
+        }
+
+        public byte[] GetTileSetData(TileSetDataType tsetType)
+        {
+            var dataOffset = (int)tsetType * 0x4000;
+            var data = new byte[0x4000];
+            using (MemoryStream ms = new MemoryStream(tilesetData))
+            {
+                ms.Position = dataOffset;
+                ms.Read(data, 0, 0x4000);
+            }
+
+            return data;
+        }
+
+        public long GetCompressedTileSetData(ref byte[] data, TileSetDataType tsetType)
+        {
+            var uncompData = GetTileSetData(tsetType);
+            return DataHelper.CompressData(ref data, uncompData);
         }
     }
 }

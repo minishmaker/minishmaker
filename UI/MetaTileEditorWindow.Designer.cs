@@ -1,33 +1,33 @@
 ﻿namespace MinishMaker.UI
 {
-	partial class MetaTileEditor
-	{
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.IContainer components = null;
+    partial class MetaTileEditor
+    {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing && (components != null) )
-			{
-				components.Dispose();
-			}
-			base.Dispose( disposing );
-		}
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
 
-		#region Windows Form Designer generated code
+        #region Windows Form Designer generated code
 
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MetaTileEditor));
             this.metaTileSetPanel = new System.Windows.Forms.Panel();
             this.metaTileGridBox = new MinishMaker.UI.GridBox();
@@ -61,7 +61,20 @@
             this.sTId = new System.Windows.Forms.TextBox();
             this.mTId = new System.Windows.Forms.TextBox();
             this.HiddenLabel = new System.Windows.Forms.Label();
-			this.mTType = new System.Windows.Forms.TextBox();
+            this.mTType = new System.Windows.Forms.TextBox();
+            this.menuStrip = new System.Windows.Forms.MenuStrip();
+            this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.importToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bg1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bg2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.commonToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.paletteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bg1ToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.bg2ToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.commonToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.paletteToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.label6 = new System.Windows.Forms.Label();
             this.metaTileSetPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.metaTileGridBox)).BeginInit();
             this.tileSetPanel.SuspendLayout();
@@ -70,13 +83,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.selectedMetaGridBox)).BeginInit();
             this.selectedTilePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.selectedTileBox)).BeginInit();
+            this.menuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // metaTileSetPanel
             // 
             this.metaTileSetPanel.AutoScroll = true;
             this.metaTileSetPanel.Controls.Add(this.metaTileGridBox);
-            this.metaTileSetPanel.Location = new System.Drawing.Point(132, 12);
+            this.metaTileSetPanel.Location = new System.Drawing.Point(132, 42);
             this.metaTileSetPanel.Name = "metaTileSetPanel";
             this.metaTileSetPanel.Size = new System.Drawing.Size(275, 240);
             this.metaTileSetPanel.TabIndex = 1;
@@ -105,7 +119,7 @@
             // 
             this.tileSetPanel.AutoScroll = true;
             this.tileSetPanel.Controls.Add(this.tileSetGridBox);
-            this.tileSetPanel.Location = new System.Drawing.Point(413, 12);
+            this.tileSetPanel.Location = new System.Drawing.Point(413, 42);
             this.tileSetPanel.Name = "tileSetPanel";
             this.tileSetPanel.Size = new System.Drawing.Size(256, 256);
             this.tileSetPanel.TabIndex = 2;
@@ -134,7 +148,7 @@
             // 
             this.selectedMetaTilePanel.AutoScroll = true;
             this.selectedMetaTilePanel.Controls.Add(this.selectedMetaGridBox);
-            this.selectedMetaTilePanel.Location = new System.Drawing.Point(32, 12);
+            this.selectedMetaTilePanel.Location = new System.Drawing.Point(31, 42);
             this.selectedMetaTilePanel.Name = "selectedMetaTilePanel";
             this.selectedMetaTilePanel.Size = new System.Drawing.Size(64, 64);
             this.selectedMetaTilePanel.TabIndex = 2;
@@ -161,7 +175,7 @@
             // 
             this.selectedTilePanel.AutoScroll = true;
             this.selectedTilePanel.Controls.Add(this.selectedTileBox);
-            this.selectedTilePanel.Location = new System.Drawing.Point(12, 102);
+            this.selectedTilePanel.Location = new System.Drawing.Point(11, 132);
             this.selectedTilePanel.Name = "selectedTilePanel";
             this.selectedTilePanel.Size = new System.Drawing.Size(32, 32);
             this.selectedTilePanel.TabIndex = 3;
@@ -178,7 +192,7 @@
             // label1
             // 
             this.label1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label1.Location = new System.Drawing.Point(0, 98);
+            this.label1.Location = new System.Drawing.Point(-1, 128);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(130, 2);
             this.label1.TabIndex = 4;
@@ -186,7 +200,7 @@
             // label2
             // 
             this.label2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label2.Location = new System.Drawing.Point(409, -5);
+            this.label2.Location = new System.Drawing.Point(409, 15);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(2, 300);
             this.label2.TabIndex = 5;
@@ -194,14 +208,14 @@
             // label3
             // 
             this.label3.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label3.Location = new System.Drawing.Point(128, -5);
+            this.label3.Location = new System.Drawing.Point(128, 15);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(2, 300);
             this.label3.TabIndex = 6;
             // 
             // tLPalette
             // 
-            this.tLPalette.Location = new System.Drawing.Point(12, 0);
+            this.tLPalette.Location = new System.Drawing.Point(11, 30);
             this.tLPalette.MaxLength = 1;
             this.tLPalette.Name = "tLPalette";
             this.tLPalette.Size = new System.Drawing.Size(13, 20);
@@ -211,7 +225,7 @@
             // 
             // bLPalette
             // 
-            this.bLPalette.Location = new System.Drawing.Point(12, 72);
+            this.bLPalette.Location = new System.Drawing.Point(11, 102);
             this.bLPalette.MaxLength = 1;
             this.bLPalette.Name = "bLPalette";
             this.bLPalette.Size = new System.Drawing.Size(13, 20);
@@ -221,7 +235,7 @@
             // 
             // tRPalette
             // 
-            this.tRPalette.Location = new System.Drawing.Point(102, 0);
+            this.tRPalette.Location = new System.Drawing.Point(101, 30);
             this.tRPalette.MaxLength = 1;
             this.tRPalette.Name = "tRPalette";
             this.tRPalette.Size = new System.Drawing.Size(13, 20);
@@ -231,7 +245,7 @@
             // 
             // bRPalette
             // 
-            this.bRPalette.Location = new System.Drawing.Point(102, 72);
+            this.bRPalette.Location = new System.Drawing.Point(101, 102);
             this.bRPalette.MaxLength = 1;
             this.bRPalette.Name = "bRPalette";
             this.bRPalette.Size = new System.Drawing.Size(13, 20);
@@ -242,7 +256,7 @@
             // hFlipBox
             // 
             this.hFlipBox.AutoSize = true;
-            this.hFlipBox.Location = new System.Drawing.Point(12, 140);
+            this.hFlipBox.Location = new System.Drawing.Point(11, 170);
             this.hFlipBox.Name = "hFlipBox";
             this.hFlipBox.Size = new System.Drawing.Size(92, 17);
             this.hFlipBox.TabIndex = 1;
@@ -253,7 +267,7 @@
             // vFlipBox
             // 
             this.vFlipBox.AutoSize = true;
-            this.vFlipBox.Location = new System.Drawing.Point(12, 163);
+            this.vFlipBox.Location = new System.Drawing.Point(11, 193);
             this.vFlipBox.Name = "vFlipBox";
             this.vFlipBox.Size = new System.Drawing.Size(80, 17);
             this.vFlipBox.TabIndex = 11;
@@ -264,7 +278,7 @@
             // prevButton
             // 
             this.prevButton.Enabled = false;
-            this.prevButton.Location = new System.Drawing.Point(11, 227);
+            this.prevButton.Location = new System.Drawing.Point(10, 257);
             this.prevButton.Name = "prevButton";
             this.prevButton.Size = new System.Drawing.Size(17, 23);
             this.prevButton.TabIndex = 12;
@@ -274,7 +288,7 @@
             // 
             // nextButton
             // 
-            this.nextButton.Location = new System.Drawing.Point(53, 227);
+            this.nextButton.Location = new System.Drawing.Point(52, 257);
             this.nextButton.Name = "nextButton";
             this.nextButton.Size = new System.Drawing.Size(17, 23);
             this.nextButton.TabIndex = 13;
@@ -284,7 +298,7 @@
             // 
             // PaletteNum
             // 
-            this.PaletteNum.Location = new System.Drawing.Point(34, 232);
+            this.PaletteNum.Location = new System.Drawing.Point(33, 262);
             this.PaletteNum.Name = "PaletteNum";
             this.PaletteNum.Size = new System.Drawing.Size(13, 13);
             this.PaletteNum.TabIndex = 14;
@@ -293,7 +307,7 @@
             // layer1Button
             // 
             this.layer1Button.Enabled = false;
-            this.layer1Button.Location = new System.Drawing.Point(76, 227);
+            this.layer1Button.Location = new System.Drawing.Point(75, 257);
             this.layer1Button.Name = "layer1Button";
             this.layer1Button.Size = new System.Drawing.Size(17, 23);
             this.layer1Button.TabIndex = 15;
@@ -303,7 +317,7 @@
             // 
             // layer2Button
             // 
-            this.layer2Button.Location = new System.Drawing.Point(99, 227);
+            this.layer2Button.Location = new System.Drawing.Point(98, 257);
             this.layer2Button.Name = "layer2Button";
             this.layer2Button.Size = new System.Drawing.Size(17, 23);
             this.layer2Button.TabIndex = 16;
@@ -313,7 +327,7 @@
             // 
             // label4
             // 
-            this.label4.Location = new System.Drawing.Point(13, 211);
+            this.label4.Location = new System.Drawing.Point(12, 241);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(40, 13);
             this.label4.TabIndex = 17;
@@ -321,7 +335,7 @@
             // 
             // label5
             // 
-            this.label5.Location = new System.Drawing.Point(78, 211);
+            this.label5.Location = new System.Drawing.Point(77, 241);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(40, 13);
             this.label5.TabIndex = 18;
@@ -329,7 +343,7 @@
             // 
             // tileChange
             // 
-            this.tileChange.Location = new System.Drawing.Point(11, 186);
+            this.tileChange.Location = new System.Drawing.Point(10, 216);
             this.tileChange.Name = "tileChange";
             this.tileChange.Size = new System.Drawing.Size(114, 22);
             this.tileChange.TabIndex = 20;
@@ -340,7 +354,7 @@
             // tId1
             // 
             this.tId1.Enabled = false;
-            this.tId1.Location = new System.Drawing.Point(0, 24);
+            this.tId1.Location = new System.Drawing.Point(-1, 54);
             this.tId1.MaxLength = 3;
             this.tId1.Name = "tId1";
             this.tId1.Size = new System.Drawing.Size(25, 20);
@@ -350,7 +364,7 @@
             // tId2
             // 
             this.tId2.Enabled = false;
-            this.tId2.Location = new System.Drawing.Point(102, 24);
+            this.tId2.Location = new System.Drawing.Point(101, 54);
             this.tId2.MaxLength = 3;
             this.tId2.Name = "tId2";
             this.tId2.Size = new System.Drawing.Size(25, 20);
@@ -360,7 +374,7 @@
             // tId3
             // 
             this.tId3.Enabled = false;
-            this.tId3.Location = new System.Drawing.Point(0, 50);
+            this.tId3.Location = new System.Drawing.Point(-1, 80);
             this.tId3.MaxLength = 3;
             this.tId3.Name = "tId3";
             this.tId3.Size = new System.Drawing.Size(25, 20);
@@ -370,7 +384,7 @@
             // tId4
             // 
             this.tId4.Enabled = false;
-            this.tId4.Location = new System.Drawing.Point(102, 50);
+            this.tId4.Location = new System.Drawing.Point(101, 80);
             this.tId4.MaxLength = 3;
             this.tId4.Name = "tId4";
             this.tId4.Size = new System.Drawing.Size(25, 20);
@@ -380,7 +394,7 @@
             // sTId
             // 
             this.sTId.Enabled = false;
-            this.sTId.Location = new System.Drawing.Point(45, 111);
+            this.sTId.Location = new System.Drawing.Point(44, 141);
             this.sTId.MaxLength = 3;
             this.sTId.Name = "sTId";
             this.sTId.Size = new System.Drawing.Size(25, 20);
@@ -390,7 +404,7 @@
             // mTId
             // 
             this.mTId.Enabled = false;
-			this.mTId.Location = new System.Drawing.Point(35, 76);
+            this.mTId.Location = new System.Drawing.Point(34, 106);
             this.mTId.MaxLength = 3;
             this.mTId.Name = "mTId";
             this.mTId.Size = new System.Drawing.Size(25, 20);
@@ -400,7 +414,7 @@
             // HiddenLabel
             // 
             this.HiddenLabel.AutoSize = true;
-            this.HiddenLabel.Location = new System.Drawing.Point(78, 111);
+            this.HiddenLabel.Location = new System.Drawing.Point(77, 141);
             this.HiddenLabel.Name = "HiddenLabel";
             this.HiddenLabel.Size = new System.Drawing.Size(0, 13);
             this.HiddenLabel.TabIndex = 27;
@@ -408,20 +422,129 @@
             // mTType
             // 
             this.mTType.Enabled = false;
-            this.mTType.Location = new System.Drawing.Point(68, 76);
+            this.mTType.Location = new System.Drawing.Point(67, 106);
             this.mTType.MaxLength = 3;
             this.mTType.Name = "mTType";
             this.mTType.Size = new System.Drawing.Size(25, 20);
             this.mTType.TabIndex = 28;
             this.mTType.Text = "FFF";
-            this.mTType.LostFocus += new System.EventHandler(mTType_LostFocus);
+            this.mTType.LostFocus += new System.EventHandler(this.mTType_LostFocus);
+            // 
+            // menuStrip
+            // 
+            this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fileToolStripMenuItem});
+            this.menuStrip.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip.Name = "menuStrip";
+            this.menuStrip.Size = new System.Drawing.Size(675, 24);
+            this.menuStrip.TabIndex = 29;
+            this.menuStrip.Text = "mainMenuStrip";
+            // 
+            // fileToolStripMenuItem
+            // 
+            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.importToolStripMenuItem,
+            this.exportToolStripMenuItem});
+            this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+            this.fileToolStripMenuItem.Text = "File";
+            // 
+            // importToolStripMenuItem
+            // 
+            this.importToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.bg1ToolStripMenuItem,
+            this.bg2ToolStripMenuItem,
+            this.commonToolStripMenuItem,
+            this.paletteToolStripMenuItem});
+            this.importToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("importToolStripMenuItem.Image")));
+            this.importToolStripMenuItem.Name = "importToolStripMenuItem";
+            this.importToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.importToolStripMenuItem.Text = "Import";
+            // 
+            // bg1ToolStripMenuItem
+            // 
+            this.bg1ToolStripMenuItem.Name = "bg1ToolStripMenuItem";
+            this.bg1ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.bg1ToolStripMenuItem.Text = "Bg1";
+            this.bg1ToolStripMenuItem.Click += new System.EventHandler(this.bg1ToolStripMenuItem_Click);
+            // 
+            // bg2ToolStripMenuItem
+            // 
+            this.bg2ToolStripMenuItem.Name = "bg2ToolStripMenuItem";
+            this.bg2ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.bg2ToolStripMenuItem.Text = "Bg2";
+            this.bg2ToolStripMenuItem.Click += new System.EventHandler(this.bg2ToolStripMenuItem_Click);
+            // 
+            // commonToolStripMenuItem
+            // 
+            this.commonToolStripMenuItem.Name = "commonToolStripMenuItem";
+            this.commonToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.commonToolStripMenuItem.Text = "Common";
+            this.commonToolStripMenuItem.Click += new System.EventHandler(this.commonToolStripMenuItem_Click);
+            // 
+            // paletteToolStripMenuItem
+            // 
+            this.paletteToolStripMenuItem.Name = "paletteToolStripMenuItem";
+            this.paletteToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.paletteToolStripMenuItem.Text = "Palette";
+            this.paletteToolStripMenuItem.Click += new System.EventHandler(this.paletteToolStripMenuItem_Click);
+            // 
+            // exportToolStripMenuItem
+            // 
+            this.exportToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.bg1ToolStripMenuItem1,
+            this.bg2ToolStripMenuItem1,
+            this.commonToolStripMenuItem1,
+            this.paletteToolStripMenuItem1});
+            this.exportToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("exportToolStripMenuItem.Image")));
+            this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
+            this.exportToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exportToolStripMenuItem.Text = "Export";
+            // 
+            // bg1ToolStripMenuItem1
+            // 
+            this.bg1ToolStripMenuItem1.Name = "bg1ToolStripMenuItem1";
+            this.bg1ToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.bg1ToolStripMenuItem1.Text = "Bg1";
+            this.bg1ToolStripMenuItem1.Click += new System.EventHandler(this.bg1ToolStripMenuItem1_Click);
+            // 
+            // bg2ToolStripMenuItem1
+            // 
+            this.bg2ToolStripMenuItem1.Name = "bg2ToolStripMenuItem1";
+            this.bg2ToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.bg2ToolStripMenuItem1.Text = "Bg2";
+            this.bg2ToolStripMenuItem1.Click += new System.EventHandler(this.bg2ToolStripMenuItem1_Click);
+            // 
+            // commonToolStripMenuItem1
+            // 
+            this.commonToolStripMenuItem1.Name = "commonToolStripMenuItem1";
+            this.commonToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.commonToolStripMenuItem1.Text = "Common";
+            this.commonToolStripMenuItem1.Click += new System.EventHandler(this.commonToolStripMenuItem1_Click);
+            // 
+            // paletteToolStripMenuItem1
+            // 
+            this.paletteToolStripMenuItem1.Name = "paletteToolStripMenuItem1";
+            this.paletteToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.paletteToolStripMenuItem1.Text = "Palette";
+            this.paletteToolStripMenuItem1.Click += new System.EventHandler(this.paletteToolStripMenuItem1_Click);
+            // 
+            // label6
+            // 
+            this.label6.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label6.Location = new System.Drawing.Point(0, 21);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(680, 2);
+            this.label6.TabIndex = 30;
             // 
             // MetaTileEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(675, 275);
-			this.Controls.Add(this.mTType);
+            this.ClientSize = new System.Drawing.Size(675, 305);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.menuStrip);
+            this.Controls.Add(this.mTType);
             this.Controls.Add(this.HiddenLabel);
             this.Controls.Add(this.mTId);
             this.Controls.Add(this.sTId);
@@ -467,44 +590,59 @@
             this.selectedTilePanel.ResumeLayout(false);
             this.selectedTilePanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.selectedTileBox)).EndInit();
+            this.menuStrip.ResumeLayout(false);
+            this.menuStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
-		}
+        }
 
-		#endregion
-		private System.Windows.Forms.Panel metaTileSetPanel;
-		private System.Windows.Forms.Panel tileSetPanel;
-		private System.Windows.Forms.Panel selectedMetaTilePanel;
-		private System.Windows.Forms.Panel selectedTilePanel;
-		private System.Windows.Forms.PictureBox selectedTileBox;
-		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Label label2;
-		private System.Windows.Forms.Label label3;
-		private System.Windows.Forms.TextBox tLPalette;
-		private System.Windows.Forms.TextBox bLPalette;
-		private System.Windows.Forms.TextBox tRPalette;
-		private System.Windows.Forms.TextBox bRPalette;
-		private System.Windows.Forms.CheckBox hFlipBox;
-		private System.Windows.Forms.CheckBox vFlipBox;
-		private System.Windows.Forms.Button prevButton;
-		private System.Windows.Forms.Button nextButton;
-		private System.Windows.Forms.Label PaletteNum;
-		private System.Windows.Forms.Button layer1Button;
-		private System.Windows.Forms.Button layer2Button;
-		private System.Windows.Forms.Label label4;
-		private System.Windows.Forms.Label label5;
-		private System.Windows.Forms.Button tileChange;
-		private System.Windows.Forms.TextBox tId1;
-		private System.Windows.Forms.TextBox tId2;
-		private System.Windows.Forms.TextBox tId3;
-		private System.Windows.Forms.TextBox tId4;
-		private System.Windows.Forms.TextBox sTId;
-		private System.Windows.Forms.TextBox mTId;
+        #endregion
+        private System.Windows.Forms.Panel metaTileSetPanel;
+        private System.Windows.Forms.Panel tileSetPanel;
+        private System.Windows.Forms.Panel selectedMetaTilePanel;
+        private System.Windows.Forms.Panel selectedTilePanel;
+        private System.Windows.Forms.PictureBox selectedTileBox;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox tLPalette;
+        private System.Windows.Forms.TextBox bLPalette;
+        private System.Windows.Forms.TextBox tRPalette;
+        private System.Windows.Forms.TextBox bRPalette;
+        private System.Windows.Forms.CheckBox hFlipBox;
+        private System.Windows.Forms.CheckBox vFlipBox;
+        private System.Windows.Forms.Button prevButton;
+        private System.Windows.Forms.Button nextButton;
+        private System.Windows.Forms.Label PaletteNum;
+        private System.Windows.Forms.Button layer1Button;
+        private System.Windows.Forms.Button layer2Button;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Button tileChange;
+        private System.Windows.Forms.TextBox tId1;
+        private System.Windows.Forms.TextBox tId2;
+        private System.Windows.Forms.TextBox tId3;
+        private System.Windows.Forms.TextBox tId4;
+        private System.Windows.Forms.TextBox sTId;
+        private System.Windows.Forms.TextBox mTId;
         private GridBox metaTileGridBox;
         private GridBox tileSetGridBox;
         private GridBox selectedMetaGridBox;
-		private System.Windows.Forms.Label HiddenLabel;
-		private System.Windows.Forms.TextBox mTType;
-	}
+        private System.Windows.Forms.Label HiddenLabel;
+        private System.Windows.Forms.TextBox mTType;
+        private System.Windows.Forms.MenuStrip menuStrip;
+        private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem importToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem bg1ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem bg2ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem commonToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem bg1ToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem bg2ToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem commonToolStripMenuItem1;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.ToolStripMenuItem paletteToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem paletteToolStripMenuItem1;
+    }
 }

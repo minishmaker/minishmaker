@@ -1,5 +1,7 @@
-﻿using System;
+using System;
 using System.Drawing;
+using System.Text;
+using MinishMaker.Utilities;
 
 namespace MinishMaker.Core
 {
@@ -16,9 +18,6 @@ namespace MinishMaker.Core
         {
             Color[] palettes = new Color[16 * 16];
 
-            //for( int x = 0; x < 16; x++ )
-            //	palettes[x] = new Color[16];
-
             var r = ROM.Instance.reader;
 
             var header = ROM.Instance.headers;
@@ -33,7 +32,6 @@ namespace MinishMaker.Core
 
             int pos = 0; //position in pdata array
                          //manual 0th entry as I dont know where it gets it from yet
-
 
             palettes[0] = Color.Transparent;
             palettes[1] = Color.FromArgb(14 * 8, 3 * 8, 2 * 8);
@@ -54,7 +52,6 @@ namespace MinishMaker.Core
 
             if (pstart >= 2)
             {
-
                 palettes[16] = Color.Transparent;
                 palettes[17] = Color.FromArgb(3 * 8, 6 * 8, 18 * 8);
                 palettes[18] = Color.FromArgb(4 * 8, 13 * 8, 25 * 8);
@@ -87,14 +84,30 @@ namespace MinishMaker.Core
                     int green = ((pd >> 5) & 0x1F) << 3;
                     int blue = ((pd >> 10) & 0x1F) << 3;
                     palettes[p * 16 + i] = Color.FromArgb(red, green, blue);
-                    if (i == 0)
-                        palettes[p * 16 + i] = Color.Transparent; //make 0 = transparent
                 }
             }
             return palettes;
+        }
 
+        public string ToPaletteString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("CLRX 8 256");
+            var i = 0;
+            foreach (var color in this.Palettes)
+            {
+                sb.Append("0x00" + color.B.Hex().PadLeft(2, '0') + color.G.Hex().PadLeft(2, '0') + color.R.Hex().PadLeft(2, '0') + " ");
+                i++;
+                if (i == 4)
+                {
+                    sb.AppendLine();
+                    i = 0;
+                }
+            }
+            return sb.ToString();
         }
     }
+
 
     public class PaletteException : Exception
     {

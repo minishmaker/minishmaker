@@ -1,6 +1,9 @@
-﻿using System;
+using System;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using MinishMaker.Core;
 using MinishMaker.Core.ChangeTypes;
@@ -29,6 +32,7 @@ namespace MinishMaker.UI
             bLPalette.KeyDown += EnterUnfocus;
             bRPalette.KeyDown += EnterUnfocus;
             mTType.KeyDown += EnterUnfocus;
+            fileToolStripMenuItem.Enabled = false;
         }
 
         //control functions start here
@@ -75,11 +79,13 @@ namespace MinishMaker.UI
             tileChange.Enabled = true;
             mTType.Enabled = true;
 
-            mTId.Text = metaTileGridBox.SelectedIndex.Hex();
-            mTType.Text = (currentTileType[1] * 0x100 + currentTileType[0]).Hex();
+            currentTileInfo = room.GetMetaTileData(ref currentTileType, metaTileGridBox.SelectedIndex, currentLayer);
 
-            tId1.Text = (currentTileInfo[0] + (currentTileInfo[1] << 8) & 0x3ff).Hex(); //first 10 bits of 1st byte
-            tLPalette.Text = (currentTileInfo[1] >> 4).Hex();       //last 4 bits of 2nd byte
+            if (currentTileInfo == null)
+                return;
+
+            tileChange.Enabled = true;
+            mTType.Enabled = true;
 
             tId2.Text = (currentTileInfo[2] + (currentTileInfo[3] << 8) & 0x3ff).Hex(); //first 10 bits of 3th byte
             tRPalette.Text = (currentTileInfo[3] >> 4).Hex();       //last 4 bits of 4th byte
@@ -323,6 +329,7 @@ namespace MinishMaker.UI
             metaTileGridBox.Selectable = true;
             tileSetGridBox.Selectable = true;
             selectedMetaGridBox.Selectable = true;
+            fileToolStripMenuItem.Enabled = true;
         }
 
         public void DrawTileset(TileSet tset, Color[] palettes)
@@ -437,5 +444,223 @@ namespace MinishMaker.UI
             //Draw the final image in the pictureBox
             return finalImage;
         }
+
+        //import
+        private void bg1ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ImportFile("bg1", TileSet.TileSetDataType.BG1);
+        }
+
+        private void bg2ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ImportFile("bg2", TileSet.TileSetDataType.BG2);
+        }
+
+        private void commonToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ImportFile("common", TileSet.TileSetDataType.COMMON);
+        }
+
+        private void ImportFile(string type, TileSet.TileSetDataType tsetType)
+        {
+            using (OpenFileDialog ofd = new OpenFileDialog())
+            {
+                ofd.Filter = "PNG files|*.png|All Files|*.*";
+                ofd.Title = "Select a " + type + " tilset file";
+
+                if (ofd.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+
+                if (!ofd.CheckPathExists)
+                {
+                    throw new FileNotFoundException();
+                }
+
+                byte[] data = File.ReadAllBytes(ofd.FileName);
+                Bitmap inImage = BitmapHandler.LoadBitmap(data);
+                byte[] tsetData = DecodeIndices(inImage);
+
+                var room = MapManager.Instance.MapAreas.Single(a => a.Index == currentArea).Rooms.First();
+                room.tileSet.SetTileSetData(tsetType, tsetData);
+                RedrawTiles(room);
+
+                switch (tsetType)
+                {
+                    case TileSet.TileSetDataType.BG1:
+                        Project.Instance.AddPendingChange(new Bg1TileSetChange(currentArea));
+                        break;
+                    case TileSet.TileSetDataType.BG2:
+                        Project.Instance.AddPendingChange(new Bg2TileSetChange(currentArea));
+                        break;
+                    case TileSet.TileSetDataType.COMMON:
+                        Project.Instance.AddPendingChange(new CommonTileSetChange(currentArea));
+                        break;
+                }
+            }
+        }
+
+        //export
+        private void bg1ToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            ExportTileSet(TileSet.TileSetDataType.BG1, 0x80, 1);
+        }
+
+        private void bg2ToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            ExportTileSet(TileSet.TileSetDataType.BG2, 0, 0);
+        }
+
+        private void commonToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            ExportTileSet(TileSet.TileSetDataType.COMMON, 0, 1);
+        }
+
+        private void ExportTileSet(TileSet.TileSetDataType tsetType, int offset, int layer)
+        {
+            using (SaveFileDialog sfd = new SaveFileDialog())
+            {
+                var room = MapManager.Instance.MapAreas.Single(a => a.Index == currentArea).Rooms.First();
+                sfd.Filter = "Bitmap files|*.bmp|All Files|*.*";
+                sfd.Title = "Save " + tsetType + " tileset file";
+                sfd.FileName = tsetType + "_" + currentArea.Hex() + ".bmp";
+
+                if (sfd.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+
+                var fileData = room.tileSet.GetTileSetData(tsetType);
+                var bmap = new Bitmap(0x100, 0x80, PixelFormat.Format8bppIndexed);
+
+                EncodeIndices(ref bmap, fileData);
+
+                bmap.Save(sfd.FileName);
+            }
+        }
+
+        private void paletteToolStripMenuItem1_Click(object sender, EventArgs e) //export
+        {
+            using (SaveFileDialog sfd = new SaveFileDialog())
+            {
+                var room = MapManager.Instance.MapAreas.Single(a => a.Index == currentArea).Rooms.First();
+                sfd.Filter = "Palette files|*.pal|All Files|*.*";
+                sfd.Title = "Save palette file";
+                sfd.FileName = "palette_" + currentArea.Hex() + ".pal";
+
+                if (sfd.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+                var palString = room.paletteString;
+
+                File.WriteAllText(sfd.FileName, palString);
+            }
+        }
+
+        private byte[] DecodeIndices(Bitmap bmp)
+        {
+            byte[] tsetData = new byte[0x4000];
+            BitmapData data = bmp.LockBits(new Rectangle(Point.Empty, bmp.Size), ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed);
+            var tsetDataPos = 0;
+
+            for (int tileY = 0; tileY < 0x10; tileY++)
+            {
+                for (int tileX = 0; tileX < 0x20; tileX++)
+                {
+                    for (int y = 0; y < 8; y++)
+                    {
+                        for (int x = 0; x < 8; x++)
+                        {
+                            var posY = 8 * tileY + y;
+                            var posX = 8 * tileX + x;
+
+                            byte pixData = Marshal.ReadByte(data.Scan0, posX + posY * data.Stride);
+                            if (x % 2 == 0)
+                            {
+                                tsetData[tsetDataPos] = pixData;
+                            }
+                            else
+                            {
+                                pixData = (byte)(pixData << 4);
+                                tsetData[tsetDataPos] += pixData;
+                                tsetDataPos++;
+                            }
+                        }
+                    }
+                }
+            }
+
+            bmp.UnlockBits(data);
+            return tsetData;
+        }
+        private void EncodeIndices(ref Bitmap bmp, byte[] tsetData)
+        {
+            BitmapData data = bmp.LockBits(new Rectangle(Point.Empty, bmp.Size), ImageLockMode.ReadWrite, PixelFormat.Format8bppIndexed);
+            var tsetDataPos = 0;
+            //var palette = bmp.Palette.Entries;
+
+            for (int tileY = 0; tileY < 0x10; tileY++)
+            {
+                for (int tileX = 0; tileX < 0x20; tileX++)
+                {
+                    for (int y = 0; y < 8; y++)
+                    {
+                        for (int x = 0; x < 8; x++)
+                        {
+                            var posY = 8 * tileY + y;
+                            var posX = 8 * tileX + x;
+
+                            byte palData = tsetData[tsetDataPos];//get color
+                            if (x % 2 == 0)
+                            {
+                                palData = (byte)(palData & 0x0F);
+                            }
+                            else
+                            {
+                                palData = (byte)(palData >> 4);
+                                tsetDataPos++;
+                            }
+                            Marshal.WriteByte(data.Scan0, posX + posY * data.Stride, palData);
+                        }
+                    }
+                }
+            }
+
+            bmp.UnlockBits(data);
+        }
+
+
+        private void paletteToolStripMenuItem_Click(object sender, EventArgs e) //import
+        {
+            using (OpenFileDialog ofd = new OpenFileDialog())
+            {
+                ofd.Filter = "Palette files| *.pal|All Files|*.*";
+                ofd.Title = "Select a palette file";
+
+                if (ofd.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+
+                var data = File.ReadAllBytes(ofd.FileName);
+
+                //16 palettes * 16 colors * 3 parts (r g b)
+                if (data.Length != 16 * 16 * 3)
+                {
+                    throw new IncorrectFileSizeException("Incorrect palette file size. \r expected size " + (16 * 16 * 3) + " bytes. \r Found" + data.Length);
+                }
+
+                Project.Instance.AddPendingChange(new PaletteChange(currentArea));
+            }
+        }
+    }
+
+    public class IncorrectFileSizeException : Exception
+    {
+        public IncorrectFileSizeException() { }
+        public IncorrectFileSizeException(string message) : base(message) { }
+        public IncorrectFileSizeException(string message, Exception inner) : base(message, inner) { }
     }
 }

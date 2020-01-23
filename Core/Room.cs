@@ -30,6 +30,14 @@ namespace MinishMaker.Core
             get { return pset.Palettes; }
         }
 
+        public string paletteString
+        {
+            get
+            {
+                return pset.ToPaletteString();
+            }
+        }
+
         public bool Bg1Exists
         {
             get { return bg1Exists; }
@@ -386,6 +394,12 @@ namespace MinishMaker.Core
                     return bg2MetaTiles.GetCompressedMetaTileTypes(ref data);
                 case DataType.roomMetaData:
                     return GetMetadata(ref data);
+                case DataType.bg1TileSet:
+                    return tileSet.GetCompressedTileSetData(ref data, TileSet.TileSetDataType.BG1);
+                case DataType.bg2TileSet:
+                    return tileSet.GetCompressedTileSetData(ref data, TileSet.TileSetDataType.BG2);
+                case DataType.commonTileSet:
+                    return tileSet.GetCompressedTileSetData(ref data, TileSet.TileSetDataType.COMMON);
                 default:
                     return 0;
             }

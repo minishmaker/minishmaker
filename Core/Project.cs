@@ -15,7 +15,9 @@ namespace MinishMaker.Core
         bg1Data,
         bg2Data,
         roomMetaData,
-        tileSet,
+        bg1TileSet,
+        bg2TileSet,
+        commonTileSet,
         bg1MetaTileSet,
         bg2MetaTileSet,
         chestData,
@@ -26,6 +28,7 @@ namespace MinishMaker.Core
         warpData,
         bg1MetaTileType,
         bg2MetaTileType,
+        palette,
     }
 
     /// <summary>
@@ -346,7 +349,6 @@ namespace MinishMaker.Core
             }
         }
 
-
         private Change CreateChange(DataType type, int area, int room)
         {
             switch (type)
@@ -359,10 +361,16 @@ namespace MinishMaker.Core
                     return new Bg1DataChange(area, room);
                 case DataType.bg1MetaTileSet:
                     return new Bg1MetaTileSetChange(area);
+                case DataType.bg1TileSet:
+                    return new Bg1TileSetChange(area);
                 case DataType.bg2Data:
                     return new Bg2DataChange(area, room);
                 case DataType.bg2MetaTileSet:
                     return new Bg2MetaTileSetChange(area);
+                case DataType.bg2TileSet:
+                    return new Bg2TileSetChange(area);
+                case DataType.commonTileSet:
+                    return new CommonTileSetChange(area);
                 case DataType.chestData:
                     return new ChestDataChange(area, room);
                 case DataType.list1Data:
@@ -377,6 +385,8 @@ namespace MinishMaker.Core
                     return new Bg1MetaTileTypeChange(area);
                 case DataType.bg2MetaTileType:
                     return new Bg2MetaTileTypeChange(area);
+                case DataType.palette:
+                    return new PaletteChange(area);
                 default:
                     Debug.WriteLine("unknown file found of type: " + type);
                     return null;
@@ -410,8 +420,6 @@ namespace MinishMaker.Core
         {
             mainWriter.Dispose();
         }
-
-
 
         public void SaveChange(Change change)
         {

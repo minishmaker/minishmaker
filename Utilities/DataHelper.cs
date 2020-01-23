@@ -7,7 +7,6 @@ namespace MinishMaker.Core
 {
     public class DataHelper
     {
-
         public static byte[] GetData(AddrData addrData)
         {
             if (addrData.compressed)
@@ -33,6 +32,21 @@ namespace MinishMaker.Core
             using (MemoryStream ms = new MemoryStream(data))
                 Lz77Decompress(ROM.Instance.reader, ms);
             return data;
+        }
+
+        public static long CompressData(ref byte[] outData, byte[] uncompressedData)
+        {
+            var compressed = new byte[uncompressedData.Length];
+            long totalSize = 0;
+            MemoryStream ous = new MemoryStream(compressed);
+            totalSize = Compress(uncompressedData, ous, false);
+
+            outData = new byte[totalSize];
+            Array.Copy(compressed, outData, totalSize);
+
+            totalSize |= 0x80000000;
+
+            return totalSize;
         }
 
         private static byte[] GetUncompressed(int addr, int size)
