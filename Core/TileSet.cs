@@ -30,7 +30,7 @@ namespace MinishMaker.Core
                     {
                         var counter = tileSetAddrs[i].dest / 0x4000;
                         byte[] data;
-                        if (File.Exists(files[counter]))
+                        if (files.Length > counter && File.Exists(files[counter]))
                         {
                             data = File.ReadAllBytes(files[counter]);
                         }

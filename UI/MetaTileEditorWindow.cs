@@ -79,14 +79,6 @@ namespace MinishMaker.UI
             tileChange.Enabled = true;
             mTType.Enabled = true;
 
-            currentTileInfo = room.GetMetaTileData(ref currentTileType, metaTileGridBox.SelectedIndex, currentLayer);
-
-            if (currentTileInfo == null)
-                return;
-
-            tileChange.Enabled = true;
-            mTType.Enabled = true;
-
             tId2.Text = (currentTileInfo[2] + (currentTileInfo[3] << 8) & 0x3ff).Hex(); //first 10 bits of 3th byte
             tRPalette.Text = (currentTileInfo[3] >> 4).Hex();       //last 4 bits of 4th byte
 
@@ -95,6 +87,9 @@ namespace MinishMaker.UI
 
             tId4.Text = (currentTileInfo[6] + (currentTileInfo[7] << 8) & 0x3ff).Hex(); //first 10 bits of 7th byte
             bRPalette.Text = (currentTileInfo[7] >> 4).Hex();       //last 4 bits of 8th byte
+
+            mTId.Text = metaTileGridBox.SelectedIndex.Hex();
+            mTType.Text = (currentTileType[0] + (currentTileType[1] << 8) & 0x3ff).Hex();
 
             selectedMetaGridBox.Image = enlarged;
         }
