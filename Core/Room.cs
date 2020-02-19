@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Windows.Forms;
 using MinishMaker.Utilities;
 using static MinishMaker.Core.RoomMetaData;
 
@@ -171,7 +172,8 @@ namespace MinishMaker.Core
             }
             if (badTiles > 0)
             {
-                throw new RoomException("Found " + badTiles + " bad tiles while trying to draw them, the room may be unused.");
+                var info = "Found " + badTiles + " bad tiles while trying to draw them, the room may be unused.";
+                System.Windows.Forms.MessageBox.Show(info, "Warning", MessageBoxButtons.OK);
             }
         }
 
