@@ -155,7 +155,6 @@ namespace MinishMaker.Core
                     pos += 2; //2 bytes per tile
                     if (metaTiles.GetTileInfo(mt) == null)
                     {
-                        badTiles++;
                         continue;
                     }
                     try
@@ -169,11 +168,6 @@ namespace MinishMaker.Core
                                             + "\n" + e.Message, e);
                     }
                 }
-            }
-            if (badTiles > 0)
-            {
-                var info = "Found " + badTiles + " bad tiles while trying to draw them, the room may be unused.";
-                System.Windows.Forms.MessageBox.Show(info, "Warning", MessageBoxButtons.OK);
             }
         }
 
