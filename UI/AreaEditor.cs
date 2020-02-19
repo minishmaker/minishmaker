@@ -81,8 +81,8 @@ namespace MinishMaker.UI
                 area.areaInfo = data;
                 maps[spot] = area;
 
-                Console.WriteLine(dataloc.Hex());
-                Console.WriteLine(data[0]);
+                //Console.WriteLine(dataloc.Hex());
+                //Console.WriteLine(data[0]);
             }
 
             canFlute.Checked = (data[0] % 2 == 1);//bit 1

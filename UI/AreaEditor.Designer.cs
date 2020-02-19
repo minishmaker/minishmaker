@@ -66,7 +66,6 @@
             // areaLayout
             // 
             this.areaLayout.BackColor = System.Drawing.Color.Transparent;
-            this.areaLayout.Dock = System.Windows.Forms.DockStyle.Fill;
             this.areaLayout.Location = new System.Drawing.Point(0, 0);
             this.areaLayout.Name = "areaLayout";
             this.areaLayout.Size = new System.Drawing.Size(400, 400);
