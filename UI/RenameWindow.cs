@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using MinishMaker.Core;
+using MinishMaker.Utilities;
 
 namespace MinishMaker.UI
 {
@@ -52,7 +53,7 @@ namespace MinishMaker.UI
                 p.roomNames.Add(roomKey, roomName);
             }
 
-            ((MainWindow)Application.OpenForms[0]).ChangeNodeName(areaId + "", areaName, roomId + "", roomName);
+            ((MainWindow)Application.OpenForms[0]).ChangeNodeName(areaId.Hex(), areaName, roomId.Hex(), roomName);
 
             this.Close();
         }
