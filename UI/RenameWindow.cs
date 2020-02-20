@@ -27,6 +27,7 @@ namespace MinishMaker.UI
             else
                 roomNameBox.Enabled = true;
         }
+
         private void ChangeButton_Click(object sender, EventArgs e)
         {
             var areaName = areaNameBox.Text;
@@ -43,16 +44,17 @@ namespace MinishMaker.UI
             {
                 p.roomNames.Add(areaKey, areaName);
             }
-
-            if (p.roomNames.ContainsKey(roomKey))
+            if(roomId != -1) 
             {
-                p.roomNames[roomKey] = roomName;
+                if (p.roomNames.ContainsKey(roomKey) )
+                {
+                    p.roomNames[roomKey] = roomName;
+                }
+                else
+                {
+                    p.roomNames.Add(roomKey, roomName);
+                }
             }
-            else
-            {
-                p.roomNames.Add(roomKey, roomName);
-            }
-
             ((MainWindow)Application.OpenForms[0]).ChangeNodeName(areaId.Hex(), areaName, roomId.Hex(), roomName);
 
             this.Close();
