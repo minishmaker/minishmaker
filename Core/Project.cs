@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using MinishMaker.Core.ChangeTypes;
 using MinishMaker.Utilities;
@@ -59,7 +60,18 @@ namespace MinishMaker.Core
             var exeFolder = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).Substring(6);
 
             roomNames.Clear();
-            var baseNames = File.ReadAllLines(exeFolder + "\\Resources\\StandardNames.txt");
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            var baseNames = new string[0];
+            using (Stream stream = assembly.GetManifestResourceStream("MinishMaker.Resources.StandardNames.txt")) 
+            {
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    string fileContents = reader.ReadToEnd();
+                    // Each line is a different location, split regardless of return form
+                    baseNames = fileContents.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+                }
+            }
+
             LoadRoomNames(baseNames);
 
             // Double check directory
