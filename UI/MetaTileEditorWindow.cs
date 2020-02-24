@@ -79,6 +79,9 @@ namespace MinishMaker.UI
             tileChange.Enabled = true;
             mTType.Enabled = true;
 
+            tId1.Text = (currentTileInfo[0] + (currentTileInfo[1] << 8) & 0x3ff).Hex(); //first 10 bits of 1st byte
+            tLPalette.Text = (currentTileInfo[1] >> 4).Hex();       //last 4 bits of the 2nd byte
+
             tId2.Text = (currentTileInfo[2] + (currentTileInfo[3] << 8) & 0x3ff).Hex(); //first 10 bits of 3th byte
             tRPalette.Text = (currentTileInfo[3] >> 4).Hex();       //last 4 bits of 4th byte
 
@@ -517,9 +520,9 @@ namespace MinishMaker.UI
             using (SaveFileDialog sfd = new SaveFileDialog())
             {
                 var room = MapManager.Instance.MapAreas.Single(a => a.Index == currentArea).Rooms.First();
-                sfd.Filter = "Bitmap files|*.bmp|All Files|*.*";
+                sfd.Filter = "Bitmap files|*.png|All Files|*.*";
                 sfd.Title = "Save " + tsetType + " tileset file";
-                sfd.FileName = tsetType + "_" + currentArea.Hex() + ".bmp";
+                sfd.FileName = tsetType + "_" + currentArea.Hex() + ".png";
 
                 if (sfd.ShowDialog() != DialogResult.OK)
                 {
