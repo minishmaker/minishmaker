@@ -1,7 +1,5 @@
 ﻿using System;
-using System.CodeDom.Compiler;
 using System.Collections.Generic;
-using System.Diagnostics;
 using MinishMaker.Utilities;
 
 namespace MinishMaker.Core
@@ -13,12 +11,12 @@ namespace MinishMaker.Core
         {
             public int Index { get; private set; }
             private readonly List<Room> AreaRooms;
-			public byte[] areaInfo;
+            public byte[] areaInfo;
 
             public Area(int index)
             {
                 Index = index;
-				areaInfo = new byte[4];
+                areaInfo = new byte[4];
                 AreaRooms = new List<Room>();
             }
 
@@ -95,8 +93,8 @@ namespace MinishMaker.Core
                 {
                     if (IsValidRoom(areaNum, roomNum))
                     {
-                        if(IsStableRoom(areaNum, roomNum))
-                        area.Add(new Room(roomNum));
+                        if (IsStableRoom(areaNum, roomNum))
+                            area.Add(new Room(roomNum));
                     }
 
                     else break;
@@ -123,7 +121,7 @@ namespace MinishMaker.Core
 
             int roomaddr = addr + room * 0x0A;
             int roomheader = ROM.Instance.reader.ReadUInt16(roomaddr);
-            
+
             return roomheader != 0xFFFF;
         }
 

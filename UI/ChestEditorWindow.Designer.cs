@@ -49,6 +49,8 @@
             this.prevButton = new System.Windows.Forms.Button();
             this.newButton = new System.Windows.Forms.Button();
             this.removeButton = new System.Windows.Forms.Button();
+            this.label4 = new System.Windows.Forms.Label();
+            this.unknown = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // entityType
@@ -241,13 +243,34 @@
             this.removeButton.TabIndex = 21;
             this.removeButton.Text = "-";
             this.removeButton.UseVisualStyleBackColor = true;
-            this.removeButton.Click += new System.EventHandler(this.RemoveButton_Click);
+            this.removeButton.LostFocus += new System.EventHandler(this.RemoveButton_Click);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(158, 131);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(31, 13);
+            this.label4.TabIndex = 23;
+            this.label4.Text = "Extra";
+            // 
+            // unknown
+            // 
+            this.unknown.Location = new System.Drawing.Point(196, 128);
+            this.unknown.MaxLength = 2;
+            this.unknown.Name = "unknown";
+            this.unknown.Size = new System.Drawing.Size(20, 20);
+            this.unknown.TabIndex = 22;
+            this.unknown.Text = "00";
+            this.unknown.TextChanged += new System.EventHandler(this.unknown_LostFocus);
             // 
             // ChestEditorWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(333, 162);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.unknown);
             this.Controls.Add(this.removeButton);
             this.Controls.Add(this.newButton);
             this.Controls.Add(this.prevButton);
@@ -301,5 +324,7 @@
 		private System.Windows.Forms.Button prevButton;
 		private System.Windows.Forms.Button newButton;
         private System.Windows.Forms.Button removeButton;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox unknown;
     }
 }

@@ -1,72 +1,70 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using System.Drawing;
 using MinishMaker.Core;
 using MinishMaker.Utilities;
-using System.Drawing;
 using MinishMaker.Core.ChangeTypes;
+using MinishMaker.Properties;
 
 
 namespace MinishMaker.UI
 {
-	public partial class MainWindow : Form
-	{   
+    public partial class MainWindow : Form
+    {
         private Project project_;
 
-		private MapManager mapManager_;
-	    private NewProjectWindow newProjectWindow = null;
+        private MapManager mapManager_;
+        private NewProjectWindow newProjectWindow = null;
         private ChestEditorWindow chestEditor = null;
-		private MetaTileEditor metatileEditor = null;
-		private AreaEditor areaEditor = null;
-		//private EnemyPlacementEditor enemyPlacementEditor = null;
-		private WarpEditor warpEditor = null;
-		private ObjectPlacementEditor objectPlacementEditor = null;
+        private MetaTileEditor metatileEditor = null;
+        private AreaEditor areaEditor = null;
+        private WarpEditor warpEditor = null;
+        private ObjectPlacementEditor objectPlacementEditor = null;
+        private RenameWindow renameWindow = null;
 
-		private Bitmap[] mapLayers;
-		private Bitmap[] tileMaps;
+        private Bitmap[] mapLayers;
+        private Bitmap[] tileMaps;
 
         public static Room currentRoom = null;
-		public static int currentArea = -1;
-		private int selectedTileData = -1;
-		private int selectedLayer = 2; //start with bg2
-		private static List<Change> pendingRomChanges;
+        public static int currentArea = -1;
+        private int selectedTileData = -1;
+        private int selectedLayer = 2; //start with bg2
         private Point lastTilePos;
-	    private ViewLayer viewLayer = 0;
+        private ViewLayer viewLayer = ViewLayer.Both;
 
         struct RepointData
-		{
-			public int areaIndex;
-			public int roomIndex;
-			public DataType type;
-			public int start;
-			public int size;
+        {
+            public int areaIndex;
+            public int roomIndex;
+            public DataType type;
+            public int start;
+            public int size;
 
 
-			public RepointData( int areaIndex, int roomIndex, DataType type, int start, int size )
-			{
-				this.areaIndex = areaIndex;
-				this.roomIndex = roomIndex;
-				this.type = type;
-				this.start = start;
-				this.size = size;
-			}
-		}
-		
+            public RepointData(int areaIndex, int roomIndex, DataType type, int start, int size)
+            {
+                this.areaIndex = areaIndex;
+                this.roomIndex = roomIndex;
+                this.type = type;
+                this.start = start;
+                this.size = size;
+            }
+        }
 
-	    public enum ViewLayer
-	    {
+
+        public enum ViewLayer
+        {
             Both,
             Top,
             Bottom
-	    }
+        }
 
-		public MainWindow()
-		{
-			InitializeComponent();
-
+        public MainWindow()
+        {
+            InitializeComponent();
+            UpdateWindowTitle();
             /*
 			var exeFolder = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).Substring(6);
 			if(File.Exists(exeFolder+"/Settings.cfg"))
@@ -92,7 +90,16 @@ namespace MinishMaker.UI
 				statusText.Text = "Opened last project: "+pName;
 			}
             */
-		}
+        }
+
+        private void UpdateWindowTitle()
+        {
+#if DEBUG
+            this.Text = $"{ProductName} {AssemblyInfo.GetGitTag()} DEBUG-{AssemblyInfo.GetGitHash()}";
+#else
+            this.Text = $"{ProductName} {AssemblyInfo.GetGitTag()}";
+#endif
+        }
 
         #region MenuBarButtons
 
@@ -101,98 +108,98 @@ namespace MinishMaker.UI
             NewProject();
         }
 
-        private void OpenProjectToolStripMenuItem_Click( object sender, EventArgs e )
-		{
+        private void OpenProjectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
             OpenProject();
-		}
+        }
 
         private void saveAllChangesCtrlSToolStripMenuItem_Click(object sender, EventArgs e)
-	    {
+        {
             SaveAllChanges();
-	    }
+        }
 
         private void BuildProjectToolStripMenuItem_Click(object sender, EventArgs e)
         {
             BuildProject();
         }
 
-        private void ExitButtonClick( object sender, EventArgs e )
-		{
-			Close();
-		}
+        private void ExitButtonClick(object sender, EventArgs e)
+        {
+            Close();
+        }
 
-	    private void topLayerToolStripMenuItem_Click(object sender, EventArgs e)
-	    {
-	        UpdateViewLayer(ViewLayer.Top);
-	    }
+        private void topLayerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            UpdateViewLayer(ViewLayer.Top);
+        }
 
-	    private void bottomLayerToolStripMenuItem_Click(object sender, EventArgs e)
-	    {
-	        UpdateViewLayer(ViewLayer.Bottom);
-	    }
+        private void bottomLayerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            UpdateViewLayer(ViewLayer.Bottom);
+        }
 
-	    private void bothLayersToolStripMenuItem_Click(object sender, EventArgs e)
-	    {
-	        UpdateViewLayer(ViewLayer.Both);
-	    }
+        private void bothLayersToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            UpdateViewLayer(ViewLayer.Both);
+        }
 
-	    private void chestEditorStripMenuItem_Click(object sender, EventArgs e)
-	    {
-	        OpenChestEditor();
-	    }
+        private void chestEditorStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenChestEditor();
+        }
 
         private void metatileEditorToolStripMenuItem_Click(object sender, EventArgs e)
-	    {
-	        OpenMetatileEditor();
-	    }
+        {
+            OpenMetatileEditor();
+        }
 
-	    private void areaEditorToolStripMenuItem_Click(object sender, EventArgs e)
-	    {
+        private void areaEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
             OpenAreaEditor();
-	    }
+        }
 
-		private void warpEditorToolStripMenuItem_Click( object sender, EventArgs e )
-		{
-			OpenWarpEditor();
-		}
+        private void warpEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenWarpEditor();
+        }
 
-		private void objectPlacementEditorToolStripMenuItem_Click( object sender, EventArgs e )
-		{
-			OpenObjectPlacementEditor(); 
-		}
+        private void objectPlacementEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenObjectPlacementEditor();
+        }
 
-        private void AboutButtonClick( object sender, EventArgs e )
-		{
-			Form aboutWindow = new AboutWindow();
-			aboutWindow.Show();
-		}
+        private void AboutButtonClick(object sender, EventArgs e)
+        {
+            Form aboutWindow = new AboutWindow();
+            aboutWindow.Show();
+        }
         #endregion
 
         #region ToolStripButtons
-        private void openToolStripButton_Click( object sender, EventArgs e )
-		{
-			OpenProject();
-		}
+        private void openToolStripButton_Click(object sender, EventArgs e)
+        {
+            OpenProject();
+        }
 
-	    private void saveToolStripButton_Click(object sender, EventArgs e)
-	    {
+        private void saveToolStripButton_Click(object sender, EventArgs e)
+        {
             SaveAllChanges();
-	    }
+        }
 
-	    private void chestToolStripButton_Click(object sender, EventArgs e)
-	    {
-	        OpenChestEditor();
-	    }
+        private void chestToolStripButton_Click(object sender, EventArgs e)
+        {
+            OpenChestEditor();
+        }
 
-	    private void metatileToolStripButton_Click(object sender, EventArgs e)
-	    {
-	        OpenMetatileEditor();
-	    }
+        private void metatileToolStripButton_Click(object sender, EventArgs e)
+        {
+            OpenMetatileEditor();
+        }
 
-	    private void areaToolStripButton_Click(object sender, EventArgs e)
-	    {
+        private void areaToolStripButton_Click(object sender, EventArgs e)
+        {
             OpenAreaEditor();
-	    }
+        }
 
         private void objectToolStripButton_Click(object sender, EventArgs e)
         {
@@ -210,15 +217,15 @@ namespace MinishMaker.UI
 
         // Other interactions
         private void tileTabControl_SelectedIndexChanged(object sender, EventArgs e)
-	    {
-	        selectedLayer = tileTabControl.SelectedIndex + 1;
+        {
+            selectedLayer = tileTabControl.SelectedIndex + 1;
 
-	    }
+        }
 
-        private void MainWindow_DragDrop( object sender, DragEventArgs e )
-		{
+        private void MainWindow_DragDrop(object sender, DragEventArgs e)
+        {
 
-		}
+        }
         #endregion
 
         #region ProjectManagement
@@ -302,10 +309,13 @@ namespace MinishMaker.UI
             statusText.Text = st;*/
         }
 
-	    private void OnNewProjectWindowClosed(object sender, FormClosedEventArgs e)
-	    {
-	        if (newProjectWindow.project != null)
+        private void OnNewProjectWindowClosed(object sender, FormClosedEventArgs e)
+        {
+            if (newProjectWindow.project != null)
             {
+                if (renameWindow != null)
+                    renameWindow.Close();
+
                 project_ = newProjectWindow.project;
                 if (project_.Loaded)
                 {
@@ -315,13 +325,13 @@ namespace MinishMaker.UI
                 else
                     statusText.Text = "Could not load project.";
             }
-	        else
-	            statusText.Text = "Project creation aborted.";
-	        newProjectWindow = null;
-	    }
+            else
+                statusText.Text = "Project creation aborted.";
+            newProjectWindow = null;
+        }
 
-		private void OpenProject()
-		{
+        private void OpenProject()
+        {
             OpenFileDialog ofd = new OpenFileDialog
             {
                 Filter = "Minish Maker Project|*.mmproj|All Files|*.*",
@@ -333,18 +343,36 @@ namespace MinishMaker.UI
                 return;
             }
 
-			if(project_== null)
-			{
-				project_ = new Project(ofd.FileName);
-			}
+            if (renameWindow != null)
+                renameWindow.Close();
 
-			if(project_.Loaded)
+            if (chestEditor != null)
+                chestEditor.Close();
+
+            if (areaEditor != null)
+                areaEditor.Close();
+
+            if (metatileEditor != null)
+                metatileEditor.Close();
+
+            if (objectPlacementEditor != null)
+                objectPlacementEditor.Close();
+
+            if (warpEditor != null)
+                warpEditor.Close();
+
+            if (project_ == null)
+            {
+                project_ = new Project(ofd.FileName);
+            }
+
+            if (project_.Loaded)
             {
                 LoadProjectData();
             }
 
             statusText.Text = "Loaded: " + ofd.FileName;
-		}
+        }
 
         private void LoadProjectData()
         {
@@ -355,7 +383,6 @@ namespace MinishMaker.UI
             currentArea = -1;
             selectedTileData = -1;
             selectedLayer = 2;
-            pendingRomChanges = new List<Change>();
             LoadMaps();
         }
 
@@ -367,7 +394,7 @@ namespace MinishMaker.UI
                 return;
             }
             // TODO check for pending changes before building, and prompt user
-
+            SaveAllChanges();
             if (project_.BuildProject())
             {
                 MessageBox.Show("Build Completed!");
@@ -379,7 +406,7 @@ namespace MinishMaker.UI
                 statusText.Text = "Failed to build project.";
             }
             // TODO check for build completing correctly, probably needs deeper integration with ColorzCore
-   
+
         }
 
         #endregion
@@ -395,11 +422,29 @@ namespace MinishMaker.UI
 
             foreach (MapManager.Area area in mapManager_.MapAreas)
             {
-                roomTreeView.Nodes.Add("Area " + StringUtil.AsStringHex2(area.Index));
+                var areaName = "Area " + StringUtil.AsStringHex2(area.Index);
+                var areaKey = new Tuple<int, int>(area.Index, -1);
+
+                if (Project.Instance.roomNames.ContainsKey(areaKey))
+                {
+                    areaName = Project.Instance.roomNames[areaKey];
+                }
+
+                var areaNode = roomTreeView.Nodes.Add(areaName);
+                areaNode.Name = StringUtil.AsStringHex(area.Index, 1);
 
                 foreach (Room room in area.Rooms)
                 {
-                    roomTreeView.Nodes[subsection].Nodes.Add("Room " + StringUtil.AsStringHex2(room.Index));
+                    var roomName = "Room " + StringUtil.AsStringHex2(room.Index);
+                    var roomKey = new Tuple<int, int>(area.Index, room.Index);
+
+                    if (Project.Instance.roomNames.ContainsKey(roomKey))
+                    {
+                        roomName = Project.Instance.roomNames[roomKey];
+                    }
+
+                    var roomNode = areaNode.Nodes.Add(roomName);
+                    roomNode.Name = StringUtil.AsStringHex(room.Index, 1);
                 }
 
                 subsection++;
@@ -409,413 +454,441 @@ namespace MinishMaker.UI
         }
 
         private void OpenChestEditor()
-	    {
-	        if (chestEditorStripMenuItem.Checked)
-	            return; // dont open a second one
+        {
+            if (chestEditorStripMenuItem.Checked)
+            {
+                chestEditor.Focus();
+                return; // dont open a second one
+            }
 
-	        chestEditor = new ChestEditorWindow();
+            chestEditor = new ChestEditorWindow();
 
-	        if (currentRoom != null)
-	        {
-	            var chestData = currentRoom.GetChestData();
-	            chestEditor.SetData(chestData);
-	        }
-	        chestEditor.FormClosed += new FormClosedEventHandler(OnChestEditorClose);
-	        chestEditorStripMenuItem.Checked = true;
-	        chestEditor.Show();
-	    }
-
-	    private void OnChestEditorClose(object sender, FormClosedEventArgs e)
-	    {
-	        chestEditor = null;
-	        chestEditorStripMenuItem.Checked = false;
-			HighlightChest(-1,-1);
-	    }
-
-	    private void OpenMetatileEditor()
-	    {
-	        if (metatileEditorToolStripMenuItem.Checked)
-	            return; // dont open a second one
-
-	        metatileEditor = new MetaTileEditor();
-
-	        if (currentRoom != null)
-	        {
-				metatileEditor.currentArea = currentArea;
-				var room = MapManager.Instance.MapAreas.Single(a=>a.Index==currentArea).Rooms.First();
-				if(!room.Loaded)
-				{
-					room.LoadRoom(currentArea);
-				}
-	            metatileEditor.RedrawTiles(room);
-	        }
-
-	        metatileEditor.FormClosed += new FormClosedEventHandler(OnMetaTileEditorClose);
-	        metatileEditorToolStripMenuItem.Checked = true;
-	        metatileEditor.Show();
-	    }
-
-	    private void OnMetaTileEditorClose(object sender, FormClosedEventArgs e)
-	    {
-	        metatileEditor = null;
-	        metatileEditorToolStripMenuItem.Checked = false;
-	    }
-
-	    private void OpenAreaEditor()
-	    {
-	        if (areaEditorToolStripMenuItem.Checked)
-	            return;
-
-	        areaEditor = new AreaEditor();
-
-	        if (currentRoom != null)
-	        {
-	            areaEditor.LoadArea(currentArea);
-	        }
-
-	        areaEditor.FormClosed += new FormClosedEventHandler(OnAreaEditorClose);
-	        areaEditorToolStripMenuItem.Checked = true;
-	        areaEditor.Show();
+            if (currentRoom != null)
+            {
+                var chestData = currentRoom.GetChestData();
+                chestEditor.SetData(chestData);
+            }
+            chestEditor.FormClosed += new FormClosedEventHandler(OnChestEditorClose);
+            chestEditorStripMenuItem.Checked = true;
+            chestEditor.Show();
         }
 
-		private void OnAreaEditorClose(object sender, FormClosedEventArgs e)
-		{
-			areaEditor = null;
-			areaEditorToolStripMenuItem.Checked = false;
-		}
+        private void OnChestEditorClose(object sender, FormClosedEventArgs e)
+        {
+            chestEditor = null;
+            chestEditorStripMenuItem.Checked = false;
+            HighlightChest(-1, -1);
+        }
 
-		private void OpenWarpEditor()
-		{
-			if(warpEditorToolStripMenuItem.Checked)
-				return; // dont open a second one
+        private void OnRenameWindowClose(object sender, FormClosedEventArgs e)
+        {
+            renameWindow = null;
+        }
 
-			warpEditor = new WarpEditor();
-			warpEditor.FormClosed += new FormClosedEventHandler(OnWarpEditorClose);
-	        warpEditorToolStripMenuItem.Checked = true;
-	        warpEditor.Show();
-		}
-
-		private void OnWarpEditorClose(object sender, FormClosedEventArgs e)
-		{
-			warpEditor = null;
-			warpEditorToolStripMenuItem.Checked = false;
-			HighlightWarp(-1,-1);
-		}
-
-		private void OpenObjectPlacementEditor()
-		{
-			if(objectPlacementEditorToolStripMenuItem.Checked)
-				return; // dont open a second one
-
-			objectPlacementEditor = new ObjectPlacementEditor();
-			objectPlacementEditor.FormClosed += new FormClosedEventHandler(OnObjectPlacementEditorClose);
-	        objectPlacementEditorToolStripMenuItem.Checked = true;
-	        objectPlacementEditor.Show();
-		}
-
-		private void OnObjectPlacementEditorClose(object sender, FormClosedEventArgs e)
-		{
-			objectPlacementEditor = null;
-			objectPlacementEditorToolStripMenuItem.Checked = false;
-			HighlightListObject(-1,-1);
-		}
-
-        private void roomTreeView_NodeMouseDoubleClick( object sender, TreeNodeMouseClickEventArgs e )
-		{
-			if( e.Node.Parent != null )
-			{
-				Console.WriteLine( e.Node.Parent.Text.Split( ' ' )[1] + " " + e.Node.Text.Split( ' ' )[1] );
-				int areaIndex = Convert.ToInt32( e.Node.Parent.Text.Split( ' ' )[1], 16 );
-				int roomIndex = Convert.ToInt32( e.Node.Text.Split( ' ' )[1], 16 );
-				var prevArea = currentArea; //changed in next line so hold temporarily
-				var room = FindRoom( areaIndex, roomIndex );
-
-				currentRoom = room;
-
-				mapLayers = room.DrawRoom( areaIndex, true, true );
-
-				selectedTileData = -1;
-			    tileTabControl.SelectedIndex = 1; // Reset to bg2
-
-				//0= bg1 (treetops and such)
-				//1= bg2 (flooring)
-				mapGridBox.Image = OverlayImage( mapLayers[1], mapLayers[0] );
-				tileMaps = room.DrawTilesetImages( 16, currentArea );
-				bottomTileGridBox.Image = tileMaps[1];
-                topTileGridBox.Image = tileMaps[0];
-
-                mapGridBox.Selectable = true;
-				mapGridBox.SelectedIndex = -1;
-                bottomTileGridBox.Selectable = true;
-                topTileGridBox.Selectable = true;
-
-                if (chestEditor != null)
-                {
-                    var chestData = currentRoom.GetChestData();
-                    chestEditor.SetData(chestData);
-                }
-
-				if(metatileEditor != null)
-				{
-					metatileEditor.currentArea = currentArea;
-					room = MapManager.Instance.MapAreas.Single(a=>a.Index==currentArea).Rooms.First();
-					if(!room.Loaded)
-					{
-						room.LoadRoom(currentArea);
-					}
-					metatileEditor.RedrawTiles(currentRoom);
-				}
-
-				if(areaEditor != null&& currentArea != prevArea)//still in the same area? dont reload
-				{
-					areaEditor.LoadArea(areaIndex);
-				}
-
-				/*if(enemyPlacementEditor != null)
-				{
-					enemyPlacementEditor.LoadData();
-				}*/
-
-				if(warpEditor != null)
-				{
-					warpEditor.LoadData();
-				}
-
-				if(objectPlacementEditor != null)
-				{
-					objectPlacementEditor.LoadData();
-				}
+        private void OpenMetatileEditor()
+        {
+            if (metatileEditorToolStripMenuItem.Checked)
+            {
+                metatileEditor.Focus();
+                return; // dont open a second one
             }
-		}
 
-		public Bitmap OverlayImage( Bitmap baseImage, Bitmap overlay )
-		{
-			Bitmap finalImage = new Bitmap( baseImage.Width, baseImage.Height );
+            metatileEditor = new MetaTileEditor();
 
-			using( Graphics g = Graphics.FromImage( finalImage ) )
-			{
-				//set background color
-				g.Clear( Color.Black );
+            if (currentRoom != null)
+            {
+                metatileEditor.currentArea = currentArea;
+                var room = MapManager.Instance.MapAreas.Single(a => a.Index == currentArea).Rooms.First();
+                if (!room.Loaded)
+                {
+                    room.LoadRoom(currentArea);
+                }
+                metatileEditor.RedrawTiles(room);
+            }
 
-				g.DrawImage( baseImage, new Rectangle( 0, 0, baseImage.Width, baseImage.Height ) );
-				g.DrawImage( overlay, new Rectangle( 0, 0, baseImage.Width, baseImage.Height ) );
-			}
-			//Draw the final image in the gridBox
-			return finalImage;
-		}
+            metatileEditor.FormClosed += new FormClosedEventHandler(OnMetaTileEditorClose);
+            metatileEditorToolStripMenuItem.Checked = true;
+            metatileEditor.Show();
+        }
 
-		private Room FindRoom( int areaIndex, int roomIndex )
-		{
-			int foundIndex = 0;
+        private void OnMetaTileEditorClose(object sender, FormClosedEventArgs e)
+        {
+            metatileEditor = null;
+            metatileEditorToolStripMenuItem.Checked = false;
+        }
 
-			currentArea = areaIndex;
-			for( int i = 0; i < mapManager_.MapAreas.Count; i++ )
-			{
-				if( mapManager_.MapAreas[i].Index == areaIndex )
-				{
-					foundIndex = i;
-					break;
-				}
-				if( i == mapManager_.MapAreas.Count - 1 )
-				{
-					throw new Exception( "Could not find any area with index: " + areaIndex.Hex() );
-				}
-			}
+        private void OpenAreaEditor()
+        {
+            if (areaEditorToolStripMenuItem.Checked)
+            {
+                areaEditor.Focus();
+                return;
+            }
 
-			var area = mapManager_.MapAreas[foundIndex];
-			for( int j = 0; j < area.Rooms.Count(); j++ )
-			{
-				if( area.Rooms[j].Index == roomIndex )
-				{
-					foundIndex = j;
-					break;
-				}
-				if( j == area.Rooms.Count - 1 )
-				{
-					throw new Exception( "Could not find any room with index: " + roomIndex.Hex() + " in area: " + areaIndex.Hex() );
-				}
-			}
+            areaEditor = new AreaEditor();
 
-			return area.Rooms[foundIndex];
-		}
+            if (currentRoom != null)
+            {
+                areaEditor.LoadArea(currentArea);
+            }
+
+            areaEditor.FormClosed += new FormClosedEventHandler(OnAreaEditorClose);
+            areaEditorToolStripMenuItem.Checked = true;
+            areaEditor.Show();
+        }
+
+        private void OnAreaEditorClose(object sender, FormClosedEventArgs e)
+        {
+            areaEditor = null;
+            areaEditorToolStripMenuItem.Checked = false;
+        }
+
+        private void OpenWarpEditor()
+        {
+            if (warpEditorToolStripMenuItem.Checked)
+            {
+                warpEditor.Focus();
+                return; // dont open a second one
+            }
+
+            warpEditor = new WarpEditor();
+            warpEditor.FormClosed += new FormClosedEventHandler(OnWarpEditorClose);
+            warpEditorToolStripMenuItem.Checked = true;
+            warpEditor.Show();
+        }
+
+        private void OnWarpEditorClose(object sender, FormClosedEventArgs e)
+        {
+            warpEditor = null;
+            warpEditorToolStripMenuItem.Checked = false;
+            HighlightWarp(-1, -1);
+        }
+
+        private void OpenObjectPlacementEditor()
+        {
+            if (objectPlacementEditorToolStripMenuItem.Checked)
+            {
+                objectPlacementEditor.Focus();
+                return; // dont open a second one
+            }
+
+            objectPlacementEditor = new ObjectPlacementEditor();
+            objectPlacementEditor.FormClosed += new FormClosedEventHandler(OnObjectPlacementEditorClose);
+            objectPlacementEditorToolStripMenuItem.Checked = true;
+            objectPlacementEditor.Show();
+        }
+
+        private void OnObjectPlacementEditorClose(object sender, FormClosedEventArgs e)
+        {
+            objectPlacementEditor = null;
+            objectPlacementEditorToolStripMenuItem.Checked = false;
+            HighlightListObject(-1, -1);
+        }
+
+        private void roomTreeView_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if (e.Node.Parent != null)
+            {
+                Console.WriteLine(e.Node.Parent.Name + " " + e.Node.Name);
+                int areaIndex = Convert.ToInt32(e.Node.Parent.Name, 16);
+                int roomIndex = Convert.ToInt32(e.Node.Name, 16);
+                statusRoomIdText.Text = "Room Id:" + roomIndex.Hex().PadLeft(2, '0'); ;
+                statusAreaIdText.Text = "Area Id:" + areaIndex.Hex().PadLeft(2, '0'); ;
+                ChangeRoom(areaIndex, roomIndex);
+            }
+        }
+
+        private void roomTreeView_NodeMouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                Point ClickPoint = new Point(e.X, e.Y);
+                TreeNode ClickNode = roomTreeView.GetNodeAt(ClickPoint);
+                if (ClickNode == null) return;
+                roomTreeView.SelectedNode = ClickNode;
+                // Convert from Tree coordinates to Screen coordinates    
+                Point ScreenPoint = roomTreeView.PointToScreen(ClickPoint);
+                // Convert from Screen coordinates to Form coordinates    
+                Point FormPoint = this.PointToClient(ScreenPoint);
+                // Show context menu   
+                nodeContextMenu.Show(ScreenPoint);
+            }
+        }
+
+        private void RoomRenameContext(TreeNode node)
+        {
+            if (renameWindow == null)
+            {
+                renameWindow = new RenameWindow();
+                renameWindow.FormClosed += new FormClosedEventHandler(OnRenameWindowClose);
+                renameWindow.Show();
+            }
+
+            var room = -1;
+            var area = -1;
+            var areaName = "";
+            var roomName = "";
+            if (node.Parent != null)
+            {
+                area = Convert.ToInt32(node.Parent.Name, 16);
+                room = Convert.ToInt32(node.Name, 16);
+                areaName = node.Parent.Text;
+                roomName = node.Text;
+            }
+            else
+            {
+                area = Convert.ToInt32(node.Name, 16);
+                areaName = node.Text;
+            }
+
+            renameWindow.SetTarget(area, room, areaName, roomName);
+        }
+
+        public void ChangeNodeName(string areaNodeName, string newAreaName, string roomNodeName, string newRoomName)
+        {
+            TreeNode parentNode = null;
+            foreach (TreeNode node in roomTreeView.Nodes)
+            {
+                if (node.Name == areaNodeName)
+                {
+                    parentNode = node;
+                    node.Text = newAreaName;
+                    break;
+                }
+            }
+
+            if (newRoomName == "")
+                return;
+
+            foreach (TreeNode node in parentNode.Nodes)
+            {
+                if (node.Name == roomNodeName)
+                {
+                    node.Text = newRoomName;
+                    break;
+                }
+            }
+
+        }
+        public Bitmap OverlayImage(Bitmap baseImage, Bitmap overlay)
+        {
+            Bitmap finalImage = new Bitmap(baseImage.Width, baseImage.Height);
+
+            using (Graphics g = Graphics.FromImage(finalImage))
+            {
+                //set background color
+                g.Clear(Color.Black);
+
+                g.DrawImage(baseImage, new Rectangle(0, 0, baseImage.Width, baseImage.Height));
+                g.DrawImage(overlay, new Rectangle(0, 0, baseImage.Width, baseImage.Height));
+            }
+            //Draw the final image in the gridBox
+            return finalImage;
+        }
+
+        private Room FindRoom(int areaIndex, int roomIndex)
+        {
+            int foundIndex = 0;
+
+            for (int i = 0; i < mapManager_.MapAreas.Count; i++)
+            {
+                if (mapManager_.MapAreas[i].Index == areaIndex)
+                {
+                    foundIndex = i;
+                    break;
+                }
+                if (i == mapManager_.MapAreas.Count - 1)
+                {
+                    throw new Exception("Could not find any area with index: " + areaIndex.Hex());
+                }
+            }
+
+            var area = mapManager_.MapAreas[foundIndex];
+            for (int j = 0; j < area.Rooms.Count(); j++)
+            {
+                if (area.Rooms[j].Index == roomIndex)
+                {
+                    foundIndex = j;
+                    break;
+                }
+                if (j == area.Rooms.Count - 1)
+                {
+                    throw new Exception("Could not find any room with index: " + roomIndex.Hex() + " in area: " + areaIndex.Hex());
+                }
+            }
+
+            return area.Rooms[foundIndex];
+        }
 
         private void SaveAllChanges()
         {
-			if(Project.Instance==null)
-				return;
+            if (Project.Instance == null)
+                return;
 
-			Project.Instance.StartSave();
-
-            while (pendingRomChanges.Count > 0)
-            {
-                Change data = pendingRomChanges.ElementAt(0);
-                Project.Instance.SaveChange(data);
-                pendingRomChanges.RemoveAt(0);
-            }
-
+            Project.Instance.StartSave();
+            Project.Instance.Save();
             Project.Instance.EndSave();
+
+            Project.Instance.CreateProjectFile();
 
             MessageBox.Show("Project Saved");
         }
 
-		public static void AddPendingChange(Change change)
-		{
-			if(!pendingRomChanges.Any(x=>x.Compare(change))) //change does not yet exist
-				pendingRomChanges.Add(change);
-		}
+        public void HighlightChest(int tileX, int tileY)
+        {
+            mapGridBox.chestHighlightPoint = new Point(tileX, tileY);
+            mapGridBox.Invalidate();
+        }
 
-		public void HighlightChest(int tileX, int tileY)
-		{
-			mapGridBox.chestHighlightPoint = new Point(tileX,tileY);
-			mapGridBox.Invalidate();
-		}
+        public void HighlightListObject(int pixelX, int pixelY)
+        {
+            mapGridBox.listObjectHighlightPoint = new Point(pixelX, pixelY);
+            mapGridBox.Invalidate();
+        }
 
-		public void HighlightListObject(int pixelX, int pixelY)
-		{
-			mapGridBox.listObjectHighlightPoint = new Point(pixelX,pixelY);
-			mapGridBox.Invalidate();
-		}
+        public void HighlightWarp(int pixelX, int pixelY)
+        {
+            mapGridBox.warpHighlightPoint = new Point(pixelX, pixelY);
+            mapGridBox.Invalidate();
+        }
 
-		public void HighlightWarp(int pixelX, int pixelY)
-		{
-			mapGridBox.warpHighlightPoint = new Point(pixelX,pixelY);
-			mapGridBox.Invalidate();
-		}
-
-	    private void UpdateViewLayer(ViewLayer layer)
-	    {
-	        if (currentRoom == null)
-	            return;
-
-	        switch (layer)
-	        {
-	            case ViewLayer.Both:
-	                mapGridBox.Image = OverlayImage(mapLayers[1], mapLayers[0]);
-	                viewLayer = ViewLayer.Both;
-	                topTileTab.Enabled = true;
-	                bottomTileTab.Enabled = true;
-	                break;
-	            case ViewLayer.Top:
-	                mapGridBox.Image = mapLayers[0];
-	                tileTabControl.SelectedIndex = 0;
-	                viewLayer = ViewLayer.Top;
-                    selectedTileData = topTileGridBox.SelectedIndex;
-                    topTileTab.Enabled = true;
-	                bottomTileTab.Enabled = false;
-	                break;
-	            case ViewLayer.Bottom:
-	                mapGridBox.Image = mapLayers[1];
-	                tileTabControl.SelectedIndex = 1;
-	                viewLayer = ViewLayer.Bottom;
-                    selectedTileData = bottomTileGridBox.SelectedIndex;
-                    bottomTileTab.Enabled = true;
-	                topTileTab.Enabled = false;
-	                break;
-	        }
-	    }
-
-        private void discardRoomChangesToolStripMenuItem_Click( object sender, EventArgs e )
-		{
-			//TODO
-		}
-
-        #region MapInteraction
-	    private void mapGridBox_MouseDown(object sender, MouseEventArgs e)
-	    {
-	        if (currentRoom == null)
-	            return;
-
-	        var tsTileWidth = tileMaps[0].Width / 16;
-
-	        lastTilePos = mapGridBox.GetIndexPoint(mapGridBox.HoverIndex);
-
-	        if (e.Button == MouseButtons.Right)
-	        {
-	            selectedTileData = currentRoom.GetTileData(selectedLayer, mapGridBox.HoverIndex * 2);//*2 as each tile is 2 bytes
-	            mapGridBox.SelectedIndex = mapGridBox.HoverIndex;
-	            var newX = selectedTileData % tsTileWidth;
-	            var newY = (selectedTileData - newX) / tsTileWidth;
-	            // bad practice, entire map selection functions could do with refactor like the tile selection
-	            if (selectedLayer == 2)
-	            {
-	                bottomTileGridBox.SelectedIndex = selectedTileData;
-	            }
-	            else
-	            {
-	                topTileGridBox.SelectedIndex = selectedTileData;
-	            }
-
-	        }
-	        else if (e.Button == MouseButtons.Left)
-	        {
-	            if (selectedTileData == -1) //no selected tile, nothing to paste
-	                return;
-
-	            WriteTile(mapGridBox.GetIndexPoint(mapGridBox.HoverIndex), mapGridBox.HoverIndex, selectedTileData, selectedLayer);
-	        }
-	    }
-
-	    private void mapGridBox_MouseMove(object sender, MouseEventArgs e)
-	    {
-            if(currentRoom == null)
+        private void UpdateViewLayer(ViewLayer layer)
+        {
+            if (currentRoom == null)
                 return;
 
-			var xspot=mapGridBox.HoverIndex%currentRoom.roomSize.X;
-			var yspot=mapGridBox.HoverIndex/currentRoom.roomSize.X;
-			statusXposText.Text="X:"+xspot.Hex().PadLeft(2, '0');
-            statusYposText.Text="Y:"+yspot.Hex().PadLeft(2, '0');
+            switch (layer)
+            {
+                case ViewLayer.Both:
+                    mapGridBox.Image = OverlayImage(mapLayers[1], mapLayers[0]);
+                    viewLayer = ViewLayer.Both;
+                    topTileTab.Enabled = true;
+                    bottomTileTab.Enabled = true;
+                    break;
+                case ViewLayer.Top:
+                    mapGridBox.Image = mapLayers[0];
+                    tileTabControl.SelectedIndex = 0;
+                    viewLayer = ViewLayer.Top;
+                    selectedTileData = topTileGridBox.SelectedIndex;
+                    topTileTab.Enabled = true;
+                    bottomTileTab.Enabled = false;
+                    break;
+                case ViewLayer.Bottom:
+                    mapGridBox.Image = mapLayers[1];
+                    tileTabControl.SelectedIndex = 1;
+                    viewLayer = ViewLayer.Bottom;
+                    selectedTileData = bottomTileGridBox.SelectedIndex;
+                    bottomTileTab.Enabled = true;
+                    topTileTab.Enabled = false;
+                    break;
+            }
+        }
 
-	        if (e.Button == MouseButtons.Left)
-	        {
-	            var currentPos = mapGridBox.GetIndexPoint(mapGridBox.HoverIndex);
+        private void discardRoomChangesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //TODO
+        }
 
-	            if (!lastTilePos.Equals(currentPos))
-	            {
-	                if (selectedTileData == -1) //no selected tile, nothing to paste
-	                    return;
+        #region MapInteraction
+        private void mapGridBox_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (currentRoom == null)
+                return;
+
+            var tsTileWidth = tileMaps[0].Width / 16;
+
+            lastTilePos = mapGridBox.GetIndexPoint(mapGridBox.HoverIndex);
+
+            if (e.Button == MouseButtons.Right)
+            {
+                selectedTileData = currentRoom.GetTileData(selectedLayer, mapGridBox.HoverIndex * 2);//*2 as each tile is 2 bytes
+                mapGridBox.SelectedIndex = mapGridBox.HoverIndex;
+                var newX = selectedTileData % tsTileWidth;
+                var newY = (selectedTileData - newX) / tsTileWidth;
+                // bad practice, entire map selection functions could do with refactor like the tile selection
+                if (selectedLayer == 2)
+                {
+                    bottomTileGridBox.SelectedIndex = selectedTileData;
+                }
+                else
+                {
+                    topTileGridBox.SelectedIndex = selectedTileData;
+                }
+
+            }
+            else if (e.Button == MouseButtons.Left)
+            {
+                if (selectedTileData == -1) //no selected tile, nothing to paste
+                    return;
+
+                WriteTile(mapGridBox.GetIndexPoint(mapGridBox.HoverIndex), mapGridBox.HoverIndex, selectedTileData, selectedLayer);
+            }
+        }
+
+        private void mapGridBox_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (currentRoom == null)
+                return;
+
+            var xspot = mapGridBox.HoverIndex % currentRoom.roomSize.X;
+            var yspot = mapGridBox.HoverIndex / currentRoom.roomSize.X;
+            statusXposText.Text = "X:" + xspot.Hex().PadLeft(2, '0');
+            statusYposText.Text = "Y:" + yspot.Hex().PadLeft(2, '0');
+
+            if (e.Button == MouseButtons.Left)
+            {
+                var currentPos = mapGridBox.GetIndexPoint(mapGridBox.HoverIndex);
+
+                if (!lastTilePos.Equals(currentPos))
+                {
+                    if (selectedTileData == -1) //no selected tile, nothing to paste
+                        return;
 
                     lastTilePos = currentPos;
-	                mapGridBox.SelectedIndex = mapGridBox.HoverIndex;
+                    mapGridBox.SelectedIndex = mapGridBox.HoverIndex;
 
-	                WriteTile(mapGridBox.GetIndexPoint(mapGridBox.HoverIndex), mapGridBox.HoverIndex, selectedTileData, selectedLayer);
+                    WriteTile(mapGridBox.GetIndexPoint(mapGridBox.HoverIndex), mapGridBox.HoverIndex, selectedTileData, selectedLayer);
                 }
-	        }
+            }
         }
         #endregion
 
         #region TilesetInteraction	  
         private void bottomTileGridBox_MouseDown(object sender, MouseEventArgs e)
-	    {
-	        if (currentRoom == null)
-	            return;
+        {
+            if (currentRoom == null)
+                return;
 
-	        bottomTileGridBox.SelectedIndex = bottomTileGridBox.HoverIndex;
-	        selectedLayer = 2;
-	        selectedTileData = bottomTileGridBox.SelectedIndex;
-	    }
+            bottomTileGridBox.SelectedIndex = bottomTileGridBox.HoverIndex;
+            selectedLayer = 2;
+            selectedTileData = bottomTileGridBox.SelectedIndex;
+        }
 
-	    private void topTileGridBox_MouseDown(object sender, MouseEventArgs e)
-	    {
-	        if (currentRoom == null)
-	            return;
+        private void topTileGridBox_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (currentRoom == null)
+                return;
 
-	        topTileGridBox.SelectedIndex = topTileGridBox.HoverIndex;
-	        selectedLayer = 1;
-	        selectedTileData = topTileGridBox.SelectedIndex;
-	    }
+            topTileGridBox.SelectedIndex = topTileGridBox.HoverIndex;
+            selectedLayer = 1;
+            selectedTileData = topTileGridBox.SelectedIndex;
+        }
         #endregion
 
-        private void WriteTile (Point p, int pos, int tileData, int layer)
+        private void WriteTile(Point p, int pos, int tileData, int layer)
         {
+            if (p.X < 0 || p.Y < 0 || p.X > currentRoom.roomSize.X * 16 || p.Y > currentRoom.roomSize.Y * 16)
+                return;
+
             if (layer == 1 && currentRoom.Bg1Exists)
             {
                 currentRoom.DrawTile(ref mapLayers[0], p, currentArea, selectedLayer, tileData);
-                AddPendingChange(new Bg1DataChange(currentArea,currentRoom.Index));
+                Project.Instance.AddPendingChange(new Bg1DataChange(currentArea, currentRoom.Index));
             }
             else if (layer == 2 && currentRoom.Bg2Exists)
             {
                 currentRoom.DrawTile(ref mapLayers[1], p, currentArea, selectedLayer, tileData);
-                AddPendingChange(new Bg2DataChange(currentArea,currentRoom.Index));
+                Project.Instance.AddPendingChange(new Bg2DataChange(currentArea, currentRoom.Index));
             }
 
             currentRoom.SetTileData(selectedLayer, pos * 2, selectedTileData);
@@ -824,9 +897,138 @@ namespace MinishMaker.UI
             UpdateViewLayer(viewLayer);
         }
 
-		public static void Notify(string info, string title)
-		{
-			MessageBox.Show( info, title, MessageBoxButtons.OK );
-		}
-	}
+        public void Notify(string info, string title)
+        {
+            MessageBox.Show(info, title, MessageBoxButtons.OK);
+        }
+
+        private void RenameToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var node = roomTreeView.SelectedNode;
+            RoomRenameContext(node);
+        }
+
+        public void ChangeRoom(int areaId, int roomId)
+        {
+            statusRoomIdText.Text = "Room Id:" + roomId.Hex().PadLeft(2, '0');
+            statusAreaIdText.Text = "Area Id:" + areaId.Hex().PadLeft(2, '0');
+
+            var isDifferentArea = currentArea != areaId;
+            var room = FindRoom(areaId, roomId);
+            
+
+            try
+            {
+                mapLayers = room.DrawRoom(areaId, true, true);
+            }
+            catch (PaletteException exception)
+            {
+                Notify(exception.Message, "Invalid Room");
+                statusText.Text = "Room load aborted.";
+                return;
+            }
+
+            currentArea = areaId;
+            currentRoom = room;
+
+            selectedTileData = -1;
+            tileTabControl.SelectedIndex = 1; // Reset to bg2
+
+            //0= bg1 (treetops and such)
+            //1= bg2 (flooring)
+            mapGridBox.Image = OverlayImage(mapLayers[1], mapLayers[0]);
+            tileMaps = room.DrawTilesetImages(16, currentArea);
+            bottomTileGridBox.Image = tileMaps[1];
+            topTileGridBox.Image = tileMaps[0];
+
+            mapGridBox.Selectable = true;
+            mapGridBox.SelectedIndex = -1;
+            bottomTileGridBox.Selectable = true;
+            topTileGridBox.Selectable = true;
+
+            if (chestEditor != null)
+            {
+                var chestData = currentRoom.GetChestData();
+                chestEditor.SetData(chestData);
+            }
+
+            if (metatileEditor != null)
+            {
+                metatileEditor.currentArea = currentArea;
+                room = MapManager.Instance.MapAreas.Single(a => a.Index == currentArea).Rooms.First();
+                if (!room.Loaded)
+                {
+                    room.LoadRoom(currentArea);
+                }
+                metatileEditor.RedrawTiles(currentRoom);
+            }
+
+            if (areaEditor != null && isDifferentArea)//still in the same area? dont reload
+            {
+                areaEditor.LoadArea(areaId);
+            }
+
+            /*if(enemyPlacementEditor != null)
+            {
+            	enemyPlacementEditor.LoadData();
+            }*/
+
+            if (warpEditor != null)
+            {
+                warpEditor.LoadData();
+            }
+
+            if (objectPlacementEditor != null)
+            {
+                objectPlacementEditor.LoadData();
+            }
+        }
+
+        public bool RoomExists(int areaId, int roomId)
+        {
+            try
+            {
+                FindRoom(areaId, roomId);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private void ResizeRoom()
+        {
+            if (currentRoom == null)
+                return;
+
+            using (var dimPrompt = new ResizeDialog(currentRoom.roomSize))
+            {
+                if (dimPrompt.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+
+                var dimensions = dimPrompt.GetDims();
+
+                if (dimensions.X == currentRoom.roomSize.X && dimensions.Y == currentRoom.roomSize.Y)// no changes
+                    return;
+
+                //if above minimum
+                if (dimensions.X < 15 || dimensions.Y < 10)
+                {
+                    Notify("Make sure the room is at least 15 by 10.", "Invalid room size");
+                }
+
+                currentRoom.ResizeRoom(currentArea, dimensions.X, dimensions.Y);
+                mapLayers = currentRoom.DrawRoom(currentArea, true, true);
+                UpdateViewLayer(viewLayer);
+            }
+        }
+
+        private void resizeRoomToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ResizeRoom();
+        }
+    }
 }
