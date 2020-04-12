@@ -5,7 +5,6 @@ using System.Windows.Forms;
 using MinishMaker.Core;
 using MinishMaker.Core.ChangeTypes;
 using MinishMaker.Utilities;
-using static MinishMaker.Core.RoomMetaData;
 
 namespace MinishMaker.UI
 {

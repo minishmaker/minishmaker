@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using MinishMaker.Core;
 using MinishMaker.Utilities;
-using static MinishMaker.Core.RoomMetaData;
 using MinishMaker.Core.ChangeTypes;
 
 namespace MinishMaker.UI

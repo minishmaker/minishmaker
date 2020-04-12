@@ -6,6 +6,107 @@ using MinishMaker.Utilities;
 
 namespace MinishMaker.Core
 {
+    public struct AddrData
+    {
+        public int src;
+        public int dest;
+        public int size; // in words (2x bytes)
+        public bool compressed;
+
+        public AddrData(int src, int dest, int size, bool compressed)
+        {
+            this.src = src;
+            this.dest = dest;
+            this.size = size;
+            this.compressed = compressed;
+        }
+    }
+
+    public struct ChestData
+    {
+        public byte type;
+        public byte chestId;
+        public byte itemId;
+        public byte itemSubNumber;
+        public ushort chestLocation;
+        public ushort unknown;
+
+        public ChestData(byte type, byte chestId, byte itemId, byte itemSubNumber, ushort chestLocation, ushort other)
+        {
+            this.type = type;
+            this.chestId = chestId;
+            this.itemId = itemId;
+            this.itemSubNumber = itemSubNumber;
+            this.chestLocation = chestLocation;
+            this.unknown = other;
+        }
+    }
+
+    public struct ObjectData
+    {
+        public byte objectType;
+        public byte objectSub;
+        public byte objectId;
+        public byte d1item;
+        public byte d2itemSub;
+        public byte d3;
+        public byte d4;
+        public byte d5;
+        public ushort pixelX;
+        public ushort pixelY;
+        public ushort flag1;
+        public ushort flag2;
+
+        public ObjectData(byte[] data, int index)
+        {
+            objectType = data[index + 0];
+            objectSub = data[index + 1];
+            objectId = data[index + 2];
+            d1item = data[index + 3];
+            d2itemSub = data[index + 4];
+            d3 = data[index + 5];
+            d4 = data[index + 6];
+            d5 = data[index + 7];
+            pixelX = (ushort)(data[index + 8] + (data[index + 9] << 8));
+            pixelY = (ushort)(data[index + 10] + (data[index + 11] << 8));
+            flag1 = (ushort)(data[index + 12] + (data[index + 13] << 8));
+            flag2 = (ushort)(data[index + 14] + (data[index + 15] << 8));
+        }
+    }
+
+    public struct WarpData
+    {
+        public ushort warpType; //2
+        public ushort warpXPixel;//4
+        public ushort warpYPixel;//6
+        public ushort destXPixel;//8
+        public ushort destYPixel;//10 A
+        public byte warpVar;//11 B
+        public byte destArea;//12 C
+        public byte destRoom;//13 D
+        public byte exitHeight;//14 E
+        public byte transitionType;//15 F
+        public byte facing;//16 10
+        public ushort soundId;//18 12
+                              //2 byte padding 20 14
+        public WarpData(byte[] data, int offset)
+        {
+            warpType = (ushort)(data[0 + offset] + (data[1 + offset] << 8));
+            warpXPixel = (ushort)(data[2 + offset] + (data[3 + offset] << 8));
+            warpYPixel = (ushort)(data[4 + offset] + (data[5 + offset] << 8));
+            destXPixel = (ushort)(data[6 + offset] + (data[7 + offset] << 8));
+            destYPixel = (ushort)(data[8 + offset] + (data[9 + offset] << 8));
+            warpVar = data[10 + offset];
+            destArea = data[11 + offset];
+            destRoom = data[12 + offset];
+            exitHeight = data[13 + offset];
+            transitionType = data[14 + offset];
+            facing = data[15 + offset];
+            soundId = (ushort)(data[16 + offset] + (data[17 + offset] << 8));
+
+        }
+    }
+
     public class RoomMetaData
     {
         private int width, height;
@@ -100,107 +201,6 @@ namespace MinishMaker.Core
             get
             {
                 return bg1Use20344B0;
-            }
-        }
-
-        public struct AddrData
-        {
-            public int src;
-            public int dest;
-            public int size; // in words (2x bytes)
-            public bool compressed;
-
-            public AddrData(int src, int dest, int size, bool compressed)
-            {
-                this.src = src;
-                this.dest = dest;
-                this.size = size;
-                this.compressed = compressed;
-            }
-        }
-
-        public struct ChestData
-        {
-            public byte type;
-            public byte chestId;
-            public byte itemId;
-            public byte itemSubNumber;
-            public ushort chestLocation;
-            public ushort unknown;
-
-            public ChestData(byte type, byte chestId, byte itemId, byte itemSubNumber, ushort chestLocation, ushort other)
-            {
-                this.type = type;
-                this.chestId = chestId;
-                this.itemId = itemId;
-                this.itemSubNumber = itemSubNumber;
-                this.chestLocation = chestLocation;
-                this.unknown = other;
-            }
-        }
-
-        public struct ObjectData
-        {
-            public byte objectType;
-            public byte objectSub;
-            public byte objectId;
-            public byte d1item;
-            public byte d2itemSub;
-            public byte d3;
-            public byte d4;
-            public byte d5;
-            public ushort pixelX;
-            public ushort pixelY;
-            public ushort flag1;
-            public ushort flag2;
-
-            public ObjectData(byte[] data, int index)
-            {
-                objectType = data[index + 0];
-                objectSub = data[index + 1];
-                objectId = data[index + 2];
-                d1item = data[index + 3];
-                d2itemSub = data[index + 4];
-                d3 = data[index + 5];
-                d4 = data[index + 6];
-                d5 = data[index + 7];
-                pixelX = (ushort)(data[index + 8] + (data[index + 9] << 8));
-                pixelY = (ushort)(data[index + 10] + (data[index + 11] << 8));
-                flag1 = (ushort)(data[index + 12] + (data[index + 13] << 8));
-                flag2 = (ushort)(data[index + 14] + (data[index + 15] << 8));
-            }
-        }
-
-        public struct WarpData
-        {
-            public ushort warpType; //2
-            public ushort warpXPixel;//4
-            public ushort warpYPixel;//6
-            public ushort destXPixel;//8
-            public ushort destYPixel;//10 A
-            public byte warpVar;//11 B
-            public byte destArea;//12 C
-            public byte destRoom;//13 D
-            public byte exitHeight;//14 E
-            public byte transitionType;//15 F
-            public byte facing;//16 10
-            public ushort soundId;//18 12
-                                  //2 byte padding 20 14
-            public WarpData(byte[] data, int offset)
-            {
-                warpType = (ushort)(data[0 + offset] + (data[1 + offset] << 8));
-                warpXPixel = (ushort)(data[2 + offset] + (data[3 + offset] << 8));
-                warpYPixel = (ushort)(data[4 + offset] + (data[5 + offset] << 8));
-                destXPixel = (ushort)(data[6 + offset] + (data[7 + offset] << 8));
-                destYPixel = (ushort)(data[8 + offset] + (data[9 + offset] << 8));
-                warpVar = data[10 + offset];
-                destArea = data[11 + offset];
-                destRoom = data[12 + offset];
-                exitHeight = data[13 + offset];
-                transitionType = data[14 + offset];
-                facing = data[15 + offset];
-                soundId = (ushort)(data[16 + offset] + (data[17 + offset] << 8));
-
             }
         }
 

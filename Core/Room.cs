@@ -5,7 +5,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
 using MinishMaker.Utilities;
-using static MinishMaker.Core.RoomMetaData;
 
 namespace MinishMaker.Core
 {

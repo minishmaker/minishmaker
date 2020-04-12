@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Drawing.Imaging;
-using static MinishMaker.Core.RoomMetaData;
 
 
 namespace MinishMaker.Core
