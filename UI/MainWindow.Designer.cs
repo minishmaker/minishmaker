@@ -51,6 +51,7 @@ namespace MinishMaker.UI
             this.warpEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.resizeRoomToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bottomStatusStrip = new System.Windows.Forms.StatusStrip();
             this.statusXposText = new System.Windows.Forms.ToolStripStatusLabel();
             this.statusYposText = new System.Windows.Forms.ToolStripStatusLabel();
@@ -75,10 +76,11 @@ namespace MinishMaker.UI
             this.mapPanel = new System.Windows.Forms.Panel();
             this.nodeContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.documentationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.topTileGridBox = new MinishMaker.UI.GridBox();
             this.bottomTileGridBox = new MinishMaker.UI.GridBox();
             this.mapGridBox = new MinishMaker.UI.GridBox();
-			this.resizeRoomToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.menuStrip.SuspendLayout();
             this.bottomStatusStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
@@ -101,7 +103,7 @@ namespace MinishMaker.UI
             this.viewToolStripMenuItem,
             this.windowToolStripMenuItem,
             this.helpToolStripMenuItem,
-			this.resizeRoomToolStripMenuItem});
+            this.resizeRoomToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
             this.menuStrip.Size = new System.Drawing.Size(1284, 24);
@@ -255,6 +257,8 @@ namespace MinishMaker.UI
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.documentationToolStripMenuItem,
+            this.toolStripSeparator2,
             this.aboutToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
@@ -263,9 +267,16 @@ namespace MinishMaker.UI
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.AboutButtonClick);
+            // 
+            // resizeRoomToolStripMenuItem
+            // 
+            this.resizeRoomToolStripMenuItem.Name = "resizeRoomToolStripMenuItem";
+            this.resizeRoomToolStripMenuItem.Size = new System.Drawing.Size(83, 20);
+            this.resizeRoomToolStripMenuItem.Text = "Resize room";
+            this.resizeRoomToolStripMenuItem.Click += new System.EventHandler(this.resizeRoomToolStripMenuItem_Click);
             // 
             // bottomStatusStrip
             // 
@@ -509,6 +520,14 @@ namespace MinishMaker.UI
             this.renameToolStripMenuItem.Text = "Rename";
             this.renameToolStripMenuItem.Click += new System.EventHandler(this.RenameToolStripMenuItem_Click);
             // 
+            // documentationToolStripMenuItem
+            // 
+            this.documentationToolStripMenuItem.Name = "documentationToolStripMenuItem";
+            this.documentationToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F1;
+            this.documentationToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.documentationToolStripMenuItem.Text = "Documentation";
+            this.documentationToolStripMenuItem.Click += new System.EventHandler(this.documentationToolStripMenuItem_Click);
+            // 
             // topTileGridBox
             // 
             this.topTileGridBox.AllowMultiSelection = false;
@@ -570,13 +589,11 @@ namespace MinishMaker.UI
             this.mapGridBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.mapGridBox_MouseDown);
             this.mapGridBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.mapGridBox_MouseMove);
             // 
-			// resizeRoomToolStripMenuItem
-			// 
-			this.resizeRoomToolStripMenuItem.Name = "resizeRoomToolStripMenuItem";
-			this.resizeRoomToolStripMenuItem.Size = new System.Drawing.Size(83, 20);
-			this.resizeRoomToolStripMenuItem.Text = "Resize room";
-			this.resizeRoomToolStripMenuItem.Click += new System.EventHandler(this.resizeRoomToolStripMenuItem_Click);
-			// 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
+            // 
             // MainWindow
             // 
             this.AllowDrop = true;
@@ -667,6 +684,8 @@ namespace MinishMaker.UI
         private System.Windows.Forms.ContextMenuStrip nodeContextMenu;
         private System.Windows.Forms.ToolStripMenuItem renameToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem resizeRoomToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem documentationToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
     }
 }
 

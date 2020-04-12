@@ -168,6 +168,18 @@ namespace MinishMaker.UI
             OpenObjectPlacementEditor();
         }
 
+        private void documentationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start("https://docs.minishmaker.com/minish-maker/minish-maker");
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception);
+            }
+        }
+
         private void AboutButtonClick(object sender, EventArgs e)
         {
             Form aboutWindow = new AboutWindow();
