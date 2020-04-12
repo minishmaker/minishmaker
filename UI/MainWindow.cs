@@ -64,6 +64,7 @@ namespace MinishMaker.UI
         public MainWindow()
         {
             InitializeComponent();
+            EnableEditor(false);
             UpdateWindowTitle();
             /*
 			var exeFolder = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase).Substring(6);
@@ -113,7 +114,7 @@ namespace MinishMaker.UI
             OpenProject();
         }
 
-        private void saveAllChangesCtrlSToolStripMenuItem_Click(object sender, EventArgs e)
+        private void saveProjectToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SaveAllChanges();
         }
@@ -126,6 +127,10 @@ namespace MinishMaker.UI
         private void ExitButtonClick(object sender, EventArgs e)
         {
             Close();
+        }
+        private void resizeRoomToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ResizeRoom();
         }
 
         private void topLayerToolStripMenuItem_Click(object sender, EventArgs e)
@@ -332,6 +337,7 @@ namespace MinishMaker.UI
                 if (project_.Loaded)
                 {
                     LoadProjectData();
+                    EnableEditor(true);
                     statusText.Text = "Created new project: " + project_.projectPath + "/" + project_.projectName + ".mmproj";
                 }
                 else
@@ -381,9 +387,13 @@ namespace MinishMaker.UI
             if (project_.Loaded)
             {
                 LoadProjectData();
+                EnableEditor(true);
+                statusText.Text = "Loaded: " + ofd.FileName;
             }
-
-            statusText.Text = "Loaded: " + ofd.FileName;
+            else
+            {
+                statusText.Text = "Project load failed.";
+            }
         }
 
         private void LoadProjectData()
@@ -396,6 +406,30 @@ namespace MinishMaker.UI
             selectedTileData = -1;
             selectedLayer = 2;
             LoadMaps();
+        }
+
+        private void EnableEditor(bool enabled)
+        {
+            // Enable or disable all components
+            saveProjectToolStripMenuItem.Enabled = enabled;
+            buildProjectToolStripMenuItem.Enabled = enabled;
+
+            resizeRoomToolStripMenuItem.Enabled = enabled;
+
+            viewToolStripMenuItem.Enabled = enabled;
+
+            chestEditorStripMenuItem.Enabled = enabled;
+            metatileEditorToolStripMenuItem.Enabled = enabled;
+            areaEditorToolStripMenuItem.Enabled = enabled;
+            objectPlacementEditorToolStripMenuItem.Enabled = enabled;
+            warpEditorToolStripMenuItem.Enabled = enabled;
+
+            saveToolStripButton.Enabled = enabled;
+            chestToolStripButton.Enabled = enabled;
+            metatileToolStripButton.Enabled = enabled;
+            areaToolStripButton.Enabled = enabled;
+            objectPlacementToolStripButton.Enabled = enabled;
+            warpToolStripButton.Enabled = enabled;
         }
 
         private void BuildProject()
@@ -1036,11 +1070,6 @@ namespace MinishMaker.UI
                 mapLayers = currentRoom.DrawRoom(currentArea, true, true);
                 UpdateViewLayer(viewLayer);
             }
-        }
-
-        private void resizeRoomToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ResizeRoom();
         }
     }
 }
