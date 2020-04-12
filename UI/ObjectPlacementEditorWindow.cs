@@ -8,7 +8,7 @@ using MinishMaker.Utilities;
 
 namespace MinishMaker.UI
 {
-    public partial class ObjectPlacementEditor : Form
+    public partial class ObjectPlacementEditorWindow : Form
     {
         private int objectIndex = -1;
         private int listIndex = -1;
@@ -17,7 +17,7 @@ namespace MinishMaker.UI
         private bool shouldTrigger = false;
         private ObjectData? copy = null;
 
-        public ObjectPlacementEditor()
+        public ObjectPlacementEditorWindow()
         {
             InitializeComponent();
             objectTypeBox.DropDownStyle = ComboBoxStyle.DropDownList;

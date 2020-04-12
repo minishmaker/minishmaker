@@ -75,11 +75,11 @@ namespace MinishMaker.UI
             this.tilePanel = new System.Windows.Forms.Panel();
             this.tileTabControl = new System.Windows.Forms.TabControl();
             this.topTileTab = new System.Windows.Forms.TabPage();
-            this.topTileGridBox = new MinishMaker.UI.GridBox();
+            this.topTileGridBox = new MinishMaker.UI.GridBoxComponent();
             this.bottomTileTab = new System.Windows.Forms.TabPage();
-            this.bottomTileGridBox = new MinishMaker.UI.GridBox();
+            this.bottomTileGridBox = new MinishMaker.UI.GridBoxComponent();
             this.mapPanel = new System.Windows.Forms.Panel();
-            this.mapGridBox = new MinishMaker.UI.GridBox();
+            this.mapGridBox = new MinishMaker.UI.GridBoxComponent();
             this.nodeContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
@@ -666,9 +666,9 @@ namespace MinishMaker.UI
         private System.Windows.Forms.TabControl tileTabControl;
         private System.Windows.Forms.TabPage bottomTileTab;
         private System.Windows.Forms.TabPage topTileTab;
-        private GridBox mapGridBox;
-        private GridBox bottomTileGridBox;
-        private GridBox topTileGridBox;
+        private GridBoxComponent mapGridBox;
+        private GridBoxComponent bottomTileGridBox;
+        private GridBoxComponent topTileGridBox;
         private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem bothLayersToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem topLayerToolStripMenuItem;

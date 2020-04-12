@@ -30,11 +30,11 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MetaTileEditor));
             this.metaTileSetPanel = new System.Windows.Forms.Panel();
-            this.metaTileGridBox = new MinishMaker.UI.GridBox();
+            this.metaTileGridBox = new MinishMaker.UI.GridBoxComponent();
             this.tileSetPanel = new System.Windows.Forms.Panel();
-            this.tileSetGridBox = new MinishMaker.UI.GridBox();
+            this.tileSetGridBox = new MinishMaker.UI.GridBoxComponent();
             this.selectedMetaTilePanel = new System.Windows.Forms.Panel();
-            this.selectedMetaGridBox = new MinishMaker.UI.GridBox();
+            this.selectedMetaGridBox = new MinishMaker.UI.GridBoxComponent();
             this.selectedTilePanel = new System.Windows.Forms.Panel();
             this.selectedTileBox = new System.Windows.Forms.PictureBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -626,9 +626,9 @@
         private System.Windows.Forms.TextBox tId4;
         private System.Windows.Forms.TextBox sTId;
         private System.Windows.Forms.TextBox mTId;
-        private GridBox metaTileGridBox;
-        private GridBox tileSetGridBox;
-        private GridBox selectedMetaGridBox;
+        private GridBoxComponent metaTileGridBox;
+        private GridBoxComponent tileSetGridBox;
+        private GridBoxComponent selectedMetaGridBox;
         private System.Windows.Forms.Label HiddenLabel;
         private System.Windows.Forms.TextBox mTType;
         private System.Windows.Forms.MenuStrip menuStrip;

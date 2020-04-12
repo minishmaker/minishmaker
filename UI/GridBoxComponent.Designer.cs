@@ -1,6 +1,6 @@
 ﻿namespace MinishMaker.UI
 {
-    partial class GridBox
+    partial class GridBoxComponent
     {
         /// <summary> 
         /// Required designer variable.

@@ -5,12 +5,12 @@ using MinishMaker.Utilities;
 
 namespace MinishMaker.UI
 {
-    public partial class RenameWindow : Form
+    public partial class RenameDialog : Form
     {
         int areaId = -1;
         int roomId = -1;
 
-        public RenameWindow()
+        public RenameDialog()
         {
             InitializeComponent();
         }

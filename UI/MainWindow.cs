@@ -19,10 +19,10 @@ namespace MinishMaker.UI
         private NewProjectWindow newProjectWindow = null;
         private ChestEditorWindow chestEditor = null;
         private MetaTileEditor metatileEditor = null;
-        private AreaEditor areaEditor = null;
-        private WarpEditor warpEditor = null;
-        private ObjectPlacementEditor objectPlacementEditor = null;
-        private RenameWindow renameWindow = null;
+        private AreaEditorWindow areaEditor = null;
+        private WarpEditorWindow warpEditor = null;
+        private ObjectPlacementEditorWindow objectPlacementEditor = null;
+        private RenameDialog renameWindow = null;
 
         private Bitmap[] mapLayers;
         private Bitmap[] tileMaps;
@@ -187,7 +187,7 @@ namespace MinishMaker.UI
 
         private void AboutButtonClick(object sender, EventArgs e)
         {
-            Form aboutWindow = new AboutWindow();
+            Form aboutWindow = new AboutDialog();
             aboutWindow.Show();
         }
         #endregion
@@ -571,7 +571,7 @@ namespace MinishMaker.UI
                 return;
             }
 
-            areaEditor = new AreaEditor();
+            areaEditor = new AreaEditorWindow();
 
             if (currentRoom != null)
             {
@@ -597,7 +597,7 @@ namespace MinishMaker.UI
                 return; // dont open a second one
             }
 
-            warpEditor = new WarpEditor();
+            warpEditor = new WarpEditorWindow();
             warpEditor.FormClosed += new FormClosedEventHandler(OnWarpEditorClose);
             warpEditorToolStripMenuItem.Checked = true;
             warpEditor.Show();
@@ -618,7 +618,7 @@ namespace MinishMaker.UI
                 return; // dont open a second one
             }
 
-            objectPlacementEditor = new ObjectPlacementEditor();
+            objectPlacementEditor = new ObjectPlacementEditorWindow();
             objectPlacementEditor.FormClosed += new FormClosedEventHandler(OnObjectPlacementEditorClose);
             objectPlacementEditorToolStripMenuItem.Checked = true;
             objectPlacementEditor.Show();
@@ -665,7 +665,7 @@ namespace MinishMaker.UI
         {
             if (renameWindow == null)
             {
-                renameWindow = new RenameWindow();
+                renameWindow = new RenameDialog();
                 renameWindow.FormClosed += new FormClosedEventHandler(OnRenameWindowClose);
                 renameWindow.Show();
             }
@@ -1048,7 +1048,7 @@ namespace MinishMaker.UI
             if (currentRoom == null)
                 return;
 
-            using (var dimPrompt = new ResizeDialog(currentRoom.roomSize))
+            using (var dimPrompt = new ResizeRoomDialog(currentRoom.roomSize))
             {
                 if (dimPrompt.ShowDialog() != DialogResult.OK)
                 {

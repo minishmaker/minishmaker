@@ -8,13 +8,13 @@ using MinishMaker.Utilities;
 
 namespace MinishMaker.UI
 {
-    public partial class WarpEditor : Form
+    public partial class WarpEditorWindow : Form
     {
         int warpIndex = -1;
         private List<WarpData> warpDataList;
         private bool shouldTrigger = false;
 
-        public WarpEditor()
+        public WarpEditorWindow()
         {
             InitializeComponent();
             warpTypeBox.DropDownStyle = ComboBoxStyle.DropDownList;

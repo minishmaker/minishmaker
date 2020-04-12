@@ -102,11 +102,11 @@
     <Compile Include="Core\ChangeTypes\RoomMetadataChange.cs" />
     <Compile Include="Core\ChangeTypes\WarpDataChange.cs" />
     <Compile Include="Core\Project.cs" />
-    <Compile Include="UI\AreaEditor.cs">
+    <Compile Include="UI\AreaEditorWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\AreaEditor.Designer.cs">
-      <DependentUpon>AreaEditor.cs</DependentUpon>
+    <Compile Include="UI\AreaEditorWindow.Designer.cs">
+      <DependentUpon>AreaEditorWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\ChestEditorWindow.cs">
       <SubType>Form</SubType>
@@ -114,11 +114,11 @@
     <Compile Include="UI\ChestEditorWindow.Designer.cs">
       <DependentUpon>ChestEditorWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\GridBox.cs">
+    <Compile Include="UI\GridBoxComponent.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="UI\GridBox.Designer.cs">
-      <DependentUpon>GridBox.cs</DependentUpon>
+    <Compile Include="UI\GridBoxComponent.Designer.cs">
+      <DependentUpon>GridBoxComponent.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\MetaTileEditorWindow.cs">
       <SubType>Form</SubType>
@@ -126,29 +126,29 @@
     <Compile Include="UI\MetaTileEditorWindow.Designer.cs">
       <DependentUpon>MetaTileEditorWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\ObjectPlacementEditor.cs">
+    <Compile Include="UI\ObjectPlacementEditorWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\ObjectPlacementEditor.Designer.cs">
-      <DependentUpon>ObjectPlacementEditor.cs</DependentUpon>
+    <Compile Include="UI\ObjectPlacementEditorWindow.Designer.cs">
+      <DependentUpon>ObjectPlacementEditorWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\RenameWindow.cs">
+    <Compile Include="UI\RenameDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\RenameWindow.Designer.cs">
-      <DependentUpon>RenameWindow.cs</DependentUpon>
+    <Compile Include="UI\RenameDialog.Designer.cs">
+      <DependentUpon>RenameDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\ResizeDialog.cs">
+    <Compile Include="UI\ResizeRoomDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\ResizeDialog.Designer.cs">
-      <DependentUpon>ResizeDialog.cs</DependentUpon>
+    <Compile Include="UI\ResizeRoomDialog.Designer.cs">
+      <DependentUpon>ResizeRoomDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\WarpEditor.cs">
+    <Compile Include="UI\WarpEditorWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\WarpEditor.Designer.cs">
-      <DependentUpon>WarpEditor.cs</DependentUpon>
+    <Compile Include="UI\WarpEditorWindow.Designer.cs">
+      <DependentUpon>WarpEditorWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\NewProjectWindow.cs">
       <SubType>Form</SubType>
@@ -164,11 +164,11 @@
     <Compile Include="Core\Room.cs" />
     <Compile Include="Core\RoomMetaData.cs" />
     <Compile Include="Core\TileSet.cs" />
-    <Compile Include="UI\AboutWindow.cs">
+    <Compile Include="UI\AboutDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\AboutWindow.Designer.cs">
-      <DependentUpon>AboutWindow.cs</DependentUpon>
+    <Compile Include="UI\AboutDialog.Designer.cs">
+      <DependentUpon>AboutDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\MainWindow.cs">
       <SubType>Form</SubType>
@@ -184,11 +184,11 @@
     <Compile Include="Utilities\Reader.cs" />
     <Compile Include="Utilities\StringUtil.cs" />
     <Compile Include="Utilities\Writer.cs" />
-    <EmbeddedResource Include="UI\AreaEditor.resx">
-      <DependentUpon>AreaEditor.cs</DependentUpon>
+    <EmbeddedResource Include="UI\AreaEditorWindow.resx">
+      <DependentUpon>AreaEditorWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\GridBox.resx">
-      <DependentUpon>GridBox.cs</DependentUpon>
+    <EmbeddedResource Include="UI\GridBoxComponent.resx">
+      <DependentUpon>GridBoxComponent.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -200,8 +200,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="UI\AboutWindow.resx">
-      <DependentUpon>AboutWindow.cs</DependentUpon>
+    <EmbeddedResource Include="UI\AboutDialog.resx">
+      <DependentUpon>AboutDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\ChestEditorWindow.resx">
       <DependentUpon>ChestEditorWindow.cs</DependentUpon>
@@ -213,17 +213,17 @@
     <EmbeddedResource Include="UI\MetaTileEditorWindow.resx">
       <DependentUpon>MetaTileEditorWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\ObjectPlacementEditor.resx">
-      <DependentUpon>ObjectPlacementEditor.cs</DependentUpon>
+    <EmbeddedResource Include="UI\ObjectPlacementEditorWindow.resx">
+      <DependentUpon>ObjectPlacementEditorWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\RenameWindow.resx">
-      <DependentUpon>RenameWindow.cs</DependentUpon>
+    <EmbeddedResource Include="UI\RenameDialog.resx">
+      <DependentUpon>RenameDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\ResizeDialog.resx">
-      <DependentUpon>ResizeDialog.cs</DependentUpon>
+    <EmbeddedResource Include="UI\ResizeRoomDialog.resx">
+      <DependentUpon>ResizeRoomDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\WarpEditor.resx">
-      <DependentUpon>WarpEditor.cs</DependentUpon>
+    <EmbeddedResource Include="UI\WarpEditorWindow.resx">
+      <DependentUpon>WarpEditorWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\NewProjectWindow.resx">
       <DependentUpon>NewProjectWindow.cs</DependentUpon>

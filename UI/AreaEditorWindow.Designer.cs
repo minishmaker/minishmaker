@@ -1,6 +1,6 @@
 ﻿namespace MinishMaker.UI
 {
-	partial class AreaEditor
+	partial class AreaEditorWindow
 	{
 		/// <summary>
 		/// Required designer variable.
@@ -28,7 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AreaEditor));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AreaEditorWindow));
             this.panel1 = new System.Windows.Forms.Panel();
             this.areaLayout = new System.Windows.Forms.PictureBox();
             this.areaLabel = new System.Windows.Forms.Label();

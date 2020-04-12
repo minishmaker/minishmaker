@@ -1,6 +1,6 @@
 ﻿namespace MinishMaker.UI
 {
-	partial class ObjectPlacementEditor
+	partial class ObjectPlacementEditorWindow
 	{
 		/// <summary>
 		/// Required designer variable.
@@ -28,7 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ObjectPlacementEditor));
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ObjectPlacementEditorWindow));
 			this.indexLabel = new System.Windows.Forms.Label();
 			this.removeButton = new System.Windows.Forms.Button();
 			this.newButton = new System.Windows.Forms.Button();

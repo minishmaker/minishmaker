@@ -4,9 +4,9 @@ using MinishMaker.Properties;
 
 namespace MinishMaker.UI
 {
-    public partial class AboutWindow : Form
+    public partial class AboutDialog : Form
     {
-        public AboutWindow()
+        public AboutDialog()
         {
             InitializeComponent();
 
