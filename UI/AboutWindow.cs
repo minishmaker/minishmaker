@@ -43,5 +43,17 @@ namespace MinishMaker.UI
                 Console.WriteLine(exception);
             }
         }
+
+        private void linkLabel3_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start("https://docs.minishmaker.com/minish-maker/minish-maker");
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception);
+            }
+        }
     }
 }
