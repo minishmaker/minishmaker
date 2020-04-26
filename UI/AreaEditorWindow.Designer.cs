@@ -66,6 +66,7 @@
             // areaLayout
             // 
             this.areaLayout.BackColor = System.Drawing.Color.Transparent;
+            this.areaLayout.Dock = System.Windows.Forms.DockStyle.Fill;
             this.areaLayout.Location = new System.Drawing.Point(0, 0);
             this.areaLayout.Name = "areaLayout";
             this.areaLayout.Size = new System.Drawing.Size(400, 400);
@@ -239,7 +240,7 @@
             this.label1.TabIndex = 15;
             this.label1.Text = "Area name id:";
             // 
-            // AreaEditor
+            // AreaEditorWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -263,7 +264,8 @@
             this.Controls.Add(this.areaLabel);
             this.Controls.Add(this.panel1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "AreaEditor";
+            this.MinimumSize = new System.Drawing.Size(440, 539);
+            this.Name = "AreaEditorWindow";
             this.Text = "Area Editor";
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
@@ -293,5 +295,5 @@
 		private System.Windows.Forms.CheckBox moleCave;
 		private System.Windows.Forms.TextBox areaNameId;
 		private System.Windows.Forms.Label label1;
-	}
+    }
 }
