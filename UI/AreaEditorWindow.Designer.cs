@@ -47,6 +47,7 @@
             this.moleCave = new System.Windows.Forms.CheckBox();
             this.areaNameId = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.panel2 = new System.Windows.Forms.Panel();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.areaLayout)).BeginInit();
             this.SuspendLayout();
@@ -56,9 +57,10 @@
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.AutoScroll = true;
+            this.panel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.panel1.BackColor = System.Drawing.Color.White;
             this.panel1.Controls.Add(this.areaLayout);
-            this.panel1.Location = new System.Drawing.Point(12, 12);
+            this.panel1.Location = new System.Drawing.Point(12, 9);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(400, 400);
             this.panel1.TabIndex = 0;
@@ -240,12 +242,23 @@
             this.label1.TabIndex = 15;
             this.label1.Text = "Area name id:";
             // 
+            // panel2
+            // 
+            this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel2.Location = new System.Drawing.Point(12, 415);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(400, 73);
+            this.panel2.TabIndex = 17;
+            // 
             // AreaEditorWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(424, 500);
+            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.panel2);
             this.Controls.Add(this.areaNameId);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.moleCave);
@@ -262,7 +275,6 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.roomLabel);
             this.Controls.Add(this.areaLabel);
-            this.Controls.Add(this.panel1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(440, 539);
             this.Name = "AreaEditorWindow";
@@ -295,5 +307,6 @@
 		private System.Windows.Forms.CheckBox moleCave;
 		private System.Windows.Forms.TextBox areaNameId;
 		private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Panel panel2;
     }
 }
