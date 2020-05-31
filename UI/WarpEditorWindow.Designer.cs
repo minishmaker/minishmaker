@@ -1,6 +1,6 @@
 ﻿namespace MinishMaker.UI
 {
-	partial class WarpEditor
+	partial class WarpEditorWindow
 	{
 		/// <summary>
 		/// Required designer variable.
@@ -28,7 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WarpEditor));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WarpEditorWindow));
             this.removeButton = new System.Windows.Forms.Button();
             this.newButton = new System.Windows.Forms.Button();
             this.prevButton = new System.Windows.Forms.Button();

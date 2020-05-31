@@ -1,6 +1,6 @@
 ﻿namespace MinishMaker.UI
 {
-    partial class RenameWindow
+    partial class RenameDialog
     {
         /// <summary>
         /// Required designer variable.
@@ -77,7 +77,7 @@
             this.saveButton.UseVisualStyleBackColor = true;
             this.saveButton.Click += new System.EventHandler(this.ChangeButton_Click);
             // 
-            // RenameWindow
+            // RenameDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -87,8 +87,9 @@
             this.Controls.Add(this.areaNameBox);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.Name = "RenameWindow";
-            this.Text = "RenameWindow";
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.Name = "RenameDialog";
+            this.Text = "Rename";
             this.ResumeLayout(false);
             this.PerformLayout();
 

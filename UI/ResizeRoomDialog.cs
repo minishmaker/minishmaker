@@ -4,9 +4,9 @@ using System.Windows.Forms;
 
 namespace MinishMaker.UI
 {
-    public partial class ResizeDialog : Form
+    public partial class ResizeRoomDialog : Form
     {
-        public ResizeDialog(Point roomSize)
+        public ResizeRoomDialog(Point roomSize)
         {
             InitializeComponent();
             this.confirmation.DialogResult = DialogResult.OK;

@@ -7,7 +7,7 @@ using System.Windows.Forms;
 // Adapted from ZOLE's Grid Box by Lin22
 namespace MinishMaker.UI
 {
-    public partial class GridBox : PictureBox
+    public partial class GridBoxComponent : PictureBox
     {
         private Color hoverColor = Color.White;
         private Color selectedColor = Color.Red;
@@ -29,7 +29,7 @@ namespace MinishMaker.UI
         public Point listObjectHighlightPoint = new Point(-1, -1);
         public Point warpHighlightPoint = new Point(-1, -1);
 
-        public GridBox()
+        public GridBoxComponent()
         {
             InitializeComponent();
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);

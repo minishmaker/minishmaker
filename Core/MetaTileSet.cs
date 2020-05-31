@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
-using static MinishMaker.Core.RoomMetaData;
 
 namespace MinishMaker.Core
 {

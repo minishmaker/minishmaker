@@ -5,11 +5,10 @@ using System.Windows.Forms;
 using MinishMaker.Core;
 using MinishMaker.Core.ChangeTypes;
 using MinishMaker.Utilities;
-using static MinishMaker.Core.RoomMetaData;
 
 namespace MinishMaker.UI
 {
-    public partial class ObjectPlacementEditor : Form
+    public partial class ObjectPlacementEditorWindow : Form
     {
         private int objectIndex = -1;
         private int listIndex = -1;
@@ -18,7 +17,7 @@ namespace MinishMaker.UI
         private bool shouldTrigger = false;
         private ObjectData? copy = null;
 
-        public ObjectPlacementEditor()
+        public ObjectPlacementEditorWindow()
         {
             InitializeComponent();
             objectTypeBox.DropDownStyle = ComboBoxStyle.DropDownList;

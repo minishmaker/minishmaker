@@ -5,17 +5,16 @@ using System.Windows.Forms;
 using MinishMaker.Core;
 using MinishMaker.Core.ChangeTypes;
 using MinishMaker.Utilities;
-using static MinishMaker.Core.RoomMetaData;
 
 namespace MinishMaker.UI
 {
-    public partial class WarpEditor : Form
+    public partial class WarpEditorWindow : Form
     {
         int warpIndex = -1;
         private List<WarpData> warpDataList;
         private bool shouldTrigger = false;
 
-        public WarpEditor()
+        public WarpEditorWindow()
         {
             InitializeComponent();
             warpTypeBox.DropDownStyle = ComboBoxStyle.DropDownList;

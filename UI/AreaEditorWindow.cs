@@ -10,7 +10,7 @@ using MinishMaker.Utilities;
 
 namespace MinishMaker.UI
 {
-    public partial class AreaEditor : Form
+    public partial class AreaEditorWindow : Form
     {
         private int currentArea = -1;
         private int selectedRoomRect = -1;
@@ -23,7 +23,7 @@ namespace MinishMaker.UI
 
         private Dictionary<int, Rectangle> roomRects = new Dictionary<int, Rectangle>();
 
-        public AreaEditor()
+        public AreaEditorWindow()
         {
             InitializeComponent();
             mapX.KeyDown += EnterUnfocus;
