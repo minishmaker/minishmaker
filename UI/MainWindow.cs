@@ -193,6 +193,12 @@ namespace MinishMaker.UI
         #endregion
 
         #region ToolStripButtons
+
+        private void newToolStripButton_Click(object sender, EventArgs e)
+        {
+            NewProject();
+        }
+
         private void openToolStripButton_Click(object sender, EventArgs e)
         {
             OpenProject();
@@ -202,6 +208,12 @@ namespace MinishMaker.UI
         {
             SaveAllChanges();
         }
+        private void buildToolStripButton_Click(object sender, EventArgs e)
+        {
+            BuildProject();
+        }
+
+        // Seperator
 
         private void chestToolStripButton_Click(object sender, EventArgs e)
         {
