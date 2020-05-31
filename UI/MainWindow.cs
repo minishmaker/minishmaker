@@ -437,6 +437,8 @@ namespace MinishMaker.UI
             warpEditorToolStripMenuItem.Enabled = enabled;
 
             saveToolStripButton.Enabled = enabled;
+            buildToolStripButton.Enabled = enabled;
+
             chestToolStripButton.Enabled = enabled;
             metatileToolStripButton.Enabled = enabled;
             areaToolStripButton.Enabled = enabled;
