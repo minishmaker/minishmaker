@@ -431,10 +431,12 @@ namespace MinishMaker.Core
             //chunks = new ushort[3] { 0x00FF, 0x00FF, 0x00FF };
 
             var pos = 0;
-            bool ended = false;
+            bool bg1ended = false;
+            bool bg2ended = false;
+
             for (int j = 0; j < rowsRequired; j++)
             {
-                if (ended)
+                if (bg1ended && bg2ended)
                     break;
                 for (int i = 0; i < tilesPerRow; i++)
                 {
@@ -448,23 +450,31 @@ namespace MinishMaker.Core
                     //	SwapTiles( areaIndex, oldchunks, chunks, (ushort)(i * 16), (ushort)(j * 16) );
                     //}
 
-                    try
+                    if (pos != 0xFFFF)
                     {
-                        if (pos != 0xFFFF)
+                        try
                         {
-                            if (bg1Exists)
+                            if (bg1Exists && !bg1ended)
                                 bg1MetaTiles.DrawMetaTile(ref bg1, new Point(i * 16, j * 16), tset, pset, pos, true);
+                        }
+                        catch (ArgumentException)
+                        {
+                            Debug.WriteLine("end of bg1 metatile file: " + (pos % 256).Hex() + "|" + (pos / 256).Hex());
+                            Debug.WriteLine("");
+                            bg1ended = true;
+                        }
 
-                            if (bg2Exists)
+                        try
+                        {
+                            if (bg2Exists && !bg2ended)
                                 bg2MetaTiles.DrawMetaTile(ref bg2, new Point(i * 16, j * 16), tset, pset, pos, true);
                         }
-                    }
-                    catch (ArgumentException)
-                    {
-                        Debug.WriteLine("end of metatile file: " + (pos % 256).Hex() + "|" + (pos / 256).Hex());
-                        Debug.WriteLine("");
-                        ended = true;
-                        break;
+                        catch (ArgumentException)
+                        {
+                            Debug.WriteLine("end of bg2 metatile file: " + (pos % 256).Hex() + "|" + (pos / 256).Hex());
+                            Debug.WriteLine("");
+                            bg2ended = true;
+                        }
                     }
                     pos++;
                 }
