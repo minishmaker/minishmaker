@@ -1,5 +1,10 @@
 ﻿namespace MinishMaker.Core
 {
+    public class Constants
+    {
+        public static readonly string _listData = "listData";
+    }
+
     public enum RegionVersion
     {
         EU,

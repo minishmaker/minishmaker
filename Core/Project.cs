@@ -23,6 +23,7 @@ namespace MinishMaker.Core
         bg2MetaTileSet,
         chestData,
         areaInfo,
+        listData,
         list1Data,
         list2Data,
         list3Data,

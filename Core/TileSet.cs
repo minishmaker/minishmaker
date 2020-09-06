@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Drawing.Imaging;
+using static MinishMaker.Core.RoomMetaData;
 
 
 namespace MinishMaker.Core
@@ -16,7 +17,7 @@ namespace MinishMaker.Core
             get { return tilesetData.Length / 0x20; }
         }
 
-        public TileSet(List<AddrData> tileSetAddrs, String roomPath)
+        public TileSet(List<AddrData> tileSetAddrs, string roomPath)
         {
 
             string[] files = { roomPath + DataType.bg1TileSet + "Dat.bin", roomPath + DataType.commonTileSet + "Dat.bin", roomPath + DataType.bg2TileSet + "Dat.bin" };
@@ -55,6 +56,12 @@ namespace MinishMaker.Core
         public void SetChunk(byte[] newdata, int dest)
         {
             newdata.CopyTo(this.tilesetData, dest);
+        }
+
+        public byte[] GetTile(int tileId) {
+            byte[] data = new byte[20];
+            Array.Copy(tilesetData, tileId * 0x20, data, 0, 0x20);
+            return data;
         }
 
         public unsafe void SetPixel(int x, int y, Color c, ref BitmapData bd)

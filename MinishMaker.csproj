@@ -102,6 +102,11 @@
     <Compile Include="Core\ChangeTypes\RoomMetadataChange.cs" />
     <Compile Include="Core\ChangeTypes\WarpDataChange.cs" />
     <Compile Include="Core\Project.cs" />
+    <Compile Include="Core\Rework\Area.cs" />
+    <Compile Include="Core\Rework\MetaTileSet.cs" />
+    <Compile Include="Core\Rework\PaletteSet.cs" />
+    <Compile Include="Core\Rework\Room.cs" />
+    <Compile Include="Core\Rework\RoomMetaData.cs" />
     <Compile Include="UI\AreaEditorWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -144,6 +149,21 @@
     <Compile Include="UI\ResizeRoomDialog.Designer.cs">
       <DependentUpon>ResizeRoomDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Rework\AreaEditorWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Rework\AreaEditorWindow.Designer.cs">
+      <DependentUpon>AreaEditorWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Rework\MainWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Rework\MainWindow.Designer.cs">
+      <DependentUpon>MainWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\Rework\SubWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="UI\WarpEditorWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -182,6 +202,8 @@
     <Compile Include="Utilities\ExtensionMethods.cs" />
     <Compile Include="Utilities\BitmapHandler.cs" />
     <Compile Include="Utilities\Reader.cs" />
+    <Compile Include="Utilities\Rework\DrawingUtil.cs" />
+    <Compile Include="Utilities\Rework\MapManager.cs" />
     <Compile Include="Utilities\StringUtil.cs" />
     <Compile Include="Utilities\Writer.cs" />
     <EmbeddedResource Include="UI\AreaEditorWindow.resx">
@@ -221,6 +243,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\ResizeRoomDialog.resx">
       <DependentUpon>ResizeRoomDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Rework\AreaEditorWindow.resx">
+      <DependentUpon>AreaEditorWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Rework\MainWindow.resx">
+      <DependentUpon>MainWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\WarpEditorWindow.resx">
       <DependentUpon>WarpEditorWindow.cs</DependentUpon>

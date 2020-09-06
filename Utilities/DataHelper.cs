@@ -37,9 +37,8 @@ namespace MinishMaker.Core
         public static long CompressData(ref byte[] outData, byte[] uncompressedData)
         {
             var compressed = new byte[uncompressedData.Length];
-            long totalSize = 0;
             MemoryStream ous = new MemoryStream(compressed);
-            totalSize = Compress(uncompressedData, ous, false);
+            long totalSize = Compress(uncompressedData, ous, false);
 
             outData = new byte[totalSize];
             Array.Copy(compressed, outData, totalSize);
