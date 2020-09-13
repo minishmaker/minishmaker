@@ -60,14 +60,14 @@ namespace MinishMaker.Utilities
                     int mt = room.GetTileData(layer, pos);
 
                     pos++; //2 bytes per tile
-                    if (metaTiles.GetTileInfo(mt) == null)
+                    if (metaTiles.GetTileImageInfo(mt) == null)
                     {
                         continue;
                     }
                     try
                     {
                         if (mt != 0xFFFF) //nonexistant room data does this, eg. area 0D room 10
-                            DrawTileId(ref layerImage, 1, metaTiles, room.Parent.TileSet, new Point(i * 16, j * 16), room.MetaData.PaletteSet, mt, overwrite);
+                            DrawTileId(ref layerImage, 1, metaTiles, room.MetaData.TileSet, new Point(i * 16, j * 16), room.MetaData.PaletteSet, mt, overwrite);
                     }
                     catch (Exception e)
                     {
@@ -96,16 +96,35 @@ namespace MinishMaker.Utilities
                     bool hflip = (data & 0x400) != 0;
                     bool vflip = (data & 0x800) != 0;
 
-                    DrawQuarterTile(ref layer, 1, new Point(i * 8, j * 8), tnum, room.Parent.TileSet, room.MetaData.PaletteSet.Colors, pnum, hflip, vflip, overwrite);
+                    DrawQuarterTile(ref layer, 1, new Point(i * 8, j * 8), tnum, room.MetaData.TileSet, room.MetaData.PaletteSet.Colors, pnum, hflip, vflip, overwrite);
                 }
             }
             return layer;
         }
 
-
-        public static Bitmap[] DrawTilesetImages(Core.Rework.Room room, int tilesPerRow)
+        public static Bitmap[] DrawTilesetImages(Core.Rework.Room room, int pnum)
         {
-            var tset = room.Parent.TileSet;
+            var images = new Bitmap[2];
+            images[0] = new Bitmap(256, 0x100); //0x200 * 8 /16 = 0x200 * 0.5
+            images[1] = new Bitmap(256, 0x100);
+
+            for (int tnum = 0; tnum < 0x400; tnum++)
+            {
+                var xpos = tnum % 0x20; //tiles
+                var ypos = (tnum - xpos) / 0x20; //tiles
+                ypos *= 8; //pixels
+                xpos *= 8; //pixels
+                var point = new Point(xpos, ypos);
+                DrawQuarterTile(ref images[0], 1, point, tnum + 0x200, room, pnum, false, false, true);
+                DrawQuarterTile(ref images[1], 1, point, tnum        , room, pnum, false, false, true);
+            }
+
+            return images;
+        }
+
+        public static Bitmap[] DrawMetatileImages(Core.Rework.Room room, int tilesPerRow)
+        {
+            var tset = room.MetaData.TileSet;
             var pset = room.MetaData.PaletteSet;
             var totalValues = 0x100;// amount different low values (00-FF)
             var tileSize = 16;// 0x10 pixels
@@ -166,7 +185,7 @@ namespace MinishMaker.Utilities
         {
             try
             {
-                DrawTileData(ref image, scale, mtset.GetTileInfo(tileId), tset, p, pset.Colors, mtset.IsBg1, overwrite);
+                DrawTileData(ref image, scale, mtset.GetTileImageInfo(tileId), tset, p, pset.Colors, mtset.IsBg1, overwrite);
             }
             catch (ArgumentNullException e)
             {
@@ -285,6 +304,22 @@ namespace MinishMaker.Utilities
             image = scaledImage;
         }
 
+        public static Bitmap MagnifyImageArea(Bitmap b, Rectangle rect, int scale)
+        {
+            Bitmap ret = new Bitmap(rect.Width * scale, rect.Height * scale);
+            BitmapData bd = ret.LockBits(new Rectangle(0, 0, ret.Width, ret.Height), ImageLockMode.WriteOnly, ret.PixelFormat);
+            for (int i = 0; i < rect.Width; i++)
+            {
+                for (int j = 0; j < rect.Width; j++)
+                {
+                    var color = b.GetPixel(rect.X + i, rect.Y + j);
+
+                    SetScaledPixel(i, j, color, scale, ref bd);
+                }
+            }
+            return ret;
+        }
+
         public static unsafe void SetPixel(int x, int y, Color c, ref BitmapData bd)
             {
                 byte* pixels = (byte*)bd.Scan0.ToPointer();
@@ -399,7 +434,7 @@ namespace MinishMaker.Utilities
             var header = ROM.Instance.headers;
             int updatepal = -1;
             var areaIndex = room.Parent.Id;
-            var tset = room.Parent.TileSet;
+            var tset = room.MetaData.TileSet;
             var pset = room.MetaData.PaletteSet;
             for (int i = 0; i < 3; i++)
             {
@@ -468,7 +503,7 @@ namespace MinishMaker.Utilities
         {
             try
             {
-                DrawTileData(ref image, scale, mtset.GetTileInfo(tileId), tset, p, pset.Colors, mtset.IsBg1, overwrite);
+                DrawTileData(ref image, scale, mtset.GetTileImageInfo(tileId), tset, p, pset.Colors, mtset.IsBg1, overwrite);
             }
             catch (ArgumentNullException e)
             {
@@ -506,7 +541,7 @@ namespace MinishMaker.Utilities
 
         public static void DrawQuarterTile(ref Bitmap image, int scale, Point p, int tnum, in Core.Rework.Room room, int pnum, bool hflip, bool vflip, bool overwrite)
         {
-            var tset = room.Parent.TileSet;
+            var tset = room.MetaData.TileSet;
             var pal = room.MetaData.PaletteSet.Colors;
             byte[] data = tset.GetTile(tnum);
             BitmapData bd = image.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.WriteOnly, image.PixelFormat);

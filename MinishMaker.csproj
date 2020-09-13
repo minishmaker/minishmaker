@@ -161,6 +161,12 @@
     <Compile Include="UI\Rework\MainWindow.Designer.cs">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Rework\MetaTileEditorWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Rework\MetaTileEditorWindow.Designer.cs">
+      <DependentUpon>MetaTileEditorWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Rework\SubWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -249,6 +255,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Rework\MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Rework\MetaTileEditorWindow.resx">
+      <DependentUpon>MetaTileEditorWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\WarpEditorWindow.resx">
       <DependentUpon>WarpEditorWindow.cs</DependentUpon>

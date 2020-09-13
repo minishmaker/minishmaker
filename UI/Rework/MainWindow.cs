@@ -166,7 +166,7 @@ namespace MinishMaker.UI.Rework
         private void SetupSubWindows()
         {
             //subWindows.Add(new SubWindowHolder(new ChestEditorWindow(this), chestEditorStripMenuItem, chestToolStripButton));//chest
-            //subWindows.Add(new SubWindowHolder(new MetaTileEditor(this), metatileEditorToolStripMenuItem, metatileToolStripButton));//metatile
+            subWindows.Add(new SubWindowHolder(new MetaTileEditorWindow(), metatileEditorToolStripMenuItem, metatileToolStripButton));//metatile
             subWindows.Add(new SubWindowHolder(new AreaEditorWindow(), areaEditorToolStripMenuItem, areaToolStripButton));//area
             //subWindows.Add(new SubWindowHolder(new ObjectPlacementEditorWindow(this), objectPlacementEditorToolStripMenuItem, objectPlacementToolStripButton)); //object
             //subWindows.Add(new SubWindowHolder(new WarpEditorWindow(this), warpEditorToolStripMenuItem, warpToolStripButton)); //warp
@@ -598,12 +598,12 @@ namespace MinishMaker.UI.Rework
 
             if (layer == 1 && currentRoom.Bg1Exists)
             {
-                DrawingUtil.DrawTileId(ref mapLayers[0], currentScale, currentRoom.Bg1MetaTiles, currentRoom.Parent.TileSet, p, currentRoom.MetaData.PaletteSet, tileData, true);
+                DrawingUtil.DrawTileId(ref mapLayers[0], currentScale, currentRoom.Bg1MetaTiles, currentRoom.MetaData.TileSet, p, currentRoom.MetaData.PaletteSet, tileData, true);
                 Project.Instance.AddPendingChange(new Bg1DataChange(currentRoom.Parent.Id, currentRoom.Id));
             }
             else if (layer == 2 && currentRoom.Bg2Exists)
             {
-                DrawingUtil.DrawTileId(ref mapLayers[1], currentScale, currentRoom.Bg2MetaTiles, currentRoom.Parent.TileSet, p, currentRoom.MetaData.PaletteSet, tileData, true);
+                DrawingUtil.DrawTileId(ref mapLayers[1], currentScale, currentRoom.Bg2MetaTiles, currentRoom.MetaData.TileSet, p, currentRoom.MetaData.PaletteSet, tileData, true);
                 Project.Instance.AddPendingChange(new Bg2DataChange(currentRoom.Parent.Id, currentRoom.Id));
             }
 
@@ -674,7 +674,7 @@ namespace MinishMaker.UI.Rework
             //0= bg1 (treetops and such)
             //1= bg2 (flooring)
             mapGridBox.Image = OverlayImage(mapLayers[1], mapLayers[0]);
-            tileMaps = DrawingUtil.DrawTilesetImages(room, 16);
+            tileMaps = DrawingUtil.DrawMetatileImages(room, 16);
             bottomTileGridBox.Image = tileMaps[1];
             topTileGridBox.Image = tileMaps[0];
 

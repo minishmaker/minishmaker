@@ -119,27 +119,27 @@ namespace MinishMaker.Core.Rework
                         return null;
                     tileType = bg1MetaTiles.GetTileTypeInfo(tileNum);
 
-                    return bg1MetaTiles.GetTileInfo(tileNum);
+                    return bg1MetaTiles.GetTileImageInfo(tileNum);
                 case 2:
                     if (!this.Bg2Exists)
                         return null;
                     tileType = bg2MetaTiles.GetTileTypeInfo(tileNum);
 
-                    return bg2MetaTiles.GetTileInfo(tileNum);
+                    return bg2MetaTiles.GetTileImageInfo(tileNum);
                 default:
                     return null;
             }
         }
 
-        public void SetMetaTileInfo(byte[] data, int tileNum, int layer)
+        public void SetMetaTileImageInfo(byte[] data, int tileNum, int layer)
         {
             switch (layer)
             {
                 case 1:
-                    bg1MetaTiles.SetTileInfo(data, tileNum);
+                    bg1MetaTiles.SetTileImageInfo(data, tileNum);
                     break;
                 case 2:
-                    bg2MetaTiles.SetTileInfo(data, tileNum);
+                    bg2MetaTiles.SetTileImageInfo(data, tileNum);
                     break;
             }
         }
@@ -191,11 +191,11 @@ namespace MinishMaker.Core.Rework
                     return GetRoomSpecifics(ref data);
 
                 case DataType.bg1TileSet:
-                    return Parent.TileSet.GetCompressedTileSetData(ref data, TileSet.TileSetDataType.BG1);
+                    return MetaData.TileSet.GetCompressedTileSetData(ref data, TileSet.TileSetDataType.BG1);
                 case DataType.bg2TileSet:
-                    return Parent.TileSet.GetCompressedTileSetData(ref data, TileSet.TileSetDataType.BG2);
+                    return MetaData.TileSet.GetCompressedTileSetData(ref data, TileSet.TileSetDataType.BG2);
                 case DataType.commonTileSet:
-                    return Parent.TileSet.GetCompressedTileSetData(ref data, TileSet.TileSetDataType.COMMON);
+                    return MetaData.TileSet.GetCompressedTileSetData(ref data, TileSet.TileSetDataType.COMMON);
                 default:
                     return 0;
             }

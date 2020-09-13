@@ -39,7 +39,7 @@ namespace MinishMaker.Core.Rework
             this.IsBg1 = isBg1;
         }
 
-        public byte[] GetTileInfo(int tileNum)
+        public byte[] GetTileImageInfo(int tileNum)
         {
             try
             {
@@ -54,7 +54,7 @@ namespace MinishMaker.Core.Rework
             }
         }
 
-        public void SetTileInfo(byte[] tileInfo, int tileNum)
+        public void SetTileImageInfo(byte[] tileInfo, int tileNum)
         {
             if (tileInfo.Length != 8)
                 return;

@@ -40,7 +40,7 @@ namespace MinishMaker.Core.Rework
                 return path;
             }
         }
-        public TileSet TileSet { get; private set; }
+
         public MetaTileSet MetaTileSet { get; private set; }
 
         private Dictionary<int, Room> rooms = new Dictionary<int, Room>();
