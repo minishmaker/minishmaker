@@ -38,6 +38,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -167,8 +168,20 @@
     <Compile Include="UI\Rework\MetaTileEditorWindow.Designer.cs">
       <DependentUpon>MetaTileEditorWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Rework\ObjectPlacementEditorWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Rework\ObjectPlacementEditorWindow.Designer.cs">
+      <DependentUpon>ObjectPlacementEditorWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Rework\SubWindow.cs">
       <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Rework\WarpEditorWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Rework\WarpEditorWindow.Designer.cs">
+      <DependentUpon>WarpEditorWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\WarpEditorWindow.cs">
       <SubType>Form</SubType>
@@ -258,6 +271,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Rework\MetaTileEditorWindow.resx">
       <DependentUpon>MetaTileEditorWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Rework\ObjectPlacementEditorWindow.resx">
+      <DependentUpon>ObjectPlacementEditorWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Rework\WarpEditorWindow.resx">
+      <DependentUpon>WarpEditorWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\WarpEditorWindow.resx">
       <DependentUpon>WarpEditorWindow.cs</DependentUpon>

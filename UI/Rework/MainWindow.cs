@@ -168,8 +168,8 @@ namespace MinishMaker.UI.Rework
             //subWindows.Add(new SubWindowHolder(new ChestEditorWindow(this), chestEditorStripMenuItem, chestToolStripButton));//chest
             subWindows.Add(new SubWindowHolder(new MetaTileEditorWindow(), metatileEditorToolStripMenuItem, metatileToolStripButton));//metatile
             subWindows.Add(new SubWindowHolder(new AreaEditorWindow(), areaEditorToolStripMenuItem, areaToolStripButton));//area
-            //subWindows.Add(new SubWindowHolder(new ObjectPlacementEditorWindow(this), objectPlacementEditorToolStripMenuItem, objectPlacementToolStripButton)); //object
-            //subWindows.Add(new SubWindowHolder(new WarpEditorWindow(this), warpEditorToolStripMenuItem, warpToolStripButton)); //warp
+            subWindows.Add(new SubWindowHolder(new ObjectPlacementEditorWindow(), objectPlacementEditorToolStripMenuItem, objectPlacementToolStripButton)); //object
+            subWindows.Add(new SubWindowHolder(new WarpEditorWindow(), warpEditorToolStripMenuItem, warpToolStripButton)); //warp
         }
         #endregion
 

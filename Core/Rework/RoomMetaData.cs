@@ -46,7 +46,7 @@ namespace MinishMaker.Core.Rework
                 {
                     this.paletteSet = new PaletteSet(PaletteSetID);
                 }
-                return this.paletteSet; 
+                return this.paletteSet;
             }
         }
 
@@ -55,8 +55,8 @@ namespace MinishMaker.Core.Rework
         private Dictionary<int, List<byte[]>> listInformation = new Dictionary<int, List<byte[]>>();
         private List<Core.AddrData> tileSetAddrs = new List<Core.AddrData>();
 
-        public int mapPosX { get; private set; }
-        public int mapPosY { get; private set; }
+        public int MapPosX { get; private set; }
+        public int MapPosY { get; private set; }
 
         public int tileSetOffset;
 
@@ -83,8 +83,8 @@ namespace MinishMaker.Core.Rework
             if (File.Exists(path + "/" + DataType.roomMetaData + "Dat.bin"))
             {
                 var data = File.ReadAllBytes(path + "/" + DataType.roomMetaData + "Dat.bin");
-                this.mapPosX = (data[0] + (data[1] << 8)) >> 4;
-                this.mapPosY = (data[2] + (data[3] << 8)) >> 4;
+                this.MapPosX = (data[0] + (data[1] << 8)) >> 4;
+                this.MapPosY = (data[2] + (data[3] << 8)) >> 4;
 
                 if (data.Length == 4) //backwards compatibility because WHY DIDNT I SAVE IT ALL AT FIRST
                 {
@@ -103,8 +103,8 @@ namespace MinishMaker.Core.Rework
             }
             else
             {
-                this.mapPosX = r.ReadUInt16(roomMetaDataTableLoc) >> 4;
-                this.mapPosY = r.ReadUInt16() >> 4;
+                this.MapPosX = r.ReadUInt16(roomMetaDataTableLoc) >> 4;
+                this.MapPosY = r.ReadUInt16() >> 4;
                 this.PixelWidth = r.ReadUInt16();
                 this.PixelHeight = r.ReadUInt16();
                 tileSetOffset = r.ReadUInt16();
@@ -164,7 +164,7 @@ namespace MinishMaker.Core.Rework
             Core.AddrData MetaTileTypeAddr;
             Area area = Parent.Parent;
 
-            if (isBg1) 
+            if (isBg1)
             {
                 bgRoomDataAddr = bg1RoomDataAddr;
                 bgMetaTilesAddr = area.bg1MetaTilesAddr;
@@ -177,7 +177,7 @@ namespace MinishMaker.Core.Rework
                 bgMetaTilesAddr = area.bg2MetaTilesAddr;
                 MetaTileTypeAddr = area.bg2MetaTileTypeAddr;
                 bgDataType = DataType.bg2Data;
-            } 
+            }
 
 
             if (bgRoomDataAddr == null) {
@@ -249,9 +249,9 @@ namespace MinishMaker.Core.Rework
             bool cont = true;
             while (cont)
             {
-                UInt32 data = r.ReadUInt32();
-                UInt32 data2 = r.ReadUInt32();
-                UInt32 data3 = r.ReadUInt32();
+                uint data = r.ReadUInt32();
+                uint data2 = r.ReadUInt32();
+                uint data3 = r.ReadUInt32();
 
 
 
@@ -279,8 +279,8 @@ namespace MinishMaker.Core.Rework
         {
             if (x > 0 && y > 0 && x < 0x10000 && y < 0x10000)
             {
-                mapPosX = x;
-                mapPosY = y;
+                MapPosX = x;
+                MapPosY = y;
             }
 
             Project.Instance.AddPendingChange(new RoomMetadataChange(this.Parent.Parent.Id, this.Parent.Id));
@@ -288,13 +288,13 @@ namespace MinishMaker.Core.Rework
 
         public Rectangle GetMapRect()
         {
-            return new Rectangle(new Point(mapPosX, mapPosY), new Size(TileWidth, TileHeight));
+            return new Rectangle(new Point(MapPosX, MapPosY), new Size(TileWidth, TileHeight));
         }
 
         #region list add/remove/get sets
         public void AddNewChestInformation(int position)
         {
-            if(position > chestInformation.Count)
+            if (position > chestInformation.Count)
             {
                 throw new RoomMetaDataException("Position is outside of the list");
             }
@@ -333,6 +333,11 @@ namespace MinishMaker.Core.Rework
             warpInformation.Insert(position + 1, new WarpData());
         }
 
+        public int GetWarpInformationSize()
+        {
+            return warpInformation.Count();
+        }
+        
         public void RemoveWarpInformation(int position)
         {
             if (position > warpInformation.Count)
@@ -343,7 +348,7 @@ namespace MinishMaker.Core.Rework
             warpInformation.RemoveAt(position);
         }
 
-        public WarpData GetWarpDataEntry(int position)
+        public WarpData GetWarpInformationEntry(int position)
         {
             if (warpInformation.Count <= position || position < 0)
             {

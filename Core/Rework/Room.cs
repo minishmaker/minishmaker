@@ -211,8 +211,8 @@ namespace MinishMaker.Core.Rework
 
         public long GetRoomSpecifics(ref byte[] data)
         {
-            var mapX = MetaData.mapPosX * 16;
-            var mapY = MetaData.mapPosY * 16;
+            var mapX = MetaData.MapPosX * 16;
+            var mapY = MetaData.MapPosY * 16;
 
             data = new byte[] {
                 (byte)(mapX&0xff),
