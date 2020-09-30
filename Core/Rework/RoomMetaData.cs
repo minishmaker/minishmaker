@@ -52,7 +52,7 @@ namespace MinishMaker.Core.Rework
 
         private List<ChestData> chestInformation = new List<ChestData>();
         private List<WarpData> warpInformation = new List<WarpData>();
-        private Dictionary<int, List<byte[]>> listInformation = new Dictionary<int, List<byte[]>>();
+        private Dictionary<int, List<List<byte>>> listInformation = new Dictionary<int, List<List<byte>>>();
         private List<Core.AddrData> tileSetAddrs = new List<Core.AddrData>();
 
         public int MapPosX { get; private set; }
@@ -367,8 +367,8 @@ namespace MinishMaker.Core.Rework
                 {
                     throw new RoomMetaDataException("Adding to a non-existant list requires a position of 0");
                 }
-                listInformation.Add(listId, new List<byte[]>());
-                listInformation[listId].Add(new byte[16]);
+                listInformation.Add(listId, new List<List<byte>>());
+                listInformation[listId].Add(new List<byte>(new byte[16]));
                 return;
             }
 
@@ -377,7 +377,7 @@ namespace MinishMaker.Core.Rework
                 throw new RoomMetaDataException("Position is outside of the list");
             }
 
-            listInformation[listId].Insert(position + 1, new byte[16]);
+            listInformation[listId].Insert(position + 1, new List<byte>(new byte[16]));
         }
 
         public void RemoveListInformation(int listId, int position)
@@ -395,7 +395,7 @@ namespace MinishMaker.Core.Rework
             listInformation[listId].RemoveAt(position);
         }
 
-        public byte[] GetListInformationEntry(int listId, int position)
+        public List<byte> GetListInformationEntry(int listId, int position)
         {
             if (!listInformation.ContainsKey(listId))
             {
@@ -408,6 +408,11 @@ namespace MinishMaker.Core.Rework
             }
 
             return listInformation[listId][position];
+        }
+
+        public int GetListEntryAmount(int listId)
+        {
+            return listInformation[listId].Count();
         }
 
         public int[] GetListInformationKeys()
@@ -432,7 +437,7 @@ namespace MinishMaker.Core.Rework
         private void ListBinding(byte[] data, int startIndex)
         {
             var list = listInformation[G_listLoopVar];
-            var dat = data.Skip(startIndex).Take(0x10).ToArray();
+            var dat = new List<byte>(data.Skip(startIndex).Take(0x10).ToArray());
             list.Add(dat);
         }
 

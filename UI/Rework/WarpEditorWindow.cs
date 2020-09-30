@@ -20,6 +20,32 @@ namespace MinishMaker.UI.Rework
         public WarpEditorWindow()
         {
             InitializeComponent();
+            removeButton.Click += new EventHandler((object o, EventArgs e) => { ChangedHandler(RemoveButton_Click); });
+            newButton.Click += new EventHandler((object o, EventArgs e) => { ChangedHandler(NewButton_Click); });
+            warpTypeBox.SelectedIndexChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(WarpTypeBox_SelectedIndexChanged); });
+
+            warpY.TextChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(WarpY_TextChanged); });
+            warpX.TextChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(WarpX_TextChanged); });
+            destY.TextChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(DestY_TextChanged); });
+            destX.TextChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(DestX_TextChanged); });
+            destArea.TextChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(DestArea_TextChanged); });
+            destRoom.TextChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(DestRoom_TextChanged); });
+
+            warpShape.TextChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(WarpShape_TextChanged); });
+            exitHeight.TextChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(ExitHeight_TextChanged); });
+            transitionTypeBox.SelectedIndexChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(TransitionTypeBox_SelectedIndexChanged); });
+            facingBox.SelectedIndexChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(FacingBox_SelectedIndexChanged); });
+            soundId.TextChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(SoundId_TextChanged); });
+
+            topLeftCheck.CheckedChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(CheckboxChanged); });
+            topRightCheck.CheckedChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(CheckboxChanged); });
+            bottomRightCheck.CheckedChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(CheckboxChanged); });
+            bottomLeftCheck.CheckedChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(CheckboxChanged); });
+            leftTopCheck.CheckedChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(CheckboxChanged); });
+            leftBottomCheck.CheckedChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(CheckboxChanged); });
+            rightBottomCheck.CheckedChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(CheckboxChanged); });
+            rightTopCheck.CheckedChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(CheckboxChanged); });
+
             warpTypeBox.DropDownStyle = ComboBoxStyle.DropDownList;
             warpTypeBox.DataSource = Enum.GetValues(typeof(WarpType));
             transitionTypeBox.DropDownStyle = ComboBoxStyle.DropDownList;
