@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using MinishMaker.Utilities;
 
 namespace MinishMaker.Core
@@ -333,7 +334,7 @@ namespace MinishMaker.Core
 
         public PaletteSet GetPaletteSet()
         {
-            return new PaletteSet(paletteSetID);
+            return new PaletteSet(paletteSetID, areaPath);
         }
 
         public int GetPaletteSetID()
@@ -692,7 +693,11 @@ namespace MinishMaker.Core
                     int roomWarpTableAddrLoc = areaWarpTableAddr + (roomIndex << 2);
                     retAddr = roomWarpTableAddrLoc;
                     break;
-
+                case DataType.palette:
+                    int paletteSetTableLoc = header.paletteSetTableLoc;
+                    int addr = r.ReadAddr(paletteSetTableLoc + ( paletteSetID * 4));
+                    retAddr = header.tileOffset + (r.ReadUInt16(addr) << 5);
+                    break;
                 default:
                     break;
             }

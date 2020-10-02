@@ -252,7 +252,9 @@ namespace MinishMaker.Core
             }
             if (updatepal > 0) //if the palette number changed due to swapping, create new paletteset
             {
-                pset = new PaletteSet(updatepal);
+                var areaPath = Project.Instance.projectPath + "/Areas/Area " + StringUtil.AsStringHex2(areaIndex);
+                var roomPath = areaPath + "/Room " + StringUtil.AsStringHex2(this.Index);
+                pset = new PaletteSet(updatepal, roomPath);
             }
         }
 
@@ -395,6 +397,8 @@ namespace MinishMaker.Core
                     return tileSet.GetCompressedTileSetData(ref data, TileSet.TileSetDataType.BG2);
                 case DataType.commonTileSet:
                     return tileSet.GetCompressedTileSetData(ref data, TileSet.TileSetDataType.COMMON);
+                case DataType.palette:
+                    return pset.GetSaveData(ref data);
                 default:
                     return 0;
             }

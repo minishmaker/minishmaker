@@ -1,9 +1,6 @@
 ﻿using MinishMaker.Utilities;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace MinishMaker.Core.ChangeTypes
 {
@@ -23,21 +20,24 @@ namespace MinishMaker.Core.ChangeTypes
 			var sb = new StringBuilder();
 			var room = MapManager.Instance.MapAreas.Single(a=>a.Index == areaId).Rooms.First();
 			var pointerLoc = room.GetPointerLoc(changeType,areaId);
-			var gfxOffset = ROM.Instance.headers.gfxSourceBase;
+			var tileOffset = ROM.Instance.headers.tileOffset;
 			byte[] data = null;
 			var size = room.GetSaveData(ref data, changeType);
-			var bitSet = ROM.Instance.reader.ReadByte(pointerLoc+3)==0x80;
+            //var junkLength = tileOffset % 32;
 
 			sb.AppendLine("PUSH");	//save cursor location
-			sb.AppendLine("ORG "+pointerLoc);	//go to pointer location
-			sb.AppendLine("WORD "+changeType+"x"+areaId.Hex()+"-"+gfxOffset + "+$" + (bitSet?"80000000":"0"));	//write label location to position - constant
-			sb.AppendLine("ORG currentoffset+4"); //move over dest
-			sb.AppendLine("WORD $"+size.Hex()); //write size
+			sb.AppendLine("ORG 0x"+pointerLoc.Hex());	//go to pointer location
+            sb.AppendLine("#incbin \"./" + changeType.ToString() + "Dat.bin\""); //overwritten because limits
+            //sb.AppendLine("SHORT ("+changeType+"x"+areaId.Hex()+"-"+ tileOffset + ")>> 5");	//write label location to position - constant
 			sb.AppendLine("POP");	//go back to cursor location
 
-			sb.AppendLine("ALIGN 4");	//align to avoid a mess
-			sb.AppendLine(changeType+"x"+areaId.Hex()+":"); //create label,  wont need to supply a new position like this
-			sb.AppendLine("#incbin \"./"+changeType.ToString()+"Dat.bin\"");
+			//sb.AppendLine("ALIGN 32");	//because thats apperantly the minimum distance (<<5)
+            //for(int i = 0; i < junkLength; i++) {
+            //    sb.AppendLine("BYTE 0");
+            //}
+
+			//sb.AppendLine(changeType+"x"+areaId.Hex()+":"); //create label, wont need to supply a new position like this
+			//sb.AppendLine("#incbin \"./"+changeType.ToString()+"Dat.bin\"");
 			binDat = data;
 			
 			return sb.ToString();

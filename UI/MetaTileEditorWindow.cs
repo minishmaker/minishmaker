@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -642,14 +643,28 @@ namespace MinishMaker.UI
                     return;
                 }
 
-                var data = File.ReadAllBytes(ofd.FileName);
-
-                //16 palettes * 16 colors * 3 parts (r g b)
-                if (data.Length != 16 * 16 * 3)
+                var data = File.ReadAllText(ofd.FileName);
+                var palStrings = data.Split(new char[] { ' ', '\n' });                var room = MapManager.Instance.MapAreas.Single(a => a.Index == currentArea).Rooms.First();
+                var entryNum = 0;
+                foreach (string palEntry in palStrings)
                 {
-                    throw new IncorrectFileSizeException("Incorrect palette file size. \r expected size " + (16 * 16 * 3) + " bytes. \r Found" + data.Length);
+                    if (palEntry.StartsWith("0x00"))
+                    {
+                        if (entryNum >= 256)
+                        {
+                            throw new IncorrectFileSizeException("Given palette file contains too many palette entries, expected 256");
+                        }
+                        var b = int.Parse(palEntry.Substring(4, 2), NumberStyles.HexNumber);
+                        var g = int.Parse(palEntry.Substring(6, 2), NumberStyles.HexNumber);
+                        var r = int.Parse(palEntry.Substring(8, 2), NumberStyles.HexNumber);
+                        room.palettes[entryNum] = Color.FromArgb(r, g, b);
+                        entryNum++;
+                    }
                 }
-
+                if (entryNum != 256)
+                {
+                    throw new IncorrectFileSizeException("Given palette file contains too few palette entries, expected 256");
+                }
                 Project.Instance.AddPendingChange(new PaletteChange(currentArea));
             }
         }

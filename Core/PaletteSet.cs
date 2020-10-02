@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using System.IO;
 using System.Text;
 using MinishMaker.Utilities;
 
@@ -8,13 +9,16 @@ namespace MinishMaker.Core
     public class PaletteSet
     {
         public Color[] Palettes;
-
-        public PaletteSet(int pnum)
+        private byte pstart = 0;
+        private byte pamount = 0;
+        public int pnum = 0;
+        public PaletteSet(int pnum, string areaPath)
         {
-            this.Palettes = LoadPalettes(pnum);
+            this.pnum = pnum;
+            this.Palettes = LoadPalettes(areaPath);
         }
 
-        public Color[] LoadPalettes(int pnum)
+        public Color[] LoadPalettes(string areaPath)
         {
             Color[] palettes = new Color[16 * 16];
 
@@ -24,11 +28,19 @@ namespace MinishMaker.Core
             int paletteSetTableLoc = header.paletteSetTableLoc;
             int tileOffset = header.tileOffset;
             int addr = r.ReadAddr(paletteSetTableLoc + (pnum * 4)); //4 byte entries
-            int palAddr = (int)(tileOffset + (r.ReadUInt16(addr) << 5));
-            byte pstart = r.ReadByte();
-            byte pamount = r.ReadByte();
+            int palAddr = tileOffset + (r.ReadUInt16(addr) << 5);
+            pstart = r.ReadByte();
+            pamount = r.ReadByte();
 
-            byte[] pdata = r.ReadBytes(pamount * 0x20, palAddr);
+            byte[] pdata;
+            if (File.Exists(areaPath + "/" + DataType.palette + "Dat.bin"))
+            {
+                pdata = File.ReadAllBytes(areaPath + "/" + DataType.palette + "Dat.bin");
+            }
+            else
+            {
+                pdata = r.ReadBytes(pamount * 0x20, palAddr);
+            }
 
             int pos = 0; //position in pdata array
                          //manual 0th entry as I dont know where it gets it from yet
@@ -105,6 +117,19 @@ namespace MinishMaker.Core
                 }
             }
             return sb.ToString();
+        }
+
+        public long GetSaveData(ref byte[] data)
+        {
+            data = new byte[pamount * 0x20];
+            for (int i = 0; i < pamount * 0x10; i++)
+            {
+                var curColor = Palettes[i + (pstart * 16)];
+                int value = (curColor.R >> 3) + (curColor.G << 2) + (curColor.B << 7);
+                data[i * 2] = (byte)(value & 0xFF);
+                data[i * 2 + 1] = (byte)(value >> 8);
+            }
+            return pamount * 0x20;
         }
     }
 
