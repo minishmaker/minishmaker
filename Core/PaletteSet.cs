@@ -125,7 +125,10 @@ namespace MinishMaker.Core
             for (int i = 0; i < pamount * 0x10; i++)
             {
                 var curColor = Palettes[i + (pstart * 16)];
-                int value = (curColor.R >> 3) + (curColor.G << 2) + (curColor.B << 7);
+                int rVal = (curColor.R >> 3);
+                int gVal = (curColor.G >> 3) << 5;
+                int bVal = (curColor.B >> 3) << 10;
+                int value = rVal + gVal + bVal;
                 data[i * 2] = (byte)(value & 0xFF);
                 data[i * 2 + 1] = (byte)(value >> 8);
             }

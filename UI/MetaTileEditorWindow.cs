@@ -644,7 +644,8 @@ namespace MinishMaker.UI
                 }
 
                 var data = File.ReadAllText(ofd.FileName);
-                var palStrings = data.Split(new char[] { ' ', '\n' });                var room = MapManager.Instance.MapAreas.Single(a => a.Index == currentArea).Rooms.First();
+                var palStrings = data.Split(new char[] { ' ', '\n' });
+                var room = MapManager.Instance.MapAreas.Single(a => a.Index == currentArea).Rooms.First();
                 var entryNum = 0;
                 foreach (string palEntry in palStrings)
                 {
