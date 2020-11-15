@@ -13,7 +13,7 @@ namespace MinishMaker
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new UI.MainWindow());
+            Application.Run(new UI.Rework.MainWindow());
         }
     }
 }

@@ -9,6 +9,7 @@ namespace MinishMaker.UI
     public partial class NewProjectWindow : Form
     {
         public Project project = null;
+        public Core.Rework.Project project2 = null;
         public NewProjectWindow()
         {
             InitializeComponent();
@@ -67,7 +68,7 @@ namespace MinishMaker.UI
             }
 
             project = new Project(projectNameTextBox.Text, baseROMTextBox.Text, projectTextBox.Text);
-
+            project2 = new Core.Rework.Project(projectNameTextBox.Text, baseROMTextBox.Text, projectTextBox.Text);
             Close();
         }
 

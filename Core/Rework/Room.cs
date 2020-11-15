@@ -11,7 +11,7 @@ namespace MinishMaker.Core.Rework
         public int Id { get; private set; }
         private bool isLoaded = false;
 
-        private string path;
+        private string path = "";
         public string Path {
             get
             {

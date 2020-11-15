@@ -59,7 +59,7 @@ namespace MinishMaker.Core
         }
 
         public byte[] GetTile(int tileId) {
-            byte[] data = new byte[20];
+            byte[] data = new byte[0x20];
             Array.Copy(tilesetData, tileId * 0x20, data, 0, 0x20);
             return data;
         }

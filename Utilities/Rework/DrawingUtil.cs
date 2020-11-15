@@ -12,7 +12,7 @@ namespace MinishMaker.Utilities
         #region various draw functions
         public static Bitmap[] DrawRoom(Core.Rework.Room room)
         {
-            var images = new Bitmap[2];
+            var images = new Bitmap[2] { new Bitmap(room.MetaData.PixelWidth, room.MetaData.PixelHeight), new Bitmap(room.MetaData.PixelWidth, room.MetaData.PixelHeight) };
 
             if (room.Bg2Exists)
             {
@@ -195,7 +195,7 @@ namespace MinishMaker.Utilities
 
         public static void DrawTileData(ref Bitmap image, int scale, byte[] tileData, TileSet tset, Point p, Color[] palettes, bool isBg1, bool overwrite)
         {
-            if (tileData.Length == 0)
+            if (tileData == null || tileData.Length == 0)
                 throw new ArgumentNullException("metaTileData", "Cannot draw empty metatile.");
 
             int i = 0;
@@ -348,6 +348,21 @@ namespace MinishMaker.Utilities
             }
         }
 
+        public static Bitmap OverlayImage(Bitmap baseImage, Bitmap overlay)
+        {
+            Bitmap finalImage = new Bitmap(baseImage.Width, baseImage.Height);
+
+            using (Graphics g = Graphics.FromImage(finalImage))
+            {
+                //set background color
+                g.Clear(Color.Black);
+
+                g.DrawImage(baseImage, new Rectangle(0, 0, baseImage.Width, baseImage.Height));
+                g.DrawImage(overlay, new Rectangle(0, 0, baseImage.Width, baseImage.Height));
+            }
+            //Draw the final image in the gridBox
+            return finalImage;
+        }
         #endregion
 
         //TODO: FIGURE OUT HOW THESE WORK

@@ -223,17 +223,17 @@ namespace MinishMaker.UI.Rework
             {
                 currentRoom.SetMetaTileImageInfo(currentTileInfo, metaTileGridBox.SelectedIndex, currentLayer);
                 if (currentLayer == 1)
-                    Project.Instance.AddPendingChange(new Bg1MetaTileSetChange(currentRoom.Parent.Id));
+                    Core.Rework.Project.Instance.AddPendingChange(new Bg1MetaTileSetChange(currentRoom.Parent.Id));
                 if (currentLayer == 2)
-                    Project.Instance.AddPendingChange(new Bg2MetaTileSetChange(currentRoom.Parent.Id));
+                    Core.Rework.Project.Instance.AddPendingChange(new Bg2MetaTileSetChange(currentRoom.Parent.Id));
             }
             if (hasTypeChange)
             {
                 currentRoom.SetMetaTileTypeInfo(currentTileType, metaTileGridBox.SelectedIndex, currentLayer);
                 if (currentLayer == 1)
-                    Project.Instance.AddPendingChange(new Bg1MetaTileTypeChange(currentRoom.Parent.Id));
+                    Core.Rework.Project.Instance.AddPendingChange(new Bg1MetaTileTypeChange(currentRoom.Parent.Id));
                 if (currentLayer == 2)
-                    Project.Instance.AddPendingChange(new Bg2MetaTileTypeChange(currentRoom.Parent.Id));
+                    Core.Rework.Project.Instance.AddPendingChange(new Bg2MetaTileTypeChange(currentRoom.Parent.Id));
             }
 
             var image = metaTiles[currentLayer - 1];
@@ -300,7 +300,7 @@ namespace MinishMaker.UI.Rework
                     throw new IncorrectFileSizeException("Incorrect palette file size. \r expected size " + (16 * 16 * 3) + " bytes. \r Found" + data.Length);
                 }
 
-                Project.Instance.AddPendingChange(new PaletteChange(currentRoom.Parent.Id));
+                Core.Rework.Project.Instance.AddPendingChange(new PaletteChange(currentRoom.Parent.Id));
             }
         }
 
@@ -494,13 +494,13 @@ namespace MinishMaker.UI.Rework
                 switch (tsetType)
                 {
                     case TileSet.TileSetDataType.BG1:
-                        Project.Instance.AddPendingChange(new Bg1TileSetChange(currentRoom.Parent.Id));
+                        Core.Rework.Project.Instance.AddPendingChange(new Bg1TileSetChange(currentRoom.Parent.Id));
                         break;
                     case TileSet.TileSetDataType.BG2:
-                        Project.Instance.AddPendingChange(new Bg2TileSetChange(currentRoom.Parent.Id));
+                        Core.Rework.Project.Instance.AddPendingChange(new Bg2TileSetChange(currentRoom.Parent.Id));
                         break;
                     case TileSet.TileSetDataType.COMMON:
-                        Project.Instance.AddPendingChange(new CommonTileSetChange(currentRoom.Parent.Id));
+                        Core.Rework.Project.Instance.AddPendingChange(new CommonTileSetChange(currentRoom.Parent.Id));
                         break;
                 }
             }

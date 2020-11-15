@@ -108,17 +108,26 @@ namespace MinishMaker.UI.Rework
 
             foreach (var room in area.GetAllRooms())
             {
-                var rect = room.MetaData.GetMapRect();
-                roomRects.Add(room.Id, rect);
-
-                if (rect.Bottom > biggestY)
+                try
                 {
-                    biggestY = rect.Bottom;
+                    var rect = room.MetaData.GetMapRect();
+                    roomRects.Add(room.Id, rect);
+
+                    if (rect.Bottom > biggestY)
+                    {
+                        biggestY = rect.Bottom;
+                    }
+
+                    if (rect.Right > biggestX)
+                    {
+                        biggestX = rect.Right;
+                    }
                 }
-
-                if (rect.Right > biggestX)
+                catch (RoomException ex) 
                 {
-                    biggestX = rect.Right;
+                    if(room.Bg1Exists || room.Bg2Exists) {
+                        throw (ex);
+                    } //otherwise its just an invalid room and should be ignored
                 }
             }
             DrawRects();
@@ -236,6 +245,9 @@ namespace MinishMaker.UI.Rework
         private void AreaChanged(object sender, EventArgs e)
         {
             if (loading)
+                return;
+
+            if (currentAreaId == -1) //nothing loaded
                 return;
 
             var byte1Data =

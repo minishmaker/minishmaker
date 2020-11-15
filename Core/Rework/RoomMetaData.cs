@@ -186,7 +186,7 @@ namespace MinishMaker.Core.Rework
 
             string bgPath = Parent.Path + "/" + bgDataType + "Dat.bin";
 
-            byte[] data = Project.Instance.GetSavedData(bgPath, true);
+            byte[] data = DataHelper.GetSavedData(bgPath, true);
             if (data == null) //no saved data, get from original source
             {
                 data = DataHelper.GetData(bgRoomDataAddr.Value);
@@ -417,7 +417,7 @@ namespace MinishMaker.Core.Rework
 
         public int[] GetListInformationKeys()
         {
-            return (int[])listInformation.Keys.AsEnumerable();
+            return listInformation.Keys.ToArray();
         }
 
         #endregion
@@ -436,7 +436,17 @@ namespace MinishMaker.Core.Rework
 
         private void ListBinding(byte[] data, int startIndex)
         {
-            var list = listInformation[G_listLoopVar];
+            List<List<byte>> list;
+
+            if (listInformation.ContainsKey(G_listLoopVar))
+            {
+                list = listInformation[G_listLoopVar];
+            }
+            else
+            {
+                list = new List<List<byte>>();
+            }
+
             var dat = new List<byte>(data.Skip(startIndex).Take(0x10).ToArray());
             list.Add(dat);
         }

@@ -23,8 +23,8 @@ namespace MinishMaker.Core.Rework
                 typePath += "/" + DataType.bg2MetaTileType + "Dat.bin";
             }
 
-            metaTileSetData = Project.Instance.GetSavedData(setPath, true, addrData.size);
-            metaTileTypeData = Project.Instance.GetSavedData(typePath, true, metaTypes.size);
+            metaTileSetData = DataHelper.GetSavedData(setPath, true, addrData.size);
+            metaTileTypeData = DataHelper.GetSavedData(typePath, true, metaTypes.size);
 
             if (metaTileSetData == null)
             {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using MinishMaker.Core;
+using MinishMaker.Core.Rework;
 using MinishMaker.Core.ChangeTypes;
 using MinishMaker.Utilities;
 
@@ -10,10 +10,10 @@ namespace MinishMaker.UI.Rework
 {
     public partial class WarpEditorWindow : SubWindow
     {
-        private int warpIndex = -1;
+        private int warpIndex = 0;
         private int warpInformationSize;
-        private Core.Rework.WarpData currentWarp;
-        private Core.Rework.Room currentRoom;
+        private WarpData currentWarp;
+        private Room currentRoom;
 
         private bool shouldTrigger = false;
 
@@ -52,8 +52,6 @@ namespace MinishMaker.UI.Rework
             transitionTypeBox.DataSource = Enum.GetValues(typeof(TransitionType));
             facingBox.DropDownStyle = ComboBoxStyle.DropDownList;
             facingBox.DataSource = Enum.GetValues(typeof(Facing));
-
-            warpIndex = -1;
 
             warpTypeBox.Enabled = false;
             transitionTypeBox.Enabled = false;
@@ -117,7 +115,11 @@ namespace MinishMaker.UI.Rework
                 return;
             }
 
-            warpIndex = 0;
+            if(currentRoom != MainWindow.instance.currentRoom)
+            {
+                warpIndex = 0;
+            }
+
             currentRoom = MainWindow.instance.currentRoom;
             warpInformationSize = currentRoom.MetaData.GetWarpInformationSize();
             shouldTrigger = false;
@@ -150,7 +152,7 @@ namespace MinishMaker.UI.Rework
             
         }
 
-        private void SetFilled(Core.Rework.WarpData warp)
+        private void SetFilled(WarpData warp)
         {
             warpTypeBox.Enabled = true;
             transitionTypeBox.Enabled = true;

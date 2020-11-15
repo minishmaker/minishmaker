@@ -19,6 +19,28 @@ namespace MinishMaker.Core
             }
         }
 
+        public static byte[] GetSavedData(string path, bool compressed, int size = 0x2000)
+        {
+            byte[] data = null;
+            if (File.Exists(path))
+            {
+                data = new byte[size];
+                byte[] savedData = File.ReadAllBytes(path);
+                if (compressed)
+                {
+                    using (MemoryStream os = new MemoryStream(data))
+                    {
+                        using (MemoryStream ms = new MemoryStream(savedData))
+                        {
+                            Reader r = new Reader(ms);
+                            Lz77Decompress(r, os);
+                        }
+                    }
+                }
+            }
+            return data;
+        }
+
         private static byte[] GetCompressed(int addr)
         {
             var r = ROM.Instance.reader;

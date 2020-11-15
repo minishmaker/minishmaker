@@ -32,27 +32,34 @@ namespace MinishMaker.UI
         {
             var areaName = areaNameBox.Text;
             var roomName = roomNameBox.Text;
-            var p = Project.Instance;
+            var p = Core.Rework.Project.Instance;
             var areaKey = new Tuple<int, int>(areaId, -1);
             var roomKey = new Tuple<int, int>(areaId, roomId);
 
             if (p.roomNames.ContainsKey(areaKey))
             {
-                p.roomNames[areaKey] = areaName;
+                if (!p.roomNames[areaKey].Equals(areaName))
+                {
+                    p.customNames[areaKey] = areaName;
+                }
             }
             else
             {
-                p.roomNames.Add(areaKey, areaName);
+                p.customNames.Add(areaKey, areaName);
             }
-            if(roomId != -1) 
+
+            if (roomId != -1) 
             {
                 if (p.roomNames.ContainsKey(roomKey) )
                 {
-                    p.roomNames[roomKey] = roomName;
+                    if (!p.roomNames[roomKey].Equals(roomName))
+                    {
+                        p.customNames[roomKey] = roomName;
+                    }
                 }
                 else
                 {
-                    p.roomNames.Add(roomKey, roomName);
+                    p.customNames.Add(roomKey, roomName);
                 }
             }
             ((MainWindow)Application.OpenForms[0]).ChangeNodeName(areaId.Hex(), areaName, roomId.Hex(), roomName);

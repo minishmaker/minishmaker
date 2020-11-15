@@ -29,13 +29,13 @@ namespace MinishMaker.Core.Rework
 
         private bool infoLoaded = false;
 
-        private string path;
+        private string path = "";
         public string Path {
             get 
             {
                 if (path.Length == 0)
                 {
-                    path = Project.Instance.projectPath + "/Areas/Area " + StringUtil.AsStringHex2(Id);
+                    path = Project.Instance.ProjectPath + "/Areas/Area " + StringUtil.AsStringHex2(Id);
                 }
                 return path;
             }
@@ -140,7 +140,7 @@ namespace MinishMaker.Core.Rework
 
         public void AddRoom(Room room)
         {
-            
+            rooms.Add(room.Id, room);
         }
 
         public bool HasRooms()

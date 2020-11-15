@@ -41,6 +41,7 @@
 			this.nextListButton = new System.Windows.Forms.Button();
 			this.copyButton = new System.Windows.Forms.Button();
 			this.pasteButton = new System.Windows.Forms.Button();
+			this.elementTable = new System.Windows.Forms.TableLayoutPanel();
 			this.SuspendLayout();
 			// 
 			// indexLabel
@@ -56,7 +57,7 @@
 			// 
 			this.removeButton.Enabled = false;
 			this.removeButton.Location = new System.Drawing.Point(137, 23);
-			this.removeButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.removeButton.Margin = new System.Windows.Forms.Padding(4);
 			this.removeButton.Name = "removeButton";
 			this.removeButton.Size = new System.Drawing.Size(27, 25);
 			this.removeButton.TabIndex = 30;
@@ -68,7 +69,7 @@
 			// 
 			this.newButton.Enabled = false;
 			this.newButton.Location = new System.Drawing.Point(103, 23);
-			this.newButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.newButton.Margin = new System.Windows.Forms.Padding(4);
 			this.newButton.Name = "newButton";
 			this.newButton.Size = new System.Drawing.Size(27, 25);
 			this.newButton.TabIndex = 29;
@@ -80,7 +81,7 @@
 			// 
 			this.prevButton.Enabled = false;
 			this.prevButton.Location = new System.Drawing.Point(8, 23);
-			this.prevButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.prevButton.Margin = new System.Windows.Forms.Padding(4);
 			this.prevButton.Name = "prevButton";
 			this.prevButton.Size = new System.Drawing.Size(27, 25);
 			this.prevButton.TabIndex = 28;
@@ -92,7 +93,7 @@
 			// 
 			this.nextButton.Enabled = false;
 			this.nextButton.Location = new System.Drawing.Point(68, 23);
-			this.nextButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.nextButton.Margin = new System.Windows.Forms.Padding(4);
 			this.nextButton.Name = "nextButton";
 			this.nextButton.Size = new System.Drawing.Size(27, 25);
 			this.nextButton.TabIndex = 27;
@@ -133,7 +134,7 @@
 			// 
 			this.prevListButton.Enabled = false;
 			this.prevListButton.Location = new System.Drawing.Point(276, 23);
-			this.prevListButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.prevListButton.Margin = new System.Windows.Forms.Padding(4);
 			this.prevListButton.Name = "prevListButton";
 			this.prevListButton.Size = new System.Drawing.Size(27, 25);
 			this.prevListButton.TabIndex = 61;
@@ -145,7 +146,7 @@
 			// 
 			this.nextListButton.Enabled = false;
 			this.nextListButton.Location = new System.Drawing.Point(336, 23);
-			this.nextListButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.nextListButton.Margin = new System.Windows.Forms.Padding(4);
 			this.nextListButton.Name = "nextListButton";
 			this.nextListButton.Size = new System.Drawing.Size(27, 25);
 			this.nextListButton.TabIndex = 60;
@@ -157,7 +158,7 @@
 			// 
 			this.copyButton.Enabled = false;
 			this.copyButton.Location = new System.Drawing.Point(137, 231);
-			this.copyButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.copyButton.Margin = new System.Windows.Forms.Padding(4);
 			this.copyButton.Name = "copyButton";
 			this.copyButton.Size = new System.Drawing.Size(69, 25);
 			this.copyButton.TabIndex = 66;
@@ -169,7 +170,7 @@
 			// 
 			this.pasteButton.Enabled = false;
 			this.pasteButton.Location = new System.Drawing.Point(223, 231);
-			this.pasteButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.pasteButton.Margin = new System.Windows.Forms.Padding(4);
 			this.pasteButton.Name = "pasteButton";
 			this.pasteButton.Size = new System.Drawing.Size(69, 25);
 			this.pasteButton.TabIndex = 67;
@@ -177,11 +178,25 @@
 			this.pasteButton.UseVisualStyleBackColor = true;
 			this.pasteButton.Click += new System.EventHandler(this.pasteButton_Click);
 			// 
+			// elementTable
+			// 
+			this.elementTable.ColumnCount = 2;
+			this.elementTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 26F));
+			this.elementTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 74F));
+			this.elementTable.Location = new System.Drawing.Point(8, 55);
+			this.elementTable.Name = "elementTable";
+			this.elementTable.RowCount = 2;
+			this.elementTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.elementTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.elementTable.Size = new System.Drawing.Size(200, 100);
+			this.elementTable.TabIndex = 68;
+			// 
 			// ObjectPlacementEditorWindow
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(379, 260);
+			this.Controls.Add(this.elementTable);
 			this.Controls.Add(this.pasteButton);
 			this.Controls.Add(this.copyButton);
 			this.Controls.Add(this.label9);
@@ -196,7 +211,7 @@
 			this.Controls.Add(this.nextButton);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-			this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Margin = new System.Windows.Forms.Padding(4);
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "ObjectPlacementEditorWindow";
@@ -220,5 +235,6 @@
 		private System.Windows.Forms.Button nextListButton;
 		private System.Windows.Forms.Button copyButton;
 		private System.Windows.Forms.Button pasteButton;
-	}
+        private System.Windows.Forms.TableLayoutPanel elementTable;
+    }
 }

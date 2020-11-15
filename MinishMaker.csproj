@@ -110,6 +110,7 @@
     <Compile Include="Core\Rework\Area.cs" />
     <Compile Include="Core\Rework\MetaTileSet.cs" />
     <Compile Include="Core\Rework\PaletteSet.cs" />
+    <Compile Include="Core\Rework\Project.cs" />
     <Compile Include="Core\Rework\Room.cs" />
     <Compile Include="Core\Rework\RoomMetaData.cs" />
     <Compile Include="UI\AreaEditorWindow.cs">

@@ -13,6 +13,8 @@ namespace MinishMaker.Utilities.Rework
     {
         private static MapManager instance;
         private Dictionary<int, Area> areas;
+
+        private MapManager() { }
         public static MapManager Get()
         {
             if (instance == null)
@@ -34,9 +36,9 @@ namespace MinishMaker.Utilities.Rework
                 var areaKey = new Tuple<int, int>(areaNum, -1);
                 var areaName = "";
 
-                if (Project.Instance.roomNames.ContainsKey(areaKey))
+                if (Core.Rework.Project.Instance.roomNames.ContainsKey(areaKey))
                 {
-                    areaName = Project.Instance.roomNames[areaKey];
+                    areaName = Core.Rework.Project.Instance.roomNames[areaKey];
                 }
 
                 Area area = new Area(areaNum, areaName);
@@ -50,9 +52,9 @@ namespace MinishMaker.Utilities.Rework
                             var roomName = "";
                             var roomKey = new Tuple<int, int>(areaNum, roomNum);
 
-                            if (Project.Instance.roomNames.ContainsKey(roomKey))
+                            if (Core.Rework.Project.Instance.roomNames.ContainsKey(roomKey))
                             {
-                                roomName = Project.Instance.roomNames[roomKey];
+                                roomName = Core.Rework.Project.Instance.roomNames[roomKey];
                             }
 
                             area.AddRoom(new Room(roomNum, roomName, area));

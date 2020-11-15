@@ -15,7 +15,7 @@ namespace MinishMaker.UI.Rework
     public partial class MainWindow : Form
     {
         public static MainWindow instance;
-        private Project project_;
+        private Core.Rework.Project project_;
 
         private Utilities.Rework.MapManager mapManager_;
         private List<SubWindowHolder> subWindows = new List<SubWindowHolder>();
@@ -36,12 +36,12 @@ namespace MinishMaker.UI.Rework
         {
             public int areaIndex;
             public int roomIndex;
-            public DataType type;
+            public Core.Rework.DataType type;
             public int start;
             public int size;
 
 
-            public RepointData(int areaIndex, int roomIndex, DataType type, int start, int size)
+            public RepointData(int areaIndex, int roomIndex, Core.Rework.DataType type, int start, int size)
             {
                 this.areaIndex = areaIndex;
                 this.roomIndex = roomIndex;
@@ -207,12 +207,12 @@ namespace MinishMaker.UI.Rework
                 if (renameWindow != null)
                     renameWindow.Close();
 
-                project_ = newProjectWindow.project;
+                project_ = newProjectWindow.project2;
                 if (project_.Loaded)
                 {
                     LoadProjectData();
                     EnableEditor(true);
-                    statusText.Text = "Created new project: " + project_.projectPath + "/" + project_.projectName + ".mmproj";
+                    statusText.Text = "Created new project: " + project_.ProjectPath + "/" + project_.ProjectName + ".mmproj";
                 }
                 else
                     statusText.Text = "Could not load project.";
@@ -237,13 +237,13 @@ namespace MinishMaker.UI.Rework
 
 
             if (renameWindow != null)
-                renameWindow.Close();
+                renameWindow.Hide();
 
-            subWindows.ForEach(sw => sw.CloseWindow());
+            subWindows.ForEach(sw => sw.HideWindow());
 
             if (project_ == null)
             {
-                project_ = new Project(ofd.FileName);
+                project_ = new Core.Rework.Project(ofd.FileName);
             }
 
             if (project_.Loaded)
@@ -297,7 +297,7 @@ namespace MinishMaker.UI.Rework
 
         private void BuildProject()
         {
-            if (Project.Instance == null)
+            if (project_ == null)
             {
                 MessageBox.Show("No project loaded!");
                 return;
@@ -307,7 +307,7 @@ namespace MinishMaker.UI.Rework
             if (project_.BuildProject())
             {
                 MessageBox.Show("Build Completed!");
-                statusText.Text = "Build Completed. Output file: " + project_.projectPath + "\\" + project_.projectName + ".gba";
+                statusText.Text = "Build Completed. Output file: " + project_.ProjectPath + "\\" + project_.ProjectName + ".gba";
             }
             else
             {
@@ -322,7 +322,7 @@ namespace MinishMaker.UI.Rework
 
         private void LoadMaps()
         {
-            mapManager_ = new Utilities.Rework.MapManager();
+            mapManager_ = Utilities.Rework.MapManager.Get();
 
             roomTreeView.Nodes.Clear();
             // Set up room list
@@ -334,9 +334,9 @@ namespace MinishMaker.UI.Rework
                 var areaName = "Area " + StringUtil.AsStringHex2(area.Id);
                 var areaKey = new Tuple<int, int>(area.Id, -1);
 
-                if (Project.Instance.roomNames.ContainsKey(areaKey))
+                if (project_.roomNames.ContainsKey(areaKey))
                 {
-                    areaName = Project.Instance.roomNames[areaKey];
+                    areaName = project_.roomNames[areaKey];
                 }
 
                 var areaNode = roomTreeView.Nodes.Add(areaName);
@@ -347,9 +347,9 @@ namespace MinishMaker.UI.Rework
                     var roomName = "Room " + StringUtil.AsStringHex2(room.Id);
                     var roomKey = new Tuple<int, int>(area.Id, room.Id);
 
-                    if (Project.Instance.roomNames.ContainsKey(roomKey))
+                    if (project_.roomNames.ContainsKey(roomKey))
                     {
-                        roomName = Project.Instance.roomNames[roomKey];
+                        roomName = project_.roomNames[roomKey];
                     }
 
                     var roomNode = areaNode.Nodes.Add(roomName);
@@ -418,34 +418,18 @@ namespace MinishMaker.UI.Rework
                     break;
                 }
             }
-
-        }
-        public Bitmap OverlayImage(Bitmap baseImage, Bitmap overlay)
-        {
-            Bitmap finalImage = new Bitmap(baseImage.Width, baseImage.Height);
-
-            using (Graphics g = Graphics.FromImage(finalImage))
-            {
-                //set background color
-                g.Clear(Color.Black);
-
-                g.DrawImage(baseImage, new Rectangle(0, 0, baseImage.Width, baseImage.Height));
-                g.DrawImage(overlay, new Rectangle(0, 0, baseImage.Width, baseImage.Height));
-            }
-            //Draw the final image in the gridBox
-            return finalImage;
         }
 
         private void SaveAllChanges()
         {
-            if (Project.Instance == null)
+            if (project_ == null)
                 return;
 
-            Project.Instance.StartSave();
-            Project.Instance.Save();
-            Project.Instance.EndSave();
+            project_.StartSave();
+            project_.Save();
+            project_.EndSave();
 
-            Project.Instance.CreateProjectFile();
+            project_.CreateProjectFile();
 
             MessageBox.Show("Project Saved");
         }
@@ -476,7 +460,7 @@ namespace MinishMaker.UI.Rework
             switch (layer)
             {
                 case ViewLayer.Both:
-                    mapGridBox.Image = OverlayImage(mapLayers[1], mapLayers[0]);
+                    mapGridBox.Image = DrawingUtil.OverlayImage(mapLayers[1], mapLayers[0]);
                     viewLayer = ViewLayer.Both;
                     topTileTab.Enabled = true;
                     bottomTileTab.Enabled = true;
@@ -599,12 +583,12 @@ namespace MinishMaker.UI.Rework
             if (layer == 1 && currentRoom.Bg1Exists)
             {
                 DrawingUtil.DrawTileId(ref mapLayers[0], currentScale, currentRoom.Bg1MetaTiles, currentRoom.MetaData.TileSet, p, currentRoom.MetaData.PaletteSet, tileData, true);
-                Project.Instance.AddPendingChange(new Bg1DataChange(currentRoom.Parent.Id, currentRoom.Id));
+                project_.AddPendingChange(new Bg1DataChange(currentRoom.Parent.Id, currentRoom.Id));
             }
             else if (layer == 2 && currentRoom.Bg2Exists)
             {
                 DrawingUtil.DrawTileId(ref mapLayers[1], currentScale, currentRoom.Bg2MetaTiles, currentRoom.MetaData.TileSet, p, currentRoom.MetaData.PaletteSet, tileData, true);
-                Project.Instance.AddPendingChange(new Bg2DataChange(currentRoom.Parent.Id, currentRoom.Id));
+                project_.AddPendingChange(new Bg2DataChange(currentRoom.Parent.Id, currentRoom.Id));
             }
 
             currentRoom.SetTileData(selectedLayer, pos * 2, selectedTileData);
@@ -649,12 +633,16 @@ namespace MinishMaker.UI.Rework
 
         public void ChangeRoom(int areaId, int roomId)
         {
-            statusRoomIdText.Text = "Room Id:" + roomId.Hex().PadLeft(2, '0');
-            statusAreaIdText.Text = "Area Id:" + areaId.Hex().PadLeft(2, '0');
-
-            var room = Utilities.Rework.MapManager.Get().GetArea(areaId).GetRoom(roomId);
-
-
+            var room = Utilities.Rework.MapManager.Get().GetRoom(areaId, roomId);
+            try
+            {
+                room.LoadRoom();
+            }
+            catch (RoomException ex)
+            {
+                Notify(ex.Message, "Room Unloadable");
+                return;
+            }
             try
             {
                 mapLayers = DrawingUtil.DrawRoom(room);
@@ -666,6 +654,9 @@ namespace MinishMaker.UI.Rework
                 return;
             }
 
+            statusRoomIdText.Text = "Room Id:" + roomId.Hex().PadLeft(2, '0');
+            statusAreaIdText.Text = "Area Id:" + areaId.Hex().PadLeft(2, '0');
+
             currentRoom = room;
 
             selectedTileData = -1;
@@ -673,7 +664,7 @@ namespace MinishMaker.UI.Rework
 
             //0= bg1 (treetops and such)
             //1= bg2 (flooring)
-            mapGridBox.Image = OverlayImage(mapLayers[1], mapLayers[0]);
+            mapGridBox.Image = DrawingUtil.OverlayImage(mapLayers[1], mapLayers[0]);
             tileMaps = DrawingUtil.DrawMetatileImages(room, 16);
             bottomTileGridBox.Image = tileMaps[1];
             topTileGridBox.Image = tileMaps[0];
@@ -726,9 +717,10 @@ namespace MinishMaker.UI.Rework
                 this.subWindow = window;
                 this.toolStripItem = toolItem;
                 this.toolStripButton = toolButton;
-                this.subWindow.FormClosed += new FormClosedEventHandler(Close);
+                this.subWindow.FormClosed += new FormClosedEventHandler(Hide);
                 this.toolStripItem.Click += new EventHandler(Open);
                 this.toolStripButton.Click += new EventHandler(Open);
+                window.FormClosing += new FormClosingEventHandler(Closing); //dont dispose
             }
 
             private void Open(object sender, EventArgs e)
@@ -752,20 +744,29 @@ namespace MinishMaker.UI.Rework
                  }
             }
 
-            public void CloseWindow()
+            public void HideWindow()
+            {
+                Hide(null, null);
+            }
+
+            private void Hide(object sender, FormClosedEventArgs e)
             {
                 if (toolStripItem.Checked)
                 {
-                    subWindow.Close();
+                    subWindow.Hide();
                 }
-            }
-
-            private void Close(object sender, FormClosedEventArgs e)
-            {
                 toolStripItem.Checked = false;
                 subWindow.Cleanup();
             }
-        }
 
+            private void Closing(object sender, FormClosingEventArgs e)
+            {
+                if (e.CloseReason == CloseReason.UserClosing)
+                {
+                    Hide(null, null);
+                    e.Cancel = true;
+                }
+            }
+        }
     }
 }

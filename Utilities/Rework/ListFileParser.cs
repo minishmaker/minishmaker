@@ -15,27 +15,19 @@ namespace MinishMaker.Utilities.Rework
 {
     public class ListFileParser
     {
-        private static ListFileParser instance;
-        private Dictionary<string, Dictionary<int, string>> enums = new Dictionary<string, Dictionary<int, string>>();
+        private static Dictionary<string, Dictionary<int, string>> enums = new Dictionary<string, Dictionary<int, string>>();
+        public static Filter topFilter;
 
-        public static ListFileParser Get()
-        {
-            if (instance == null)
-                instance = new ListFileParser();
-
-            return instance;
-        }
-
-        public void ReadFile()
+        public static void Setup()
         {
             string filterJson = Hjson.HjsonValue.Load("testObjFile").ToString();
             JavaScriptSerializer jsonthingy = new JavaScriptSerializer();
-            Filter topFilter = jsonthingy.Deserialize<Filter>(filterJson);
+            topFilter = jsonthingy.Deserialize<Filter>(filterJson);
             enums = jsonthingy.Deserialize <Dictionary<string, Dictionary<int, string>>>(File.ReadAllText("testEnumFile"));
             ParseFilter(topFilter);
         }
 
-        private void ParseFilter(Filter filter)
+        private static void ParseFilter(Filter filter)
         {
             //children
             foreach (Filter childFilter in filter.children)
@@ -201,12 +193,12 @@ namespace MinishMaker.Utilities.Rework
             }
         }
 
-        public Dictionary<int,string> GetEnum(string enumName)
+        public static Dictionary<int,string> GetEnum(string enumName)
         {
             return enums[enumName];
         }
 
-        private int ParseInt(string numberString)
+        private static int ParseInt(string numberString)
         {
             if (numberString.StartsWith("0x", StringComparison.InvariantCultureIgnoreCase))
             {
@@ -218,7 +210,7 @@ namespace MinishMaker.Utilities.Rework
             }
         }
 
-        private class Filter
+        public class Filter
         {
             public string defaultTargetType = "";
             public int defaultTargetPos = 0;
@@ -235,7 +227,7 @@ namespace MinishMaker.Utilities.Rework
             public Filter parent = null;
         }
 
-        private class FormElement
+        public class FormElement
         {
             public string type;
             public string enumType = "";
