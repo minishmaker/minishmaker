@@ -375,7 +375,6 @@ namespace MinishMaker.UI.Rework
             hexNumberElement.Text = "0x" + value.Hex();
             hexNumberElement.LostFocus += new EventHandler((object o, EventArgs e) => 
                 {
-                    var value = 0;
                     var success = ParseInt(hexNumberElement.Text, ref value);
                     if (!success)
                     {
@@ -403,7 +402,7 @@ namespace MinishMaker.UI.Rework
             numberElement.Text = "" + value;
             numberElement.LostFocus += new EventHandler((object o, EventArgs e) =>
                 {
-                    var success = int.TryParse(numberElement.Text,out var value);
+                    var success = int.TryParse(numberElement.Text, out value);
                     if (!success)
                     {
                         numberElement.Text = ""+GetTargetValue(element.valueType, element.valuePos);
