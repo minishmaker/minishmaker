@@ -81,14 +81,23 @@ namespace MinishMaker.Core.Rework
 
         public int GetTileData(int layer, int position)
         {
-            if (layer == 1)//bg1
+            try
             {
-                return bg1RoomData[position * 2] | bg1RoomData[position * 2 + 1] << 8;
+                switch(layer)
+                {
+                    case 1: //bg1
+                        return bg1RoomData[position * 2] | bg1RoomData[position * 2 + 1] << 8;
+                    case 2: //bg2
+                        return bg2RoomData[position * 2] | bg2RoomData[position * 2 + 1] << 8;
+                    default:
+                        return -1;
+                }
             }
-            if (layer == 2)//bg2
+            catch (IndexOutOfRangeException e)
             {
-                return bg2RoomData[position * 2] | bg2RoomData[position * 2 + 1] << 8;
+                Console.WriteLine($"{e.Message}\nSelected position {position} on layer {layer} out of range.");
             }
+
             return -1;
         }
 
