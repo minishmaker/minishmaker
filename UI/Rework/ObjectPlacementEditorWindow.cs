@@ -223,8 +223,8 @@ namespace MinishMaker.UI.Rework
             
             while (currentFilter.children.Length != 0)
             {
-                var dtt = currentFilter.defaultTargetType;
-                var dtp = currentFilter.defaultTargetPos;
+                var dtt = currentFilter.defaultChildTargetType;
+                var dtp = currentFilter.defaultChildTargetPos - 1;
                 Filter nextFilter = null;
 
                 int defaultDataValue = -1;
@@ -236,7 +236,7 @@ namespace MinishMaker.UI.Rework
                 foreach (var filter in currentFilter.children)
                 {
                     var tt = filter.targetType;
-                    var tp = filter.targetPos;
+                    var tp = filter.targetPos - 1;
 
                     if (filter.targetValues.Length == 0)//default if nothing else is found
                     {
@@ -331,7 +331,7 @@ namespace MinishMaker.UI.Rework
             labelElement.Margin = new Padding(4, 0, 4, 0);
             labelElement.Text = element.label;
             labelElement.Anchor = AnchorStyles.Right;
-            elementTable.Controls.Add(labelElement, element.collumn, element.row);
+            elementTable.Controls.Add(labelElement, element.collumn-1, element.row-1);
         }
 
         private void CreateEnumElement(FormElement element, int tabIndex)
@@ -373,16 +373,7 @@ namespace MinishMaker.UI.Rework
             var hexNumberElement = new TextBox();
             hexNumberElement.TabIndex = tabIndex;
             hexNumberElement.Text = "0x" + value.Hex();
-            hexNumberElement.LostFocus += new EventHandler((object o, EventArgs e) => 
-                {
-                    var success = ParseInt(hexNumberElement.Text, ref value);
-                    if (!success)
-                    {
-                        hexNumberElement.Text = "" + GetTargetValue(element.valueType, element.valuePos);
-                    }
-                    ChangedHandler(element, value);
-                }
-            );
+            hexNumberElement.LostFocus += new EventHandler((object o, EventArgs e) => { TextboxLostFocus(hexNumberElement, element); });
 
             elementTable.Controls.Add(hexNumberElement, collumn, element.row);
         }
@@ -400,18 +391,20 @@ namespace MinishMaker.UI.Rework
             var numberElement = new TextBox();
             numberElement.TabIndex = tabIndex;
             numberElement.Text = "" + value;
-            numberElement.LostFocus += new EventHandler((object o, EventArgs e) =>
-                {
-                    var success = int.TryParse(numberElement.Text, out value);
-                    if (!success)
-                    {
-                        numberElement.Text = ""+GetTargetValue(element.valueType, element.valuePos);
-                    }
-                    ChangedHandler(element, value);
-                }
-            );
+            numberElement.LostFocus += new EventHandler((object o, EventArgs e) => { TextboxLostFocus(numberElement, element); });
 
             elementTable.Controls.Add(numberElement, collumn, element.row);
+        }
+
+        private void TextboxLostFocus(TextBox textBoxElement, FormElement element)
+        {
+            var value = 0;
+            var success = ParseInt(textBoxElement.Text, ref value);
+            if (!success)
+            {
+                textBoxElement.Text = "" + GetTargetValue(element.valueType, element.valuePos);
+            }
+            ChangedHandler(element, value);
         }
 
         private int GetTargetValue(string targetType, int targetPos)

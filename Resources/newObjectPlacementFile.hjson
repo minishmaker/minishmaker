@@ -1,0 +1,549 @@
+	//hjson, because comments are a must to explain stuff
+
+	//targetType is what should be looked at to determine the path through the filters
+	//targetPos is where the data is located (starts at 1)
+	//should a targetType not be defined it will look at the defaultChildTargetType of the filter above it
+	
+	//values for (defaultChild)TargetType are list, bit, byte, short, tri, int
+		//list is the list index in the application, needs no targetPos, first list is 1
+		//bit is 1 bit, (defaultChild)TargetPos is what bit to look at(9 is the 2nd byte its 1st bit)
+		//byte is 1 byte, pos is the byte to look at
+		//short is 2 bytes, pos is the byte to start at(5 get the combined value of the 5th and 6th bytes)
+		//tri (for lack of a better name) is 3 bytes, pos is the byte to start at
+		//int is 4 bytes, pos is the byte to start at
+	
+	//targetValues hold the numbers to filter on in string form, if using hex the string should start with 0x
+	//if there is no targetValues that filter will used when there is no match
+	
+	//elements contains all the form elements to show
+	//element types are enum, text, number, hexNumber and bit
+		//enum creates a dropdown list with all entries of an enum specified in the enum file,
+		//text just creates a text label element
+		//number creates a box for decimal number input
+		//hexNumber creates a box for hexadecimal number input
+		//bit creates a checkbox, valueType is ignored, valuePos is the bit position
+	
+		//valueType uses the values used in (default)TargetType other than list and adds the part type
+		//part is x bits, x determined by valueLength, valuePos is the bit to start at
+	
+		//label is a bit of text that precedes the created element, required when making a text element
+		//enumType is the name of the enum to use in the dropdown list, only used when making an enum element
+		//collumn is the collumn to put the element in
+		//row is the row to put the element in
+	
+	//childrenNames matches the given names with the filters in 'filters' and adds them to the filter.
+	//childrenSetName matches the given name with a set of filters in 'filterSets' and adds them to the filter.
+	//elementNames and elementSetName do the same as the above but for form elements
+	
+	//children contains more filter objects to filter on, once there is no more children the form elements of that filter and all its parents get used
+	
+{
+	//the starting point for filtering
+	"baseFilter":{
+		//first check what list we are on
+		"defaultChildTargetType" : "list", 
+		//add 2 filters to the children of this one
+		"childrenNames" : ["tileType", "defaultList"]
+	},
+	//filters that can be added in by name
+	"filters": {
+		"tileType": {
+			//check the first byte for the tile type in children
+			"defaultChildTargetType" : "Byte",
+			"defaultChildTargetPos" : 1,
+			//4th list(chests and other)
+			"targetValues" : ["4"],
+			"elementSetName" : "list3Base",
+			"childrenNames" : ["chest"]
+		},
+		
+		"chest": {
+			//check 3rd byte for the item in children
+			"defaultChildTargetType" : "Byte",
+			"defaultChildTargetPos" : 3,
+			//chest or big chest
+			"targetValues" : ["2","3"],
+			"elementSet" : "chestBase",
+			"childrenNames" : ["chestKinstone","chestDefault"]
+		},
+		"chestKinstone": {	//kinstone in chest
+			"targetValues" : ["0x5C"],
+			"elementSetName" : "kinstoneChest"
+		},
+		"chestDefault" : {  //any other item
+			"elementSetName" : "defaultChest"
+		},
+		
+		"defaultList": { //no targetValues so default if no matches are found, in this case when its not the chest list
+			//check byte 1 for the object category in children
+			"defaultChildTargetType" : "Byte",
+			"defaultChildTargetPos" : 1,
+			"elementSetName" : "objectTypeBase",
+			"childrenNames" : [ "object", "enemy", "npc", "event", "unknownObject"]
+		},
+		
+		"object": {
+			"defaultChildTargetType" : "byte",
+			"defaultChildTargetPos" : 2,
+			"targetValues" : ["0x6", "0x16"],
+			"elementSetName": "objectBase",
+			"childrenNames":["defaultObject"]
+		},
+		"defaultObject": {
+			"elementNames": ["data3","data4","data5","pixelX","pixelY","flag1","flag2"],
+			"elementSetName": "defaultObject"
+		},
+	
+		
+		"enemy": {
+			"defaultChildTargetType" : "byte",
+			"defaultChildTargetPos" : 2,
+			"targetValues" : ["0x3", "0x13"],
+			"childrenNames" : ["defaultEnemy"],
+			"elementSetName" : "enemyBase"
+		},
+		"defaultEnemy": {
+			"elementNames" : ["data1","data2","data3","data4","data5","pixelX","pixelY","flag1","flag2"]
+		},
+	
+		"npc": {//NPCs
+			"defaultChildTargetType" : "byte",
+			"defaultChildTargetPos" : 2,
+			"targetValues" : ["0x7"],
+			"elementSetName" : "npcBase",
+			"childrenNames" : ["defaultNpc"]
+		},
+		"defaultNpc": {
+			"elementNames" : ["data1","data2","data3","data4","data5","pixelX","pixelY","flag1","flag2"]
+		},
+	
+		"event": {
+			//Events
+			"defaultChildTargetType" : "byte",
+			"defaultChildTargetPos" : 2,
+			"targetValues" : ["0x9"],
+			"elementSetName" : "eventBase",
+			"childrenNames" : ["defaultEvent"]	
+		},
+		"defaultEvent": {
+			"elementNames" : ["data1","data2","data3","data4","data5","pixelX","pixelY","flag1","flag2"]
+		},
+	
+		"unknownObject": {
+			"elementNames" : ["data1","data2","data3","data4","data5"],
+			"elementSetName" : "unknownObject"
+		},
+	},
+	//filterSets that can be added in by name
+	"filterSets":{
+	},
+	//elements that can be added in by name
+	"elements":{
+			"data1":{
+				"type" : "hexNumber",
+				"valueType" : "byte",
+				"valuePos" : 4,
+				"label" : "Data 1:",
+				"collumn" : 1,
+				"row" : 4
+			},
+			"pixelX":{
+				"type" : "hexNumber",
+				"valueType" : "short",
+				"valuePos" : 9
+				"label" : "Pos X (pixel):",
+				"collumn" : 3,
+				"row" : 4
+			},
+			"data2":{
+				"type" : "hexNumber",
+				"valueType" : "byte",
+				"valuePos" : 5,
+				"label" : "Data 2:",
+				"collumn" : 1,
+				"row" : 5
+			},
+			"pixelY":{
+				"type" : "hexNumber",
+				"valueType" : "short",
+				"valuePos" : 11,
+				"label" : "Pos Y (pixel):",
+				"collumn" : 3,
+				"row" : 5
+			},
+			"data3":{
+				"type" : "hexNumber",
+				"valueType" : "byte",
+				"valuePos" : 6,
+				"label" : "Data 3:",
+				"collumn" : 1,
+				"row" : 6
+			},
+			"flag1":{
+				"type" : "hexNumber",
+				"valueType" : "short",
+				"valuePos" : 13,
+				"label" : "Flag 1:",
+				"collumn" : 3,
+				"row" : 6
+			},
+			"data4":{
+				"type" : "hexNumber",
+				"valueType" : "byte",
+				"valuePos" : 7,
+				"label" : "Data 4:",
+				"collumn" : 1,
+				"row" : 7
+			},
+			"flag2":{
+				"type" : "hexNumber",
+				"valueType" : "short",
+				"valuePos" : 15,
+				"label" : "Flag 2:",
+				"collumn" : 3,
+				"row" : 7
+			},
+			"data5":{
+				"type" : "hexNumber",
+				"valueType" : "byte",
+				"valuePos" : 8,
+				"label" : "Data 5:",
+				"collumn" : 1,
+				"row" : 8
+			}
+	},
+	//elementSets that can be added in by name
+	"elementSets":{
+		"list3Base":[
+			{
+				"type" : "enum",
+				"enumType" : "TileEntityTypes",
+				"valueType" : "Byte",
+				"valuePos" : 1,
+				"label" : "Tile type:",
+				"collumn" : 1,
+				"row" : 1
+			},
+			{
+				"type" : "hexNumber",
+				"valueType" : "Byte",
+				"valuePos" : 1,
+				"collumn" : 3,
+				"row" : 1
+			}
+		]
+		"chestBase": [
+			{	//item type dropdown
+				"type" : "enum",
+				"label" : "Item:",
+				"valueType" : "Byte",
+				"valuePos" : 3,
+				"collumn" : 1,
+				"row" : 2
+			},
+			{
+				"type" : "hexNumber",
+				"valueType" : "Byte",
+				"valuePos" : 3,
+				"collumn" : 3,
+				"row" : 2
+			},
+			{	//entity id number
+				"type" : "hexNumber",
+				"label" : "Entity id:",
+				"valueType" : "Byte",
+				"valuePos" : 2,
+				"collumn" : 1,
+				"row" : 5
+			},
+			{ 	//unknown value number box
+				"type" : "hexNumber",
+				"label" : "Extra:",
+				"valueType" : "Short",
+				"valuePos" : 6,
+				"collumn" : 3,
+				"row" : 5
+			},
+			{	//x  position number box
+				"type" : "hexNumber",
+				"label" : "X:",
+				"valueType" : "Part",
+				"valuePos" : 33,
+				"valueLength" : 6,
+				"collumn" : 1,
+				"row" : 6
+			},
+			{	//y position number box
+				"type" : "hexNumber",
+				"label" : "Y:",
+				"valueType" : "Part",
+				"valuePos" : 39,
+				"valueLength" : 6,
+				"collumn" : 3,
+				"row" : 6
+			}
+		],
+		"kinstoneChest": [
+			{	//kinstone type dropdown
+				"type" : "enum",
+				"enumType" : "KinstoneTypes",
+				"label" : "Kinstone type:",
+				"valueType" : "Byte",
+				"valuePos" : 3,
+				"collumn" : 1,
+				"row" : 3
+			},
+			{	//item sub number box
+				"type" : "hexNumber",
+				"valueType" : "Byte",
+				"valuePos" : 3,
+				"collumn" : 3,
+				"row" : 3
+			}
+		],
+		"defaultChest": [
+			{	//item sub number box
+				"type" : "hexNumber",
+				"label" : "Item sub number:",
+				"valueType" : "Byte",
+				"valuePos" : 3,
+				"collumn" : 1,
+				"row" : 4
+			}
+		],
+		
+		"objectTypeBase": [
+			{	//object category dropdown
+				"type" : "enum",
+				"enumType" : "ObjectCategories",
+				"valueType" : "Byte",
+				"valuePos" : 1,
+				"label" : "Object category:",
+				"collumn" : 1,
+				"row" : 1
+			},
+			{	//object category number box (for when an item hasnt been documented yet)
+				"type" : "hexNumber",
+				"valueType" : "Byte",
+				"valuePos" : 1,
+				"collumn" : 3,
+				"row" : 1
+			},
+			{
+				"type" : "hexNumber",
+				"valueType" : "Byte",
+				"valuePos" : 2,
+				"label" : "Object sub:"
+				"collumn" : 4,
+				"row" : 1
+			}
+		],
+	
+		"objectBase": [
+			{
+				"type" : "enum",
+				"enumType" : "Object6Types",
+				"valueType" : "Byte",
+				"valuePos" : 3,
+				"label" : "Object type:",
+				"collumn" : 1,
+				"row" : 2
+			},
+			{
+				"type" : "hexNumber",
+				"valueType" : "Byte",
+				"valuePos" : 3,
+				"collumn" : 3,
+				"row" : 2
+			}
+		],
+		"defaultObject": [
+			{
+				"type" : "hexNumber",
+				"valueType" : "byte",
+				"valuePos" : 4,
+				"label" : "Item type:",
+				"collumn" : 1,
+				"row" : 4
+			},
+			{
+				"type" : "hexNumber",
+				"valueType" : "byte",
+				"valuePos" : 5,
+				"label" : "Item sub:",
+				"collumn" : 1,
+				"row" : 5
+			}
+		],
+		
+		"enemyBase": [ 
+			{
+				"type" : "enum",
+				"enumType" : "EnemyTypes",
+				"valueType" : "Byte",
+				"valuePos" : 3,
+				"label" : "Enemy type:",
+				"collumn" : 1,
+				"row" : 2
+			},
+			{
+				"type" : "hexNumber",
+				"valueType" : "Byte",
+				"valuePos" : 3,
+				"collumn" : 3,
+				"row" : 2
+			}
+		],
+
+		"npcBase": [ 
+			{
+				"type" : "enum",
+				"enumType" : "NPCTypes",
+				"valueType" : "Byte",
+				"valuePos" : 3,
+				"label" : "NPC type:",
+				"collumn" : 1,
+				"row" : 2
+			},
+			{
+				"type" : "hexNumber",
+				"valueType" : "Byte",
+				"valuePos" : 3,
+				"collumn" : 3,
+				"row" : 2
+			}
+		],
+
+		"eventBase": [ 
+			{
+				"type" : "enum",
+				"enumType" : "EventTypes",
+				"valueType" : "Byte",
+				"valuePos" : 3,
+				"label" : "Event type:",
+				"collumn" : 1,
+				"row" : 2
+			},
+			{
+				"type" : "hexNumber",
+				"valueType" : "Byte",
+				"valuePos" : 3,
+				"collumn" : 3,
+				"row" : 2
+			}
+		],
+
+		"unknownObject": [
+			{
+				"type" : "hexNumber",
+				"valueType" : "byte",
+				"valuePos" : 9,
+				"label" : "Data 6:",
+				"collumn" : 3,
+				"row" : 4
+			},
+			{
+				"type" : "hexNumber",
+				"valueType" : "byte",
+				"valuePos" : 10,
+				"label" : "Data 7:",
+				"collumn" : 3,
+				"row" : 5
+			},
+			{
+				"type" : "hexNumber",
+				"valueType" : "byte",
+				"valuePos" : 11,
+				"label" : "Data 8:",
+				"collumn" : 3,
+				"row" : 6
+			},
+			{
+				"type" : "hexNumber",
+				"valueType" : "byte",
+				"valuePos" : 12,
+				"label" : "Data 9:",
+				"collumn" : 3,
+				"row" : 7
+			},
+			{
+				"type" : "hexNumber",
+				"valueType" : "byte",
+				"valuePos" : 13,
+				"label" : "Data 10:",
+				"collumn" : 5,
+				"row" : 4
+			},
+			{
+				"type" : "hexNumber",
+				"valueType" : "byte",
+				"valuePos" : 14,
+				"label" : "Data 11:",
+				"collumn" : 5,
+				"row" : 5
+			},
+			{
+				"type" : "hexNumber",
+				"valueType" : "byte",
+				"valuePos" : 15,
+				"label" : "Data 12:",
+				"collumn" : 5,
+				"row" : 6
+			},
+			{
+				"type" : "hexNumber",
+				"valueType" : "byte",
+				"valuePos" : 16,
+				"label" : "Data 13:",
+				"collumn" : 5,
+				"row" : 7
+			}
+		]
+	}
+
+	"enums":{
+		"ObjectCategories" : {
+			"0x03" : "Enemy",
+			"0x06" : "Object",
+			"0x07" : "NPC",
+			"0x09" : "Event",
+			"0x16" : "Enemy2",
+			"0x16" : "Object2"
+		},
+	
+		"NPCTypes" : {
+			//TODO
+			"0x01" : "Temp"
+		},
+	
+		"Object6Types" : {
+			//TODO
+			"0x01" : "Temp"
+		},
+	
+		"ItemTypes" : {
+			//TODO
+			"0x01" : "Temp"
+		},
+	
+		"KinstoneTypes" : {
+			//TODO
+			"0x01" : "Temp"
+		},
+	
+		"EnemyTypes" : {
+			//TODO
+			"0x01" : "Temp"
+		},
+	
+		"TileEntityTypes" : {
+			"0x00" : "None",
+			"0x02" : "Chest",
+			"0x03" : "Big Chest"
+		},
+		
+		"EventTypes" : {
+			"0x01" : "Temp"
+		}
+	}
+}
