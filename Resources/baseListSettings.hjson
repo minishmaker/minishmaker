@@ -1,5 +1,9 @@
 	//hjson, because comments are a must to explain stuff
-
+	//BE AWARE THAT THIS FILE SHOULD NOT BE EDITED AS IT CAN BE UPDATED
+	//to make changes use the userListSettings.hjson file
+	//any entry in there will either overwrite the ones in here if it has the same name or get added if it does not
+	
+	
 	//targetType is what should be looked at to determine the path through the filters
 	//targetPos is where the data is located (starts at 1)
 	//should a targetType not be defined it will look at the defaultChildTargetType of the filter above it
@@ -28,7 +32,7 @@
 	
 		//label is a bit of text that precedes the created element, required when making a text element
 		//enumType is the name of the enum to use in the dropdown list, only used when making an enum element
-		//collumn is the collumn to put the element in
+		//column is the column to put the element in
 		//row is the row to put the element in
 	
 	//childrenNames matches the given names with the filters in 'filters' and adds them to the filter.
@@ -144,7 +148,7 @@
 				"valueType" : "byte",
 				"valuePos" : 4,
 				"label" : "Data 1:",
-				"collumn" : 1,
+				"column" : 1,
 				"row" : 4
 			},
 			"pixelX":{
@@ -152,7 +156,7 @@
 				"valueType" : "short",
 				"valuePos" : 9
 				"label" : "Pos X (pixel):",
-				"collumn" : 3,
+				"column" : 3,
 				"row" : 4
 			},
 			"data2":{
@@ -160,7 +164,7 @@
 				"valueType" : "byte",
 				"valuePos" : 5,
 				"label" : "Data 2:",
-				"collumn" : 1,
+				"column" : 1,
 				"row" : 5
 			},
 			"pixelY":{
@@ -168,7 +172,7 @@
 				"valueType" : "short",
 				"valuePos" : 11,
 				"label" : "Pos Y (pixel):",
-				"collumn" : 3,
+				"column" : 3,
 				"row" : 5
 			},
 			"data3":{
@@ -176,7 +180,7 @@
 				"valueType" : "byte",
 				"valuePos" : 6,
 				"label" : "Data 3:",
-				"collumn" : 1,
+				"column" : 1,
 				"row" : 6
 			},
 			"flag1":{
@@ -184,7 +188,7 @@
 				"valueType" : "short",
 				"valuePos" : 13,
 				"label" : "Flag 1:",
-				"collumn" : 3,
+				"column" : 3,
 				"row" : 6
 			},
 			"data4":{
@@ -192,7 +196,7 @@
 				"valueType" : "byte",
 				"valuePos" : 7,
 				"label" : "Data 4:",
-				"collumn" : 1,
+				"column" : 1,
 				"row" : 7
 			},
 			"flag2":{
@@ -200,7 +204,7 @@
 				"valueType" : "short",
 				"valuePos" : 15,
 				"label" : "Flag 2:",
-				"collumn" : 3,
+				"column" : 3,
 				"row" : 7
 			},
 			"data5":{
@@ -208,7 +212,7 @@
 				"valueType" : "byte",
 				"valuePos" : 8,
 				"label" : "Data 5:",
-				"collumn" : 1,
+				"column" : 1,
 				"row" : 8
 			}
 	},
@@ -221,14 +225,14 @@
 				"valueType" : "Byte",
 				"valuePos" : 1,
 				"label" : "Tile type:",
-				"collumn" : 1,
+				"column" : 1,
 				"row" : 1
 			},
 			{
 				"type" : "hexNumber",
 				"valueType" : "Byte",
 				"valuePos" : 1,
-				"collumn" : 3,
+				"column" : 3,
 				"row" : 1
 			}
 		]
@@ -238,14 +242,14 @@
 				"label" : "Item:",
 				"valueType" : "Byte",
 				"valuePos" : 3,
-				"collumn" : 1,
+				"column" : 1,
 				"row" : 2
 			},
 			{
 				"type" : "hexNumber",
 				"valueType" : "Byte",
 				"valuePos" : 3,
-				"collumn" : 3,
+				"column" : 3,
 				"row" : 2
 			},
 			{	//entity id number
@@ -253,7 +257,7 @@
 				"label" : "Entity id:",
 				"valueType" : "Byte",
 				"valuePos" : 2,
-				"collumn" : 1,
+				"column" : 1,
 				"row" : 5
 			},
 			{ 	//unknown value number box
@@ -261,7 +265,7 @@
 				"label" : "Extra:",
 				"valueType" : "Short",
 				"valuePos" : 6,
-				"collumn" : 3,
+				"column" : 3,
 				"row" : 5
 			},
 			{	//x  position number box
@@ -270,7 +274,7 @@
 				"valueType" : "Part",
 				"valuePos" : 33,
 				"valueLength" : 6,
-				"collumn" : 1,
+				"column" : 1,
 				"row" : 6
 			},
 			{	//y position number box
@@ -279,7 +283,7 @@
 				"valueType" : "Part",
 				"valuePos" : 39,
 				"valueLength" : 6,
-				"collumn" : 3,
+				"column" : 3,
 				"row" : 6
 			}
 		],
@@ -290,14 +294,14 @@
 				"label" : "Kinstone type:",
 				"valueType" : "Byte",
 				"valuePos" : 3,
-				"collumn" : 1,
+				"column" : 1,
 				"row" : 3
 			},
 			{	//item sub number box
 				"type" : "hexNumber",
 				"valueType" : "Byte",
 				"valuePos" : 3,
-				"collumn" : 3,
+				"column" : 3,
 				"row" : 3
 			}
 		],
@@ -307,7 +311,7 @@
 				"label" : "Item sub number:",
 				"valueType" : "Byte",
 				"valuePos" : 3,
-				"collumn" : 1,
+				"column" : 1,
 				"row" : 4
 			}
 		],
@@ -319,22 +323,27 @@
 				"valueType" : "Byte",
 				"valuePos" : 1,
 				"label" : "Object category:",
-				"collumn" : 1,
+				"column" : 1,
 				"row" : 1
 			},
 			{	//object category number box (for when an item hasnt been documented yet)
 				"type" : "hexNumber",
 				"valueType" : "Byte",
 				"valuePos" : 1,
-				"collumn" : 3,
+				"column" : 3,
 				"row" : 1
 			},
 			{
 				"type" : "hexNumber",
 				"valueType" : "Byte",
 				"valuePos" : 2,
+				"column" : 4,
+				"row" : 2
+			},
+			{
+				"type" : "text",
 				"label" : "Object sub:"
-				"collumn" : 4,
+				"column" : 4,
 				"row" : 1
 			}
 		],
@@ -346,14 +355,14 @@
 				"valueType" : "Byte",
 				"valuePos" : 3,
 				"label" : "Object type:",
-				"collumn" : 1,
+				"column" : 1,
 				"row" : 2
 			},
 			{
 				"type" : "hexNumber",
 				"valueType" : "Byte",
 				"valuePos" : 3,
-				"collumn" : 3,
+				"column" : 3,
 				"row" : 2
 			}
 		],
@@ -363,7 +372,7 @@
 				"valueType" : "byte",
 				"valuePos" : 4,
 				"label" : "Item type:",
-				"collumn" : 1,
+				"column" : 1,
 				"row" : 4
 			},
 			{
@@ -371,7 +380,7 @@
 				"valueType" : "byte",
 				"valuePos" : 5,
 				"label" : "Item sub:",
-				"collumn" : 1,
+				"column" : 1,
 				"row" : 5
 			}
 		],
@@ -383,14 +392,14 @@
 				"valueType" : "Byte",
 				"valuePos" : 3,
 				"label" : "Enemy type:",
-				"collumn" : 1,
+				"column" : 1,
 				"row" : 2
 			},
 			{
 				"type" : "hexNumber",
 				"valueType" : "Byte",
 				"valuePos" : 3,
-				"collumn" : 3,
+				"column" : 3,
 				"row" : 2
 			}
 		],
@@ -402,14 +411,14 @@
 				"valueType" : "Byte",
 				"valuePos" : 3,
 				"label" : "NPC type:",
-				"collumn" : 1,
+				"column" : 1,
 				"row" : 2
 			},
 			{
 				"type" : "hexNumber",
 				"valueType" : "Byte",
 				"valuePos" : 3,
-				"collumn" : 3,
+				"column" : 3,
 				"row" : 2
 			}
 		],
@@ -421,14 +430,14 @@
 				"valueType" : "Byte",
 				"valuePos" : 3,
 				"label" : "Event type:",
-				"collumn" : 1,
+				"column" : 1,
 				"row" : 2
 			},
 			{
 				"type" : "hexNumber",
 				"valueType" : "Byte",
 				"valuePos" : 3,
-				"collumn" : 3,
+				"column" : 3,
 				"row" : 2
 			}
 		],
@@ -439,7 +448,7 @@
 				"valueType" : "byte",
 				"valuePos" : 9,
 				"label" : "Data 6:",
-				"collumn" : 3,
+				"column" : 3,
 				"row" : 4
 			},
 			{
@@ -447,7 +456,7 @@
 				"valueType" : "byte",
 				"valuePos" : 10,
 				"label" : "Data 7:",
-				"collumn" : 3,
+				"column" : 3,
 				"row" : 5
 			},
 			{
@@ -455,7 +464,7 @@
 				"valueType" : "byte",
 				"valuePos" : 11,
 				"label" : "Data 8:",
-				"collumn" : 3,
+				"column" : 3,
 				"row" : 6
 			},
 			{
@@ -463,7 +472,7 @@
 				"valueType" : "byte",
 				"valuePos" : 12,
 				"label" : "Data 9:",
-				"collumn" : 3,
+				"column" : 3,
 				"row" : 7
 			},
 			{
@@ -471,7 +480,7 @@
 				"valueType" : "byte",
 				"valuePos" : 13,
 				"label" : "Data 10:",
-				"collumn" : 5,
+				"column" : 5,
 				"row" : 4
 			},
 			{
@@ -479,7 +488,7 @@
 				"valueType" : "byte",
 				"valuePos" : 14,
 				"label" : "Data 11:",
-				"collumn" : 5,
+				"column" : 5,
 				"row" : 5
 			},
 			{
@@ -487,7 +496,7 @@
 				"valueType" : "byte",
 				"valuePos" : 15,
 				"label" : "Data 12:",
-				"collumn" : 5,
+				"column" : 5,
 				"row" : 6
 			},
 			{
@@ -495,11 +504,11 @@
 				"valueType" : "byte",
 				"valuePos" : 16,
 				"label" : "Data 13:",
-				"collumn" : 5,
+				"column" : 5,
 				"row" : 7
 			}
 		]
-	}
+	},
 
 	"enums":{
 		"ObjectCategories" : {

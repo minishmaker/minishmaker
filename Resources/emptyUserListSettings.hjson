@@ -1,0 +1,27 @@
+﻿	//hjson, because comments are a must to explain stuff
+	//this file should be the one edited to change how things are shown
+	//any entry in here will either overwrite the ones in here if it has the same name or get added if it does not
+	//details about syntax can be found in baseListSettings.hjson which should be inside MinishMaker's resource folder
+	
+	//to change the baseFilter uncomment the baseFilter below and set its properties to what you want
+{
+	//"baseFilter":{
+	//	"defaultChildTargetType" : "list", 
+	//	"childrenNames" : ["tileType", "defaultList"]
+	//},
+
+	"filters": {
+	},
+
+	"filterSets":{
+	},
+
+	"elements":{
+	},
+
+	"elementSets":{
+	},
+
+	"enums":{
+	}
+}

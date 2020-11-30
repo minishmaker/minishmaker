@@ -81,7 +81,7 @@ namespace MinishMaker.UI.Rework
             removeButton.Enabled = currentListEntryAmount != 0;
 
             copyButton.Enabled = true;
-            pasteButton.Enabled = copy.Count != 0;
+            pasteButton.Enabled = copy != null;
 
             currentListEntry = currentRoom.MetaData.GetListInformationEntry(currentListNumber, objectIndex);
             GetRepresentation();
@@ -218,6 +218,10 @@ namespace MinishMaker.UI.Rework
         private void GetRepresentation()
         {
             List<Filter> filters = new List<Filter>();
+            if (ListFileParser.topFilter == null)
+            {
+                ListFileParser.Setup();
+            }
             var currentFilter = ListFileParser.topFilter;
             filters.Add(currentFilter);
             
@@ -228,7 +232,7 @@ namespace MinishMaker.UI.Rework
                 Filter nextFilter = null;
 
                 int defaultDataValue = -1;
-                if (dtt.ToLower() == "list" || dtp != 0)
+                if (dtt.ToLower() == "list" || dtp != -1)
                 {
                     defaultDataValue = GetTargetValue(dtt, dtp);
                 }
@@ -238,13 +242,13 @@ namespace MinishMaker.UI.Rework
                     var tt = filter.targetType;
                     var tp = filter.targetPos - 1;
 
-                    if (filter.targetValues.Length == 0)//default if nothing else is found
+                    if (filter.targetValues.Length == 0 && nextFilter == null)//default if nothing else is found
                     {
                         nextFilter = filter;
                         continue;
                     }
                     int dataValue = 0;
-                    if (defaultDataValue != -1 && tt.ToLower() != "list" && tp == 0) //no type and pos set so use default target type and pos
+                    if (defaultDataValue != -1 && tt.ToLower() != "list" && tp == -1) //no type and pos set so use default target type and pos
                     {
                         dataValue = defaultDataValue;
                     }
@@ -287,13 +291,21 @@ namespace MinishMaker.UI.Rework
             }
             //done filtering, get all elements
             var tabIndex = 30;
-            foreach(var filter in filters)
+            for (int i = elementTable.Controls.Count - 1; i >= 0; --i)
+                elementTable.Controls[i].Dispose();
+
+            elementTable.Controls.Clear();
+            elementTable.RowCount = 0;
+            elementTable.ColumnCount = 0;
+            elementTable.SuspendLayout();
+            foreach (var filter in filters)
             {
                 foreach (var element in filter.elements)
                 {
                     CreateElement(element, ref tabIndex);
                 }
             }
+            elementTable.ResumeLayout();
         }
 
         private void CreateElement(FormElement element, ref int tabIndex)
@@ -312,7 +324,7 @@ namespace MinishMaker.UI.Rework
                     CreateHexNumberElement(element, tabIndex);
                     tabIndex += 1;
                     break;
-                case "label":
+                case "text":
                     CreateLabelElement(element);
                     break;
                 case "xmarker":
@@ -331,61 +343,96 @@ namespace MinishMaker.UI.Rework
             labelElement.Margin = new Padding(4, 0, 4, 0);
             labelElement.Text = element.label;
             labelElement.Anchor = AnchorStyles.Right;
-            elementTable.Controls.Add(labelElement, element.collumn-1, element.row-1);
+
+            elementTable.Controls.Add(labelElement, element.column-1, element.row-1);
         }
 
         private void CreateEnumElement(FormElement element, int tabIndex)
         {
-            var collumn = element.collumn;
+            var column = element.column;
             if(element.label.Length != 0)
             {
                 CreateLabelElement(element);
-                collumn += 1;
+                column += 1;
             }
-            int value = GetTargetValue(element.valueType, element.valuePos);
+            int value = GetTargetValue(element.valueType, element.valuePos - 1);
             var enumSource = ListFileParser.GetEnum(element.enumType);
-            var enumObject = enumSource[value];
+
             var enumElement = new ComboBox();
             enumElement.FormattingEnabled = true;
-            enumElement.DisplayMember = "Value";
-            enumElement.ValueMember = "Key";
-            enumElement.DataSource = new BindingSource(enumSource, null);
+            enumElement.DisplayMember = "entryName";
+            enumElement.ValueMember = "entryId";
             
-            enumElement.SelectedIndex = enumElement.Items.IndexOf(enumObject);
+            foreach(var entryId in enumSource.Keys)
+            {
+                var entryName = enumSource[entryId];
+                var eObj = new enumObject() { entryName = entryName, entryId = entryId };
+                enumElement.Items.Add(eObj);
+                if (entryId == value)
+                {
+                    enumElement.SelectedItem = eObj;
+                }
+            }
+
+            if(enumElement.SelectedItem == null)
+            {
+                enumElement.SelectedItem = enumElement.Items[0];
+            }
+
+            enumElement.DropDownStyle = ComboBoxStyle.DropDownList;
             enumElement.TabIndex = tabIndex;
 
             //TODO: add change logic
-            enumElement.SelectedIndexChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(element, (int)enumElement.SelectedValue); });
+            enumElement.SelectedIndexChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(element, ((enumObject)enumElement.SelectedItem).entryId); });
 
-            elementTable.Controls.Add(enumElement, collumn, element.row);
+            elementTable.Controls.Add(enumElement, column-1, element.row-1);
         }
 
         private void CreateHexNumberElement(FormElement element, int tabIndex)
         {
-            int value = GetTargetValue(element.valueType, element.valuePos);
-            var collumn = element.collumn;
+            int value = GetTargetValue(element.valueType, element.valuePos - 1);
+            var column = element.column;
             if (element.label.Length != 0)
             {
                 CreateLabelElement(element);
-                collumn += 1;
+                column += 1;
             }
 
             var hexNumberElement = new TextBox();
             hexNumberElement.TabIndex = tabIndex;
             hexNumberElement.Text = "0x" + value.Hex();
             hexNumberElement.LostFocus += new EventHandler((object o, EventArgs e) => { TextboxLostFocus(hexNumberElement, element); });
+            var size = 0;
+            switch(element.valueType.ToLower())
+            {
+                case "byte":
+                    size = 16;
+                    break;
+                case "short":
+                    size = 32;
+                    break;
+                case "tri":
+                    size = 48;
+                    break;
+                case "int":
+                    size = 64;
+                    break;
+                default:
+                    break;
+            }
+            hexNumberElement.Size = new Size(16+size, hexNumberElement.Size.Height);
 
-            elementTable.Controls.Add(hexNumberElement, collumn, element.row);
+            elementTable.Controls.Add(hexNumberElement, column-1, element.row-1);
         }
 
         private void CreateNumberElement(FormElement element, int tabIndex)
         {
-            var value = GetTargetValue(element.valueType, element.valuePos);
-            var collumn = element.collumn;
+            var value = GetTargetValue(element.valueType, element.valuePos - 1);
+            var column = element.column;
             if (element.label.Length != 0)
             {
                 CreateLabelElement(element);
-                collumn += 1;
+                column += 1;
             }
 
             var numberElement = new TextBox();
@@ -393,7 +440,7 @@ namespace MinishMaker.UI.Rework
             numberElement.Text = "" + value;
             numberElement.LostFocus += new EventHandler((object o, EventArgs e) => { TextboxLostFocus(numberElement, element); });
 
-            elementTable.Controls.Add(numberElement, collumn, element.row);
+            elementTable.Controls.Add(numberElement, column-1, element.row-1);
         }
 
         private void TextboxLostFocus(TextBox textBoxElement, FormElement element)
@@ -402,7 +449,7 @@ namespace MinishMaker.UI.Rework
             var success = ParseInt(textBoxElement.Text, ref value);
             if (!success)
             {
-                textBoxElement.Text = "" + GetTargetValue(element.valueType, element.valuePos);
+                textBoxElement.Text = "" + GetTargetValue(element.valueType, element.valuePos - 1);
             }
             ChangedHandler(element, value);
         }
@@ -438,4 +485,10 @@ namespace MinishMaker.UI.Rework
             return dataValue;
         }
     }
+}
+
+public class enumObject
+{
+    public string entryName { get; set; }
+    public int entryId { get; set; }
 }

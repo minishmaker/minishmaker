@@ -301,6 +301,12 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <EmbeddedResource Include="Resources\emptyUserListSettings.hjson">
+      <SubType>Component</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\baseListSettings.hjson">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

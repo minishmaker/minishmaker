@@ -449,6 +449,7 @@ namespace MinishMaker.Core.Rework
 
             var dat = new List<byte>(data.Skip(startIndex).Take(0x10).ToArray());
             list.Add(dat);
+            listInformation[G_listLoopVar] = list;
         }
 
         #endregion

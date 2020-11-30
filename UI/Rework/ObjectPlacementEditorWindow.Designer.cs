@@ -114,7 +114,7 @@
 			// label9
 			// 
 			this.label9.AutoSize = true;
-			this.label9.Location = new System.Drawing.Point(285, 4);
+			this.label9.Location = new System.Drawing.Point(414, 4);
 			this.label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
 			this.label9.Name = "label9";
 			this.label9.Size = new System.Drawing.Size(67, 17);
@@ -124,7 +124,7 @@
 			// listIndexLabel
 			// 
 			this.listIndexLabel.AutoSize = true;
-			this.listIndexLabel.Location = new System.Drawing.Point(311, 28);
+			this.listIndexLabel.Location = new System.Drawing.Point(440, 28);
 			this.listIndexLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
 			this.listIndexLabel.Name = "listIndexLabel";
 			this.listIndexLabel.Size = new System.Drawing.Size(0, 17);
@@ -133,7 +133,7 @@
 			// prevListButton
 			// 
 			this.prevListButton.Enabled = false;
-			this.prevListButton.Location = new System.Drawing.Point(276, 23);
+			this.prevListButton.Location = new System.Drawing.Point(405, 23);
 			this.prevListButton.Margin = new System.Windows.Forms.Padding(4);
 			this.prevListButton.Name = "prevListButton";
 			this.prevListButton.Size = new System.Drawing.Size(27, 25);
@@ -145,7 +145,7 @@
 			// nextListButton
 			// 
 			this.nextListButton.Enabled = false;
-			this.nextListButton.Location = new System.Drawing.Point(336, 23);
+			this.nextListButton.Location = new System.Drawing.Point(465, 23);
 			this.nextListButton.Margin = new System.Windows.Forms.Padding(4);
 			this.nextListButton.Name = "nextListButton";
 			this.nextListButton.Size = new System.Drawing.Size(27, 25);
@@ -157,7 +157,7 @@
 			// copyButton
 			// 
 			this.copyButton.Enabled = false;
-			this.copyButton.Location = new System.Drawing.Point(137, 231);
+			this.copyButton.Location = new System.Drawing.Point(207, 23);
 			this.copyButton.Margin = new System.Windows.Forms.Padding(4);
 			this.copyButton.Name = "copyButton";
 			this.copyButton.Size = new System.Drawing.Size(69, 25);
@@ -169,7 +169,7 @@
 			// pasteButton
 			// 
 			this.pasteButton.Enabled = false;
-			this.pasteButton.Location = new System.Drawing.Point(223, 231);
+			this.pasteButton.Location = new System.Drawing.Point(293, 23);
 			this.pasteButton.Margin = new System.Windows.Forms.Padding(4);
 			this.pasteButton.Name = "pasteButton";
 			this.pasteButton.Size = new System.Drawing.Size(69, 25);
@@ -180,22 +180,26 @@
 			// 
 			// elementTable
 			// 
+			this.elementTable.AutoSize = true;
+			this.elementTable.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.elementTable.ColumnCount = 2;
-			this.elementTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 26F));
-			this.elementTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 74F));
+			this.elementTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.elementTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.elementTable.GrowStyle = System.Windows.Forms.TableLayoutPanelGrowStyle.AddColumns;
 			this.elementTable.Location = new System.Drawing.Point(8, 55);
+			this.elementTable.Margin = new System.Windows.Forms.Padding(0);
 			this.elementTable.Name = "elementTable";
 			this.elementTable.RowCount = 2;
-			this.elementTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.elementTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.elementTable.Size = new System.Drawing.Size(200, 100);
+			this.elementTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.elementTable.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.elementTable.Size = new System.Drawing.Size(0, 0);
 			this.elementTable.TabIndex = 68;
 			// 
 			// ObjectPlacementEditorWindow
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(379, 260);
+			this.ClientSize = new System.Drawing.Size(511, 309);
 			this.Controls.Add(this.elementTable);
 			this.Controls.Add(this.pasteButton);
 			this.Controls.Add(this.copyButton);

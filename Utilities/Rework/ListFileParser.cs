@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,27 +19,122 @@ namespace MinishMaker.Utilities.Rework
     {
         private static Dictionary<string, Dictionary<int, string>> enums = new Dictionary<string, Dictionary<int, string>>();
         public static Filter topFilter;
-        private static ReplacableHolder holder;
+        private static ListSettings baseSettings;
+
         public static void Setup()
         {
-            
-            string holderJson = Hjson.HjsonValue.Load(Project.Instance.ProjectPath+"\\newObjectPlacementFile.hjson").ToString();
-            JavaScriptSerializer jsonthingy = new JavaScriptSerializer();
+            JavaScriptSerializer jss = new JavaScriptSerializer();
+            string settingContents;
+            using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("MinishMaker.Resources.baseListSettings.hjson"))
+            {
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    settingContents = reader.ReadToEnd();
+                }
+            }
 
-            holder = jsonthingy.Deserialize<ReplacableHolder>(holderJson);
+            if (!File.Exists(Project.Instance.ProjectPath + "\\userListSettings.hjson"))
+            {
+                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("MinishMaker.Resources.emptyUserListSettings.hjson"))
+                {
+                    using (StreamReader reader = new StreamReader(stream))
+                    {
+                        string baseUserSettings = reader.ReadToEnd();
+                        File.WriteAllText(Project.Instance.ProjectPath + "\\userListSettings.hjson", baseUserSettings);
+                    }
+                }
+            }
+            string baseJson = Hjson.HjsonValue.Parse(settingContents).ToString(); // always load the application version
+            string userJson = Hjson.HjsonValue.Load(Project.Instance.ProjectPath + "\\userListSettings.hjson").ToString();
+
+            baseSettings = jss.Deserialize<ListSettings>(baseJson);
+            var userChanges = jss.Deserialize<ListSettings>(userJson);
+            if(userChanges.baseFilter != null)
+            {
+                baseSettings.baseFilter = userChanges.baseFilter;
+            }
+
+            foreach (KeyValuePair<string,Filter> f in userChanges.filters)
+            {
+                if(baseSettings.filters.ContainsKey(f.Key)) {
+                    baseSettings.filters[f.Key] = f.Value;
+                } else {
+                    baseSettings.filters.Add(f.Key, f.Value);
+                }
+            }
+
+            foreach (KeyValuePair<string, Filter[]> f in userChanges.filterSets)
+            {
+                if (baseSettings.filterSets.ContainsKey(f.Key))
+                {
+                    baseSettings.filterSets[f.Key] = f.Value;
+                }
+                else
+                {
+                    baseSettings.filterSets.Add(f.Key, f.Value);
+                }
+            }
+
+            foreach (KeyValuePair<string, FormElement> f in userChanges.elements)
+            {
+                if (baseSettings.elements.ContainsKey(f.Key))
+                {
+                    baseSettings.elements[f.Key] = f.Value;
+                }
+                else
+                {
+                    baseSettings.elements.Add(f.Key, f.Value);
+                }
+            }
+
+            foreach (KeyValuePair<string, FormElement[]> f in userChanges.elementSets)
+            {
+                if (baseSettings.elementSets.ContainsKey(f.Key))
+                {
+                    baseSettings.elementSets[f.Key] = f.Value;
+                }
+                else
+                {
+                    baseSettings.elementSets.Add(f.Key, f.Value);
+                }
+            }
+
+            foreach (KeyValuePair<string, Dictionary<string,string>> f in userChanges.enums)
+            {
+                if (baseSettings.enums.ContainsKey(f.Key))
+                {
+                    baseSettings.enums[f.Key] = f.Value;
+                }
+                else
+                {
+                    baseSettings.enums.Add(f.Key, f.Value);
+                }
+            }
+
+            foreach (KeyValuePair<string, Filter> f in userChanges.filters)
+            {
+                if (baseSettings.filters.ContainsKey(f.Key))
+                {
+                    baseSettings.filters[f.Key] = f.Value;
+                }
+                else
+                {
+                    baseSettings.filters.Add(f.Key, f.Value);
+                }
+            }
             ConvertEnums();
-            ParseFilter(holder.baseFilter);
-            topFilter = holder.baseFilter;
+            ParseFilter(baseSettings.baseFilter);
+            topFilter = baseSettings.baseFilter;
         }
 
         private static void ConvertEnums()
         {
-            foreach(var typeKey in holder.enums.Keys) {
+            foreach(var typeKey in baseSettings.enums.Keys) {
                 var dict = new Dictionary<int, string>();
-                foreach(var key in holder.enums[typeKey].Keys)
+                foreach(var key in baseSettings.enums[typeKey].Keys)
                 {
                     var intKey = ParseInt(key);
-                    var value = holder.enums[typeKey][key];
+                    var value = baseSettings.enums[typeKey][key];
                     dict.Add(intKey, value);
                 }
                 enums.Add(typeKey, dict);
@@ -50,9 +146,9 @@ namespace MinishMaker.Utilities.Rework
             var childTotal = filter.children.Count();
             var chId = childTotal;
             childTotal += filter.childrenNames.Count();
-            if (holder.filterSets.ContainsKey(filter.childrenSetName))
+            if (baseSettings.filterSets.ContainsKey(filter.childrenSetName))
             {
-                childTotal = holder.filterSets[filter.childrenSetName].Count();
+                childTotal = baseSettings.filterSets[filter.childrenSetName].Count();
             }
 
             var newFilterArr = new Filter[childTotal];
@@ -60,23 +156,23 @@ namespace MinishMaker.Utilities.Rework
 
             foreach(string childString in filter.childrenNames)
             {
-                if (!holder.filters.ContainsKey(childString))
+                if (!baseSettings.filters.ContainsKey(childString))
                 {
                     throw new ArgumentException($"No filter with the name {childString} exists within filters");
                 }
 
-                newFilterArr[chId] = holder.filters[childString];
+                newFilterArr[chId] = baseSettings.filters[childString];
                 chId++;
             }
 
             if(filter.childrenSetName != "")
             {
-                if(!holder.filterSets.ContainsKey(filter.childrenSetName))
+                if(!baseSettings.filterSets.ContainsKey(filter.childrenSetName))
                 {
                     throw new ArgumentException($"No filter set with the name {filter.childrenSetName} exists within filterSets");
                 }
                 
-                var filters = holder.filterSets[filter.childrenSetName];
+                var filters = baseSettings.filterSets[filter.childrenSetName];
                 foreach (var setFilter in filters)
                 {
                     newFilterArr[chId] = setFilter;
@@ -179,9 +275,9 @@ namespace MinishMaker.Utilities.Rework
             var elementTotal = filter.elements.Count();
             var elId = elementTotal;
             elementTotal += filter.elementNames.Count();
-            if (holder.elementSets.ContainsKey(filter.elementSetName))
+            if (baseSettings.elementSets.ContainsKey(filter.elementSetName))
             {
-                elementTotal += holder.elementSets[filter.elementSetName].Count();
+                elementTotal += baseSettings.elementSets[filter.elementSetName].Count();
             }
 
             var newElementArr = new FormElement[elementTotal];
@@ -189,23 +285,23 @@ namespace MinishMaker.Utilities.Rework
 
             foreach (string elementString in filter.elementNames)
             {
-                if (!holder.elements.ContainsKey(elementString))
+                if (!baseSettings.elements.ContainsKey(elementString))
                 {
                     throw new ArgumentException($"No element with the name {elementString} exists within elements");
                 }
 
-                newElementArr[elId] = holder.elements[elementString];
+                newElementArr[elId] = baseSettings.elements[elementString];
                 elId++;
             }
 
             if (filter.elementSetName !="")
             {
-                if (!holder.elementSets.ContainsKey(filter.elementSetName))
+                if (!baseSettings.elementSets.ContainsKey(filter.elementSetName))
                 {
                     throw new ArgumentException($"No element set with the name {filter.elementSetName} exists within elementSets");
                 }
 
-                var elements = holder.elementSets[filter.elementSetName];
+                var elements = baseSettings.elementSets[filter.elementSetName];
                 foreach (var setElement in elements)
                 {
                     newElementArr[elId] = setElement;
@@ -217,9 +313,9 @@ namespace MinishMaker.Utilities.Rework
 
             foreach (FormElement element in filter.elements)
             {
-                if (element.collumn <= 0)
+                if (element.column <= 0)
                 {
-                    throw new ArgumentException("The collumn for a formElement has to be specified at a value of 1 or higher.");
+                    throw new ArgumentException("The column for a formElement has to be specified at a value of 1 or higher.");
                 }
 
                 if (element.row <= 0)
@@ -281,7 +377,7 @@ namespace MinishMaker.Utilities.Rework
                     }
                 }
 
-                if (element.valueType.Equals("part", StringComparison.InvariantCultureIgnoreCase))
+                if (!element.type.Equals("text", StringComparison.InvariantCultureIgnoreCase) && element.valueType.Equals("part", StringComparison.InvariantCultureIgnoreCase))
                 {
                     if(element.valueLength <= 0)
                     {
@@ -309,9 +405,9 @@ namespace MinishMaker.Utilities.Rework
         }
 
 
-        public class ReplacableHolder
+        public class ListSettings
         {
-            public Filter baseFilter;
+            public Filter baseFilter = null;
             public Dictionary<string, Filter> filters;
             public Dictionary<string, Filter[]> filterSets;
             public Dictionary<string, FormElement> elements;
@@ -352,7 +448,7 @@ namespace MinishMaker.Utilities.Rework
             public string label = "";
 
             public int row = 0;
-            public int collumn = 0;
+            public int column = 0;
         }
     }
 }
