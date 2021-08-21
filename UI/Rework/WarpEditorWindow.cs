@@ -472,7 +472,7 @@ namespace MinishMaker.UI.Rework
 
             changeAction.Invoke();
 
-            Project.Instance.AddPendingChange(new WarpDataChange(currentRoom.Parent.Id, currentRoom.Id));
+            Project.Instance.AddPendingChange(new Core.ChangeTypes.Rework.WarpDataChange(currentRoom.Parent.Id, currentRoom.Id));
         }
 
         //because why type the same 4 times

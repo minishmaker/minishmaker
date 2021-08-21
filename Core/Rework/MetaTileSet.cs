@@ -13,18 +13,17 @@ namespace MinishMaker.Core.Rework
             var typePath = filePath;
             if (isBg1)
             {
-                setPath += "/" + DataType.bg1MetaTileSet + "Dat.bin";
-                typePath += "/" + DataType.bg1MetaTileType + "Dat.bin";
+                setPath += "/" + DataType.bgMetaTileSet + "1Dat.bin";
+                typePath += "/" + DataType.bgMetaTileType + "1Dat.bin";
             }
-
-            if (isBg1)
+            else
             {
-                setPath += "/" + DataType.bg2MetaTileSet + "Dat.bin";
-                typePath += "/" + DataType.bg2MetaTileType + "Dat.bin";
+                setPath += "/" + DataType.bgMetaTileSet + "2Dat.bin";
+                typePath += "/" + DataType.bgMetaTileType + "2Dat.bin";
             }
 
-            metaTileSetData = DataHelper.GetSavedData(setPath, true, addrData.size);
-            metaTileTypeData = DataHelper.GetSavedData(typePath, true, metaTypes.size);
+            metaTileSetData = DataHelper.GetFromSavedData(setPath, true, addrData.size);
+            metaTileTypeData = DataHelper.GetFromSavedData(typePath, true, metaTypes.size);
 
             if (metaTileSetData == null)
             {

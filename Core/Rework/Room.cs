@@ -166,56 +166,65 @@ namespace MinishMaker.Core.Rework
             }
         }
 
-        public long GetSaveData(ref byte[] data, DataType type)
+        public long GetSaveData(ref byte[] data, ChangeTypes.Rework.Change change)
         {
-            switch (type)
+            switch (change.changeType)
             {
-                case DataType.bg1Data:
-                    return DataHelper.CompressData(ref data, bg1RoomData);
+                case DataType.bgData:
+                    if (change.identifier == 1) 
+                    {
+                        return DataHelper.CompressData(ref data, bg1RoomData); 
+                    }
+                    else if (change.identifier == 2)
+                    { 
+                        return DataHelper.CompressData(ref data, bg2RoomData);
+                    }
+                    break;
 
-                case DataType.bg2Data:
-                    return DataHelper.CompressData(ref data, bg2RoomData);
-
-                case DataType.chestData:
-                    data[0] = 4;
-                    return MetaData.BytifyListInformation(ref data);
-
-                case DataType.bg1MetaTileSet:
-                    return bg1MetaTiles.CompressMetaTileSet(ref data);
-                case DataType.bg2MetaTileSet:
-                    return bg2MetaTiles.CompressMetaTileSet(ref data);
-
+                case DataType.bgMetaTileSet:
+                    if (change.identifier == 1)
+                    {
+                        return bg1MetaTiles.CompressMetaTileSet(ref data);
+                    }
+                    else if (change.identifier == 2)
+                    {
+                        return bg2MetaTiles.CompressMetaTileSet(ref data);
+                    }
+                    break;
                 case DataType.listData:
-                    return MetaData.BytifyListInformation(ref data);
+                    return MetaData.BytifyListInformation(ref data, change.identifier);
 
                 case DataType.warpData:
                     return MetaData.BytifyWarpInformation(ref data);
 
-                case DataType.bg1MetaTileType:
-                    return bg1MetaTiles.CompressMetaTileTypes(ref data);
-                case DataType.bg2MetaTileType:
-                    return bg2MetaTiles.CompressMetaTileTypes(ref data);
+                case DataType.bgMetaTileType:
+                    if (change.identifier == 1)
+                    {
+                        return bg1MetaTiles.CompressMetaTileTypes(ref data);
+                    }
+                    else if (change.identifier == 2)
+                    {
+                        return bg2MetaTiles.CompressMetaTileTypes(ref data);
+                    }
+                    break;
                 
-                    case DataType.roomMetaData:
+                case DataType.roomMetaData:
                     return GetRoomSpecifics(ref data);
 
-                case DataType.bg1TileSet:
-                    return MetaData.TileSet.GetCompressedTileSetData(ref data, TileSet.TileSetDataType.BG1);
-                case DataType.bg2TileSet:
-                    return MetaData.TileSet.GetCompressedTileSetData(ref data, TileSet.TileSetDataType.BG2);
-                case DataType.commonTileSet:
-                    return MetaData.TileSet.GetCompressedTileSetData(ref data, TileSet.TileSetDataType.COMMON);
+                case DataType.tileSet:
+                    return MetaData.TileSet.GetCompressedTileSetData(ref data, (TileSet.TileSetDataType)change.identifier);
                 default:
-                    return 0;
+                    throw new ArgumentOutOfRangeException("The change is not correct: " + change);
             }
+            throw new ArgumentOutOfRangeException("The change identifier is not correct: " + change.identifier);
         }
 
-        public int GetPointerLoc(DataType type)
+        public int GetPointerLoc(ChangeTypes.Rework.Change change)
         {
             if (MetaData == null)
                 LoadRoom();
 
-            return MetaData.GetPointerLoc(type);
+            return MetaData.GetPointerLoc(change);
         }
 
         public long GetRoomSpecifics(ref byte[] data)
@@ -287,17 +296,17 @@ namespace MinishMaker.Core.Rework
             if (Bg1Exists)
             {
                 bg1RoomData = bg1New;
-                Project.Instance.AddPendingChange(new ChangeTypes.Bg1DataChange(this.Parent.Id, this.Id));
+                Project.Instance.AddPendingChange(new ChangeTypes.Rework.BgDataChange(this.Parent.Id, this.Id, 1));
             }
 
             if (Bg2Exists)
             {
                 bg2RoomData = bg2New;
-                Project.Instance.AddPendingChange(new ChangeTypes.Bg2DataChange(this.Parent.Id, this.Id));
+                Project.Instance.AddPendingChange(new ChangeTypes.Rework.BgDataChange(this.Parent.Id, this.Id, 2));
             }
 
             MetaData.SetRoomSize(xdim, ydim);
-            Project.Instance.AddPendingChange(new ChangeTypes.RoomMetadataChange(this.Parent.Id, this.Id));
+            Project.Instance.AddPendingChange(new ChangeTypes.Rework.RoomMetadataChange(this.Parent.Id, this.Id));
         }
 
     }

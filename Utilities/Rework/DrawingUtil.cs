@@ -236,8 +236,6 @@ namespace MinishMaker.Utilities
                         //itteration						0	1	2	3	4	5	6	7	-	0	1	2	3	4	5	6	7
                         int posX = hflip ? 6 - x : x; //	6+7	4+5	2+3	0+1	x	x	x	x	or	0+1	2+3	4+5	6+7	x	x	x	x
                         int posY = vflip ? 7 - y : y; //	7	6	5	4	3	2	1	0	or	0	1	2	3	4	5	6	7 
-                        posX += p.X;
-                        posY += p.Y;
 
                         int colorData = data[dataPos];
                         int data1 = hflip ? colorData >> 4 : colorData & 0x0F; // /16 for last 4 bits or & 15 for the first 4 bits
@@ -252,20 +250,20 @@ namespace MinishMaker.Utilities
 
                         if (color1.A > 0)//if see through dont draw white
                         {
-                            SetScaledPixel(posX, posY, color1, scale, ref bd);
+                            SetScaledPixel(p.X, p.Y, posX, posY, color1, scale, ref bd);
                         }
                         else if (overwrite)
                         {
-                            SetScaledPixel(posX, posY, Color.Transparent, scale, ref bd);
+                            SetScaledPixel(p.X, p.Y, posX, posY, Color.Transparent, scale, ref bd);
                            
                         }
                         if (color2.A > 0)//if see through dont draw white
                         {
-                            SetScaledPixel(posX + 1, posY, color2, scale, ref bd);
+                            SetScaledPixel(p.X, p.Y, posX + 1, posY, color2, scale, ref bd);
                         }
                         else if (overwrite)
                         {
-                            SetScaledPixel(posX + 1, posY, Color.Transparent, scale, ref bd);
+                            SetScaledPixel(p.X, p.Y, posX + 1, posY, Color.Transparent, scale, ref bd);
                         }
                         dataPos++;
                     }
@@ -293,7 +291,7 @@ namespace MinishMaker.Utilities
                         var a = readPixels[(x * 4) + (y * rbd.Stride) + 3]; //A
                         Color c = Color.FromArgb(a, r, g, b);
 
-                        SetScaledPixel(x, y, c, newScale, ref wbd);
+                        SetScaledPixel(0, 0, x, y, c, newScale, ref wbd);
                     }
                 }
             }
@@ -314,35 +312,35 @@ namespace MinishMaker.Utilities
                 {
                     var color = b.GetPixel(rect.X + i, rect.Y + j);
 
-                    SetScaledPixel(i, j, color, scale, ref bd);
+                    SetScaledPixel(0, 0, i, j, color, scale, ref bd);
                 }
             }
             return ret;
         }
 
         public static unsafe void SetPixel(int x, int y, Color c, ref BitmapData bd)
-            {
-                byte* pixels = (byte*)bd.Scan0.ToPointer();
-                pixels[(x * 4) + (y * bd.Stride) + 0] = c.B; //B
-                pixels[(x * 4) + (y * bd.Stride) + 1] = c.G; //G
-                pixels[(x * 4) + (y * bd.Stride) + 2] = c.R; //R
-                pixels[(x * 4) + (y * bd.Stride) + 3] = c.A; //A
-            }
+        {
+            byte* pixels = (byte*)bd.Scan0.ToPointer();
+            pixels[(x * 4) + (y * bd.Stride) + 0] = c.B; //B
+            pixels[(x * 4) + (y * bd.Stride) + 1] = c.G; //G
+            pixels[(x * 4) + (y * bd.Stride) + 2] = c.R; //R
+            pixels[(x * 4) + (y * bd.Stride) + 3] = c.A; //A
+        }
 
-        public static void SetScaledPixel(int x, int y, Color c, int scale, ref BitmapData bd)
+        public static void SetScaledPixel(int startX, int startY, int x, int y, Color c, int scale, ref BitmapData bd)
         {
             if(scale == 1)
             {
-                SetPixel(x, y, c, ref bd);
+                SetPixel(startX+x, startY+y, c, ref bd);
                 return;
             }
 
             for (int sy = 0; sy < scale; sy++)
             {
-                var newY = y * scale + sy;
+                var newY = startY+(y * scale + sy);
                 for (int sx = 0; sx < scale; sx++)
                 {
-                    var newX = x * scale + sx;
+                    var newX = startX+ (x * scale + sx);
                     SetPixel(newX, newY, c, ref bd);
                 }
             }
@@ -571,8 +569,6 @@ namespace MinishMaker.Utilities
                         //itteration						0	1	2	3	4	5	6	7	-	0	1	2	3	4	5	6	7
                         int posX = hflip ? 6 - x : x; //	6+7	4+5	2+3	0+1	x	x	x	x	or	0+1	2+3	4+5	6+7	x	x	x	x
                         int posY = vflip ? 7 - y : y; //	7	6	5	4	3	2	1	0	or	0	1	2	3	4	5	6	7 
-                        posX += p.X;
-                        posY += p.Y;
 
                         int colorData = data[dataPos];
                         int data1 = hflip ? colorData >> 4 : colorData & 0x0F; // /16 for last 4 bits or & 15 for the first 4 bits
@@ -587,20 +583,20 @@ namespace MinishMaker.Utilities
 
                         if (color1.A > 0)//if see through dont draw white
                         {
-                            SetScaledPixel(posX, posY, color1, scale, ref bd);
+                            SetScaledPixel(p.X, p.Y, posX, posY, color1, scale, ref bd);
                         }
                         else if (overwrite)
                         {
-                            SetScaledPixel(posX, posY, Color.Transparent, scale, ref bd);
+                            SetScaledPixel(p.X, p.Y, posX, posY, Color.Transparent, scale, ref bd);
 
                         }
                         if (color2.A > 0)//if see through dont draw white
                         {
-                            SetScaledPixel(posX + 1, posY, color2, scale, ref bd);
+                            SetScaledPixel(p.X, p.Y, posX + 1, posY, color2, scale, ref bd);
                         }
                         else if (overwrite)
                         {
-                            SetScaledPixel(posX + 1, posY, Color.Transparent, scale, ref bd);
+                            SetScaledPixel(p.X, p.Y, posX + 1, posY, Color.Transparent, scale, ref bd);
                         }
                         dataPos++;
                     }

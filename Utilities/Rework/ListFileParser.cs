@@ -53,7 +53,7 @@ namespace MinishMaker.Utilities.Rework
             {
                 baseSettings.baseFilter = userChanges.baseFilter;
             }
-
+            
             foreach (KeyValuePair<string,Filter> f in userChanges.filters)
             {
                 if(baseSettings.filters.ContainsKey(f.Key)) {
@@ -122,7 +122,14 @@ namespace MinishMaker.Utilities.Rework
                     baseSettings.filters.Add(f.Key, f.Value);
                 }
             }
+
+            foreach(KeyValuePair<string, Filter> f in baseSettings.filters)
+            {
+                baseSettings.filters[f.Key].name = f.Key;
+            }
+
             ConvertEnums();
+            baseSettings.baseFilter.name = "baseFilter";
             ParseFilter(baseSettings.baseFilter);
             topFilter = baseSettings.baseFilter;
         }
@@ -133,7 +140,8 @@ namespace MinishMaker.Utilities.Rework
                 var dict = new Dictionary<int, string>();
                 foreach(var key in baseSettings.enums[typeKey].Keys)
                 {
-                    var intKey = ParseInt(key);
+                    int intKey = 0;
+                    var success = NumberUtil.ParseInt(key, ref intKey);
                     var value = baseSettings.enums[typeKey][key];
                     dict.Add(intKey, value);
                 }
@@ -158,7 +166,7 @@ namespace MinishMaker.Utilities.Rework
             {
                 if (!baseSettings.filters.ContainsKey(childString))
                 {
-                    throw new ArgumentException($"No filter with the name {childString} exists within filters");
+                    throw new ArgumentException($"{filter.name} : No filter with the name {childString} exists within filters");
                 }
 
                 newFilterArr[chId] = baseSettings.filters[childString];
@@ -169,7 +177,7 @@ namespace MinishMaker.Utilities.Rework
             {
                 if(!baseSettings.filterSets.ContainsKey(filter.childrenSetName))
                 {
-                    throw new ArgumentException($"No filter set with the name {filter.childrenSetName} exists within filterSets");
+                    throw new ArgumentException($"{filter.name} : No filter set with the name {filter.childrenSetName} exists within filterSets");
                 }
                 
                 var filters = baseSettings.filterSets[filter.childrenSetName];
@@ -184,9 +192,22 @@ namespace MinishMaker.Utilities.Rework
 
             foreach (Filter childFilter in filter.children)
             {
+                if(childFilter.dataSize == -1 && filter.dataSize != -1) 
+                {
+                    childFilter.dataSize = filter.dataSize;
+                }
+                
                 childFilter.parent = filter;
                 ParseFilter(childFilter);
             }
+
+            if (filter.dataSize == -1 && filter.children.Count() == 0)
+            { 
+                string name = baseSettings.filters.FirstOrDefault(x => x.Value == filter).Key;
+                throw new ArgumentException($"{name} : dataSize is not set and no dataSize was inherited from a parent filter.");
+            }
+
+   
 
             //defaultChildTargetType
             if (filter.defaultChildTargetType.Length != 0)
@@ -198,12 +219,12 @@ namespace MinishMaker.Utilities.Rework
                     !filter.defaultChildTargetType.Equals("tri", StringComparison.InvariantCultureIgnoreCase) &&   // 3 bytes
                     !filter.defaultChildTargetType.Equals("int", StringComparison.InvariantCultureIgnoreCase))     // 4 bytes
                 {
-                    throw new FormatException($"{filter.defaultChildTargetType} is not a default filter target type, use list, bit, byte, short, tri or int");
+                    throw new FormatException($"{filter.name} : {filter.defaultChildTargetType} is not a default filter target type, use list, bit, byte, short, tri or int.");
                 }
 
                 if (filter.defaultChildTargetPos <= 0 && !filter.defaultChildTargetType.Equals("list", StringComparison.InvariantCultureIgnoreCase)) //pos not needed if list value
                 {
-                    throw new FormatException($"default target type is set but target position is not");
+                    throw new FormatException($"{filter.name} : Default target type is set but target position is not.");
                 }
             }
 
@@ -216,13 +237,13 @@ namespace MinishMaker.Utilities.Rework
                 {
                     while (x < filter.targetValues.Length)
                     {
-                        filter.parsedTargets[x] = ParseInt(filter.targetValues[x]);
+                        var success = NumberUtil.ParseInt(filter.targetValues[x], ref filter.parsedTargets[x]);
                         x++;
                     }
                 }
                 catch
                 {
-                    throw new FormatException($"Could not convert target value {filter.targetValues[x]} to a number");
+                    throw new FormatException($"{filter.name} : Could not convert target value {filter.targetValues[x]} to a number.");
                 }
             }
 
@@ -238,12 +259,12 @@ namespace MinishMaker.Utilities.Rework
                         !filter.targetType.Equals("tri", StringComparison.InvariantCultureIgnoreCase) &&
                         !filter.targetType.Equals("int", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        throw new FormatException($"{filter.targetType} is not a filter target type, use list, bit, byte, short, tri or int");
+                        throw new FormatException($"{filter.name} : {filter.targetType} is not a filter target type, use list, bit, byte, short, tri or int.");
                     }
 
                     if (filter.parent.defaultChildTargetPos <= 0 && !filter.targetType.Equals("list", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        throw new FormatException($"target type is set but target position is not");
+                        throw new FormatException($"{filter.name} : Target type is set but target position is not.");
                     }
                 }
                 else //if target is empty there must be a default on the entry above
@@ -251,7 +272,7 @@ namespace MinishMaker.Utilities.Rework
                     var parentDTT = filter.parent.defaultChildTargetType;
                     if (parentDTT.Length == 0)
                     {
-                        throw new ArgumentNullException("Missing either a target type or a default target type in the parent");
+                        throw new ArgumentNullException($"{filter.name} : Missing either a target type or a default target type in the parent");
                     }
 
                     if (!parentDTT.Equals("list", StringComparison.InvariantCultureIgnoreCase) &&
@@ -261,12 +282,12 @@ namespace MinishMaker.Utilities.Rework
                         !parentDTT.Equals("tri", StringComparison.InvariantCultureIgnoreCase) &&
                         !parentDTT.Equals("int", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        throw new FormatException($"{parentDTT} is not a type, use list, bit, byte, short, tri or int");
+                        throw new FormatException($"{filter.name} : {parentDTT} is not a type, use list, bit, byte, short, tri or int");
                     }
 
                     if (filter.parent.defaultChildTargetPos <= 0 && !parentDTT.Equals("list", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        throw new FormatException($"default target type is set but default target position is not");
+                        throw new FormatException($"{filter.name} : Default target type is set but default target position is not");
                     }
                 }
             }
@@ -282,12 +303,12 @@ namespace MinishMaker.Utilities.Rework
 
             var newElementArr = new FormElement[elementTotal];
             filter.elements.CopyTo(newElementArr, 0);
-
+            
             foreach (string elementString in filter.elementNames)
             {
                 if (!baseSettings.elements.ContainsKey(elementString))
                 {
-                    throw new ArgumentException($"No element with the name {elementString} exists within elements");
+                    throw new ArgumentException($"{filter.name} : No element with the name {elementString} exists within elements");
                 }
 
                 newElementArr[elId] = baseSettings.elements[elementString];
@@ -298,7 +319,7 @@ namespace MinishMaker.Utilities.Rework
             {
                 if (!baseSettings.elementSets.ContainsKey(filter.elementSetName))
                 {
-                    throw new ArgumentException($"No element set with the name {filter.elementSetName} exists within elementSets");
+                    throw new ArgumentException($"{filter.name} : No element set with the name {filter.elementSetName} exists within elementSets");
                 }
 
                 var elements = baseSettings.elementSets[filter.elementSetName];
@@ -315,12 +336,12 @@ namespace MinishMaker.Utilities.Rework
             {
                 if (element.column <= 0)
                 {
-                    throw new ArgumentException("The column for a formElement has to be specified at a value of 1 or higher.");
+                    throw new ArgumentException($"{filter.name} : The column for a formElement has to be specified at a value of 1 or higher.");
                 }
 
                 if (element.row <= 0)
                 {
-                    throw new ArgumentException("The row for a formElement has to be specified at a value of 1 or higher.");
+                    throw new ArgumentException($"{filter.name} : The row for a formElement has to be specified at a value of 1 or higher.");
                 }
 
                 if (!element.type.Equals("enum", StringComparison.InvariantCultureIgnoreCase) &&
@@ -329,7 +350,7 @@ namespace MinishMaker.Utilities.Rework
                     !element.type.Equals("number", StringComparison.InvariantCultureIgnoreCase) &&
                     !element.type.Equals("hexnumber", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    throw new FormatException($"{filter.targetType} is not a type, use bit, byte, short, tri or int");
+                    throw new FormatException($"{filter.name} : {element.type} is not an element type, use enum, text, bit, number or hexnumber");
                 }
 
                 if (!element.type.Equals("text", StringComparison.InvariantCultureIgnoreCase)) //text doesnt require a value, just a label
@@ -342,17 +363,17 @@ namespace MinishMaker.Utilities.Rework
                         !element.valueType.Equals("int", StringComparison.InvariantCultureIgnoreCase) &&
                         !element.valueType.Equals("part", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        throw new FormatException($"{element.valueType} is not a element value type, use bit, byte, short, tri, int or part");
+                        throw new FormatException($"{filter.name} : {element.valueType} is not an element value type, use bit, byte, short, tri, int or part");
                     }
 
                     if (element.valuePos <= 0)
                     {
-                        throw new FormatException($"Element value position must be 1 or higher");
+                        throw new FormatException($"{filter.name} : Element value position must be 1 or higher");
                     }
 
                     if (element.valueType.Equals("part", StringComparison.InvariantCultureIgnoreCase) && element.valueLength <= 1) //why not use a bit when its only 1 long?
                     {
-                        throw new FormatException($"Element part value length must be 2 or higher");
+                        throw new FormatException($"{filter.name} : Element part value length must be 2 or higher");
                     }
                 }
 
@@ -360,7 +381,7 @@ namespace MinishMaker.Utilities.Rework
                 {
                     if(element.label == "")
                     {
-                        throw new ArgumentException("A text element needs a label with text");
+                        throw new ArgumentException($"{filter.name} : A text element needs a label with text");
                     }
                 }
 
@@ -368,12 +389,12 @@ namespace MinishMaker.Utilities.Rework
                 {
                     if (element.enumType == "")
                     {
-                        throw new FormatException("An enum form element requires an enumType");
+                        throw new FormatException($"{filter.name} : An enum form element requires an enumType");
                     }
 
                     if (!enums.ContainsKey(element.enumType))
                     {
-                        throw new ArgumentException($"{element.enumType} was not found in the enum file");
+                        throw new ArgumentException($"{filter.name} : {element.enumType} was not found in the enum file");
                     }
                 }
 
@@ -381,7 +402,7 @@ namespace MinishMaker.Utilities.Rework
                 {
                     if(element.valueLength <= 0)
                     {
-                        throw new ArgumentException("A valueLength is required for part values");
+                        throw new ArgumentException($"{filter.name} : A valueLength is required for part values");
                     }
                 }
             }
@@ -391,19 +412,6 @@ namespace MinishMaker.Utilities.Rework
         {
             return enums[enumName];
         }
-
-        private static int ParseInt(string numberString)
-        {
-            if (numberString.StartsWith("0x", StringComparison.InvariantCultureIgnoreCase))
-            {
-                return int.Parse(numberString.Substring(2), NumberStyles.HexNumber);
-            }
-            else
-            {
-                return int.Parse(numberString);
-            }
-        }
-
 
         public class ListSettings
         {
@@ -415,8 +423,144 @@ namespace MinishMaker.Utilities.Rework
             public Dictionary<string, Dictionary<string, string>> enums;
         }
 
+        public static Tuple<List<Filter>, int> FilterData(byte[] dataOriginal, int startIndex, int listIndex)
+        {
+            List<Filter> filters = new List<Filter>();
+            var data = dataOriginal.Skip(startIndex).Take(0x10).ToArray();
+            if (ListFileParser.topFilter == null)
+            {
+                ListFileParser.Setup();
+            }
+
+            var currentFilter = ListFileParser.topFilter;
+            filters.Add(currentFilter);
+
+            while (currentFilter.children.Length != 0)
+            {
+                var dtt = currentFilter.defaultChildTargetType;
+                var dtp = currentFilter.defaultChildTargetPos - 1;
+                Filter nextFilter = null;
+
+                int defaultDataValue = -1;
+                if (dtt.ToLower() == "list" || dtp != -1)
+                {
+                    defaultDataValue = GetTargetValue(data, listIndex, dtt, dtp, 0);
+                }
+
+                foreach (var filter in currentFilter.children)
+                {
+                    var tt = filter.targetType;
+                    var tp = filter.targetPos - 1;
+
+                    if (filter.targetValues.Length == 0 && nextFilter == null)//default if nothing else is found
+                    {
+                        nextFilter = filter;
+                        continue;
+                    }
+                    int dataValue = 0;
+                    if (defaultDataValue != -1 && tt.ToLower() != "list" && tp == -1) //no type and pos set so use default target type and pos
+                    {
+                        dataValue = defaultDataValue;
+                    }
+                    else
+                    {
+                        dataValue = GetTargetValue(data, listIndex, tt, tp, 0);
+                    }
+
+                    bool found = false;
+                    foreach (var targetVal in filter.targetValues)
+                    {
+                        var outValue = 0;
+                        var success = NumberUtil.ParseInt(targetVal, ref outValue);
+                        if (!success)
+                        {
+                            throw new FormatException("This should never happen as it is pre-validated.");
+                        }
+
+                        if (outValue == dataValue)
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if (found)
+                    {
+                        nextFilter = filter;
+                        break;
+                    }
+
+                }
+
+                if (nextFilter == null)
+                {
+                    throw new MissingMemberException($"No matches were made and no default filter was found in the children of a filter with defaultTarget:{currentFilter.targetType} and defaultPos:{currentFilter.targetPos}");
+                }
+                
+                currentFilter = nextFilter;
+                filters.Add(nextFilter);
+            }
+
+            return new Tuple<List<Filter>, int>(filters, currentFilter.dataSize);
+        }
+
+        public static int GetTargetValue(byte[] data, int currentListNumber, string targetType, int targetPos, int valueLength)
+        {
+            var dataValue = 0;
+            switch (targetType.ToLower())
+            {
+                case "bit":
+                    var bytePos = targetPos / 8;
+                    var bitPos = targetPos & 0x7;
+                    dataValue = (data[bytePos] >> bitPos) & 0x1;
+                    break;
+                case "list":
+                    dataValue = currentListNumber;
+                    break;
+                case "int":
+                    dataValue += (data[targetPos + 3] << 24);
+                    goto case "tri";
+                case "tri":
+                    dataValue += (data[targetPos + 2] << 16);
+                    goto case "short";
+                case "short":
+                    dataValue += (data[targetPos + 1] << 8);
+                    goto case "byte";
+                case "byte":
+                    dataValue += data[targetPos];
+                    break;
+                case "part":
+                    int startBytePos = targetPos / 8;
+                    var startBitPos = targetPos & 0x7; //0-7
+                    //                                  0-7           V + 1 so its 1-8 per byte instead of 0-7
+                    int byteCount = (int)Math.Ceiling((startBitPos + valueLength + 1) / 8d); //ceil(0/8) = 0, ceil(1/8) =1 ceil(8/8)=1
+
+                    for (int i = 0; i < byteCount; i++)
+                    {
+                        var val = data[i + startBytePos] << (i * 8);
+                        dataValue += val;
+                    }
+
+                    var mask = 0;
+                    for (int i = 0; i < valueLength; i++)
+                    { //create a mask for valueLength - 1 bits
+                        mask += (int)Math.Pow(2, i);
+                    }
+
+                    dataValue = (dataValue >> startBitPos);
+                    dataValue = dataValue & mask; //shave off the first 0-7 bits, then apply mask to get the value
+
+                    break;
+                default:
+                    throw new ArgumentException($"Unknown targetType ({targetType}). How did you get here? this should have been checked already.");
+            }
+            return dataValue;
+        }
+
         public class Filter
         {
+            public string name = "";
+
             public string defaultChildTargetType = "";
             public int defaultChildTargetPos = 0;
 
@@ -430,11 +574,13 @@ namespace MinishMaker.Utilities.Rework
             public string childrenSetName = "";
             public string[] childrenNames = new string[0];
 
+            //public bool overwriteElements = false;
             public FormElement[] elements = new FormElement[0];
             public string elementSetName = "";
             public string[] elementNames = new string[0];
 
             public Filter parent = null;
+            public int dataSize = -1;
         }
 
 

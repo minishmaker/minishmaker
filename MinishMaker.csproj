@@ -104,6 +104,18 @@
     <Compile Include="Core\ChangeTypes\List3DataChange.cs" />
     <Compile Include="Core\ChangeTypes\List1DataChange.cs" />
     <Compile Include="Core\ChangeTypes\PaletteChange.cs" />
+    <Compile Include="Core\ChangeTypes\Rework\AreaChangeBase.cs" />
+    <Compile Include="Core\ChangeTypes\Rework\Change.cs" />
+    <Compile Include="Core\ChangeTypes\Rework\ListDataChange.cs" />
+    <Compile Include="Core\ChangeTypes\Rework\RoomChangeBase.cs" />
+    <Compile Include="Core\ChangeTypes\Rework\TileSetChange.cs" />
+    <Compile Include="Core\ChangeTypes\Rework\AreaInfoChange.cs" />
+    <Compile Include="Core\ChangeTypes\Rework\TODO\BgDataChange.cs" />
+    <Compile Include="Core\ChangeTypes\Rework\BgMetaTileSetChange.cs" />
+    <Compile Include="Core\ChangeTypes\Rework\BgMetaTileTypeChange.cs" />
+    <Compile Include="Core\ChangeTypes\Rework\PaletteChange.cs" />
+    <Compile Include="Core\ChangeTypes\Rework\RoomMetadataChange.cs" />
+    <Compile Include="Core\ChangeTypes\Rework\WarpDataChange.cs" />
     <Compile Include="Core\ChangeTypes\RoomMetadataChange.cs" />
     <Compile Include="Core\ChangeTypes\WarpDataChange.cs" />
     <Compile Include="Core\Project.cs" />
@@ -229,6 +241,7 @@
     <Compile Include="Utilities\Rework\ListFileParser.cs" />
     <Compile Include="Utilities\Rework\DrawingUtil.cs" />
     <Compile Include="Utilities\Rework\MapManager.cs" />
+    <Compile Include="Utilities\Rework\NumberUtil.cs" />
     <Compile Include="Utilities\StringUtil.cs" />
     <Compile Include="Utilities\Writer.cs" />
     <EmbeddedResource Include="UI\AreaEditorWindow.resx">
@@ -256,6 +269,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\MetaTileEditorWindow.resx">
       <DependentUpon>MetaTileEditorWindow.cs</DependentUpon>

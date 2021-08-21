@@ -47,7 +47,8 @@
 		//first check what list we are on
 		"defaultChildTargetType" : "list", 
 		//add 2 filters to the children of this one
-		"childrenNames" : ["tileType", "defaultList"]
+		"childrenNames" : ["tileType", "defaultList"],
+		"dataSize" : 16
 	},
 	//filters that can be added in by name
 	"filters": {
@@ -56,9 +57,10 @@
 			"defaultChildTargetType" : "Byte",
 			"defaultChildTargetPos" : 1,
 			//4th list(chests and other)
-			"targetValues" : ["4"],
-			"elementSetName" : "list3Base",
-			"childrenNames" : ["chest"]
+			"targetValues" : ["3"],
+			"elementSetName" : "list4Base",
+			"childrenNames" : ["chest","unknownList4"],
+			"dataSize" : 8
 		},
 		
 		"chest": {
@@ -67,7 +69,7 @@
 			"defaultChildTargetPos" : 3,
 			//chest or big chest
 			"targetValues" : ["2","3"],
-			"elementSet" : "chestBase",
+			"elementSetName" : "chestBase",
 			"childrenNames" : ["chestKinstone","chestDefault"]
 		},
 		"chestKinstone": {	//kinstone in chest
@@ -77,13 +79,16 @@
 		"chestDefault" : {  //any other item
 			"elementSetName" : "defaultChest"
 		},
+		"unknownList4": {
+			"elementSetName" : "halfRepresentation",
+		},
 		
 		"defaultList": { //no targetValues so default if no matches are found, in this case when its not the chest list
 			//check byte 1 for the object category in children
 			"defaultChildTargetType" : "Byte",
 			"defaultChildTargetPos" : 1,
 			"elementSetName" : "objectTypeBase",
-			"childrenNames" : [ "object", "enemy", "npc", "event", "unknownObject"]
+			"childrenNames" : [ "object", "enemy", "npc", "event", "unknown"]
 		},
 		
 		"object": {
@@ -133,9 +138,8 @@
 			"elementNames" : ["data1","data2","data3","data4","data5","pixelX","pixelY","flag1","flag2"]
 		},
 	
-		"unknownObject": {
-			"elementNames" : ["data1","data2","data3","data4","data5"],
-			"elementSetName" : "unknownObject"
+		"unknown": {
+			"elementSetName" : "fullRepresentation"
 		},
 	},
 	//filterSets that can be added in by name
@@ -218,7 +222,7 @@
 	},
 	//elementSets that can be added in by name
 	"elementSets":{
-		"list3Base":[
+		"list4Base":[
 			{
 				"type" : "enum",
 				"enumType" : "TileEntityTypes",
@@ -235,10 +239,12 @@
 				"column" : 3,
 				"row" : 1
 			}
-		]
+		],
+		
 		"chestBase": [
 			{	//item type dropdown
 				"type" : "enum",
+				"enumType" : "ItemTypes",
 				"label" : "Item:",
 				"valueType" : "Byte",
 				"valuePos" : 3,
@@ -287,33 +293,215 @@
 				"row" : 6
 			}
 		],
+		
 		"kinstoneChest": [
 			{	//kinstone type dropdown
 				"type" : "enum",
 				"enumType" : "KinstoneTypes",
 				"label" : "Kinstone type:",
 				"valueType" : "Byte",
-				"valuePos" : 3,
+				"valuePos" : 4,
 				"column" : 1,
 				"row" : 3
 			},
 			{	//item sub number box
 				"type" : "hexNumber",
 				"valueType" : "Byte",
-				"valuePos" : 3,
+				"valuePos" : 4,
 				"column" : 3,
 				"row" : 3
 			}
 		],
+		
 		"defaultChest": [
 			{	//item sub number box
 				"type" : "hexNumber",
 				"label" : "Item sub number:",
 				"valueType" : "Byte",
-				"valuePos" : 3,
+				"valuePos" : 4,
 				"column" : 1,
 				"row" : 4
 			}
+		],
+
+		"fullRepresentation" : [
+			{
+				"type" : "hexNumber",
+				"valueType" : "byte",
+				"valuePos" : 1,
+				"label" : "Bytes 1-4:",
+				"column" : 1,
+				"row" : 3
+			},
+			{
+				"type" : "hexNumber",
+				"valueType" : "byte",
+				"valuePos" : 2,
+				"column" : 3,
+				"row" : 3
+			},
+			{
+				"type" : "hexNumber",
+				"valueType" : "byte",
+				"valuePos" : 3,
+				"column" : 4,
+				"row" : 3
+			},
+			{
+				"type" : "hexNumber",
+				"valueType" : "byte",
+				"valuePos" : 4,
+				"column" : 5,
+				"row" : 3
+			},
+			{
+				"type" : "hexNumber",
+				"valueType" : "byte",
+				"valuePos" : 5,
+				"label" : "Bytes 5-8:",
+				"column" : 1,
+				"row" : 4
+			},
+			{
+				"type" : "hexNumber",
+				"valueType" : "byte",
+				"valuePos" : 6,
+				"column" : 3,
+				"row" : 4
+			},
+			{
+				"type" : "hexNumber",
+				"valueType" : "byte",
+				"valuePos" : 7,
+				"column" : 4,
+				"row" : 4
+			},
+			{
+				"type" : "hexNumber",
+				"valueType" : "byte",
+				"valuePos" : 8,
+				"column" : 5,
+				"row" : 4
+			},
+			{
+				"type" : "hexNumber",
+				"valueType" : "byte",
+				"valuePos" : 9,
+				"label" : "Bytes 9-12:",
+				"column" : 1,
+				"row" : 5
+			},
+			{
+				"type" : "hexNumber",
+				"valueType" : "byte",
+				"valuePos" : 10,
+				"column" : 3,
+				"row" : 5
+			},
+			{
+				"type" : "hexNumber",
+				"valueType" : "byte",
+				"valuePos" : 11,
+				"column" : 4,
+				"row" : 5
+			},
+			{
+				"type" : "hexNumber",
+				"valueType" : "byte",
+				"valuePos" : 12,
+				"column" : 5,
+				"row" : 5
+			},
+			{
+				"type" : "hexNumber",
+				"valueType" : "byte",
+				"valuePos" : 13,
+				"label" : "Bytes 13-16:",
+				"column" : 1,
+				"row" : 6
+			},
+			{
+				"type" : "hexNumber",
+				"valueType" : "byte",
+				"valuePos" : 14,
+				"column" : 3,
+				"row" : 6
+			},
+			{
+				"type" : "hexNumber",
+				"valueType" : "byte",
+				"valuePos" : 15,
+				"column" : 4,
+				"row" : 6
+			},
+			{
+				"type" : "hexNumber",
+				"valueType" : "byte",
+				"valuePos" : 16,
+				"column" : 5,
+				"row" : 6
+			},
+		],
+
+		"halfRepresentation": [
+			{
+				"type" : "hexNumber",
+				"valueType" : "byte",
+				"valuePos" : 1,
+				"label" : "Bytes 1-4:",
+				"column" : 1,
+				"row" : 3
+			},
+			{
+				"type" : "hexNumber",
+				"valueType" : "byte",
+				"valuePos" : 2,
+				"column" : 3,
+				"row" : 3
+			},
+			{
+				"type" : "hexNumber",
+				"valueType" : "byte",
+				"valuePos" : 3,
+				"column" : 4,
+				"row" : 3
+			},
+			{
+				"type" : "hexNumber",
+				"valueType" : "byte",
+				"valuePos" : 4,
+				"column" : 5,
+				"row" : 3
+			},
+			{
+				"type" : "hexNumber",
+				"valueType" : "byte",
+				"valuePos" : 5,
+				"label" : "Bytes 5-8:",
+				"column" : 1,
+				"row" : 4
+			},
+			{
+				"type" : "hexNumber",
+				"valueType" : "byte",
+				"valuePos" : 6,
+				"column" : 3,
+				"row" : 4
+			},
+			{
+				"type" : "hexNumber",
+				"valueType" : "byte",
+				"valuePos" : 7,
+				"column" : 4,
+				"row" : 4
+			},
+			{
+				"type" : "hexNumber",
+				"valueType" : "byte",
+				"valuePos" : 8,
+				"column" : 5,
+				"row" : 4
+			},
 		],
 		
 		"objectTypeBase": [
@@ -442,7 +630,7 @@
 			}
 		],
 
-		"unknownObject": [
+		/*"unknownObject": [
 			{
 				"type" : "hexNumber",
 				"valueType" : "byte",
@@ -507,7 +695,7 @@
 				"column" : 5,
 				"row" : 7
 			}
-		]
+		]*/
 	},
 
 	"enums":{

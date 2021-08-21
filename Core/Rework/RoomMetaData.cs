@@ -6,6 +6,8 @@ using System.IO;
 using System.Linq;
 using MinishMaker.Core.ChangeTypes;
 using MinishMaker.Utilities;
+using MinishMaker.Utilities.Rework;
+using static MinishMaker.Utilities.Rework.ListFileParser;
 
 namespace MinishMaker.Core.Rework
 {
@@ -25,7 +27,7 @@ namespace MinishMaker.Core.Rework
             {
                 if (this.tileSet == null)
                 {
-                    this.tileSet = new TileSet(tileSetAddrs, Parent.Path);
+                    this.tileSet = new TileSet(tileSetAddrs, Parent.Parent.Path);
                 }
                 return this.tileSet;
             }
@@ -142,12 +144,17 @@ namespace MinishMaker.Core.Rework
             bool hasMoreLists = true;
             while (hasMoreLists)
             {
-                if (G_listLoopVar == 3)//skip 3 as thats for chests specifically, might get put in at a later time
+                /*if (G_listLoopVar == 3)//skip 3 as thats for chests specifically, might get put in at a later time
                 {
                     G_listLoopVar += 1;
+                }*/
+                byte terminator = 0xFF;
+                if (G_listLoopVar == 3)
+                {
+                    terminator = 0x0;
                 }
-
-                hasMoreLists = LoadGroup(r, roomEntityTableAddr + 4 * G_listLoopVar, 0xFF, Constants._listData + (G_listLoopVar + 1), 0x10, ListBinding); //listData1-X
+                hasMoreLists = LoadGroup(r, roomEntityTableAddr + 4 * G_listLoopVar, terminator, Constants._listData + (G_listLoopVar + 1), 0x10, ListBinding); //listData1-X
+                Console.WriteLine("loaded: 0x" + (roomEntityTableAddr + 4 * G_listLoopVar).Hex() +" for id " + G_listLoopVar);
                 G_listLoopVar += 1;
             }
 
@@ -158,7 +165,6 @@ namespace MinishMaker.Core.Rework
 
         public bool LoadBGData(ref byte[] bgRoomData, ref MetaTileSet bgMetaTiles, bool isBg1)
         {
-            DataType bgDataType;
             Core.AddrData? bgRoomDataAddr;
             Core.AddrData bgMetaTilesAddr;
             Core.AddrData MetaTileTypeAddr;
@@ -169,14 +175,12 @@ namespace MinishMaker.Core.Rework
                 bgRoomDataAddr = bg1RoomDataAddr;
                 bgMetaTilesAddr = area.bg1MetaTilesAddr;
                 MetaTileTypeAddr = area.bg1MetaTileTypeAddr;
-                bgDataType = DataType.bg1Data;
             }
             else
             {
                 bgRoomDataAddr = bg2RoomDataAddr;
                 bgMetaTilesAddr = area.bg2MetaTilesAddr;
                 MetaTileTypeAddr = area.bg2MetaTileTypeAddr;
-                bgDataType = DataType.bg2Data;
             }
 
 
@@ -184,9 +188,9 @@ namespace MinishMaker.Core.Rework
                 return false;
             }
 
-            string bgPath = Parent.Path + "/" + bgDataType + "Dat.bin";
+            string bgPath = Parent.Path + "/" + DataType.bgData + (isBg1?1:2) + "Dat.bin";
 
-            byte[] data = DataHelper.GetSavedData(bgPath, true);
+            byte[] data = DataHelper.GetFromSavedData(bgPath, true);
             if (data == null) //no saved data, get from original source
             {
                 data = DataHelper.GetData(bgRoomDataAddr.Value);
@@ -201,7 +205,7 @@ namespace MinishMaker.Core.Rework
             return !(isBg1 && Bg1Use20344B0);
         }
 
-        private bool LoadGroup(Reader r, int addr, byte terminator, string dataType, int size, Action<byte[], int> bindingFunc)
+        private bool LoadGroup(Reader r, int addr, byte terminator, string dataType, int size, Func<byte[], int, int> bindingFunc)
         {
             string dataPath = Parent.Path + "/" + dataType + "Dat.bin";
             if (File.Exists(dataPath))
@@ -211,8 +215,8 @@ namespace MinishMaker.Core.Rework
 
                 while (index < data.Length && data[index] != terminator)
                 {
-                    bindingFunc(data, index);
-                    index += size;
+                    var readData = bindingFunc(data, index);
+                    index += readData;
                 }
 
                 return true;
@@ -235,7 +239,8 @@ namespace MinishMaker.Core.Rework
 
                 while (data[0] != terminator)
                 {
-                    bindingFunc(data, 0);
+                    var readData = bindingFunc(data, 0);
+                    r.SetPosition(r.Position - (size - readData)); //ex, only needed 8 bytes but read 16, jump back 8
                     data = r.ReadBytes(size);
                 }
 
@@ -283,7 +288,7 @@ namespace MinishMaker.Core.Rework
                 MapPosY = y;
             }
 
-            Project.Instance.AddPendingChange(new RoomMetadataChange(this.Parent.Parent.Id, this.Parent.Id));
+            Project.Instance.AddPendingChange(new ChangeTypes.Rework.RoomMetadataChange(this.Parent.Parent.Id, this.Parent.Id));
         }
 
         public Rectangle GetMapRect()
@@ -424,18 +429,21 @@ namespace MinishMaker.Core.Rework
 
         #region data binding methods
 
-        private void ChestBinding(byte[] data, int startIndex)
+        private int ChestBinding(byte[] data, int startIndex)
         {
             chestInformation.Add(new ChestData(data, startIndex));
+            return 8;
         }
 
-        private void WarpBinding(byte[] data, int startIndex)
+        private int WarpBinding(byte[] data, int startIndex)
         {
             warpInformation.Add(new WarpData(data, startIndex));
+            return 16;
         }
 
-        private void ListBinding(byte[] data, int startIndex)
+        private int ListBinding(byte[] data, int startIndex)
         {
+            var dataSize= ListFileParser.FilterData(data, startIndex, G_listLoopVar).Item2;
             List<List<byte>> list;
 
             if (listInformation.ContainsKey(G_listLoopVar))
@@ -447,9 +455,10 @@ namespace MinishMaker.Core.Rework
                 list = new List<List<byte>>();
             }
 
-            var dat = new List<byte>(data.Skip(startIndex).Take(0x10).ToArray());
+            var dat = new List<byte>(data.Skip(startIndex).Take(dataSize).ToArray());
             list.Add(dat);
             listInformation[G_listLoopVar] = list;
+            return dataSize;
         }
 
         #endregion
@@ -497,9 +506,9 @@ namespace MinishMaker.Core.Rework
         #region bytify methods
 
         //sneak in the list id within the byte[]
-        public long BytifyListInformation(ref byte[] data) 
+        public long BytifyListInformation(ref byte[] data, int listId) 
         {
-            var list = listInformation[data[1]];
+            var list = listInformation[listId];
             var outdata = new byte[list.Count * 16 + 1];
 
             for (int i = 0; i < list.Count; i++)
@@ -561,7 +570,7 @@ namespace MinishMaker.Core.Rework
         }
 
         //To be changed as actual data gets added, changed and tested
-        public int GetPointerLoc(DataType type)
+        public int GetPointerLoc(ChangeTypes.Rework.Change change)
         {
             var r = ROM.Instance.reader;
             var header = ROM.Instance.headers;
@@ -572,15 +581,13 @@ namespace MinishMaker.Core.Rework
             int areaRMDTableLoc = r.ReadAddr(header.MapHeaderBase + (areaId << 2));
             int roomMetaDataTableLoc = areaRMDTableLoc + (roomId * 0x0A);
 
-            switch (type)
+            switch (change.changeType)
             {
                 case DataType.roomMetaData:
                     retAddr = roomMetaDataTableLoc;
                     break;
 
-                case DataType.bg1TileSet:
-                case DataType.bg2TileSet:
-                case DataType.commonTileSet:
+                case DataType.tileSet:
                     //get addr of TPA data
 
                     int areaTileSetTableLoc = r.ReadAddr(header.globalTileSetTableLoc + (areaId << 2));
@@ -588,87 +595,76 @@ namespace MinishMaker.Core.Rework
 
                     r.SetPosition(roomTileSetLoc);
 
-                    if (type == DataType.bg1TileSet)
+                    if (change.identifier == (int)TileSet.TileSetDataType.BG1)
                     {
                         ParseData(r, Tile1Check);
                     }
-                    if (type == DataType.bg2TileSet)
+                    else if (change.identifier == (int)TileSet.TileSetDataType.BG2)
                     {
                         ParseData(r, Tile2Check);
                     }
-                    if (type == DataType.commonTileSet)
+                    else if (change.identifier == (int)TileSet.TileSetDataType.COMMON)
                     {
                         ParseData(r, TileCommonCheck);
                     }
                     retAddr = (int)r.Position - 12;
                     break;
 
-                case DataType.bg1MetaTileSet:
-                case DataType.bg2MetaTileSet:
-                case DataType.bg1MetaTileType:
-                case DataType.bg2MetaTileType:
-                    int metaTileSetsAddrLoc = r.ReadAddr(header.globalMetaTileSetTableLoc + (areaId << 2));
-                    //retAddr = metaTileSetsAddrLoc;
-                    r.SetPosition(metaTileSetsAddrLoc);
-                    if (type == DataType.bg1MetaTileSet)
+                case DataType.bgMetaTileSet:
+                    int metaTileSetsAddrLocA = r.ReadAddr(header.globalMetaTileSetTableLoc + (areaId << 2));
+                    r.SetPosition(metaTileSetsAddrLocA);
+
+                    if (change.identifier == 1)
                     {
                         ParseData(r, Meta1Check);
                     }
-                    if (type == DataType.bg2MetaTileSet)
+                    else if (change.identifier == 2)
                     {
                         ParseData(r, Meta2Check);
                     }
-                    if (type == DataType.bg1MetaTileType)
+                    retAddr = (int)r.Position - 12; //step back 12 bytes as the bg was found after reading
+                    break;
+
+                case DataType.bgMetaTileType:
+                    int metaTileSetsAddrLocB = r.ReadAddr(header.globalMetaTileSetTableLoc + (areaId << 2));
+                    r.SetPosition(metaTileSetsAddrLocB);
+
+                    if (change.identifier == 1)
                     {
                         ParseData(r, Type1Check);
                     }
-                    if (type == DataType.bg2MetaTileType)
+                    else if (change.identifier == 2)
                     {
                         ParseData(r, Type2Check);
                     }
                     retAddr = (int)r.Position - 12; //step back 12 bytes as the bg was found after reading
                     break;
 
-                case DataType.bg1Data:
-                case DataType.bg2Data:
+                case DataType.bgData:
                     int areaTileDataTableLoc = r.ReadAddr(header.globalTileDataTableLoc + (areaId << 2));
                     int tileDataLoc = r.ReadAddr(areaTileDataTableLoc + (roomId << 2));
                     r.SetPosition(tileDataLoc);
 
-                    if (type == DataType.bg1Data)
+                    if (change.identifier == 1)
                     {
                         ParseData(r, Bg1Check);
                     }
-                    else //not bg1 so has to be bg2
+                    else if (change.identifier == 2)
                     {
                         ParseData(r, Bg2Check);
                     }
                     retAddr = (int)r.Position - 12; //step back 12 bytes as the bg was found after reading
                     break;
 
-                case DataType.chestData:
-                case DataType.list1Data:
-                case DataType.list2Data:
-                case DataType.list3Data:
+                case DataType.listData:
                     int areaEntityTableAddrLoc = header.AreaMetadataBase + (areaId << 2);
                     int areaEntityTableAddr = r.ReadAddr(areaEntityTableAddrLoc);
 
                     int roomEntityTableAddrLoc = areaEntityTableAddr + (roomId << 2);
                     int roomEntityTableAddr = r.ReadAddr(roomEntityTableAddrLoc);
 
-                    //4 byte chunks, 1-3 are unknown use, 4th seems to be chests
-                    var offset = 0;
-                    if (type == DataType.list1Data)
-                        offset = 0x00;
-                    if (type == DataType.list2Data)
-                        offset = 0x04;
-                    if (type == DataType.list3Data)
-                        offset = 0x08;
-                    if (type == DataType.chestData)
-                        offset = 0x0C;
+                    var offset = (change.identifier - 1) * 4;
                     retAddr = roomEntityTableAddr + offset;
-
-                    Console.WriteLine(retAddr);
                     break;
 
                 case DataType.warpData:
@@ -763,17 +759,17 @@ namespace MinishMaker.Core.Rework
 
         private bool Tile1Check(Core.AddrData data)
         {
-            return data.dest != 0;
+            return (data.dest & 0xFFFF) != 0;
         }
 
         private bool Tile2Check(Core.AddrData data)
         {
-            return data.dest != 0x8000;
+            return (data.dest & 0xFFFF) != 0x8000;
         }
 
         private bool TileCommonCheck(Core.AddrData data)
         {
-            return data.dest != 0x4000;
+            return (data.dest & 0xFFFF) != 0x4000;
         }
         #endregion
 

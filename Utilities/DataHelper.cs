@@ -2,6 +2,7 @@
 using System.IO;
 using MinishMaker.Utilities;
 using static MinishMaker.Core.RoomMetaData;
+using System.Linq;
 
 namespace MinishMaker.Core
 {
@@ -11,7 +12,7 @@ namespace MinishMaker.Core
         {
             if (addrData.compressed)
             {
-                return GetCompressed(addrData.src);
+                return GetFromCompressed(addrData.src);
             }
             else
             {
@@ -19,7 +20,7 @@ namespace MinishMaker.Core
             }
         }
 
-        public static byte[] GetSavedData(string path, bool compressed, int size = 0x2000)
+        public static byte[] GetFromSavedData(string path, bool compressed, int size = 0x2000)
         {
             byte[] data = null;
             if (File.Exists(path))
@@ -41,7 +42,7 @@ namespace MinishMaker.Core
             return data;
         }
 
-        private static byte[] GetCompressed(int addr)
+        private static byte[] GetFromCompressed(int addr)
         {
             var r = ROM.Instance.reader;
             var sizeBytes = r.ReadBytes(3, addr);
@@ -54,6 +55,21 @@ namespace MinishMaker.Core
             using (MemoryStream ms = new MemoryStream(data))
                 Lz77Decompress(ROM.Instance.reader, ms);
             return data;
+        }
+
+        public static Boolean TestCompressed(byte[] orig, byte[] compressed)
+        {
+            var data = new byte[0x4000];
+            using (MemoryStream os = new MemoryStream(data))
+            {
+                using (MemoryStream ms = new MemoryStream(compressed))
+                {
+                    Reader r = new Reader(ms);
+                    Lz77Decompress(r, os);
+                }
+            }
+
+            return orig.SequenceEqual(data);
         }
 
         public static long CompressData(ref byte[] outData, byte[] uncompressedData)

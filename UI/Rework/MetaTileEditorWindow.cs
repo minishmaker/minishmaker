@@ -23,6 +23,8 @@ namespace MinishMaker.UI.Rework
         private Core.Rework.Room currentRoom;
         bool vFlip = false;
         bool hFlip = false;
+        byte[] pre = new byte[0x4000];
+
         public MetaTileEditorWindow()
         {
             InitializeComponent();
@@ -73,7 +75,8 @@ namespace MinishMaker.UI.Rework
 
             int xpos = me.X / 0x10;
             int ypos = me.Y / 0x10;
-
+            Console.Write(xpos);
+            Console.Write(ypos);
 
             var enlarged = DrawingUtil.MagnifyImageArea(metaTiles[currentLayer - 1], new Rectangle(xpos * 16, ypos * 16, 16, 16), 4);
 
@@ -99,7 +102,8 @@ namespace MinishMaker.UI.Rework
 
             mTId.Text = metaTileGridBox.SelectedIndex.Hex();
             mTType.Text = (currentTileType[0] + (currentTileType[1] << 8) & 0x3ff).Hex();
-
+            var e2 = (Bitmap)enlarged.Clone();
+            selectedMetaGridBox.Image = e2;
             selectedMetaGridBox.Image = enlarged;
         }
 
@@ -222,18 +226,12 @@ namespace MinishMaker.UI.Rework
             if (hasInfoChange)
             {
                 currentRoom.SetMetaTileImageInfo(currentTileInfo, metaTileGridBox.SelectedIndex, currentLayer);
-                if (currentLayer == 1)
-                    Core.Rework.Project.Instance.AddPendingChange(new Bg1MetaTileSetChange(currentRoom.Parent.Id));
-                if (currentLayer == 2)
-                    Core.Rework.Project.Instance.AddPendingChange(new Bg2MetaTileSetChange(currentRoom.Parent.Id));
+                Core.Rework.Project.Instance.AddPendingChange(new Core.ChangeTypes.Rework.BgMetaTileSetChange(currentRoom.Parent.Id, currentLayer));
             }
             if (hasTypeChange)
             {
                 currentRoom.SetMetaTileTypeInfo(currentTileType, metaTileGridBox.SelectedIndex, currentLayer);
-                if (currentLayer == 1)
-                    Core.Rework.Project.Instance.AddPendingChange(new Bg1MetaTileTypeChange(currentRoom.Parent.Id));
-                if (currentLayer == 2)
-                    Core.Rework.Project.Instance.AddPendingChange(new Bg2MetaTileTypeChange(currentRoom.Parent.Id));
+                Core.Rework.Project.Instance.AddPendingChange(new Core.ChangeTypes.Rework.BgMetaTileTypeChange(currentRoom.Parent.Id, currentLayer));
             }
 
             var image = metaTiles[currentLayer - 1];
@@ -300,7 +298,7 @@ namespace MinishMaker.UI.Rework
                     throw new IncorrectFileSizeException("Incorrect palette file size. \r expected size " + (16 * 16 * 3) + " bytes. \r Found" + data.Length);
                 }
 
-                Core.Rework.Project.Instance.AddPendingChange(new PaletteChange(currentRoom.Parent.Id));
+                Core.Rework.Project.Instance.AddPendingChange(new Core.ChangeTypes.Rework.PaletteChange(currentRoom.Parent.Id));
             }
         }
 
@@ -408,7 +406,7 @@ namespace MinishMaker.UI.Rework
             for (var i = 0; i < 4; i++)
             {
                 var x = i % 2 * 32;
-                int y = i > 2 ? 32 : 0;
+                int y = i >= 2 ? 32 : 0;
                 DrawLargeQuarterTile(ref b, new byte[] { tiledata[i * 2], tiledata[i * 2 + 1] }, x, y);
             }
             return b;
@@ -435,7 +433,7 @@ namespace MinishMaker.UI.Rework
 
         private Bitmap DrawLargeSelectedTile()
         {
-            var b = new Bitmap(8, 8);
+            var b = new Bitmap(32, 32);
             var tnum = tileSetGridBox.SelectedIndex;
 
             if (currentLayer == 1)
@@ -491,18 +489,7 @@ namespace MinishMaker.UI.Rework
                 currentRoom.MetaData.TileSet.SetTileSetData(tsetType, tsetData);
                 RedrawTiles();
 
-                switch (tsetType)
-                {
-                    case TileSet.TileSetDataType.BG1:
-                        Core.Rework.Project.Instance.AddPendingChange(new Bg1TileSetChange(currentRoom.Parent.Id));
-                        break;
-                    case TileSet.TileSetDataType.BG2:
-                        Core.Rework.Project.Instance.AddPendingChange(new Bg2TileSetChange(currentRoom.Parent.Id));
-                        break;
-                    case TileSet.TileSetDataType.COMMON:
-                        Core.Rework.Project.Instance.AddPendingChange(new CommonTileSetChange(currentRoom.Parent.Id));
-                        break;
-                }
+                Core.Rework.Project.Instance.AddPendingChange(new Core.ChangeTypes.Rework.TileSetChange(currentRoom.Parent.Id, (int)tsetType));
             }
         }
 
@@ -532,6 +519,13 @@ namespace MinishMaker.UI.Rework
         {
             byte[] tsetData = new byte[0x4000];
             BitmapData data = bmp.LockBits(new Rectangle(Point.Empty, bmp.Size), ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed);
+            var length = data.Stride * data.Height;
+
+            byte[] bytes = new byte[length];
+
+            // Copy bitmap to byte[]
+            Marshal.Copy(data.Scan0, bytes, 0, length);
+
             var tsetDataPos = 0;
 
             for (int tileY = 0; tileY < 0x10; tileY++)
@@ -561,6 +555,15 @@ namespace MinishMaker.UI.Rework
                 }
             }
 
+            if (!pre.SequenceEqual(tsetData))
+            {
+                for(int x = 0; x<tsetData.Count(); x++) {
+                    if(pre[x] != tsetData[x]) {
+                        var a = 0;
+                    }
+                }
+            }
+
             bmp.UnlockBits(data);
             return tsetData;
         }
@@ -570,7 +573,7 @@ namespace MinishMaker.UI.Rework
             BitmapData data = bmp.LockBits(new Rectangle(Point.Empty, bmp.Size), ImageLockMode.ReadWrite, PixelFormat.Format8bppIndexed);
             var tsetDataPos = 0;
             //var palette = bmp.Palette.Entries;
-
+            pre = tsetData;
             for (int tileY = 0; tileY < 0x10; tileY++)
             {
                 for (int tileX = 0; tileX < 0x20; tileX++)
@@ -597,6 +600,13 @@ namespace MinishMaker.UI.Rework
                     }
                 }
             }
+
+            var length = data.Stride * data.Height;
+
+            byte[] bytes = new byte[length];
+
+            // Copy bitmap to byte[]
+            Marshal.Copy(data.Scan0, bytes, 0, length);
 
             bmp.UnlockBits(data);
         }

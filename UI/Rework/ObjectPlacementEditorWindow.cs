@@ -146,7 +146,7 @@ namespace MinishMaker.UI.Rework
 
         private void AddChange()
         {
-
+            Core.Rework.Project.Instance.AddPendingChange(new Core.ChangeTypes.Rework.ListDataChange(currentRoom.Parent.Id, currentRoom.Id, listKeys[listIndex] ));
         }
 
         private void copyButton_Click(object sender, EventArgs e)
@@ -167,10 +167,71 @@ namespace MinishMaker.UI.Rework
         {
             if (!shouldTrigger)
                 return;
+            /*switch (targetType.ToLower())
+            {
+                case "part":
+                    int startBytePos = targetPos / 8;
+                    var startBitPos = targetPos &0x7; //0-7
+                    int byteCount = (int)Math.Ceiling((startBitPos + valueLength + 1)/8d);
 
+                    for (int i = 0; i<byteCount; i++) {
+                        var val = currentListEntry[i + startBytePos] << (i * 8);
+                        dataValue += val;
+                    }
+
+                    var mask = 0;
+                    for(int i = 0; i< valueLength; i++) { //create a mask for valueLength - 1 bits
+                        mask += (int)Math.Pow(2, i);
+                    }
+                    dataValue = (dataValue >> startBitPos);
+                    dataValue = dataValue & mask; //shave off the first 0-7 bits, then apply mask to get the value
+
+                    break;
+            }
+            */
             //changeAction.Invoke();
-
-            AddChange();
+            bool hasChanged = false;
+            var targetPos = element.valuePos - 1;
+            switch(element.valueType) {
+                case "bit":
+                    var bytePos = targetPos / 8;
+                    var bitPos = targetPos & 0x7;
+                    byte shifted = (byte)(1 << bitPos);
+                    if(newValue == 1) {
+                        currentListEntry[bytePos] += shifted; //turn on bit
+                    } else {
+                        currentListEntry[bytePos] -= shifted; //turn off bit
+                    }
+                    hasChanged = true;
+                    break;
+                case "int":
+                    byte intval = (byte)(newValue >> 24);
+                    hasChanged = hasChanged || (currentListEntry[targetPos + 3] != intval);
+                    currentListEntry[targetPos + 3] = intval;
+                    goto case "tri";
+                case "tri":
+                    byte trival = (byte)(newValue >> 16);
+                    hasChanged = hasChanged || (currentListEntry[targetPos + 2] != trival);
+                    currentListEntry[targetPos + 2] = trival;
+                    goto case "short";
+                case "short":
+                    byte shortval = (byte)(newValue >> 8);
+                    hasChanged = hasChanged || (currentListEntry[targetPos + 1] != shortval);
+                    currentListEntry[targetPos + 1] = shortval;
+                    goto case "byte";
+                case "byte":
+                    byte byteval = (byte)(newValue);
+                    hasChanged = hasChanged || (currentListEntry[targetPos] != byteval);
+                    currentListEntry[targetPos] = byteval;
+                    break;
+                default:
+                    break;
+            }
+            //currentListEntry();
+            if (hasChanged)
+            {
+                AddChange();
+            }
         }
 
         //because why type the same 4 times
@@ -203,93 +264,19 @@ namespace MinishMaker.UI.Rework
             }
         }
 
-        private static bool ParseInt(string numberString, ref int value)
-        {
-            if (numberString.StartsWith("0x", StringComparison.InvariantCultureIgnoreCase))
-            {
-                return int.TryParse(numberString.Substring(2), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out value);
-            }
-            else
-            {
-                return int.TryParse(numberString, out value);
-            }
-        }
-
         private void GetRepresentation()
         {
-            List<Filter> filters = new List<Filter>();
-            if (ListFileParser.topFilter == null)
-            {
-                ListFileParser.Setup();
-            }
-            var currentFilter = ListFileParser.topFilter;
-            filters.Add(currentFilter);
             
-            while (currentFilter.children.Length != 0)
-            {
-                var dtt = currentFilter.defaultChildTargetType;
-                var dtp = currentFilter.defaultChildTargetPos - 1;
-                Filter nextFilter = null;
-
-                int defaultDataValue = -1;
-                if (dtt.ToLower() == "list" || dtp != -1)
-                {
-                    defaultDataValue = GetTargetValue(dtt, dtp);
-                }
-
-                foreach (var filter in currentFilter.children)
-                {
-                    var tt = filter.targetType;
-                    var tp = filter.targetPos - 1;
-
-                    if (filter.targetValues.Length == 0 && nextFilter == null)//default if nothing else is found
-                    {
-                        nextFilter = filter;
-                        continue;
-                    }
-                    int dataValue = 0;
-                    if (defaultDataValue != -1 && tt.ToLower() != "list" && tp == -1) //no type and pos set so use default target type and pos
-                    {
-                        dataValue = defaultDataValue;
-                    }
-                    else
-                    {
-                        dataValue = GetTargetValue(tt, tp);
-                    }
-
-                    bool found = false;
-                    foreach (var targetVal in filter.targetValues)
-                    {
-                        var outValue = 0;
-                        var success = ParseInt(targetVal, ref outValue);
-                        if(!success)
-                        {
-                            throw new FormatException("This should never happen as it is pre-validated.");
-                        }
-
-                        if (outValue == dataValue)
-                        {
-                            found = true;
-                            break;
-                        }
-                    }
-
-                    if(found)
-                    {
-                        nextFilter = filter;
-                        break;
-                    }
-                }
-
-                if(nextFilter == null)
-                {
-                    throw new MissingMemberException($"No matches were made and no default filter was found in the children of a filter with defaultTarget:{currentFilter.targetType} and defaultPos:{currentFilter.targetPos}");
-                }
-
-                currentFilter = nextFilter;
-                filters.Add(nextFilter);
+            Console.WriteLine();
+            Console.WriteLine("----------");
+            var byteRep = "";
+            for(int i = 0; i< currentListEntry.Count; i++){
+                byteRep += currentListEntry[i].Hex() + " ";
             }
+            Console.WriteLine(byteRep);
+            List<Filter> filters = ListFileParser.FilterData(currentListEntry.ToArray(), 0, listKeys[listIndex]).Item1;
             //done filtering, get all elements
+
             var tabIndex = 30;
             for (int i = elementTable.Controls.Count - 1; i >= 0; --i)
                 elementTable.Controls[i].Dispose();
@@ -331,6 +318,8 @@ namespace MinishMaker.UI.Rework
                     break;
                 case "ymarker":
                     break;
+                case "icon":
+                    break;
                 default:
                     throw new ArgumentException($"This should not be possible as validation already happened. {element.type}");
             }
@@ -355,14 +344,15 @@ namespace MinishMaker.UI.Rework
                 CreateLabelElement(element);
                 column += 1;
             }
-            int value = GetTargetValue(element.valueType, element.valuePos - 1);
+            int value = GetTargetValue(element.valueType, element.valuePos - 1, element.valueLength);
             var enumSource = ListFileParser.GetEnum(element.enumType);
 
             var enumElement = new ComboBox();
             enumElement.FormattingEnabled = true;
             enumElement.DisplayMember = "entryName";
             enumElement.ValueMember = "entryId";
-            
+            enumElement.Width = 50;
+            enumElement.DropDownWidth = 200;
             foreach(var entryId in enumSource.Keys)
             {
                 var entryName = enumSource[entryId];
@@ -390,7 +380,7 @@ namespace MinishMaker.UI.Rework
 
         private void CreateHexNumberElement(FormElement element, int tabIndex)
         {
-            int value = GetTargetValue(element.valueType, element.valuePos - 1);
+            int value = GetTargetValue(element.valueType, element.valuePos - 1, element.valueLength);
             var column = element.column;
             if (element.label.Length != 0)
             {
@@ -417,6 +407,9 @@ namespace MinishMaker.UI.Rework
                 case "int":
                     size = 64;
                     break;
+                case "part":
+                    size = 16 * (int)Math.Ceiling((double)element.valueLength/8);
+                    break;
                 default:
                     break;
             }
@@ -427,7 +420,7 @@ namespace MinishMaker.UI.Rework
 
         private void CreateNumberElement(FormElement element, int tabIndex)
         {
-            var value = GetTargetValue(element.valueType, element.valuePos - 1);
+            var value = GetTargetValue(element.valueType, element.valuePos - 1, element.valueLength);
             var column = element.column;
             if (element.label.Length != 0)
             {
@@ -446,43 +439,17 @@ namespace MinishMaker.UI.Rework
         private void TextboxLostFocus(TextBox textBoxElement, FormElement element)
         {
             var value = 0;
-            var success = ParseInt(textBoxElement.Text, ref value);
+            var success = NumberUtil.ParseInt(textBoxElement.Text, ref value);
             if (!success)
             {
-                textBoxElement.Text = "" + GetTargetValue(element.valueType, element.valuePos - 1);
+                textBoxElement.Text = "" + GetTargetValue(element.valueType, element.valuePos - 1, element.valueLength);
             }
             ChangedHandler(element, value);
         }
 
-        private int GetTargetValue(string targetType, int targetPos)
+        private int GetTargetValue(string targetType, int targetPos, int valueLength)
         {
-            var dataValue = 0;
-            switch (targetType.ToLower())
-            {
-                case "bit":
-                    var bytePos = (targetPos - 1) / 8;
-                    var bitPos = targetPos - (bytePos * 8);
-                    dataValue = (currentListEntry[bytePos] >> (bitPos - 1)) & 1;
-                    break;
-                case "list":
-                    dataValue = listIndex;
-                    break;
-                case "int":
-                    dataValue += currentListEntry[targetPos] + currentListEntry[targetPos + 1] << 8 + currentListEntry[targetPos + 2] << 16 + currentListEntry[targetPos + 3] << 24;
-                    break;
-                case "tri":
-                    dataValue += currentListEntry[targetPos] + currentListEntry[targetPos + 1] << 8 + currentListEntry[targetPos + 2] << 16;
-                    break;
-                case "short":
-                    dataValue += currentListEntry[targetPos] + currentListEntry[targetPos + 1] << 8;
-                    break;
-                case "byte":
-                    dataValue += currentListEntry[targetPos];
-                    break;
-                default:
-                    throw new ArgumentException($"Unknown targetType ({targetType}). How did you get here? this should have been checked already.");
-            }
-            return dataValue;
+            return ListFileParser.GetTargetValue(currentListEntry.ToArray(), listKeys[listIndex], targetType, targetPos, valueLength);
         }
     }
 }

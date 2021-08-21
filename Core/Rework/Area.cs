@@ -13,8 +13,8 @@ namespace MinishMaker.Core.Rework
     {
         public int Id { get; private set; }
         public string NiceName { get; private set; }
-        public int nameId;
-        public int songId;
+        public byte nameId;
+        public byte songId;
         
         public bool hasRedName;
         public bool canFlute;
@@ -206,6 +206,17 @@ namespace MinishMaker.Core.Rework
             flagOffset = data[2];
 
             songId = data[3];
+        }
+
+        public byte[] GetInfoBytes()
+        {
+            var data = new byte[4];
+            data[0]= (byte)((canFlute ? 0x81 : 0) + (hasKeyCounter ? 2 : 0) + (hasRedName ? 4 : 0) + (usesDungeonMap ? 8 : 0) + (usesUnknown1 ? 0x10 : 0) + (isMoleCave ? 0x20 : 0) + (usesUnknown2 ? 0x40 : 0));
+            data[1] = nameId;
+            data[2] = flagOffset;
+            data[3] = songId;
+
+            return data;
         }
     }
 

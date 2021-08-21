@@ -17,10 +17,12 @@ namespace MinishMaker.Core
             get { return tilesetData.Length / 0x20; }
         }
 
-        public TileSet(List<AddrData> tileSetAddrs, string roomPath)
+        public TileSet(List<AddrData> tileSetAddrs, string areaPath)
         {
 
-            string[] files = { roomPath + DataType.bg1TileSet + "Dat.bin", roomPath + DataType.commonTileSet + "Dat.bin", roomPath + DataType.bg2TileSet + "Dat.bin" };
+            string[] files = {  areaPath + "/" + Rework.DataType.tileSet + (int)TileSetDataType.BG1 + "Dat.bin",
+                                areaPath + "/" + Rework.DataType.tileSet + (int)TileSetDataType.COMMON + "Dat.bin",
+                                areaPath + "/" + Rework.DataType.tileSet + (int)TileSetDataType.BG2 + "Dat.bin" };
             byte[] tilesetData = new byte[0x10000];
             using (MemoryStream ms = new MemoryStream(tilesetData))
             {
@@ -32,7 +34,8 @@ namespace MinishMaker.Core
                         byte[] data;
                         if (files.Length > counter && File.Exists(files[counter]))
                         {
-                            data = File.ReadAllBytes(files[counter]);
+                            data = DataHelper.GetFromSavedData(files[counter], true, 0x4000);
+                            //data = File.ReadAllBytes(files[counter]);
                         }
                         else
                         {
@@ -165,7 +168,9 @@ namespace MinishMaker.Core
         public long GetCompressedTileSetData(ref byte[] data, TileSetDataType tsetType)
         {
             var uncompData = GetTileSetData(tsetType);
-            return DataHelper.CompressData(ref data, uncompData);
+            var compdata = DataHelper.CompressData(ref data, uncompData);
+
+            return compdata;
         }
     }
 }

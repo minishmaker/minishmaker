@@ -583,12 +583,12 @@ namespace MinishMaker.UI.Rework
             if (layer == 1 && currentRoom.Bg1Exists)
             {
                 DrawingUtil.DrawTileId(ref mapLayers[0], currentScale, currentRoom.Bg1MetaTiles, currentRoom.MetaData.TileSet, p, currentRoom.MetaData.PaletteSet, tileData, true);
-                project_.AddPendingChange(new Bg1DataChange(currentRoom.Parent.Id, currentRoom.Id));
+                project_.AddPendingChange(new Core.ChangeTypes.Rework.BgDataChange(currentRoom.Parent.Id, currentRoom.Id, 1));
             }
             else if (layer == 2 && currentRoom.Bg2Exists)
             {
                 DrawingUtil.DrawTileId(ref mapLayers[1], currentScale, currentRoom.Bg2MetaTiles, currentRoom.MetaData.TileSet, p, currentRoom.MetaData.PaletteSet, tileData, true);
-                project_.AddPendingChange(new Bg2DataChange(currentRoom.Parent.Id, currentRoom.Id));
+                project_.AddPendingChange(new Core.ChangeTypes.Rework.BgDataChange(currentRoom.Parent.Id, currentRoom.Id, 2));
             }
 
             currentRoom.SetTileData(selectedLayer, pos * 2, selectedTileData);

@@ -13,24 +13,21 @@ namespace MinishMaker.Core.Rework
 {
     public enum DataType
     {
-        bg1Data,
-        bg2Data,
+        bgData,
         roomMetaData,
-        bg1TileSet,
-        bg2TileSet,
-        commonTileSet,
-        bg1MetaTileSet,
-        bg2MetaTileSet,
+        tileSet,
+        bgMetaTileSet,
         chestData,
         areaInfo,
         listData,
-        list1Data,
-        list2Data,
-        list3Data,
         warpData,
-        bg1MetaTileType,
-        bg2MetaTileType,
+        bgMetaTileType,
         palette,
+    }
+
+    public enum LayerDataType
+    {
+
     }
 
     /// <summary>
@@ -44,9 +41,11 @@ namespace MinishMaker.Core.Rework
         //public MapManager mapManager;
         public string ProjectName { get; private set; }
         public string ProjectPath { get; private set; }
+        public int ProjectVersion { get; private set; }
+        private int LatestVersion { get { return 2; } }
 
-        private List<Change> loadedChanges;
-        private List<Change> pendingRomChanges;
+        private List<ChangeTypes.Rework.Change> loadedChanges;
+        private List<ChangeTypes.Rework.Change> pendingRomChanges;
         private StreamWriter mainWriter;
         public Dictionary<Tuple<int, int>, string> customNames { get; private set; } //custom only, dont want standard in the project file anymore
         public Dictionary<Tuple<int, int>, string> roomNames { get; private set; }
@@ -58,6 +57,7 @@ namespace MinishMaker.Core.Rework
 
             ProjectName = name;
             ProjectPath = projectFolder;
+            ProjectVersion = LatestVersion;
             roomNames = new Dictionary<Tuple<int, int>, string>();
 
             Assembly assembly = Assembly.GetExecutingAssembly();
@@ -88,6 +88,7 @@ namespace MinishMaker.Core.Rework
             var sb = new StringBuilder();
             sb.AppendLine("projectName=" + ProjectName);
             sb.AppendLine("baseROM=" + "baserom.gba");
+            sb.AppendLine("version=" + ProjectVersion);
 
             foreach (string line in baseNames)
             {
@@ -96,8 +97,8 @@ namespace MinishMaker.Core.Rework
 
             File.WriteAllText(ProjectPath + "/" + ProjectName + ".mmproj", sb.ToString());
 
-            loadedChanges = new List<Change>();
-            pendingRomChanges = new List<Change>();
+            loadedChanges = new List<ChangeTypes.Rework.Change>();
+            pendingRomChanges = new List<ChangeTypes.Rework.Change>();
             LoadProject();
         }
 
@@ -106,6 +107,7 @@ namespace MinishMaker.Core.Rework
             var sb = new StringBuilder();
             sb.AppendLine("projectName=" + ProjectName);
             sb.AppendLine("baseROM=" + "baserom.gba");
+            sb.AppendLine("version=" + ProjectVersion);
 
             foreach (KeyValuePair<Tuple<int, int>, string> set in customNames)
             {
@@ -132,7 +134,10 @@ namespace MinishMaker.Core.Rework
             var settings = File.ReadLines(projectFile).ToList();
 
             ProjectName = settings.Single(x => x.Contains("projectName")).Split('=')[1];
-
+            var versionElement = settings.SingleOrDefault(x => x.Contains("projectVersion"));
+            if(versionElement != null) {
+                ProjectVersion = int.Parse(versionElement.Split('=')[1]);
+            }
             ProjectPath = Path.GetDirectoryName(projectFile);
 
             roomNames = new Dictionary<Tuple<int, int>, string>();
@@ -156,13 +161,15 @@ namespace MinishMaker.Core.Rework
 
             LoadRoomNames(baseNames, true);
 
-            loadedChanges = new List<Change>();
-            pendingRomChanges = new List<Change>();
+            loadedChanges = new List<ChangeTypes.Rework.Change>();
+            pendingRomChanges = new List<ChangeTypes.Rework.Change>();
             LoadProject();
         }
 
         public void LoadProject()
         {
+            AttemptFileTransition();
+
             loadedChanges.Clear();
             var rom = new ROM(ProjectPath + "/baserom.gba"); //sets instance
             var pos = rom.romData.Length - 1;
@@ -215,19 +222,29 @@ namespace MinishMaker.Core.Rework
                     foreach (var file in areaFiles)
                     {
                         DataType type;
-                        var success = Enum.TryParse(Path.GetFileNameWithoutExtension(file), out type);
+                        var fileNumbers = new String(file.Where(char.IsDigit).ToArray());
+                        var fileNumberless = new String(Path.GetFileNameWithoutExtension(file).Where(c => !char.IsDigit(c)).ToArray());
+                        var success = Enum.TryParse(fileNumberless, out type);
+
+                        var identifier = -1;
+                        if (fileNumbers.Length != 0)
+                        {
+                            identifier = int.Parse(fileNumbers);
+                        }
+
 
                         if (success)
                         {
-                            var change = CreateChange(type, areaIndex, 0);
+                            var change = CreateChange(type, areaIndex, 0, identifier);
                             var entry = mainSets.SingleOrDefault(x => file.Contains(x));
+                            var changeNameBase = change.changeType.ToString() + (change.identifier != -1 ? change.identifier + "" : "");
                             if (entry != null)
                             {
                                 mainSets.Remove(entry);
                             }
                             else
                             {
-                                mainWriter.WriteLine("#include \"./Areas" + change.GetFolderLocation() + "/" + change.changeType.ToString() + ".event\"");
+                                mainWriter.WriteLine("#include \"./Areas" + change.GetFolderLocation() + "/" + changeNameBase + ".event\"");
                             }
                             loadedChanges.Add(change);
                         }
@@ -247,19 +264,28 @@ namespace MinishMaker.Core.Rework
                         foreach (var file in roomFiles)
                         {
                             DataType type;
-                            var success = Enum.TryParse(Path.GetFileNameWithoutExtension(file), out type);
+                            var fileNumbers = new String(file.Where(char.IsDigit).ToArray());
+                            var fileNumberless = new String(file.Where(c => !char.IsDigit(c)).ToArray());
+                            var success = Enum.TryParse(Path.GetFileNameWithoutExtension(fileNumberless), out type);
+
+                            var identifier = -1;
+                            if (fileNumbers.Length != 0)
+                            {
+                                identifier = int.Parse(fileNumbers);
+                            }
 
                             if (success)
                             {
-                                var change = CreateChange(type, areaIndex, roomIndex);
+                                var change = CreateChange(type, areaIndex, roomIndex, identifier);
                                 var entry = mainSets.SingleOrDefault(x => file.Contains(x));
+                                var changeNameBase = change.changeType.ToString() + (change.identifier != -1 ? change.identifier + "" : "");
                                 if (entry != null)
                                 {
                                     mainSets.Remove(entry);
                                 }
                                 else
                                 {
-                                    mainWriter.WriteLine("#include \"./Areas" + change.GetFolderLocation() + "/" + change.changeType.ToString() + ".event\"");
+                                    mainWriter.WriteLine("#include \"./Areas" + change.GetFolderLocation() + "/" + changeNameBase + ".event\"");
                                 }
                                 loadedChanges.Add(change);
                             }
@@ -352,44 +378,28 @@ namespace MinishMaker.Core.Rework
             }
         }
 
-        private Change CreateChange(DataType type, int area, int room)
+        private ChangeTypes.Rework.Change CreateChange(DataType type, int area, int room, int identifier)
         {
             switch (type)
             {
                 case DataType.areaInfo:
-                    return new AreaInfoChange(area);
+                    return new ChangeTypes.Rework.AreaInfoChange(area);
                 case DataType.roomMetaData:
-                    return new RoomMetadataChange(area, room);
-                case DataType.bg1Data:
-                    return new Bg1DataChange(area, room);
-                case DataType.bg1MetaTileSet:
-                    return new Bg1MetaTileSetChange(area);
-                case DataType.bg1TileSet:
-                    return new Bg1TileSetChange(area);
-                case DataType.bg2Data:
-                    return new Bg2DataChange(area, room);
-                case DataType.bg2MetaTileSet:
-                    return new Bg2MetaTileSetChange(area);
-                case DataType.bg2TileSet:
-                    return new Bg2TileSetChange(area);
-                case DataType.commonTileSet:
-                    return new CommonTileSetChange(area);
-                case DataType.chestData:
-                    return new ChestDataChange(area, room);
-                case DataType.list1Data:
-                    return new List1DataChange(area, room);
-                case DataType.list2Data:
-                    return new List2DataChange(area, room);
-                case DataType.list3Data:
-                    return new List3DataChange(area, room);
+                    return new ChangeTypes.Rework.RoomMetadataChange(area, room);
+                case DataType.bgData:
+                    return new ChangeTypes.Rework.BgDataChange(area, room, identifier);
+                case DataType.bgMetaTileSet:
+                    return new ChangeTypes.Rework.BgMetaTileSetChange(area, identifier);
+                case DataType.tileSet:
+                    return new ChangeTypes.Rework.TileSetChange(area, identifier);
+                case DataType.listData:
+                    return new ChangeTypes.Rework.ListDataChange(area, room, identifier);
                 case DataType.warpData:
-                    return new WarpDataChange(area, room);
-                case DataType.bg1MetaTileType:
-                    return new Bg1MetaTileTypeChange(area);
-                case DataType.bg2MetaTileType:
-                    return new Bg2MetaTileTypeChange(area);
+                    return new ChangeTypes.Rework.WarpDataChange(area, room);
+                case DataType.bgMetaTileType:
+                    return new ChangeTypes.Rework.BgMetaTileTypeChange(area, identifier);
                 case DataType.palette:
-                    return new PaletteChange(area);
+                    return new ChangeTypes.Rework.PaletteChange(area);
                 default:
                     Debug.WriteLine("unknown file found of type: " + type);
                     return null;
@@ -419,7 +429,7 @@ namespace MinishMaker.Core.Rework
         }
         #endregion
 
-        public void AddPendingChange(Change change)
+        public void AddPendingChange(ChangeTypes.Rework.Change change)
         {
             if (!pendingRomChanges.Any(x => x.Compare(change))) //change does not yet exist
             {
@@ -437,7 +447,7 @@ namespace MinishMaker.Core.Rework
         {
             while (pendingRomChanges.Count > 0)
             {
-                Change data = pendingRomChanges.ElementAt(0);
+                ChangeTypes.Rework.Change data = pendingRomChanges.ElementAt(0);
                 SaveChange(data);
                 pendingRomChanges.RemoveAt(0);
             }
@@ -448,10 +458,11 @@ namespace MinishMaker.Core.Rework
             mainWriter.Dispose();
         }
 
-        public void SaveChange(Change change)
+        public void SaveChange(ChangeTypes.Rework.Change change)
         {
             var folderLoc = ProjectPath + "/Areas" + change.GetFolderLocation();
-            var fileName = change.changeType.ToString() + ".event";
+            var changeNameBase = change.changeType.ToString() + (change.identifier != -1 ? change.identifier + "" : "");
+            var fileName = changeNameBase  + ".event";
             byte[] binData;
             var content = change.GetEAString(out binData);
             Directory.CreateDirectory(folderLoc);
@@ -459,7 +470,7 @@ namespace MinishMaker.Core.Rework
 
             if (binData != null)
             {
-                File.WriteAllBytes(folderLoc + "/" + change.changeType.ToString() + "Dat.bin", binData);
+                File.WriteAllBytes(folderLoc + "/" + changeNameBase + "Dat.bin", binData);
             }
 
             if (!loadedChanges.Any(x => x.Compare(change))) //change not yet already written
@@ -491,6 +502,178 @@ namespace MinishMaker.Core.Rework
                 return true;
             else
                 return false;
+        }
+
+        private void AttemptFileTransition()
+        {
+            if (ProjectVersion == LatestVersion)
+            {
+                return;
+            }
+
+            if (!Directory.Exists(ProjectPath + "\\Areas"))
+            {
+                return;
+            }
+
+            string[] areaDirectories = Directory.GetDirectories(ProjectPath + "\\Areas");
+
+            foreach (string areaDirectory in areaDirectories)
+            {
+                int areaIndex = Convert.ToInt32(areaDirectory.Substring(areaDirectory.Length - 2), 16);
+                string[] areaFiles = Directory.GetFiles(areaDirectory, "*.event");
+                foreach (var file in areaFiles)
+                {
+                    OldEnum type;
+                    var fileNumbers =new String(file.Where(char.IsDigit).ToArray());
+                    var success = Enum.TryParse(Path.GetFileNameWithoutExtension(file), out type); //get the old type
+
+                    var identifier = -1;
+                    if (fileNumbers.Length != 0)
+                    {
+                        identifier = int.Parse(fileNumbers);
+                    }
+
+                    if (!success)
+                    {
+                        continue;
+                    }
+
+                    DataType newType;
+                    switch (type)
+                    {
+                        case (OldEnum.bg1TileSet):
+                        case (OldEnum.bg2TileSet):
+                        case (OldEnum.commonTileSet):
+                            if (identifier == -1)
+                            {
+                                identifier = 1; //common is 1 but has no number in its filename
+                            }
+                            if (identifier == 1)
+                            {
+                                identifier = 0; //bg1 is 0 but has a 1 in its filename
+                            }
+                            newType = DataType.tileSet;
+                            break;
+                        case (OldEnum.bg1Data):
+                        case (OldEnum.bg2Data):
+                            newType = DataType.bgData;
+                            break;
+                        case (OldEnum.bg1MetaTileSet):
+                        case (OldEnum.bg2MetaTileSet):
+                            newType = DataType.bgMetaTileSet;
+                            break;
+                        case (OldEnum.bg1MetaTileType):
+                        case (OldEnum.bg2MetaTileType):
+                            newType = DataType.bgMetaTileType;
+                            break;
+                        case (OldEnum.list1Data):
+                        case (OldEnum.list2Data):
+                        case (OldEnum.list3Data):
+                        case (OldEnum.chestData):
+                            newType = DataType.listData;
+                            if (identifier == -1)
+                            {
+                                identifier = 4;
+                            }
+                            break;
+                        default:
+                            throw new NotImplementedException("you forgot to check for this dum dum");
+                    }
+
+                    string idString = identifier != -1 ? "" + identifier : "";
+                    File.Move(file, areaDirectory + "\\" + newType + idString + ".event");
+
+                }
+
+                string[] roomDirectories = Directory.GetDirectories(areaDirectory);
+
+                foreach (string roomDirectory in roomDirectories)
+                {
+                    int roomIndex = Convert.ToInt32(roomDirectory.Substring(roomDirectory.Length - 2), 16);
+
+                    string[] roomFiles = Directory.GetFiles(roomDirectory, "*.event");
+                    foreach (var file in roomFiles)
+                    {
+                        OldEnum type;
+                        var fileNumbers = new String(file.Where(char.IsDigit).ToArray());
+                        var success = Enum.TryParse(Path.GetFileNameWithoutExtension(file), out type); //get the old type
+
+                        var identifier = -1;
+                        if (fileNumbers.Length != 0)
+                        {
+                            identifier = int.Parse(fileNumbers);
+                        }
+
+                        if (!success)
+                        {
+                            continue;
+                        }
+
+                        DataType newType;
+                        switch (type)
+                        {
+                            case (OldEnum.bg1TileSet):
+                            case (OldEnum.bg2TileSet):
+                            case (OldEnum.commonTileSet):
+                                if (identifier == -1)
+                                {
+                                    identifier = 1; //common is 1 but has no number in its filename
+                                }
+                                if (identifier == 1)
+                                {
+                                    identifier = 0; //bg1 is 0 but has a 1 in its filename
+                                }
+                                newType = DataType.tileSet;
+                                break;
+                            case (OldEnum.bg1Data):
+                            case (OldEnum.bg2Data):
+                                newType = DataType.bgData;
+                                break;
+                            case (OldEnum.bg1MetaTileSet):
+                            case (OldEnum.bg2MetaTileSet):
+                                newType = DataType.bgMetaTileSet;
+                                break;
+                            case (OldEnum.bg1MetaTileType):
+                            case (OldEnum.bg2MetaTileType):
+                                newType = DataType.bgMetaTileType;
+                                break;
+                            case (OldEnum.list1Data):
+                            case (OldEnum.list2Data):
+                            case (OldEnum.list3Data):
+                            case (OldEnum.chestData):
+                                newType = DataType.listData;
+                                if (identifier == -1)
+                                {
+                                    identifier = 4;
+                                }
+                                break;
+                            default:
+                                throw new NotImplementedException("you forgot to check for this dum dum");
+                        }
+                        string idString = identifier != -1 ? "" + identifier : "";
+                        File.Move(file, roomDirectory + "\\" + newType + idString + ".event");
+                    }
+                }
+            }
+            ProjectVersion = LatestVersion;
+        }
+
+        private enum OldEnum
+        {
+            bg1Data,
+            bg2Data,
+            bg1TileSet,
+            bg2TileSet,
+            commonTileSet,
+            bg1MetaTileSet,
+            bg2MetaTileSet,
+            chestData,
+            list1Data,
+            list2Data,
+            list3Data,
+            bg1MetaTileType,
+            bg2MetaTileType,
         }
     }
 }
