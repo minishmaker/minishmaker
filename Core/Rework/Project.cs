@@ -23,6 +23,7 @@ namespace MinishMaker.Core.Rework
         warpData,
         bgMetaTileType,
         palette,
+        textData
     }
 
     public enum LayerDataType
@@ -222,8 +223,9 @@ namespace MinishMaker.Core.Rework
                     foreach (var file in areaFiles)
                     {
                         DataType type;
-                        var fileNumbers = new String(file.Where(char.IsDigit).ToArray());
-                        var fileNumberless = new String(Path.GetFileNameWithoutExtension(file).Where(c => !char.IsDigit(c)).ToArray());
+                        var fileName = Path.GetFileNameWithoutExtension(file);
+                        var fileNumbers = new String(fileName.Where(char.IsDigit).ToArray());
+                        var fileNumberless = new String(fileName.Where(c => !char.IsDigit(c)).ToArray());
                         var success = Enum.TryParse(fileNumberless, out type);
 
                         var identifier = -1;
@@ -264,8 +266,9 @@ namespace MinishMaker.Core.Rework
                         foreach (var file in roomFiles)
                         {
                             DataType type;
-                            var fileNumbers = new String(file.Where(char.IsDigit).ToArray());
-                            var fileNumberless = new String(file.Where(c => !char.IsDigit(c)).ToArray());
+                            var fileName = Path.GetFileNameWithoutExtension(file);
+                            var fileNumbers = new String(fileName.Where(char.IsDigit).ToArray());
+                            var fileNumberless = new String(fileName.Where(c => !char.IsDigit(c)).ToArray());
                             var success = Enum.TryParse(Path.GetFileNameWithoutExtension(fileNumberless), out type);
 
                             var identifier = -1;
@@ -525,8 +528,9 @@ namespace MinishMaker.Core.Rework
                 foreach (var file in areaFiles)
                 {
                     OldEnum type;
-                    var fileNumbers =new String(file.Where(char.IsDigit).ToArray());
-                    var success = Enum.TryParse(Path.GetFileNameWithoutExtension(file), out type); //get the old type
+                    var fileName = Path.GetFileNameWithoutExtension(file);
+                    var fileNumbers =new String(fileName.Where(char.IsDigit).ToArray());
+                    var success = Enum.TryParse(fileName, out type); //get the old type
 
                     var identifier = -1;
                     if (fileNumbers.Length != 0)
@@ -596,8 +600,9 @@ namespace MinishMaker.Core.Rework
                     foreach (var file in roomFiles)
                     {
                         OldEnum type;
-                        var fileNumbers = new String(file.Where(char.IsDigit).ToArray());
-                        var success = Enum.TryParse(Path.GetFileNameWithoutExtension(file), out type); //get the old type
+                        var fileName = Path.GetFileNameWithoutExtension(file);
+                        var fileNumbers = new String(fileName.Where(char.IsDigit).ToArray());
+                        var success = Enum.TryParse(fileName, out type); //get the old type
 
                         var identifier = -1;
                         if (fileNumbers.Length != 0)

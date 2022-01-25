@@ -193,7 +193,7 @@ namespace MinishMaker.Utilities
             }
         }
 
-        public static void DrawTileData(ref Bitmap image, int scale, byte[] tileData, TileSet tset, Point p, Color[] palettes, bool isBg1, bool overwrite)
+        public static void DrawTileData(ref Bitmap image, int scale, byte[] tileData, TileSet tset, Point pixelPos, Color[] palettes, bool isBg1, bool overwrite)
         {
             if (tileData == null || tileData.Length == 0)
                 throw new ArgumentNullException("metaTileData", "Cannot draw empty metatile.");
@@ -215,13 +215,13 @@ namespace MinishMaker.Utilities
                     bool vflip = ((data >> 11) & 1) == 1;//is bit 12 set
                     int pnum = data >> 12;//last 4 bits
 
-                    DrawQuarterTile(ref image, scale, new Point(p.X + (x * 8), p.Y + (y * 8)), tnum, tset, palettes, pnum, hflip, vflip, overwrite);
+                    DrawQuarterTile(ref image, scale, new Point(pixelPos.X + (x * 8), pixelPos.Y + (y * 8)), tnum, tset, palettes, pnum, hflip, vflip, overwrite);
                 }
             }
         }
 
         //draws a quarter tile
-        public static void DrawQuarterTile(ref Bitmap image, int scale, Point p, int tnum, TileSet tset, Color[] pal, int pnum, bool hflip, bool vflip, bool overwrite)
+        public static void DrawQuarterTile(ref Bitmap image, int scale, Point pixelPos, int tnum, TileSet tset, Color[] pal, int pnum, bool hflip, bool vflip, bool overwrite)
         {
             byte[] data = tset.GetTile(tnum);
             BitmapData bd = image.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.WriteOnly, image.PixelFormat);
@@ -250,20 +250,21 @@ namespace MinishMaker.Utilities
 
                         if (color1.A > 0)//if see through dont draw white
                         {
-                            SetScaledPixel(p.X, p.Y, posX, posY, color1, scale, ref bd);
+                            SetScaledPixel(pixelPos.X, pixelPos.Y, posX, posY, color1, scale, ref bd);
                         }
                         else if (overwrite)
                         {
-                            SetScaledPixel(p.X, p.Y, posX, posY, Color.Transparent, scale, ref bd);
+                            SetScaledPixel(pixelPos.X, pixelPos.Y, posX, posY, Color.Transparent, scale, ref bd);
                            
                         }
+
                         if (color2.A > 0)//if see through dont draw white
                         {
-                            SetScaledPixel(p.X, p.Y, posX + 1, posY, color2, scale, ref bd);
+                            SetScaledPixel(pixelPos.X, pixelPos.Y, posX + 1, posY, color2, scale, ref bd);
                         }
                         else if (overwrite)
                         {
-                            SetScaledPixel(p.X, p.Y, posX + 1, posY, Color.Transparent, scale, ref bd);
+                            SetScaledPixel(pixelPos.X, pixelPos.Y, posX + 1, posY, Color.Transparent, scale, ref bd);
                         }
                         dataPos++;
                     }

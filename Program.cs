@@ -9,11 +9,15 @@ namespace MinishMaker
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new UI.Rework.MainWindow());
+            string file = null;
+            if(args.Length>=1) {
+                file = args[0];
+            }
+            Application.Run(new UI.Rework.MainWindow(file));
         }
     }
 }

@@ -115,9 +115,12 @@
     <Compile Include="Core\ChangeTypes\Rework\BgMetaTileTypeChange.cs" />
     <Compile Include="Core\ChangeTypes\Rework\PaletteChange.cs" />
     <Compile Include="Core\ChangeTypes\Rework\RoomMetadataChange.cs" />
+    <Compile Include="Core\ChangeTypes\Rework\TODO\GlobalChangeBase.cs" />
+    <Compile Include="Core\ChangeTypes\Rework\TODO\TextChange.cs" />
     <Compile Include="Core\ChangeTypes\Rework\WarpDataChange.cs" />
     <Compile Include="Core\ChangeTypes\RoomMetadataChange.cs" />
     <Compile Include="Core\ChangeTypes\WarpDataChange.cs" />
+    <Compile Include="Core\LanguageManager.cs" />
     <Compile Include="Core\Project.cs" />
     <Compile Include="Core\Rework\Area.cs" />
     <Compile Include="Core\Rework\MetaTileSet.cs" />
@@ -194,6 +197,12 @@
     <Compile Include="UI\Rework\SubWindow.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="UI\Rework\TextEditorWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\Rework\TextEditorWindow.Designer.cs">
+      <DependentUpon>TextEditorWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Rework\WarpEditorWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -242,6 +251,9 @@
     <Compile Include="Utilities\Rework\DrawingUtil.cs" />
     <Compile Include="Utilities\Rework\MapManager.cs" />
     <Compile Include="Utilities\Rework\NumberUtil.cs" />
+    <Compile Include="Utilities\Rework\ObjectDefinitionParser.cs" />
+    <Compile Include="Utilities\Rework\UndoRedoEntry.cs" />
+    <Compile Include="Utilities\Rework\UndoRedoManager.cs" />
     <Compile Include="Utilities\StringUtil.cs" />
     <Compile Include="Utilities\Writer.cs" />
     <EmbeddedResource Include="UI\AreaEditorWindow.resx">
@@ -295,6 +307,9 @@
     <EmbeddedResource Include="UI\Rework\ObjectPlacementEditorWindow.resx">
       <DependentUpon>ObjectPlacementEditorWindow.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\Rework\TextEditorWindow.resx">
+      <DependentUpon>TextEditorWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\Rework\WarpEditorWindow.resx">
       <DependentUpon>WarpEditorWindow.cs</DependentUpon>
     </EmbeddedResource>
@@ -325,7 +340,18 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Resources\ObjectDefinitions\Items - 0xX6\ItemTypes.xml" />
+    <Content Include="Resources\ObjectDefinitions\NPCs - 0x07\NPCTypes.xml" />
+    <Content Include="Resources\ObjectDefinitions\ObjectCategories.xml" />
+    <Content Include="Resources\ObjectDefinitions\README.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\ObjectDefinitions\BaseFilter.xml" />
+    <Content Include="Resources\UserObjectDefinitions\README.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Vendor\ColorzCore\ColorzCore\ColorzCore.csproj">
       <Project>{b98f7ccf-9caa-406e-88d7-2040fa99f631}</Project>
@@ -343,6 +369,9 @@
     <EmbeddedResource Include="Resources\StandardNames.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\ObjectDefinitions\Enemies - 0x03\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

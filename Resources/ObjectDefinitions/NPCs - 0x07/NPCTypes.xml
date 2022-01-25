@@ -1,0 +1,227 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<enums>
+	<NPCTypes>
+		<entry value="0x00" name="Untyped / Unknown" />
+		<entry value="0x01" name="Gentari" />
+		<entry value="0x02" name="Festari" />
+		<entry value="0x03" name="ForestMinish" />
+		<entry value="0x04" name="Postman" />
+		<entry value="0x05" name="Companion" />
+		<entry value="0x06" name="People Group" />
+		<entry value="0x07" name="People2 Group" />
+		<entry value="0x08" name="Soldier" />
+		<entry value="0x09" name="Broken" />
+		<entry value="0x0A" name="Stamp" />
+		<entry value="0x0B" name="RedServant" />
+		<entry value="0x0C" name="Marcy" />
+		<entry value="0x0D" name="Wheaton" />
+		<entry value="0x0E" name="Pita" />
+		<entry value="0x0F" name="MinishEzlo" />
+
+		<entry value="0x10" name="Postbox" />
+		<entry value="0x11" name="Beedle" />
+		<entry value="0x12" name="Brocco" />
+		<entry value="0x13" name="People3 Group" />
+		<entry value="0x14" name="Pina" />
+		<entry value="0x15" name="Soldier2" />
+		<entry value="0x16" name="BlueServant" />
+		<entry value="0x17" name="Din" />
+		<entry value="0x18" name="Nayru" />
+		<entry value="0x19" name="Farore" />
+		<entry value="0x1A" name="Sturgeon" />
+		<entry value="0x1B" name="Tingle Group" />
+		<entry value="0x1C" name="Stockwell" />
+		<entry value="0x1D" name="Talon" />
+		<entry value="0x1E" name="Malon" />
+		<entry value="0x1F" name="Epona" />
+
+		<entry value="0x20" name="Epona Wagon" />
+		<entry value="0x21" name="Ghosts Group" />
+		<entry value="0x22" name="Smith" />
+		<entry value="0x23" name="Broken" />
+		<entry value="0x24" name="King Daltus" />
+		<entry value="0x25" name="Minister" />
+		<entry value="0x26" name="Soldier3" />
+		<entry value="0x27" name="NSFWHero" />
+		<entry value="0x28" name="Zelda" />
+		<entry value="0x29" name="Mutoh" />
+		<entry value="0x2A" name="Mack" />
+		<entry value="0x2B" name="CastorTotem" />
+		<entry value="0x2C" name="Cats Group" />
+		<entry value="0x2D" name="Mountain Minish" />
+		<entry value="0x2E" name="Zelda Companion" />
+		<entry value="0x2F" name="Melari" />
+
+		<entry value="0x30" name="Blade Brothers Group" />
+		<entry value="0x31" name="Cow" />
+		<entry value="0x32" name="Goron" />
+		<entry value="0x33" name="Goron Merchant" />
+		<entry value="0x34" name="Gorman" />
+		<entry value="0x35" name="Dogs Group" />
+		<entry value="0x36" name="Syrup" />
+		<entry value="0x37" name="Rem" />
+		<entry value="0x38" name="TownMinish" />
+		<entry value="0x39" name="Librari" />
+		<entry value="0x3A" name="Percy" />
+		<entry value="0x3B" name="Vaati Reborn" />
+		<entry value="0x3C" name="Moblin Lady" />
+		<entry value="0x3D" name="Clerks Group" />
+		<entry value="0x3E" name="Farmers Group" />
+		<entry value="0x3F" name="Rlovs Group" />
+
+		<entry value="0x40" name="Dampe" />
+		<entry value="0x41" name="Dr. Left" />
+		<entry value="0x42" name="King Gustaf" />
+		<entry value="0x43" name="Gina" />
+		<entry value="0x44" name="Simon" />
+		<entry value="0x45" name="Anju" />
+		<entry value="0x46" name="Mama" />
+		<entry value="0x47" name="Emma" />
+		<entry value="0x48" name="Teachers Group" />
+		<entry value="0x49" name="Wind Tribe Group" />
+		<entry value="0x4A" name="Gregal" />
+		<entry value="0x4B" name="Mayor" />
+		<entry value="0x4C" name="Biggoron" />
+		<entry value="0x4D" name="Ezlo" />
+		<entry value="0x4E" name="UNKNOWN" />
+		<entry value="0x4F" name="Clothes Hanger Group" />
+
+		<entry value="0x00" name="Picolyte Bottles" />
+		<entry value="0x01" name="Unknown" />
+		<entry value="0x02" name="Small Town Minish" />
+		<entry value="0x03" name="Hurdy Gurdy Man" />
+		<entry value="0x04" name="Cucco" />
+		<entry value="0x05" name="Cucco Chick" />
+		<entry value="0x06" name="Unknown" />
+		<entry value="0x57" name="Phonograph"/>
+	</NPCTypes>
+
+
+	<People1Types>
+		<entry value="0x00" name="Klaus" />
+		<entry value="0x01" name="Marshall" />
+		<entry value="0x02" name="Dottie" />
+		<entry value="0x03" name="Breve" />
+		<entry value="0x04" name="Gepper" />
+		<entry value="0x05" name="Cafe Proprietor" />
+		<entry value="0x06" name="Keeley" />
+		<entry value="0x07" name="Verona" />
+		<entry value="0x08" name="Anton" />
+		<entry value="0x09" name="Bindle" />
+		<entry value="0x0A" name="Sheila" />
+		<entry value="0x0B" name="June" />
+		<entry value="0x0C" name="Monster Lady" />
+		<entry value="0x0D" name="Romio" />
+		<entry value="0x0E" name="Julietta" />
+		<entry value="0x0E" name="Crenel Hermit" />
+	</People1Types>
+
+
+	<People2Types>
+		<entry value="0x00" name="Joel" />
+		<entry value="0x01" name="Harrison" />
+		<entry value="0x02" name="Erik" />
+		<entry value="0x03" name="Jim" />
+		<entry value="0x04" name="Berry" />
+		<entry value="0x05" name="Leila" />
+		<entry value="0x06" name="Zill" />
+		<entry value="0x07" name="Lolly" />
+		<entry value="0x08" name="Candy" />
+	</People2Types>
+
+
+	<People3Types>
+		<entry value="0x00" name="Herb" />
+		<entry value="0x01" name="Satchel" />
+		<entry value="0x02" name="Baris" />
+		<entry value="0x03" name="Jasmine" />
+		<entry value="0x04" name="Chai" />
+		<entry value="0x05" name="Unused" />
+	</People3Types>
+
+
+	<TingleTypes>
+		<entry value="0x00" name="Tingle" />
+		<entry value="0x01" name="Ankle" />
+		<entry value="0x02" name="Knuckle" />
+		<entry value="0x03" name="David Jr." />
+	</TingleTypes>
+
+
+	<GhostTypes>
+		<entry value="0x00" name="Spekter" />
+		<entry value="0x01" name="Spookter" />
+	</GhostTypes>
+
+
+	<CatTypes>
+		<entry value="0x00" name="Gray Cat" />
+		<entry value="0x01" name="Striped Brown Cat" />
+		<entry value="0x02" name="Orange Cat" />
+		<entry value="0x03" name="Brown Cat" />
+		<entry value="0x04" name="White Cat" />
+		<entry value="0x05" name="Dark Gray Cat" />
+	</CatTypes>
+
+
+	<BladeBrotherTypes>
+		<entry value="0x00" name="Swiftblade I" />
+		<entry value="0x01" name="Swiftblade" />
+		<entry value="0x02" name="Grayblade" />
+		<entry value="0x03" name="Waveblade" />
+		<entry value="0x04" name="Grimblade" />
+		<entry value="0x05" name="Scarblade" />
+		<entry value="0x06" name="Splitblade" />
+		<entry value="0x07" name="Greatblade" />
+	</BladeBrotherTypes>
+
+
+	<DogTypes>
+		<entry value="0x00" name="Borken/Fifi" />
+		<entry value="0x01" name="1" />
+		<entry value="0x02" name="2" />
+		<entry value="0x03" name="Rolf" />
+	</DogTypes>
+
+
+	<ClerkTypes>
+		<entry value="0x00" name="Paige" />
+		<entry value="0x01" name="Maggie" />
+	</ClerkTypes>
+
+
+	<FarmerTypes>
+		<entry value="0x00" name="Eenie" />
+		<entry value="0x00" name="Meenie" />
+	</FarmerTypes>
+
+
+	<RlovTypes>
+		<entry value="0x00" name="Carlov" />
+		<entry value="0x01" name="Borlov" />
+	</RlovTypes>
+
+
+	<TeacherTypes>
+		<entry value="0x00" name="Tina" />
+		<entry value="0x01" name="Dina" />
+	</TeacherTypes>
+
+
+	<WindTribeTypes>
+		<entry value="0x00" name="Wind Tribe Man" />
+		<entry value="0x01" name="Gale" />
+		<entry value="0x02" name="Caprice" />
+		<entry value="0x03" name="Hailey" />
+		<entry value="0x04" name="Siroc" />
+		<entry value="0x05" name="Flurris" />
+	</WindTribeTypes>
+
+
+	<ClothesHangerTypes>
+		<entry value="0x00" name="Clothes Hanger" />
+		<entry value="0x01" name="Clothes Hanger (Din)" />
+		<entry value="0x02" name="Clothes Hanger (Nayru)" />
+		<entry value="0x03" name="Clothes Hanger (Farore)" />
+	</ClothesHangerTypes>
+</enums>

@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Globalization;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Windows.Forms;
-using MinishMaker.Core;
-using MinishMaker.Core.ChangeTypes;
 using MinishMaker.Utilities;
 using MinishMaker.Utilities.Rework;
 using static MinishMaker.Utilities.Rework.ListFileParser;
@@ -23,6 +18,9 @@ namespace MinishMaker.UI.Rework
         private List<byte> currentListEntry = null;
         private bool shouldTrigger = false;
         private List<byte> copy = null;
+        private int markerId = 100;
+        private List<int> usedMarkers = new List<int>();
+
         public ObjectPlacementEditorWindow()
         {
             InitializeComponent();
@@ -44,7 +42,11 @@ namespace MinishMaker.UI.Rework
 
         public override void Cleanup()
         {
-            
+            foreach(int markerId in usedMarkers)
+            {
+                MainWindow.instance.RemoveMarker(markerId);
+            }
+            usedMarkers.Clear();
         }
 
         public void SetData()
@@ -64,8 +66,8 @@ namespace MinishMaker.UI.Rework
                 removeButton.Enabled = false;
                 prevButton.Enabled = false;
                 nextButton.Enabled = false;
-
-                ((MainWindow)Application.OpenForms[0]).HighlightListObject(-1, -1);
+                
+                //((MainWindow)Application.OpenForms[0]).HighlightListObject(-1, -1);
                 return;
             }
             var currentListNumber = listKeys[listIndex];
@@ -291,6 +293,10 @@ namespace MinishMaker.UI.Rework
                 {
                     CreateElement(element, ref tabIndex);
                 }
+                foreach(var marker in filter.markers)
+                {
+                    
+                }
             }
             elementTable.ResumeLayout();
         }
@@ -313,12 +319,6 @@ namespace MinishMaker.UI.Rework
                     break;
                 case "text":
                     CreateLabelElement(element);
-                    break;
-                case "xmarker":
-                    break;
-                case "ymarker":
-                    break;
-                case "icon":
                     break;
                 default:
                     throw new ArgumentException($"This should not be possible as validation already happened. {element.type}");
@@ -348,15 +348,15 @@ namespace MinishMaker.UI.Rework
             var enumSource = ListFileParser.GetEnum(element.enumType);
 
             var enumElement = new ComboBox();
+
             enumElement.FormattingEnabled = true;
             enumElement.DisplayMember = "entryName";
-            enumElement.ValueMember = "entryId";
             enumElement.Width = 50;
             enumElement.DropDownWidth = 200;
             foreach(var entryId in enumSource.Keys)
             {
                 var entryName = enumSource[entryId];
-                var eObj = new enumObject() { entryName = entryName, entryId = entryId };
+                var eObj = new EnumObject() { entryName = entryName, entryId = entryId };
                 enumElement.Items.Add(eObj);
                 if (entryId == value)
                 {
@@ -373,7 +373,7 @@ namespace MinishMaker.UI.Rework
             enumElement.TabIndex = tabIndex;
 
             //TODO: add change logic
-            enumElement.SelectedIndexChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(element, ((enumObject)enumElement.SelectedItem).entryId); });
+            enumElement.SelectedIndexChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(element, ((EnumObject)enumElement.SelectedItem).entryId); });
 
             elementTable.Controls.Add(enumElement, column-1, element.row-1);
         }
@@ -454,7 +454,7 @@ namespace MinishMaker.UI.Rework
     }
 }
 
-public class enumObject
+public class EnumObject
 {
     public string entryName { get; set; }
     public int entryId { get; set; }

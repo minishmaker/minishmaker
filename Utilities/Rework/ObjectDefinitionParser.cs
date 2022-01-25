@@ -5,11 +5,12 @@ using System.Linq;
 using System.Reflection;
 using System.Web.Script.Serialization;
 using System.Xml;
+using System.Xml.Serialization;
 using MinishMaker.Core.Rework;
 
 namespace MinishMaker.Utilities.Rework
 {
-    public class ListFileParser
+    public class ObjectDefinitionParser
     {
         private static Dictionary<string, Dictionary<int, string>> enums = new Dictionary<string, Dictionary<int, string>>();
         public static Filter topFilter;
@@ -17,122 +18,24 @@ namespace MinishMaker.Utilities.Rework
 
         public static void Setup()
         {
-            JavaScriptSerializer jss = new JavaScriptSerializer();
-            string settingContents;
-            using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("MinishMaker.Resources.baseListSettings.hjson"))
+            baseSettings = new ListSettings();
+
+
+            List<string> folders = new List<string>();
+            ReadAllXML((Assembly.GetExecutingAssembly().GetName().CodeBase).Substring(6) + "//Resources//");
+            if (Directory.Exists(Project.Instance.ProjectPath + "\\ObjectDefinitions"))
             {
-                using (StreamReader reader = new StreamReader(stream))
-                {
-                    settingContents = reader.ReadToEnd();
-                }
+                ReadAllXML(Project.Instance.ProjectPath + "\\ObjectDefinitions");
             }
 
-            if (!File.Exists(Project.Instance.ProjectPath + "\\userListSettings.hjson"))
-            {
-                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("MinishMaker.Resources.emptyUserListSettings.hjson"))
-                {
-                    using (StreamReader reader = new StreamReader(stream))
-                    {
-                        string baseUserSettings = reader.ReadToEnd();
-                        File.WriteAllText(Project.Instance.ProjectPath + "\\userListSettings.hjson", baseUserSettings);
-                    }
-                }
-            }
-            string baseJson = Hjson.HjsonValue.Parse(settingContents).ToString(); // always load the application version
-            string userJson = Hjson.HjsonValue.Load(Project.Instance.ProjectPath + "\\userListSettings.hjson").ToString();
-
-            baseSettings = jss.Deserialize<ListSettings>(baseJson);
-            var userChanges = jss.Deserialize<ListSettings>(userJson);
-            if(userChanges.baseFilter != null)
-            {
-                baseSettings.baseFilter = userChanges.baseFilter;
-            }
-            
-            foreach (KeyValuePair<string,Filter> f in userChanges.filters)
-            {
-                if(baseSettings.filters.ContainsKey(f.Key)) {
-                    baseSettings.filters[f.Key] = f.Value;
-                } else {
-                    baseSettings.filters.Add(f.Key, f.Value);
-                }
-            }
-
-            foreach (KeyValuePair<string, Filter[]> f in userChanges.filterSets)
-            {
-                if (baseSettings.filterSets.ContainsKey(f.Key))
-                {
-                    baseSettings.filterSets[f.Key] = f.Value;
-                }
-                else
-                {
-                    baseSettings.filterSets.Add(f.Key, f.Value);
-                }
-            }
-
-            foreach (KeyValuePair<string, FormElement> f in userChanges.elements)
-            {
-                if (baseSettings.elements.ContainsKey(f.Key))
-                {
-                    baseSettings.elements[f.Key] = f.Value;
-                }
-                else
-                {
-                    baseSettings.elements.Add(f.Key, f.Value);
-                }
-            }
-
-            foreach (KeyValuePair<string, FormElement[]> f in userChanges.elementSets)
-            {
-                if (baseSettings.elementSets.ContainsKey(f.Key))
-                {
-                    baseSettings.elementSets[f.Key] = f.Value;
-                }
-                else
-                {
-                    baseSettings.elementSets.Add(f.Key, f.Value);
-                }
-            }
-
-            foreach (KeyValuePair<string, Dictionary<string,string>> f in userChanges.enums)
-            {
-                if (baseSettings.enums.ContainsKey(f.Key))
-                {
-                    baseSettings.enums[f.Key] = f.Value;
-                }
-                else
-                {
-                    baseSettings.enums.Add(f.Key, f.Value);
-                }
-            }
-
-            foreach (KeyValuePair<string, Filter> f in userChanges.filters)
-            {
-                if (baseSettings.filters.ContainsKey(f.Key))
-                {
-                    baseSettings.filters[f.Key] = f.Value;
-                }
-                else
-                {
-                    baseSettings.filters.Add(f.Key, f.Value);
-                }
-            }
-
-            foreach(KeyValuePair<string, Filter> f in baseSettings.filters)
-            {
-                baseSettings.filters[f.Key].name = f.Key;
-            }
-
-            ConvertEnums();
-            baseSettings.baseFilter.name = "baseFilter";
-            ParseFilter(baseSettings.baseFilter);
-            topFilter = baseSettings.baseFilter;
         }
 
         private static void ConvertEnums()
         {
-            foreach(var typeKey in baseSettings.enums.Keys) {
+            foreach (var typeKey in baseSettings.enums.Keys)
+            {
                 var dict = new Dictionary<int, string>();
-                foreach(var key in baseSettings.enums[typeKey].Keys)
+                foreach (var key in baseSettings.enums[typeKey].Keys)
                 {
                     int intKey = 0;
                     var success = NumberUtil.ParseInt(key, ref intKey);
@@ -142,6 +45,105 @@ namespace MinishMaker.Utilities.Rework
                 enums.Add(typeKey, dict);
             }
         }
+
+        private static void ReadAllXML(string startPath)
+        {
+            var folders = new List<string>();
+            folders.Add(startPath);
+            var filterDeserialiser = new XmlSerializer(typeof(Filter));
+            var enumDeserialiser = new XmlSerializer(typeof(EnumEntry));
+            while (folders.Count > 0)
+            {
+                var currentFolder = folders[0];
+                folders.AddRange(Directory.GetDirectories(currentFolder));
+                foreach (var file in Directory.GetFiles(currentFolder, "*.xml"))
+                {
+                    XmlDocument doc = new XmlDocument();
+                    doc.Load(file);
+                    var nodes = doc.SelectNodes("/filters");
+                    if (nodes.Count != 0)
+                    {
+                        foreach (XmlNode node in nodes)
+                        {
+                            using (XmlNodeReader reader = new XmlNodeReader(node))
+                            {
+                                Filter filter = (Filter)filterDeserialiser.Deserialize(reader);
+                                if (filter.name == "baseFilter")
+                                {
+                                    baseSettings.baseFilter = filter;
+                                }
+                                else
+                                {
+                                    if (baseSettings.filters.ContainsKey(filter.name))
+                                    {
+                                        baseSettings.filters[filter.name] = filter;
+                                    }
+                                    else
+                                    {
+                                        baseSettings.filters.Add(filter.name, filter);
+                                    }   
+                                }
+                            }
+                        }
+                    }
+
+                    nodes = doc.SelectNodes("/enums");
+                    if (nodes.Count != 0)
+                    {
+                        foreach (XmlNode node in nodes)
+                        {
+                            var enumNodes = node.SelectNodes("/*");
+                            var enumSetName = node.Name;
+                            if(!enums.ContainsKey(enumSetName)) {
+                                enums.Add(enumSetName, new Dictionary<int, string>());
+                            }
+                            var enumSet = enums[enumSetName];
+
+                            foreach(XmlNode enumNode in enumNodes)
+                            {
+                                using (XmlNodeReader reader = new XmlNodeReader(node))
+                                {
+                                    EnumEntry enumObject = (EnumEntry)enumDeserialiser.Deserialize(reader);
+                                    if(enumSet.ContainsKey(enumObject.value)) {
+                                        enumSet[enumObject.value] = enumObject.name;
+                                    } else {
+                                        enumSet.Add(enumObject.value, enumObject.name);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+
+                }
+                folders.RemoveAt(0);
+            }
+        }
+
+        private static void ReadNodeSet<T>(Dictionary<string, Nameable> list, XmlSerializer deserializer, string nodeName, XmlDocument doc) where T : Nameable
+        {
+            var nodes = doc.SelectNodes("/filter");
+            if (nodes.Count != 0)
+            {
+                foreach (XmlNode node in nodes)
+                {
+                    using (XmlNodeReader reader = new XmlNodeReader(node))
+                    {
+                        T typeObject = (T)deserializer.Deserialize(reader);
+
+                        if (list.ContainsKey(typeObject.name))
+                        {
+                            list[typeObject.name] = typeObject;
+                        }
+                        else
+                        {
+                            list.Add(typeObject.name, typeObject);
+                        }
+                    }
+                }
+            }
+        }
+
         private static void ParseFilter(Filter filter)
         {
             //children
@@ -156,7 +158,7 @@ namespace MinishMaker.Utilities.Rework
             var newFilterArr = new Filter[childTotal];
             filter.children.CopyTo(newFilterArr, 0);
 
-            foreach(string childString in filter.childrenNames)
+            foreach (string childString in filter.childrenNames)
             {
                 if (!baseSettings.filters.ContainsKey(childString))
                 {
@@ -167,13 +169,13 @@ namespace MinishMaker.Utilities.Rework
                 chId++;
             }
 
-            if(filter.childrenSetName != "")
+            if (filter.childrenSetName != "")
             {
-                if(!baseSettings.filterSets.ContainsKey(filter.childrenSetName))
+                if (!baseSettings.filterSets.ContainsKey(filter.childrenSetName))
                 {
                     throw new ArgumentException($"{filter.name} : No filter set with the name {filter.childrenSetName} exists within filterSets");
                 }
-                
+
                 var filters = baseSettings.filterSets[filter.childrenSetName];
                 foreach (var setFilter in filters)
                 {
@@ -186,22 +188,22 @@ namespace MinishMaker.Utilities.Rework
 
             foreach (Filter childFilter in filter.children)
             {
-                if(childFilter.dataSize == -1 && filter.dataSize != -1) 
+                if (childFilter.dataSize == -1 && filter.dataSize != -1)
                 {
                     childFilter.dataSize = filter.dataSize;
                 }
-                
+
                 childFilter.parent = filter;
                 ParseFilter(childFilter);
             }
 
             if (filter.dataSize == -1 && filter.children.Count() == 0)
-            { 
+            {
                 string name = baseSettings.filters.FirstOrDefault(x => x.Value == filter).Key;
                 throw new ArgumentException($"{name} : dataSize is not set and no dataSize was inherited from a parent filter.");
             }
 
-   
+
 
             //defaultChildTargetType
             if (filter.defaultChildTargetType.Length != 0)
@@ -297,7 +299,7 @@ namespace MinishMaker.Utilities.Rework
 
             var newElementArr = new FormElement[elementTotal];
             filter.elements.CopyTo(newElementArr, 0);
-            
+
             foreach (string elementString in filter.elementNames)
             {
                 if (!baseSettings.elements.ContainsKey(elementString))
@@ -309,7 +311,7 @@ namespace MinishMaker.Utilities.Rework
                 elId++;
             }
 
-            if (filter.elementSetName !="")
+            if (filter.elementSetName != "")
             {
                 if (!baseSettings.elementSets.ContainsKey(filter.elementSetName))
                 {
@@ -373,7 +375,7 @@ namespace MinishMaker.Utilities.Rework
 
                 if (element.type.Equals("text", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    if(element.label == "")
+                    if (element.label == "")
                     {
                         throw new ArgumentException($"{filter.name} : A text element needs a label with text");
                     }
@@ -394,7 +396,7 @@ namespace MinishMaker.Utilities.Rework
 
                 if (!element.type.Equals("text", StringComparison.InvariantCultureIgnoreCase) && element.valueType.Equals("part", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    if(element.valueLength <= 0)
+                    if (element.valueLength <= 0)
                     {
                         throw new ArgumentException($"{filter.name} : A valueLength is required for part values");
                     }
@@ -402,7 +404,7 @@ namespace MinishMaker.Utilities.Rework
             }
         }
 
-        public static Dictionary<int,string> GetEnum(string enumName)
+        public static Dictionary<int, string> GetEnum(string enumName)
         {
             return enums[enumName];
         }
@@ -426,7 +428,7 @@ namespace MinishMaker.Utilities.Rework
                 ListFileParser.Setup();
             }
 
-            var currentFilter = ListFileParser.topFilter;
+            var currentFilter = ObjectDefinitionParser.topFilter;
             filters.Add(currentFilter);
 
             while (currentFilter.children.Length != 0)
@@ -490,7 +492,7 @@ namespace MinishMaker.Utilities.Rework
                 {
                     throw new MissingMemberException($"No matches were made and no default filter was found in the children of a filter with defaultTarget:{currentFilter.targetType} and defaultPos:{currentFilter.targetPos}");
                 }
-                
+
                 currentFilter = nextFilter;
                 filters.Add(nextFilter);
             }
@@ -551,10 +553,8 @@ namespace MinishMaker.Utilities.Rework
             return dataValue;
         }
 
-        public class Filter
+        public class Filter:Nameable
         {
-            public string name = "";
-
             public string defaultChildTargetType = "";
             public int defaultChildTargetPos = 0;
 
@@ -576,18 +576,10 @@ namespace MinishMaker.Utilities.Rework
             public string parentName = "";
             public Filter parent = null;
             public int dataSize = -1;
-
-            public Marker[] markers = new Marker[0];
         }
 
-        public class Marker
-        {
-            public int markerId;
-            public string markerType;
-            public int[] markerDataBytes = new int[0];
-        }
 
-        public class FormElement
+        public class FormElement:Nameable
         {
             public string type;
             public string enumType = "";
@@ -598,6 +590,17 @@ namespace MinishMaker.Utilities.Rework
 
             public int row = 0;
             public int column = 0;
+        }
+
+        public class EnumEntry
+        {
+            public string name = "";
+            public int value = -1;
+        }
+
+        public class Nameable
+        {
+            public string name = "";
         }
     }
 }

@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<filter>
+	<!-- basefilter is the starting filter from which it gets more specific the further down it goes-->
+	<baseFilter>
+		<!-- check what list we are on -->
+		<defaultChildTargetType>list</defaultChildTargetType>
+		<!-- names of the children lists -->
+		<childrenNames>
+			<name>tileType</name>
+			<name>defaultList</name>
+		</childrenNames>
+		<!-- by default 16 bytes will be read if a child doesnt override this -->
+		<dataSize>16</dataSize>
+	</baseFilter>
+</filter>

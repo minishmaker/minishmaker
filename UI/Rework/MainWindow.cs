@@ -9,6 +9,7 @@ using MinishMaker.Core.ChangeTypes;
 using MinishMaker.Properties;
 using MinishMaker.Core.Rework;
 using PaletteException = MinishMaker.Core.Rework.PaletteException;
+using MinishMaker.Utilities.Rework;
 
 namespace MinishMaker.UI.Rework
 {
@@ -18,6 +19,7 @@ namespace MinishMaker.UI.Rework
         private Core.Rework.Project project_;
 
         private Utilities.Rework.MapManager mapManager_;
+        private Utilities.Rework.UndoRedoManager uRManager_;
         private List<SubWindowHolder> subWindows = new List<SubWindowHolder>();
         private NewProjectWindow newProjectWindow = null;
         private RenameDialog renameWindow = null;
@@ -26,32 +28,18 @@ namespace MinishMaker.UI.Rework
         private Bitmap[] tileMaps;
 
         public Core.Rework.Room currentRoom = null;
-        private int selectedTileData = -1;
+        //private int selectedTileData = -1;
         private int selectedLayer = 2; //start with bg2
-        private Point lastTilePos;
         private ViewLayer viewLayer = ViewLayer.Both;
+
         private int currentScale = 1;
+        private Point lastTilePos;
+        private Point boxSize;
+        private int[] selectedTileData;
 
-        struct RepointData
-        {
-            public int areaIndex;
-            public int roomIndex;
-            public Core.Rework.DataType type;
-            public int start;
-            public int size;
-
-
-            public RepointData(int areaIndex, int roomIndex, Core.Rework.DataType type, int start, int size)
-            {
-                this.areaIndex = areaIndex;
-                this.roomIndex = roomIndex;
-                this.type = type;
-                this.start = start;
-                this.size = size;
-            }
-        }
-
-
+        private bool highlightSame = false;
+        private int markerId = 1;
+        private int[] sameTileList;
         public enum ViewLayer
         {
             Both,
@@ -59,13 +47,20 @@ namespace MinishMaker.UI.Rework
             Bottom
         }
 
-        public MainWindow()
+        public MainWindow(string fileName)
         {
             InitializeComponent();
             EnableEditor(false);
             UpdateWindowTitle();
             SetupSubWindows();
+            AddMarker(markerId, new Point(0, 0), CreateSameMarker);
+            this.KeyDown += MainWindow_OnKeyDown;
+            this.KeyPreview = true;
+            mapPanel.Width = this.Width - tileTabControl.Right - roomTreeView.Right - 20;
             instance = this;
+            if(fileName != null){
+                OpenProject(fileName);
+            }
         }
 
         private void UpdateWindowTitle()
@@ -170,6 +165,7 @@ namespace MinishMaker.UI.Rework
             subWindows.Add(new SubWindowHolder(new AreaEditorWindow(), areaEditorToolStripMenuItem, areaToolStripButton));//area
             subWindows.Add(new SubWindowHolder(new ObjectPlacementEditorWindow(), objectPlacementEditorToolStripMenuItem, objectPlacementToolStripButton)); //object
             subWindows.Add(new SubWindowHolder(new WarpEditorWindow(), warpEditorToolStripMenuItem, warpToolStripButton)); //warp
+            subWindows.Add(new SubWindowHolder(new TextEditorWindow(), textEditorToolStripMenuItem, textToolStripButton)); //text
         }
         #endregion
 
@@ -179,7 +175,6 @@ namespace MinishMaker.UI.Rework
         private void tileTabControl_SelectedIndexChanged(object sender, EventArgs e)
         {
             selectedLayer = tileTabControl.SelectedIndex + 1;
-
         }
 
         private void MainWindow_DragDrop(object sender, DragEventArgs e)
@@ -235,7 +230,11 @@ namespace MinishMaker.UI.Rework
                 return;
             }
 
+            OpenProject(ofd.FileName);
+        }
 
+        private void OpenProject(string fileName)
+        { 
             if (renameWindow != null)
                 renameWindow.Hide();
 
@@ -243,14 +242,15 @@ namespace MinishMaker.UI.Rework
 
             if (project_ == null)
             {
-                project_ = new Core.Rework.Project(ofd.FileName);
+                project_ = new Core.Rework.Project(fileName);
             }
-
+            uRManager_ = UndoRedoManager.Get();
+            //uRManager_.Clear();
             if (project_.Loaded)
             {
                 LoadProjectData();
                 EnableEditor(true);
-                statusText.Text = "Loaded: " + ofd.FileName;
+                statusText.Text = "Loaded: " + fileName;
             }
             else
             {
@@ -264,7 +264,8 @@ namespace MinishMaker.UI.Rework
             bottomTileGridBox.Image = new Bitmap(1, 1);
             topTileGridBox.Image = new Bitmap(1, 1);
             currentRoom = null;
-            selectedTileData = -1;
+            selectedTileData = new int[0];
+            lastTilePos.X = -1;
             selectedLayer = 2;
             LoadMaps();
         }
@@ -284,6 +285,7 @@ namespace MinishMaker.UI.Rework
             areaEditorToolStripMenuItem.Enabled = enabled;
             objectPlacementEditorToolStripMenuItem.Enabled = enabled;
             warpEditorToolStripMenuItem.Enabled = enabled;
+            textEditorToolStripMenuItem.Enabled = enabled;
 
             saveToolStripButton.Enabled = enabled;
             buildToolStripButton.Enabled = enabled;
@@ -293,6 +295,7 @@ namespace MinishMaker.UI.Rework
             areaToolStripButton.Enabled = enabled;
             objectPlacementToolStripButton.Enabled = enabled;
             warpToolStripButton.Enabled = enabled;
+            textToolStripButton.Enabled = enabled;
         }
 
         private void BuildProject()
@@ -369,8 +372,6 @@ namespace MinishMaker.UI.Rework
                 Console.WriteLine(e.Node.Parent.Name + " " + e.Node.Name);
                 int areaIndex = Convert.ToInt32(e.Node.Parent.Name, 16);
                 int roomIndex = Convert.ToInt32(e.Node.Name, 16);
-                statusRoomIdText.Text = "Room Id:" + roomIndex.Hex().PadLeft(2, '0'); ;
-                statusAreaIdText.Text = "Area Id:" + areaIndex.Hex().PadLeft(2, '0'); ;
                 ChangeRoom(areaIndex, roomIndex);
             }
         }
@@ -433,8 +434,17 @@ namespace MinishMaker.UI.Rework
 
             MessageBox.Show("Project Saved");
         }
+        public void AddMarker(int id, Point position, Func<Tuple<Point[], Brush>> pixelFunc)
+        {
+            mapGridBox.AddMarker(id, position, pixelFunc);
+        }
 
-        public void HighlightChest(int tileX, int tileY)
+        public void RemoveMarker(int id)
+        {
+            mapGridBox.RemoveMarker(id);
+        }
+
+        /*public void HighlightChest(int tileX, int tileY)
         {
             mapGridBox.chestHighlightPoint = new Point(tileX, tileY);
             mapGridBox.Invalidate();
@@ -450,7 +460,7 @@ namespace MinishMaker.UI.Rework
         {
             mapGridBox.warpHighlightPoint = new Point(pixelX, pixelY);
             mapGridBox.Invalidate();
-        }
+        }*/
 
         private void UpdateViewLayer(ViewLayer layer)
         {
@@ -469,7 +479,7 @@ namespace MinishMaker.UI.Rework
                     mapGridBox.Image = mapLayers[0];
                     tileTabControl.SelectedIndex = 0;
                     viewLayer = ViewLayer.Top;
-                    selectedTileData = topTileGridBox.SelectedIndex;
+                    //selectedTileData = topTileGridBox.SelectedIndex;
                     topTileTab.Enabled = true;
                     bottomTileTab.Enabled = false;
                     break;
@@ -477,7 +487,7 @@ namespace MinishMaker.UI.Rework
                     mapGridBox.Image = mapLayers[1];
                     tileTabControl.SelectedIndex = 1;
                     viewLayer = ViewLayer.Bottom;
-                    selectedTileData = bottomTileGridBox.SelectedIndex;
+                    //selectedTileData = bottomTileGridBox.SelectedIndex;
                     bottomTileTab.Enabled = true;
                     topTileTab.Enabled = false;
                     break;
@@ -489,39 +499,114 @@ namespace MinishMaker.UI.Rework
             //TODO
         }
 
+        private UndoRedoEntry generateWriteMultiEntry() {
+            var HI = mapGridBox.HoverIndex;
+            object[] redo = new object[4];
+            object[] undo = new object[4];
+            var topleft = new Point();
+
+            redo[0] = mapGridBox.HoverIndex;
+            redo[1] = boxSize;
+            redo[2] = selectedLayer;
+            redo[3] = selectedTileData;
+            undo[0] = mapGridBox.HoverIndex;
+            undo[1] = boxSize;
+            undo[2] = selectedLayer;
+
+            topleft.X = mapGridBox.HoverIndex % currentRoom.RoomSize.X;
+            topleft.Y = (mapGridBox.HoverIndex - lastTilePos.X) / currentRoom.RoomSize.X;
+            var undoTileData = new int[boxSize.X *boxSize.Y]; 
+            for (var y = 0; y < boxSize.Y; y++)
+            {
+                for (var x = 0; x < boxSize.X; x++)
+                {
+                    var pos = topleft.X + x + (topleft.Y + y) * currentRoom.RoomSize.X;
+                    undoTileData[x + (boxSize.X * y)] = currentRoom.GetTileData(selectedLayer, pos);
+                }
+            }
+
+            undo[3] = undoTileData;
+            return new UndoRedoEntry(undo, DoWriteMultiTile, redo, DoWriteMultiTile, UndoRedoEntry.ActionEnum.EDIT_BG);
+        }
+
         #region MapInteraction
         private void mapGridBox_MouseDown(object sender, MouseEventArgs e)
         {
             if (currentRoom == null)
                 return;
 
-            var tsTileWidth = tileMaps[0].Width / 16;
+            lastTilePos.X = mapGridBox.HoverIndex % currentRoom.RoomSize.X;
+            lastTilePos.Y = (mapGridBox.HoverIndex - lastTilePos.X) / currentRoom.RoomSize.X;
 
-            lastTilePos = mapGridBox.GetIndexPoint(mapGridBox.HoverIndex);
+            if (e.Button == MouseButtons.Left)
+            {
+                if (selectedTileData.Length == 0) //no selected tile, nothing to paste
+                    return;
+
+                mapGridBox.SelectedIndex = mapGridBox.HoverIndex;
+                WriteMultiTile();
+            }
+        }
+
+        private void mapGridBox_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (lastTilePos.X == -1)
+                return;
+
+            var startTilePos = new Point(lastTilePos.X, lastTilePos.Y);
+
+            lastTilePos.X = -1;
 
             if (e.Button == MouseButtons.Right)
             {
-                selectedTileData = currentRoom.GetTileData(selectedLayer, mapGridBox.HoverIndex * 2);//*2 as each tile is 2 bytes
                 mapGridBox.SelectedIndex = mapGridBox.HoverIndex;
-                var newX = selectedTileData % tsTileWidth;
-                var newY = (selectedTileData - newX) / tsTileWidth;
                 // bad practice, entire map selection functions could do with refactor like the tile selection
-                if (selectedLayer == 2)
+
+                var endTilePos = new Point();
+                endTilePos.X = mapGridBox.HoverIndex % currentRoom.RoomSize.X;
+                endTilePos.Y = (mapGridBox.HoverIndex - endTilePos.X) / currentRoom.RoomSize.X;
+                boxSize.X = endTilePos.X - startTilePos.X;
+                var left = startTilePos.X;
+                
+                if (boxSize.X < 0) 
                 {
-                    bottomTileGridBox.SelectedIndex = selectedTileData;
-                }
-                else
-                {
-                    topTileGridBox.SelectedIndex = selectedTileData;
+                    boxSize.X *= -1;
+                    left = endTilePos.X;
                 }
 
-            }
-            else if (e.Button == MouseButtons.Left)
-            {
-                if (selectedTileData == -1) //no selected tile, nothing to paste
-                    return;
+                boxSize.X++;
 
-                WriteTile(mapGridBox.GetIndexPoint(mapGridBox.HoverIndex), mapGridBox.HoverIndex, selectedTileData, selectedLayer);
+                boxSize.Y = endTilePos.Y - startTilePos.Y;
+                var top = startTilePos.Y;
+
+                if (boxSize.Y < 0)
+                {
+                    boxSize.Y *= -1;
+                    top = endTilePos.Y;
+                }
+
+                boxSize.Y++;
+                selectedTileData = new int[boxSize.X * boxSize.Y];
+                for (var y = 0; y < boxSize.Y; y++)
+                {
+                    for (var x = 0; x < boxSize.X; x++)
+                    {
+                        var pos = (left+x) + ((top+y) * currentRoom.RoomSize.X);
+                        selectedTileData[x + (boxSize.X * y)] = currentRoom.GetTileData(selectedLayer, pos);
+                    }
+                }
+
+                if (boxSize.X == 1 && boxSize.Y == 1)
+                {
+                    if (selectedLayer == 2)
+                    {
+                        bottomTileGridBox.SelectedIndex = selectedTileData[0];
+                    }
+                    else
+                    {
+                        topTileGridBox.SelectedIndex = selectedTileData[0];
+                    }
+                }
             }
         }
 
@@ -539,16 +624,16 @@ namespace MinishMaker.UI.Rework
             {
                 var currentPos = mapGridBox.GetIndexPoint(mapGridBox.HoverIndex);
 
-                if (!lastTilePos.Equals(currentPos))
-                {
-                    if (selectedTileData == -1) //no selected tile, nothing to paste
-                        return;
+                if (lastTilePos.Equals(currentPos))
+                    return;
+                    
+                if (selectedTileData.Length == 0) //no selected tile, nothing to paste
+                    return;
 
-                    lastTilePos = currentPos;
-                    mapGridBox.SelectedIndex = mapGridBox.HoverIndex;
-
-                    WriteTile(mapGridBox.GetIndexPoint(mapGridBox.HoverIndex), mapGridBox.HoverIndex, selectedTileData, selectedLayer);
-                }
+                lastTilePos = currentPos;
+                
+                mapGridBox.SelectedIndex = mapGridBox.HoverIndex;
+                WriteMultiTile();
             }
         }
         #endregion
@@ -561,7 +646,10 @@ namespace MinishMaker.UI.Rework
 
             bottomTileGridBox.SelectedIndex = bottomTileGridBox.HoverIndex;
             selectedLayer = 2;
-            selectedTileData = bottomTileGridBox.SelectedIndex;
+            selectedTileData = new int[1];
+            boxSize.X = 1;
+            boxSize.Y = 1;
+            selectedTileData[0] = bottomTileGridBox.SelectedIndex;
         }
 
         private void topTileGridBox_MouseDown(object sender, MouseEventArgs e)
@@ -571,31 +659,67 @@ namespace MinishMaker.UI.Rework
 
             topTileGridBox.SelectedIndex = topTileGridBox.HoverIndex;
             selectedLayer = 1;
-            selectedTileData = topTileGridBox.SelectedIndex;
+            selectedTileData = new int[1];
+            boxSize.X = 1;
+            boxSize.Y = 1;
+            selectedTileData[0] = topTileGridBox.SelectedIndex;
         }
         #endregion
 
-        private void WriteTile(Point p, int pos, int tileData, int layer)
+        public void WriteMultiTile()
         {
-            if (p.X < 0 || p.Y < 0 || p.X > currentRoom.RoomSize.X * 16 || p.Y > currentRoom.RoomSize.Y * 16)
+            var entry = generateWriteMultiEntry();
+            entry.Redo();
+            uRManager_.AddEntry(entry);
+        }
+
+        private void DoWriteMultiTile(object[] data)
+        {
+            int hoverIndex = (int)data[0];
+            Point selectedAreaSize = (Point)data[1];
+            int layer = (int)data[2];
+            int[] tileData = (int[])data[3];
+
+            for (var y = 0; y < boxSize.Y; y++)
+            {
+                for (var x = 0; x < boxSize.X; x++)
+                {
+                    var newPos = (hoverIndex + x) + (y * currentRoom.RoomSize.X);
+                    var tile = tileData[x + (y * selectedAreaSize.X)];
+                    WriteTile(newPos, tile, layer, selectedAreaSize);
+                }
+            }
+        }
+
+        private void WriteTile(int pos, int tileData, int layer, Point selectedAreaSize)
+        {
+            var tilePos = new Point();
+            tilePos.X = pos % currentRoom.RoomSize.X;
+            tilePos.Y = (pos - tilePos.X) / currentRoom.RoomSize.X;
+            if (tilePos.X < 0 || tilePos.Y < 0 || tilePos.X > currentRoom.RoomSize.X || tilePos.Y > currentRoom.RoomSize.Y)
                 return;
 
+            var pixelPos = new Point();
+            pixelPos.X = tilePos.X * 16 * currentScale;
+            pixelPos.Y = tilePos.Y * 16 * currentScale;
             if (layer == 1 && currentRoom.Bg1Exists)
             {
-                DrawingUtil.DrawTileId(ref mapLayers[0], currentScale, currentRoom.Bg1MetaTiles, currentRoom.MetaData.TileSet, p, currentRoom.MetaData.PaletteSet, tileData, true);
+                DrawingUtil.DrawTileId(ref mapLayers[0], currentScale, currentRoom.Bg1MetaTiles, currentRoom.MetaData.TileSet, pixelPos, currentRoom.MetaData.PaletteSet, tileData, true);
                 project_.AddPendingChange(new Core.ChangeTypes.Rework.BgDataChange(currentRoom.Parent.Id, currentRoom.Id, 1));
             }
             else if (layer == 2 && currentRoom.Bg2Exists)
             {
-                DrawingUtil.DrawTileId(ref mapLayers[1], currentScale, currentRoom.Bg2MetaTiles, currentRoom.MetaData.TileSet, p, currentRoom.MetaData.PaletteSet, tileData, true);
+                DrawingUtil.DrawTileId(ref mapLayers[1], currentScale, currentRoom.Bg2MetaTiles, currentRoom.MetaData.TileSet, pixelPos, currentRoom.MetaData.PaletteSet, tileData, true);
                 project_.AddPendingChange(new Core.ChangeTypes.Rework.BgDataChange(currentRoom.Parent.Id, currentRoom.Id, 2));
             }
 
-            currentRoom.SetTileData(selectedLayer, pos * 2, selectedTileData);
+            currentRoom.SetTileData(layer, pos, tileData);
 
             // TODO switch on layer view
             UpdateViewLayer(viewLayer);
         }
+
+
 
         public static void Notify(string info, string title)
         {
@@ -633,6 +757,24 @@ namespace MinishMaker.UI.Rework
 
         public void ChangeRoom(int areaId, int roomId)
         {
+            statusRoomIdText.Text = "Room Id:" + roomId.Hex().PadLeft(2, '0');
+            statusAreaIdText.Text = "Area Id:" + areaId.Hex().PadLeft(2, '0');
+            var redoData = new object[] { areaId, roomId };
+            if (currentRoom != null)
+            {
+                var undoData = new object[] { currentRoom.Parent.Id, currentRoom.Id };
+                var entry = new UndoRedoEntry(undoData, DoChangeRoom, redoData, DoChangeRoom, UndoRedoEntry.ActionEnum.CHANGE_ROOM);
+                entry.Redo(); //do entry first, will error if bad
+                uRManager_.AddEntry(entry); //add if entry worked
+            } else {
+                DoChangeRoom(redoData);
+            }
+        }
+
+        private void DoChangeRoom(object[] data)
+        {
+            var areaId = (int)data[0];
+            var roomId = (int)data[1];
             var room = Utilities.Rework.MapManager.Get().GetRoom(areaId, roomId);
             try
             {
@@ -658,8 +800,7 @@ namespace MinishMaker.UI.Rework
             statusAreaIdText.Text = "Area Id:" + areaId.Hex().PadLeft(2, '0');
 
             currentRoom = room;
-
-            selectedTileData = -1;
+            selectedTileData = new int[0];
             tileTabControl.SelectedIndex = 1; // Reset to bg2
 
             //0= bg1 (treetops and such)
@@ -765,6 +906,70 @@ namespace MinishMaker.UI.Rework
                 {
                     Hide(null, null);
                     e.Cancel = true;
+                }
+            }
+        }
+
+        private void highlightSameToolStripButton_Click(object sender, EventArgs e)
+        {
+            highlightSame = !highlightSame;
+            highlightSameToolStripButton.Checked = highlightSame;
+            mapGridBox.Invalidate();
+        }
+
+        private Tuple<Point[], Brush> CreateSameMarker()
+        {
+            if (!highlightSame || selectedTileData.Length == 0 || boxSize.X != 1 || boxSize.Y != 1 ) //if its not on, no tiles are selected or multiple tiles are selected, dont show the same
+            {
+                return null;
+            }
+
+            var sameTiles = currentRoom.GetSameTiles(selectedLayer, selectedTileData[0]);
+            Point[] pixels = new Point[30 * sameTiles.Length];
+            for(int i = 0; i < sameTiles.Length; i++) 
+            {
+                int tileX = (sameTiles[i] % currentRoom.RoomSize.X) * 16;
+                int tileY = (sameTiles[i] / currentRoom.RoomSize.X) * 16;
+                var start = i * 30;
+                for(int j = 0; j < 30; j++)
+                {
+                    if(j < 8)
+                    {
+                        pixels[start + j] = new Point(tileX + (j * 2), tileY + 0);
+                    }
+                    else if(j < 22)
+                    {
+                        var x = j % 2 == 0 ? 15 : 0;
+                        pixels[start + j] = new Point(tileX + x, j - 7 + tileY);
+                    }
+                    else
+                    {
+                        pixels[start + j] = new Point(tileX + 1 + ((j - 22) * 2), tileY + 15);
+                    }
+                }
+            }
+
+            return new Tuple<Point[],Brush>(pixels,Brushes.Red);
+        }
+
+        private void redoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            uRManager_.Redo();
+        }
+
+        private void undoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            uRManager_.Undo();
+        }
+
+        private void MainWindow_OnKeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.Modifiers == (Keys.Control | Keys.Shift))
+            {
+                if(e.KeyCode == Keys.Z) {
+                    uRManager_.Redo();
+                    e.Handled = true;
+                    return;
                 }
             }
         }

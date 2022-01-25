@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -24,10 +25,13 @@ namespace MinishMaker.UI
         private Pen selectionPen = new Pen(Color.Red, 2);
         private InterpolationMode mode = InterpolationMode.NearestNeighbor;
 
-        private Pen chestPen = new Pen(Color.Yellow, 2);
+        //TODO: DELETE BEFORE RELEASE
         public Point chestHighlightPoint = new Point(-1, -1);
-        public Point listObjectHighlightPoint = new Point(-1, -1);
         public Point warpHighlightPoint = new Point(-1, -1);
+        public Point listObjectHighlightPoint = new Point(-1,-1);
+
+        private Dictionary<int, Tuple<Point, Func<Tuple<Point[], Brush>>>> markers = new Dictionary<int, Tuple<Point, Func<Tuple<Point[], Brush>>>>();
+        private int scale = 1;
 
         public GridBoxComponent()
         {
@@ -138,21 +142,22 @@ namespace MinishMaker.UI
                     //    e.Graphics.DrawRectangle(selectionPen, p.X, p.Y, selectionSize.Width * selectionRectangle.Width, selectionSize.Height * selectionRectangle.Height);
                     //}
 
-                    if (chestHighlightPoint.X != -1)
+                    
+                    foreach (var set in markers)
                     {
-                        e.Graphics.DrawRectangle(chestPen, chestHighlightPoint.X * 16 + 2, chestHighlightPoint.Y * 16 + 2, 12, 12);
-                    }
-
-                    if (listObjectHighlightPoint.X != -1)
-                    {
-                        e.Graphics.DrawLine(selectionPen, listObjectHighlightPoint.X - 5, listObjectHighlightPoint.Y - 5, listObjectHighlightPoint.X + 5, listObjectHighlightPoint.Y + 5);
-                        e.Graphics.DrawLine(selectionPen, listObjectHighlightPoint.X + 5, listObjectHighlightPoint.Y - 5, listObjectHighlightPoint.X - 5, listObjectHighlightPoint.Y + 5);
-                    }
-
-                    if (warpHighlightPoint.X != -1)
-                    {
-                        e.Graphics.DrawLine(selectionPen, warpHighlightPoint.X - 15, warpHighlightPoint.Y, warpHighlightPoint.X + 15, warpHighlightPoint.Y);
-                        e.Graphics.DrawLine(selectionPen, warpHighlightPoint.X, warpHighlightPoint.Y - 15, warpHighlightPoint.X, warpHighlightPoint.Y + 15);
+                        var marker = set.Value;
+                        var pos = marker.Item1;
+                        var pixelFunc = marker.Item2;
+                        
+                        var pointData = pixelFunc();
+                        if(pointData == null)
+                        {
+                            continue;
+                        }
+                        foreach (var point in pointData.Item1)
+                        {
+                            e.Graphics.FillRectangle(pointData.Item2, pos.X + point.X * scale, pos.Y + point.Y * scale, 1 * scale, 1 * scale);
+                        }
                     }
                 }
 
@@ -268,6 +273,27 @@ namespace MinishMaker.UI
                 canvas.Height = Image.Height;
                 Invalidate();
             }
+        }
+
+        public void AddMarker(int id, Point position, Func<Tuple<Point[], Brush>> pixelFunc)
+        {
+            markers.Add(id, new Tuple<Point, Func<Tuple<Point[], Brush>>>(position, pixelFunc));
+        }
+
+        public void RemoveMarker(int id)
+        {
+            markers.Remove(id);
+        }
+
+        public void SetScale(int scale)
+        {
+            if(scale<=0)
+            {
+                scale = 1;
+            }
+            this.scale = scale;
+            this.selectionSize = new Size(16 * scale, 16 * scale);
+            this.Invalidate();
         }
     }
 }

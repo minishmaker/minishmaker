@@ -16,6 +16,7 @@ namespace MinishMaker.UI.Rework
         private Room currentRoom;
 
         private bool shouldTrigger = false;
+        private int markerId = 0;
 
         public WarpEditorWindow()
         {
@@ -149,7 +150,7 @@ namespace MinishMaker.UI.Rework
 
         public override void Cleanup()
         {
-            
+            MainWindow.instance.RemoveMarker(markerId);
         }
 
         private void SetFilled(WarpData warp)
@@ -180,7 +181,8 @@ namespace MinishMaker.UI.Rework
                 warpX.Text = warp.warpXPixel.Hex();
                 warpY.Text = warp.warpYPixel.Hex();
                 warpShape.Text = warp.warpVar.Hex();
-                ((MainWindow)Application.OpenForms[0]).HighlightWarp(warp.warpXPixel, warp.warpYPixel);
+                MainWindow.instance.AddMarker(markerId, new Point(warp.warpXPixel, warp.warpYPixel), CreateXMarker);
+                //((MainWindow)Application.OpenForms[0]).HighlightWarp(warp.warpXPixel, warp.warpYPixel);
             }
             else
             { 
@@ -196,7 +198,7 @@ namespace MinishMaker.UI.Rework
                 warpX.Text = "0";
                 warpY.Text = "0";
                 RedrawBlock();
-                ((MainWindow)Application.OpenForms[0]).HighlightWarp(-1, -1);
+                //((MainWindow)Application.OpenForms[0]).HighlightWarp(-1, -1);
             }
             warpTypeBox.SelectedItem = (WarpType)warp.warpType;
             transitionTypeBox.SelectedItem = (TransitionType)warp.transitionType;
@@ -265,7 +267,7 @@ namespace MinishMaker.UI.Rework
             exitHeight.Text = "0";
             soundId.Text = "0";
             //TODO
-            ((MainWindow)Application.OpenForms[0]).HighlightWarp(-1, -1);
+            //((MainWindow)Application.OpenForms[0]).HighlightWarp(-1, -1);
         }
         
         private void SetWarpControls(int warpType)
@@ -503,6 +505,26 @@ namespace MinishMaker.UI.Rework
             {
                 textBox.Text = property.Hex();
             }
+        }
+
+        private Tuple<Point[], Brush> CreateXMarker()
+        {
+            Point[] pixels = new Point[48];
+            
+            var brush = Brushes.Red;
+            for(int i = 0; i < 48; i++)
+            {
+                if (i < 24)
+                {
+                    pixels[i] = new Point(i - 12, i - 12);
+                }
+                else
+                {
+                    var newNum = i - 24;
+                    pixels[i] = new Point(12 - newNum, newNum - 12);
+                }
+            }
+            return new Tuple<Point[], Brush>(pixels, brush);
         }
     }
 }

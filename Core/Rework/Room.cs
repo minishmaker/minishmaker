@@ -309,5 +309,24 @@ namespace MinishMaker.Core.Rework
             Project.Instance.AddPendingChange(new ChangeTypes.Rework.RoomMetadataChange(this.Parent.Id, this.Id));
         }
 
+        public int[] GetSameTiles(int layer, int tileData)
+        {
+            int[] sameTiles = new int[this.RoomSize.X * this.RoomSize.Y];
+            var layerTiles = layer == 1 ? bg1RoomData : bg2RoomData;
+            var arrayIndex = 0;
+            byte high = (byte)(tileData >> 8);
+            byte low = (byte)(tileData & 0xFF);
+            for (int i = 0; i < sameTiles.Length; i++)
+            {
+                if(layerTiles[i*2] == low && layerTiles[i*2+1] == high)
+                {
+                    sameTiles[arrayIndex] = i;
+                    arrayIndex++;
+                }
+            }
+            Array.Resize(ref sameTiles, arrayIndex);
+
+            return sameTiles;
+        }
     }
 }
