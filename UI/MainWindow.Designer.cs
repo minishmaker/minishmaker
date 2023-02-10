@@ -370,9 +370,7 @@ namespace MinishMaker.UI
             this.metatileToolStripButton,
             this.areaToolStripButton,
             this.objectPlacementToolStripButton,
-            this.warpToolStripButton,
-            this.exportAsImageToolStripButton
-            });
+            this.warpToolStripButton});
             this.toolStrip.Location = new System.Drawing.Point(0, 24);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.RightToLeft = System.Windows.Forms.RightToLeft.No;
