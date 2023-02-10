@@ -240,15 +240,20 @@ namespace MinishMaker.UI
             OpenWarpEditor();
         }
 
-        #endregion
+		private void exportAsImageToolStripButton_Click(object sender, EventArgs e) {
+			
+			ExportAsImage(mapGridBox.Image);
+		}
 
-        #region OtherInteractions
+		#endregion
 
-        // Other interactions
-        private void tileTabControl_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            selectedLayer = tileTabControl.SelectedIndex + 1;
 
+		#region OtherInteractions
+
+		// Other interactions
+		private void tileTabControl_SelectedIndexChanged(object sender, EventArgs e)
+	    {
+	        selectedLayer = tileTabControl.SelectedIndex + 1;
         }
 
         private void MainWindow_DragDrop(object sender, DragEventArgs e)
@@ -519,6 +524,9 @@ namespace MinishMaker.UI
             {
                 chestEditor.Focus();
                 return; // dont open a second one
+
+
+		
             }
 
             chestEditor = new ChestEditorWindow();
@@ -570,6 +578,18 @@ namespace MinishMaker.UI
             metatileEditorToolStripMenuItem.Checked = true;
             metatileEditor.Show();
         }
+        
+        private void ExportAsImage(Image exportImg) {
+
+            SaveFileDialog sfd = new SaveFileDialog {
+                Filter = "Images (*.png, *.bmp)| *.png; *.bmp",
+                FilterIndex = 1
+            };
+            if(sfd.ShowDialog() == DialogResult.OK) {
+                exportImg.Save(sfd.FileName);
+            }
+        }
+        
 
         private void OnMetaTileEditorClose(object sender, FormClosedEventArgs e)
         {

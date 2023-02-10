@@ -79,6 +79,7 @@ namespace MinishMaker.UI
             this.bottomTileTab = new System.Windows.Forms.TabPage();
             this.bottomTileGridBox = new MinishMaker.UI.GridBoxComponent();
             this.mapPanel = new System.Windows.Forms.Panel();
+            this.exportAsImageToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.mapGridBox = new MinishMaker.UI.GridBoxComponent();
             this.nodeContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -103,7 +104,7 @@ namespace MinishMaker.UI
             // menuStrip
             // 
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem,
+                this.fileToolStripMenuItem,
             this.editToolStripMenuItem,
             this.viewToolStripMenuItem,
             this.windowToolStripMenuItem,
@@ -190,40 +191,41 @@ namespace MinishMaker.UI
             // viewToolStripMenuItem
             // 
             this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+
             this.topLayerToolStripMenuItem,
             this.bottomLayerToolStripMenuItem,
             this.bothLayersToolStripMenuItem});
-            this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
-            this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
-            this.viewToolStripMenuItem.Text = "View";
-            // 
-            // topLayerToolStripMenuItem
-            // 
-            this.topLayerToolStripMenuItem.Name = "topLayerToolStripMenuItem";
-            this.topLayerToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D1)));
-            this.topLayerToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
-            this.topLayerToolStripMenuItem.Text = "Top Layer";
-            this.topLayerToolStripMenuItem.Click += new System.EventHandler(this.topLayerToolStripMenuItem_Click);
-            // 
-            // bottomLayerToolStripMenuItem
-            // 
-            this.bottomLayerToolStripMenuItem.Name = "bottomLayerToolStripMenuItem";
-            this.bottomLayerToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D2)));
-            this.bottomLayerToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
-            this.bottomLayerToolStripMenuItem.Text = "Bottom Layer";
-            this.bottomLayerToolStripMenuItem.Click += new System.EventHandler(this.bottomLayerToolStripMenuItem_Click);
-            // 
-            // bothLayersToolStripMenuItem
-            // 
-            this.bothLayersToolStripMenuItem.Name = "bothLayersToolStripMenuItem";
-            this.bothLayersToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D3)));
-            this.bothLayersToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
-            this.bothLayersToolStripMenuItem.Text = "Both Layers";
-            this.bothLayersToolStripMenuItem.Click += new System.EventHandler(this.bothLayersToolStripMenuItem_Click);
-            // 
-            // windowToolStripMenuItem
-            // 
-            this.windowToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+			this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
+			this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+			this.viewToolStripMenuItem.Text = "View";
+			// 
+			// topLayerToolStripMenuItem
+			// 
+			this.topLayerToolStripMenuItem.Name = "topLayerToolStripMenuItem";
+			this.topLayerToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D1)));
+			this.topLayerToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
+			this.topLayerToolStripMenuItem.Text = "Top Layer";
+			this.topLayerToolStripMenuItem.Click += new System.EventHandler(this.topLayerToolStripMenuItem_Click);
+			// 
+			// bottomLayerToolStripMenuItem
+			// 
+			this.bottomLayerToolStripMenuItem.Name = "bottomLayerToolStripMenuItem";
+			this.bottomLayerToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D2)));
+			this.bottomLayerToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
+			this.bottomLayerToolStripMenuItem.Text = "Bottom Layer";
+			this.bottomLayerToolStripMenuItem.Click += new System.EventHandler(this.bottomLayerToolStripMenuItem_Click);
+			// 
+			// bothLayersToolStripMenuItem
+			// 
+			this.bothLayersToolStripMenuItem.Name = "bothLayersToolStripMenuItem";
+			this.bothLayersToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D3)));
+			this.bothLayersToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
+			this.bothLayersToolStripMenuItem.Text = "Both Layers";
+			this.bothLayersToolStripMenuItem.Click += new System.EventHandler(this.bothLayersToolStripMenuItem_Click);
+			// 
+			// windowToolStripMenuItem
+			// 
+			this.windowToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.chestEditorStripMenuItem,
             this.metatileEditorToolStripMenuItem,
             this.areaEditorToolStripMenuItem,
@@ -368,7 +370,9 @@ namespace MinishMaker.UI
             this.metatileToolStripButton,
             this.areaToolStripButton,
             this.objectPlacementToolStripButton,
-            this.warpToolStripButton});
+            this.warpToolStripButton,
+            this.exportAsImageToolStripButton
+            });
             this.toolStrip.Location = new System.Drawing.Point(0, 24);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.RightToLeft = System.Windows.Forms.RightToLeft.No;
@@ -574,6 +578,16 @@ namespace MinishMaker.UI
             this.mapPanel.Size = new System.Drawing.Size(853, 610);
             this.mapPanel.TabIndex = 10;
             // 
+            // exportAsImageToolStripButton
+            // 
+            this.exportAsImageToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.exportAsImageToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("exportAsImageToolStripButton.Image")));
+            this.exportAsImageToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.exportAsImageToolStripButton.Name = "exportAsImageToolStripButton";
+            this.exportAsImageToolStripButton.Size = new System.Drawing.Size(23, 22);
+            this.exportAsImageToolStripButton.Text = "exportAsImageToolStripButton";
+            this.exportAsImageToolStripButton.Click += new System.EventHandler(this.exportAsImageToolStripButton_Click);
+            // 
             // mapGridBox
             // 
             this.mapGridBox.AllowMultiSelection = false;
@@ -732,6 +746,7 @@ namespace MinishMaker.UI
         private System.Windows.Forms.ToolStripButton newToolStripButton;
         private System.Windows.Forms.ToolStripButton buildToolStripButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
-    }
+        private System.Windows.Forms.ToolStripButton exportAsImageToolStripButton;
+	}
 }
 
