@@ -3,26 +3,23 @@ using MinishMaker.Utilities;
 
 namespace MinishMaker.Core.ChangeTypes
 {
-    public class RoomMetadataChange : Change
+    public class RoomMetadataChange : RoomChangeBase
     {
         public RoomMetadataChange(int areaId, int roomId) : base(areaId, roomId, DataType.roomMetaData)
         {
         }
 
-        public override string GetFolderLocation()
-        {
-            return "/Area " + StringUtil.AsStringHex2(areaId) + "/Room " + StringUtil.AsStringHex2(roomId);
-        }
-
         public override string GetEAString(out byte[] binDat)
         {
 
-            var room = MapManager.Instance.FindRoom(areaId, roomId);
-            var pointerLoc = room.GetPointerLoc(changeType, areaId);
+            var r = ROM.Instance.reader;
+            var header = ROM.Instance.headers;
+            int mapInfoArea = r.ReadAddr(header.MapInfoRoot + (areaId << 2));
+            int pointerLoc = mapInfoArea + (roomId * 0x0A);
 
+            var room = MapManager.Instance.GetRoom(areaId, roomId);
             var sb = new StringBuilder();
-            byte[] data = new byte[10];
-            room.GetSaveData(ref data, this.changeType);
+            var data = room.MetaData.GetMetadataBytes();
 
             sb.AppendLine("PUSH"); //save cursor location
             sb.AppendLine("ORG " + pointerLoc); //go to the area info
@@ -33,10 +30,9 @@ namespace MinishMaker.Core.ChangeTypes
             return sb.ToString();
         }
 
-
-        public override bool Compare(Change change)
+        public override string GetJSONString()
         {
-            return change.changeType == changeType && change.areaId == areaId;
+            return MapManager.Instance.GetRoom(areaId, roomId).MetaData.SerializeMetaData();
         }
     }
 }

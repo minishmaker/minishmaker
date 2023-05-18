@@ -17,7 +17,7 @@ namespace MinishMaker
             if(args.Length>=1) {
                 file = args[0];
             }
-            Application.Run(new UI.Rework.MainWindow(file));
+            Application.Run(new UI.MainWindow(file));
         }
     }
 }

@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<filters>
+		<eventBase>
+			<defaultChildTargetType>Byte</defaultChildTargetType>
+			<defaultChildTargetPos>2</defaultChildTargetPos>
+			<targetValues>
+				<value>0x9</value>
+			</targetValues>
+			<elementSetName>eventBase</elementSetName>
+			<childrenNames>
+				<name>defaultEvent</name>
+			</childrenNames>
+		</eventBase>
+
+		<defaultEvent>
+			<elementNames>
+				<name>data1</name>
+				<name>data2</name>
+				<name>data3</name>
+				<name>data4</name>
+				<name>data5</name>
+				<name>pixelX</name>
+				<name>pixelY</name>
+				<name>flag1</name>
+				<name>flag2</name>
+			</elementNames>
+		</defaultEvent>
+	</filters>
+</root>

@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<filters>
+		<!-- DEPTH 1 (inside baseFilter) - - - - - - - - -->
+		<enemyBase>
+			<defaultChildTargetType>Byte</defaultChildTargetType>
+			<defaultChildTargetPos>2</defaultChildTargetPos>
+			<targetValues>
+				<value>0x3</value>
+				<value>0x13</value>
+			</targetValues>
+			<childrenNames>
+				<name>defaultEnemy</name>
+			</childrenNames>
+			<elementSetName>enemyBase</elementSetName>
+		</enemyBase>
+
+		<!-- DEPTH 2 (inside enemyBase) - - - - - - - - - -->
+		<defaultEnemy>
+			<elementNames>
+				<name>data1</name>
+				<name>data2</name>
+				<name>data3</name>
+				<name>data4</name>
+				<name>data5</name>
+				<name>pixelX</name>
+				<name>pixelY</name>
+				<name>flag1</name>
+				<name>flag2</name>
+			</elementNames>
+		</defaultEnemy>
+
+		<!--Those below use parentNames instead of putting them all in objectBase's childrenNames but this works functionally the same -->
+
+	</filters>
+</root>

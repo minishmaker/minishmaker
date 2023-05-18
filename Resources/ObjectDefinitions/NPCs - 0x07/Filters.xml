@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<filters>
+		<!-- DEPTH 1 (inside baseFilter) - - - - - - - - -->
+		<npcBase>
+			<defaultTargetType>Byte</defaultTargetType>
+			<defaultTargetPos>2</defaultTargetPos>
+			<targetValues>
+				<value>0x7</value>
+			</targetValues>
+			<elementSetName>npcBase</elementSetName>
+			<childrenNames>
+				<name>defaultNpc</name>
+			</childrenNames>
+		</npcBase>
+
+		<!-- DEPTH 2 (inside npcBase) - - - - - - - - -->
+		<defaultNpc>
+			<elementNames>
+				<name>data1</name>
+				<name>data2</name>
+				<name>data3</name>
+				<name>data4</name>
+				<name>data5</name>
+				<name>pixelX</name>
+				<name>pixelY</name>
+				<name>flag1</name>
+				<name>flag2</name>
+			</elementNames>
+		</defaultNpc>
+
+		<!--Those below use parentNames instead of putting them all in objectBase's childrenNames but this works functionally the same -->
+
+	</filters>
+</root>

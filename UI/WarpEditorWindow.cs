@@ -8,23 +8,51 @@ using MinishMaker.Utilities;
 
 namespace MinishMaker.UI
 {
-    public partial class WarpEditorWindow : Form
+    public partial class WarpEditorWindow : SubWindow
     {
-        int warpIndex = -1;
-        private List<WarpData> warpDataList;
+        private int warpIndex = 0;
+        private int warpInformationSize;
+        private WarpData currentWarp;
+        private Room currentRoom;
+
         private bool shouldTrigger = false;
+        private int markerId = 0;
 
         public WarpEditorWindow()
         {
             InitializeComponent();
+            removeButton.Click += new EventHandler((object o, EventArgs e) => { ChangedHandler(RemoveButton_Click); });
+            newButton.Click += new EventHandler((object o, EventArgs e) => { ChangedHandler(NewButton_Click); });
+            warpTypeBox.SelectedIndexChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(WarpTypeBox_SelectedIndexChanged); });
+
+            warpY.TextChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(WarpY_TextChanged); });
+            warpX.TextChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(WarpX_TextChanged); });
+            destY.TextChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(DestY_TextChanged); });
+            destX.TextChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(DestX_TextChanged); });
+            destArea.TextChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(DestArea_TextChanged); });
+            destRoom.TextChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(DestRoom_TextChanged); });
+
+            warpShape.TextChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(WarpShape_TextChanged); });
+            exitHeight.TextChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(ExitHeight_TextChanged); });
+            transitionTypeBox.SelectedIndexChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(TransitionTypeBox_SelectedIndexChanged); });
+            facingBox.SelectedIndexChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(FacingBox_SelectedIndexChanged); });
+            soundId.TextChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(SoundId_TextChanged); });
+
+            topLeftCheck.CheckedChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(CheckboxChanged); });
+            topRightCheck.CheckedChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(CheckboxChanged); });
+            bottomRightCheck.CheckedChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(CheckboxChanged); });
+            bottomLeftCheck.CheckedChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(CheckboxChanged); });
+            leftTopCheck.CheckedChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(CheckboxChanged); });
+            leftBottomCheck.CheckedChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(CheckboxChanged); });
+            rightBottomCheck.CheckedChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(CheckboxChanged); });
+            rightTopCheck.CheckedChanged += new EventHandler((object o, EventArgs e) => { ChangedHandler(CheckboxChanged); });
+
             warpTypeBox.DropDownStyle = ComboBoxStyle.DropDownList;
             warpTypeBox.DataSource = Enum.GetValues(typeof(WarpType));
             transitionTypeBox.DropDownStyle = ComboBoxStyle.DropDownList;
             transitionTypeBox.DataSource = Enum.GetValues(typeof(TransitionType));
             facingBox.DropDownStyle = ComboBoxStyle.DropDownList;
             facingBox.DataSource = Enum.GetValues(typeof(Facing));
-
-            warpIndex = -1;
 
             warpTypeBox.Enabled = false;
             transitionTypeBox.Enabled = false;
@@ -47,18 +75,18 @@ namespace MinishMaker.UI
 
             ControlBorderPanel(false);
             ControlAreaPanel(false);
-
-            LoadData();
         }
 
         public enum WarpType
         {
+            UNKNOWN = -1,
             Border = 0x00,
             Area = 0x01
         }
 
         public enum TransitionType
         {
+            UNKNOWN = -1, 
             Normal = 0x00,
             MinishInstant = 0x01,
             DropIn = 0x02,
@@ -76,148 +104,117 @@ namespace MinishMaker.UI
 
         public enum Facing
         {
-            Keep = 0x00,
-            Up = 0x01,
-            Left = 0x02,
-            Down = 0x03,
-            Right = 0x04,
+            Up = 0x00,
+            Right = 0x02,
+            Down = 0x04,
+            Left = 0x06,
+            /*WalkUp = 0x08,
+            WalkLeft = 0x0A,
+            WalkDown = 0x0C,
+            WalkLeft2 = 0x0E,
+            SwingUp = 0x10,
+            SwingLeft = 0x12,
+            SwingDown = 0x14,
+            SwingLeft2 = 0x16,
+            ShieldUp = 0x18,
+            ShieldLeft = 0x1A,
+            ShieldDown = 0x1C,
+            ShieldLeft2 = 0x1E*/
         }
 
-        public void LoadData()
+        public override void Setup()
         {
-            if (MainWindow.currentRoom != null)
+            if (MainWindow.instance.currentRoom == null)
+            {
+                return;
+            }
+
+            if(currentRoom != MainWindow.instance.currentRoom)
             {
                 warpIndex = 0;
-                warpDataList = MainWindow.currentRoom.GetWarpData();
-                SetData();
             }
-        }
 
-        public void SetData()
-        {
+            currentRoom = MainWindow.instance.currentRoom;
+            warpInformationSize = currentRoom.MetaData.GetWarpInformationSize();
             shouldTrigger = false;
             newButton.Enabled = true;
 
-            if (warpDataList.Count == 0)
+            if (warpInformationSize == 0)
             {
                 indexLabel.Text = "0";
-                travelButton.Enabled = false;
-                warpTypeBox.Enabled = false;
-                transitionTypeBox.Enabled = false;
-                facingBox.Enabled = false;
-
-                destArea.Enabled = false;
-                destRoom.Enabled = false;
-                exitHeight.Enabled = false;
-
-                destX.Enabled = false;
-                destY.Enabled = false;
-
-                soundId.Enabled = false;
-
-                prevButton.Enabled = false;
-                nextButton.Enabled = false;
-
-                newButton.Enabled = true;
-                removeButton.Enabled = false;
-
-                ControlBorderPanel(false);
-                ControlAreaPanel(false);
-
-                warpTypeBox.SelectedItem = WarpType.Border;
-                transitionTypeBox.SelectedItem = TransitionType.Normal;
-                facingBox.SelectedItem = Facing.Keep;
-
-                destX.Text = "0";
-                destY.Text = "0";
-                destArea.Text = "0";
-                destRoom.Text = "0";
-                exitHeight.Text = "0";
-                soundId.Text = "0";
-
-                ((MainWindow)Application.OpenForms[0]).HighlightWarp(-1, -1);
+                SetBlank();
+                shouldTrigger = true;
                 return;
             }
 
             indexLabel.Text = warpIndex + "";
-            var warp = warpDataList[warpIndex];
+            currentWarp = currentRoom.MetaData.GetWarpInformationEntry(warpIndex);
 
-            if (warp.warpType != 0 && warp.warpType != 1)
+            if (currentWarp.warpType != 0 && currentWarp.warpType != 1)
             {
+                SetBlank();
+                shouldTrigger = true;
+                return;
+            }
 
-                warpTypeBox.Enabled = false;
-                transitionTypeBox.Enabled = false;
-                facingBox.Enabled = false;
+            SetFilled(currentWarp);
+            shouldTrigger = true;
+        }
 
-                destArea.Enabled = false;
-                destRoom.Enabled = false;
-                exitHeight.Enabled = false;
+        public override void Cleanup()
+        {
+            MainWindow.instance.RemoveMarker(markerId);
+        }
 
-                destX.Enabled = false;
-                destY.Enabled = false;
+        private void SetFilled(WarpData warp)
+        {
 
-                soundId.Enabled = false;
+            MainWindow.instance.RemoveMarker(markerId);
+            warpTypeBox.Enabled = true;
+            transitionTypeBox.Enabled = true;
+            facingBox.Enabled = true;
 
-                prevButton.Enabled = false;
-                nextButton.Enabled = false;
+            destArea.Enabled = true;
+            destRoom.Enabled = true;
+            exitHeight.Enabled = true;
 
-                newButton.Enabled = false;
-                removeButton.Enabled = false;
+            destX.Enabled = true;
+            destY.Enabled = true;
 
-                ControlBorderPanel(false);
-                ControlAreaPanel(false);
+            soundId.Enabled = true;
 
-                ((MainWindow)Application.OpenForms[0]).HighlightWarp(-1, -1);
+            prevButton.Enabled = true;
+            nextButton.Enabled = true;
+
+            newButton.Enabled = true;
+            removeButton.Enabled = true;
+
+            SetWarpControls(warp.warpType);
+
+            if (warp.warpType == 1)
+            {
+                warpX.Text = warp.warpXPixel.Hex();
+                warpY.Text = warp.warpYPixel.Hex();
+                warpShape.Text = warp.warpVar.Hex();
+                MainWindow.instance.AddMarker(markerId, new Point(warp.warpXPixel, warp.warpYPixel), CreateXMarker);
+                //((MainWindow)Application.OpenForms[0]).HighlightWarp(warp.warpXPixel, warp.warpYPixel);
             }
             else
-            {
-                warpTypeBox.Enabled = true;
-                transitionTypeBox.Enabled = true;
-                facingBox.Enabled = true;
+            { 
+                topLeftCheck.Checked = ((warp.warpVar & 0x1) == 0x1);
+                topRightCheck.Checked = ((warp.warpVar & 0x2) == 0x2);
+                rightTopCheck.Checked = ((warp.warpVar & 0x4) == 0x4);
+                rightBottomCheck.Checked = ((warp.warpVar & 0x8) == 0x8);
+                bottomLeftCheck.Checked = ((warp.warpVar & 0x10) == 0x10);
+                bottomRightCheck.Checked = ((warp.warpVar & 0x20) == 0x20);
+                leftTopCheck.Checked = ((warp.warpVar & 0x40) == 0x40);
+                leftBottomCheck.Checked = ((warp.warpVar & 0x80) == 0x80);
 
-                destArea.Enabled = true;
-                destRoom.Enabled = true;
-                exitHeight.Enabled = true;
-
-                destX.Enabled = true;
-                destY.Enabled = true;
-
-                soundId.Enabled = true;
-
-                prevButton.Enabled = true;
-                nextButton.Enabled = true;
-
-                newButton.Enabled = true;
-                removeButton.Enabled = true;
-
-                if (warp.warpType != 1)
-                {
-                    ControlAreaPanel(false);
-                    ControlBorderPanel(true);
-                    topLeftCheck.Checked = ((warp.warpVar & 0x1) == 0x1);
-                    topRightCheck.Checked = ((warp.warpVar & 0x2) == 0x2);
-                    rightTopCheck.Checked = ((warp.warpVar & 0x4) == 0x4);
-                    rightBottomCheck.Checked = ((warp.warpVar & 0x8) == 0x8);
-                    bottomLeftCheck.Checked = ((warp.warpVar & 0x10) == 0x10);
-                    bottomRightCheck.Checked = ((warp.warpVar & 0x20) == 0x20);
-                    leftTopCheck.Checked = ((warp.warpVar & 0x40) == 0x40);
-                    leftBottomCheck.Checked = ((warp.warpVar & 0x80) == 0x80);
-                    warpX.Text = "0";
-                    warpY.Text = "0";
-                    RedrawBlock();
-                    ((MainWindow)Application.OpenForms[0]).HighlightWarp(-1, -1);
-                }
-                else
-                {
-                    ControlBorderPanel(false);
-                    ControlAreaPanel(true);
-                    warpX.Text = warp.warpXPixel.Hex();
-                    warpY.Text = warp.warpYPixel.Hex();
-                    warpShape.Text = warp.warpVar.Hex();
-                    ((MainWindow)Application.OpenForms[0]).HighlightWarp(warp.warpXPixel, warp.warpYPixel);
-                }
+                warpX.Text = "0";
+                warpY.Text = "0";
+                RedrawBlock();
+                //((MainWindow)Application.OpenForms[0]).HighlightWarp(-1, -1);
             }
-
             warpTypeBox.SelectedItem = (WarpType)warp.warpType;
             transitionTypeBox.SelectedItem = (TransitionType)warp.transitionType;
             facingBox.SelectedItem = (Facing)warp.facing;
@@ -226,12 +223,11 @@ namespace MinishMaker.UI
             destY.Text = warp.destYPixel.Hex();
             destArea.Text = warp.destArea.Hex();
             destRoom.Text = warp.destRoom.Hex();
-            travelButton.Enabled = ((MainWindow)Application.OpenForms[0]).RoomExists(warp.destArea, warp.destRoom);
+            travelButton.Enabled = MapManager.Instance.RoomExists(warp.destArea, warp.destRoom);
             exitHeight.Text = warp.exitHeight.Hex();
             soundId.Text = warp.soundId.Hex();
 
-
-            if (warpIndex >= warpDataList.Count - 1)
+            if (warpIndex >= warpInformationSize - 1)
             {
                 nextButton.Enabled = false;
             }
@@ -248,8 +244,66 @@ namespace MinishMaker.UI
             {
                 prevButton.Enabled = true;
             }
+        }
 
-            shouldTrigger = true;
+        private void SetBlank()
+        {
+            travelButton.Enabled = false;
+            warpTypeBox.Enabled = false;
+            transitionTypeBox.Enabled = false;
+            facingBox.Enabled = false;
+
+            destArea.Enabled = false;
+            destRoom.Enabled = false;
+            exitHeight.Enabled = false;
+
+            destX.Enabled = false;
+            destY.Enabled = false;
+
+            soundId.Enabled = false;
+
+            newButton.Enabled = true;
+            removeButton.Enabled = false;
+
+            ControlBorderPanel(false);
+            ControlAreaPanel(false);
+
+            warpTypeBox.SelectedItem = WarpType.Border;
+            transitionTypeBox.SelectedItem = TransitionType.Normal;
+            facingBox.SelectedItem = Facing.Up;
+
+            destX.Text = "0";
+            destY.Text = "0";
+            destArea.Text = "0";
+            destRoom.Text = "0";
+            exitHeight.Text = "0";
+            soundId.Text = "0";
+
+            if (warpIndex >= warpInformationSize - 1)
+            {
+                nextButton.Enabled = false;
+            }
+            else
+            {
+                nextButton.Enabled = true;
+            }
+
+            if (warpIndex <= 0)
+            {
+                prevButton.Enabled = false;
+            }
+            else
+            {
+                prevButton.Enabled = true;
+            }
+            //TODO
+            //((MainWindow)Application.OpenForms[0]).HighlightWarp(-1, -1);
+        }
+        
+        private void SetWarpControls(int warpType)
+        {
+            ControlAreaPanel(warpType == 1);
+            ControlBorderPanel(warpType != 1);
         }
 
         public void ControlAreaPanel(bool visible)
@@ -282,7 +336,7 @@ namespace MinishMaker.UI
             var graphic = new Bitmap(32, 32);
             using (Graphics g = Graphics.FromImage(graphic))
             {
-                var warp = warpDataList[warpIndex];
+                var warp = currentWarp;
                 var redpen = new Pen(Color.Red, 2);
                 var blackPen = new Pen(Color.Black, 2);
 
@@ -306,12 +360,9 @@ namespace MinishMaker.UI
             blockImage.Image = graphic;
         }
 
-        public void CheckboxChanged(object sender, EventArgs e)
+        public void CheckboxChanged()
         {
-            if (!shouldTrigger)
-                return;
-
-            var data =
+            var borderBits  =
                 (topLeftCheck.Checked ? 0x1 : 0) +
                 (topRightCheck.Checked ? 0x2 : 0) +
                 (rightTopCheck.Checked ? 0x4 : 0) +
@@ -321,301 +372,190 @@ namespace MinishMaker.UI
                 (leftTopCheck.Checked ? 0x40 : 0) +
                 (leftBottomCheck.Checked ? 0x80 : 0);
 
-
-
-            var warp = warpDataList[warpIndex];
-            warp.warpVar = (byte)data;
-            warpDataList[warpIndex] = warp;
-            SetData();
-
-            Project.Instance.AddPendingChange(new WarpDataChange(MainWindow.currentArea, MainWindow.currentRoom.Index));
+            currentWarp.warpVar = (byte)borderBits;
+            RedrawBlock();
         }
 
-        private void warpTypeBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void WarpTypeBox_SelectedIndexChanged()
         {
-            if (!shouldTrigger)
-                return;
+            var newVal = (byte)(int)warpTypeBox.SelectedItem;
 
-            try
-            {
-                var newVal = (byte)(int)warpTypeBox.SelectedItem;
-                var warp = warpDataList[warpIndex];
-                warp.warpType = newVal;
-                warpDataList[warpIndex] = warp;
-                SetData();
-                Project.Instance.AddPendingChange(new WarpDataChange(MainWindow.currentArea, MainWindow.currentRoom.Index));
-            }
-            catch
-            {
-                SetData();
-            }
+            currentWarp.warpType = newVal;
+            SetWarpControls(newVal);
         }
 
-        private void transitionTypeBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void TransitionTypeBox_SelectedIndexChanged()
         {
-            if (!shouldTrigger)
-                return;
+            var newVal = (byte)(int)transitionTypeBox.SelectedItem;
 
-            try
-            {
-                var newVal = (byte)(int)transitionTypeBox.SelectedItem;
-                var warp = warpDataList[warpIndex];
-                warp.transitionType = newVal;
-                warpDataList[warpIndex] = warp;
-                Project.Instance.AddPendingChange(new WarpDataChange(MainWindow.currentArea, MainWindow.currentRoom.Index));
-            }
-            catch
-            {
-                SetData();
-            }
+            currentWarp.transitionType = newVal;
         }
 
-        private void facingBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void FacingBox_SelectedIndexChanged()
         {
-            if (!shouldTrigger)
-                return;
+            var newVal = (byte)(int)facingBox.SelectedItem;
 
-            try
-            {
-                var newVal = (byte)(int)facingBox.SelectedItem;
-                var warp = warpDataList[warpIndex];
-                warp.facing = newVal;
-                warpDataList[warpIndex] = warp;
-                Project.Instance.AddPendingChange(new WarpDataChange(MainWindow.currentArea, MainWindow.currentRoom.Index));
-            }
-            catch
-            {
-                SetData();
-            }
+            currentWarp.facing = newVal;
         }
 
-        private void destX_TextChanged(object sender, EventArgs e)
+        private void DestX_TextChanged()
         {
-            if (!shouldTrigger)
-                return;
-
-            try
-            {
-                var newVal = Convert.ToUInt16(destX.Text, 16);
-                var warp = warpDataList[warpIndex];
-                warp.destXPixel = newVal;
-                warpDataList[warpIndex] = warp;
-                Project.Instance.AddPendingChange(new WarpDataChange(MainWindow.currentArea, MainWindow.currentRoom.Index));
-            }
-            catch
-            {
-                SetData();
-            }
+            HandleUInt16String(ref destX, ref currentWarp.destXPixel);
         }
 
-        private void destY_TextChanged(object sender, EventArgs e)
+        private void DestY_TextChanged()
         {
-            if (!shouldTrigger)
-                return;
-
-            try
-            {
-                var newVal = Convert.ToUInt16(destY.Text, 16);
-                var warp = warpDataList[warpIndex];
-                warp.destYPixel = newVal;
-                warpDataList[warpIndex] = warp;
-                Project.Instance.AddPendingChange(new WarpDataChange(MainWindow.currentArea, MainWindow.currentRoom.Index));
-            }
-            catch
-            {
-                SetData();
-            }
+            HandleUInt16String(ref destY, ref currentWarp.destYPixel);
         }
 
-        private void destArea_TextChanged(object sender, EventArgs e)
+        private void DestArea_TextChanged()
         {
-            if (!shouldTrigger)
-                return;
+            HandleByteString(ref destArea, ref currentWarp.destArea);
 
-            try
-            {
-                var newVal = Convert.ToByte(destArea.Text, 16);
-                var room = Convert.ToByte(destRoom.Text, 16);
-                var warp = warpDataList[warpIndex];
-                warp.destArea = newVal;
-                warpDataList[warpIndex] = warp;
-                Project.Instance.AddPendingChange(new WarpDataChange(MainWindow.currentArea, MainWindow.currentRoom.Index));
-                travelButton.Enabled = ((MainWindow)Application.OpenForms[0]).RoomExists(newVal, room);
-            }
-            catch
-            {
-                SetData();
-            }
+            travelButton.Enabled = Utilities.MapManager.Instance.RoomExists(currentWarp.destArea, currentWarp.destRoom);
         }
 
-        private void destRoom_TextChanged(object sender, EventArgs e)
+        private void DestRoom_TextChanged()
         {
-            if (!shouldTrigger)
-                return;
+            HandleByteString(ref destRoom, ref currentWarp.destRoom);
 
-            try
-            {
-                var newVal = Convert.ToByte(destRoom.Text, 16);
-                var area = Convert.ToByte(destArea.Text, 16);
-                var warp = warpDataList[warpIndex];
-                warp.destRoom = newVal;
-                warpDataList[warpIndex] = warp;
-                Project.Instance.AddPendingChange(new WarpDataChange(MainWindow.currentArea, MainWindow.currentRoom.Index));
-                travelButton.Enabled = ((MainWindow)Application.OpenForms[0]).RoomExists(area, newVal);
-            }
-            catch
-            {
-                SetData();
-            }
+            travelButton.Enabled = Utilities.MapManager.Instance.RoomExists(currentWarp.destArea, currentWarp.destRoom);
         }
 
-        private void exitHeight_TextChanged(object sender, EventArgs e)
+        private void ExitHeight_TextChanged()
         {
-            if (!shouldTrigger)
-                return;
-
-            try
-            {
-                var newVal = Convert.ToByte(exitHeight.Text, 16);
-                var warp = warpDataList[warpIndex];
-                warp.exitHeight = newVal;
-                warpDataList[warpIndex] = warp;
-                Project.Instance.AddPendingChange(new WarpDataChange(MainWindow.currentArea, MainWindow.currentRoom.Index));
-            }
-            catch
-            {
-                SetData();
-            }
+            HandleByteString(ref exitHeight, ref currentWarp.exitHeight);
         }
 
-        private void soundId_TextChanged(object sender, EventArgs e)
+        private void SoundId_TextChanged()
         {
-            if (!shouldTrigger)
-                return;
-
-            try
-            {
-                var newVal = (byte)(int)warpTypeBox.SelectedItem;
-                var warp = warpDataList[warpIndex];
-                warp.warpType = newVal;
-                warpDataList[warpIndex] = warp;
-                Project.Instance.AddPendingChange(new WarpDataChange(MainWindow.currentArea, MainWindow.currentRoom.Index));
-            }
-            catch
-            {
-                SetData();
-            }
+            HandleUInt16String(ref soundId, ref currentWarp.soundId);
         }
 
-        private void warpShape_TextChanged(object sender, EventArgs e)
+        private void WarpShape_TextChanged()
         {
-            try
-            {
-                var newVal = Convert.ToByte(warpShape.Text, 16);
-                var warp = warpDataList[warpIndex];
-                warp.warpVar = newVal;
-                warpDataList[warpIndex] = warp;
-                Project.Instance.AddPendingChange(new WarpDataChange(MainWindow.currentArea, MainWindow.currentRoom.Index));
-            }
-            catch
-            {
-                SetData();
-            }
+            HandleByteString(ref warpShape, ref currentWarp.warpVar);
         }
 
-        private void warpY_TextChanged(object sender, EventArgs e)
+        private void WarpY_TextChanged()
         {
-            try
-            {
-                var newVal = Convert.ToUInt16(warpY.Text, 16);
-                var warp = warpDataList[warpIndex];
-                warp.warpYPixel = newVal;
-                warpDataList[warpIndex] = warp;
-                SetData();
-                Project.Instance.AddPendingChange(new WarpDataChange(MainWindow.currentArea, MainWindow.currentRoom.Index));
-            }
-            catch
-            {
-                SetData();
-            }
+            HandleUInt16String(ref warpY, ref currentWarp.warpYPixel);
         }
 
-        private void warpX_TextChanged(object sender, EventArgs e)
+        private void WarpX_TextChanged()
         {
-            try
-            {
-                var newVal = Convert.ToUInt16(warpX.Text, 16);
-                var warp = warpDataList[warpIndex];
-                warp.warpXPixel = newVal;
-                warpDataList[warpIndex] = warp;
-                SetData();
-                Project.Instance.AddPendingChange(new WarpDataChange(MainWindow.currentArea, MainWindow.currentRoom.Index));
-            }
-            catch
-            {
-                SetData();
-            }
+            HandleUInt16String(ref warpX, ref currentWarp.warpXPixel);
         }
 
-        private void newButton_Click(object sender, EventArgs e)
+        private void NewButton_Click()
         {
-            if (warpDataList == null)
+            if (currentRoom == null)
             {
                 return;
             }
 
-
-            if (warpDataList.Count == 0)
+            if (warpInformationSize == 0)
                 warpIndex = -1;
 
-            Project.Instance.AddPendingChange(new WarpDataChange(MainWindow.currentArea, MainWindow.currentRoom.Index));
-            var data = new byte[20] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-            warpDataList.Insert(warpIndex + 1, new WarpData(data, 0)); //add an empty warp
+            currentRoom.MetaData.AddNewWarpInformation(warpIndex);
+            warpInformationSize += 1;
             warpIndex += 1;
-            SetData();
+
+            Setup();
+
         }
 
-        private void removeButton_Click(object sender, EventArgs e)
+        private void RemoveButton_Click()
         {
-            if (warpDataList == null)
+            if (currentRoom == null)
             {
                 return;
             }
 
-            Project.Instance.AddPendingChange(new WarpDataChange(MainWindow.currentArea, MainWindow.currentRoom.Index));
-            var warp = warpDataList[warpIndex];
-            warpDataList.Remove(warp);
+            currentRoom.MetaData.RemoveWarpInformation(warpIndex);
 
             if (warpIndex != 0)
                 warpIndex -= 1;
 
-            SetData();
+            Setup();
         }
 
-        private void nextButton_Click(object sender, EventArgs e)
+        private void NextButton_Click(object sender, EventArgs e)
         {
             warpIndex += 1;
-            SetData();
+            Setup();
         }
 
-        private void prevButton_Click(object sender, EventArgs e)
+        private void PrevButton_Click(object sender, EventArgs e)
         {
             warpIndex -= 1;
-            SetData();
+            Setup();
         }
 
-        private void travelButton_Click(object sender, EventArgs e)
+        private void TravelButton_Click(object sender, EventArgs e)
+        {
+            MainWindow.instance.ChangeRoom(currentWarp.destArea, currentWarp.destRoom);
+        }
+
+        private void ChangedHandler(Action changeAction)
+        {
+            if (!shouldTrigger)
+                return;
+
+            changeAction.Invoke();
+
+            Project.Instance.AddPendingChange(new WarpDataChange(currentRoom.Parent.Id, currentRoom.Id));
+        }
+
+        //because why type the same 4 times
+        private void HandleByteString(ref TextBox textBox, ref byte property)
         {
             try
             {
-                var areaId = Convert.ToByte(destArea.Text, 16);
-                var roomId = Convert.ToByte(destRoom.Text, 16);
-                ((MainWindow)Application.OpenForms[0]).ChangeRoom(areaId, roomId);
+                var newVal = Convert.ToByte(textBox.Text, 16);
+
+                property = newVal;
             }
             catch
             {
-                SetData();
+                textBox.Text = property.Hex();
             }
+        }
+
+        //or 5 times
+        private void HandleUInt16String(ref TextBox textBox, ref ushort property)
+        {
+            try
+            {
+                var newVal = Convert.ToUInt16(textBox.Text, 16);
+
+                property = newVal;
+            }
+            catch
+            {
+                textBox.Text = property.Hex();
+            }
+        }
+
+        private Tuple<Point[], Brush> CreateXMarker(Object obj)
+        {
+            Point position = (Point)obj;
+            Point[] pixels = new Point[48];
+            
+            var brush = Brushes.Red;
+            for(int i = 0; i < 48; i++)
+            {
+                if (i < 24)
+                {
+                    pixels[i] = new Point(i - 12 + position.X, i - 12 + position.Y);
+                }
+                else
+                {
+                    var newNum = i - 24;
+                    pixels[i] = new Point(12 - newNum + position.X, newNum - 12 + position.Y);
+                }
+            }
+            return new Tuple<Point[], Brush>(pixels, brush);
         }
     }
 }

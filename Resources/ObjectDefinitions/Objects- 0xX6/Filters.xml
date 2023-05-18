@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<filters>
+		<!-- DEPTH 1 (inside baseFilter) - - - - - - - - -->
+		<objectBase>
+			<defaultChildTargetType>Byte</defaultChildTargetType>
+			<defaultChildTargetPos>3</defaultChildTargetPos>
+			<targetValues>
+				<value>0x6</value>
+				<value>0x16</value>
+				<value>0x26</value>
+			</targetValues>
+			<elementSetName>objectBase</elementSetName>
+			<childrenNames>
+				<name>defaultObject</name>
+			</childrenNames>
+			<markers>
+				<marker>
+					<type>cross</type>
+					<data>
+						<XValueType>short</XValueType>
+						<XValuePos>9</XValuePos>
+						<XValueLength>1</XValueLength>
+						<YValueType>short</YValueType>
+						<YValuePos>11</YValuePos>
+						<YValueLength>1</YValueLength>
+					</data>
+				</marker>
+			</markers>
+		</objectBase>
+
+		<!-- DEPTH 2 (inside objectBase) - - - - - - - - - -->
+		<defaultObject>
+			<elementNames>
+				<name>data1</name>
+				<name>data2</name>
+				<name>data3</name>
+				<name>data4</name>
+				<name>data5</name>
+				<name>pixelX</name>
+				<name>pixelY</name>
+				<name>flag1</name>
+				<name>flag2</name>
+			</elementNames>
+		</defaultObject>
+
+		<!--Those below use parentNames instead of putting them all in objectBase's childrenNames but this works functionally the same -->
+		<item>
+			<targetValues>
+				<value>0x00</value>
+				<value>0x02</value>
+				<value>0x1A</value>
+				<value>0x30</value>
+			</targetValues>
+			<childTargetValue>3</childTargetValue>
+			<parentNames>
+				<name>objectBase</name>
+			</parentNames>
+			<elementSetName>itemBase</elementSetName>
+			<childrenNames>
+				<name>defaultItem</name>
+			</childrenNames>
+		</item>
+
+		<!-- DEPTH 3 (inside item) -->
+		<defaultItem>
+			<elementNames>
+				<name>data3</name>
+				<name>data4</name>
+				<name>data5</name>
+				<name>pixelXR1</name>
+				<name>pixelYR1</name>
+				<name>flag1R1</name>
+				<name>flag2R1</name>
+			</elementNames>
+			<elementSetName>defaultItem</elementSetName>
+		</defaultItem>
+	</filters>
+</root>

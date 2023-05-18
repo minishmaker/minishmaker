@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<!-- basefilter is the starting filter from which it gets more specific the further down it goes-->
+	<baseFilter>
+		<!-- check what list we are on -->
+		<defaultChildTargetType>List</defaultChildTargetType>
+		<!-- names of the children lists -->
+		<childrenNames>
+			<name>tileType</name> <!-- in TileTypes -->
+			<name>defaultList</name> <!-- in here -->
+			<name>functionLink</name> <!-- in here -->
+		</childrenNames>
+		<!-- by default 16 bytes will be read if a child doesnt override this -->
+		<dataSize>16</dataSize>
+	</baseFilter>
+
+	<!-- filters other than basefilter go in here and can be referenced by other filters by name-->
+	<filters>
+		<!-- DEPTH 1 (inside baseFilter) - - - - - - - -->
+		<!-- will be defaulted to if no targetValues correspond to any others due to not having a targetValues field, will error if 2 lists with the same parent don't have this field-->
+		<defaultList>
+			<defaultChildTargetType>Byte</defaultChildTargetType>
+			<defaultChildTargetPos>1</defaultChildTargetPos>
+			<elementSetName>dataType</elementSetName>
+			<childrenNames>
+				<name>objectBase</name> <!-- in Items - 0xX6 -->
+				<name>enemyBase</name> <!-- in Enemies - 0xX3 -->
+				<name>npcBase</name> <!-- in NPCs - 0x07 -->
+				<name>eventBase</name> <!-- -->
+				<name>unknown</name> <!-- -->
+			</childrenNames>
+		</defaultList>
+
+		<functionLink>
+			<targetValues>
+				<value>4</value>
+				<value>5</value>
+				<value>6</value>
+				<value>7</value>
+			</targetValues>
+			<elementNames>
+				<name>pointer</name>
+				<name>pointerHex</name>
+			</elementNames>
+			<dataSize>4</dataSize> <!-- just the 4 bytes for the table address-->
+		</functionLink>
+		<!-- DEPTH 2 (inside defaultList) - - - - - - - 
+		just write out all the bytes of the entry so it can still be edited even if we don't know what it is-->
+		<unknown>
+			<elementSetName>fullRepresentation</elementSetName>
+		</unknown>
+	</filters>
+</root>

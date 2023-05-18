@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>MinishMaker</RootNamespace>
     <AssemblyName>MinishMaker</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
@@ -27,6 +27,8 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -61,9 +63,6 @@
     <StartupObject>MinishMaker.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Hjson, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Hjson.3.0.0\lib\net40\Hjson.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.WindowsAPICodePack-Core.1.1.0.2\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
     </Reference>
@@ -72,6 +71,9 @@
     </Reference>
     <Reference Include="Microsoft.WindowsAPICodePack.ShellExtensions, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.WindowsAPICodePack-Shell.1.1.0.0\lib\Microsoft.WindowsAPICodePack.ShellExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
@@ -88,75 +90,39 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\ChangeTypes\AreaInfoChange.cs" />
-    <Compile Include="Core\ChangeTypes\Bg1DataChange.cs" />
-    <Compile Include="Core\ChangeTypes\Bg1MetaTileTypeChange.cs" />
-    <Compile Include="Core\ChangeTypes\Bg2TileSetChange.cs" />
-    <Compile Include="Core\ChangeTypes\CommonTileSetChange.cs" />
-    <Compile Include="Core\ChangeTypes\Bg1TileSetChange.cs" />
-    <Compile Include="Core\ChangeTypes\Bg2MetaTileSetChange.cs" />
-    <Compile Include="Core\ChangeTypes\Bg2DataChange.cs" />
-    <Compile Include="Core\ChangeTypes\Bg2MetaTileTypeChange.cs" />
-    <Compile Include="Core\ChangeTypes\ChestDataChange.cs" />
-    <Compile Include="Core\ChangeTypes\Bg1MetaTileSetChange.cs" />
+    <Compile Include="Core\ChangeTypes\AreaChangeBase.cs" />
     <Compile Include="Core\ChangeTypes\Change.cs" />
-    <Compile Include="Core\ChangeTypes\List2DataChange.cs" />
-    <Compile Include="Core\ChangeTypes\List3DataChange.cs" />
-    <Compile Include="Core\ChangeTypes\List1DataChange.cs" />
+    <Compile Include="Core\ChangeTypes\ListDataChange.cs" />
+    <Compile Include="Core\ChangeTypes\TODO\RoomAdditionChange.cs" />
+    <Compile Include="Core\ChangeTypes\RoomChangeBase.cs" />
+    <Compile Include="Core\ChangeTypes\TilesetChange.cs" />
+    <Compile Include="Core\ChangeTypes\AreaInfoChange.cs" />
+    <Compile Include="Core\ChangeTypes\BgDataChange.cs" />
+    <Compile Include="Core\ChangeTypes\MetaTilesetChange.cs" />
+    <Compile Include="Core\ChangeTypes\MetaTileTypeChange.cs" />
     <Compile Include="Core\ChangeTypes\PaletteChange.cs" />
-    <Compile Include="Core\ChangeTypes\Rework\AreaChangeBase.cs" />
-    <Compile Include="Core\ChangeTypes\Rework\Change.cs" />
-    <Compile Include="Core\ChangeTypes\Rework\ListDataChange.cs" />
-    <Compile Include="Core\ChangeTypes\Rework\RoomChangeBase.cs" />
-    <Compile Include="Core\ChangeTypes\Rework\TileSetChange.cs" />
-    <Compile Include="Core\ChangeTypes\Rework\AreaInfoChange.cs" />
-    <Compile Include="Core\ChangeTypes\Rework\TODO\BgDataChange.cs" />
-    <Compile Include="Core\ChangeTypes\Rework\BgMetaTileSetChange.cs" />
-    <Compile Include="Core\ChangeTypes\Rework\BgMetaTileTypeChange.cs" />
-    <Compile Include="Core\ChangeTypes\Rework\PaletteChange.cs" />
-    <Compile Include="Core\ChangeTypes\Rework\RoomMetadataChange.cs" />
-    <Compile Include="Core\ChangeTypes\Rework\TODO\GlobalChangeBase.cs" />
-    <Compile Include="Core\ChangeTypes\Rework\TODO\TextChange.cs" />
-    <Compile Include="Core\ChangeTypes\Rework\WarpDataChange.cs" />
     <Compile Include="Core\ChangeTypes\RoomMetadataChange.cs" />
+    <Compile Include="Core\ChangeTypes\GlobalChangeBase.cs" />
+    <Compile Include="Core\ChangeTypes\TextChange.cs" />
     <Compile Include="Core\ChangeTypes\WarpDataChange.cs" />
     <Compile Include="Core\LanguageManager.cs" />
+    <Compile Include="Core\Area.cs" />
+    <Compile Include="Core\MetaTileset.cs" />
+    <Compile Include="Core\PaletteSet.cs" />
     <Compile Include="Core\Project.cs" />
-    <Compile Include="Core\Rework\Area.cs" />
-    <Compile Include="Core\Rework\MetaTileSet.cs" />
-    <Compile Include="Core\Rework\PaletteSet.cs" />
-    <Compile Include="Core\Rework\Project.cs" />
-    <Compile Include="Core\Rework\Room.cs" />
-    <Compile Include="Core\Rework\RoomMetaData.cs" />
-    <Compile Include="UI\AreaEditorWindow.cs">
+    <Compile Include="Core\Room.cs" />
+    <Compile Include="Core\RoomMetaData.cs" />
+    <Compile Include="UI\PaletteEditorWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\AreaEditorWindow.Designer.cs">
-      <DependentUpon>AreaEditorWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\ChestEditorWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\ChestEditorWindow.Designer.cs">
-      <DependentUpon>ChestEditorWindow.cs</DependentUpon>
+    <Compile Include="UI\PaletteEditorWindow.Designer.cs">
+      <DependentUpon>PaletteEditorWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\GridBoxComponent.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="UI\GridBoxComponent.Designer.cs">
       <DependentUpon>GridBoxComponent.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\MetaTileEditorWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\MetaTileEditorWindow.Designer.cs">
-      <DependentUpon>MetaTileEditorWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\ObjectPlacementEditorWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\ObjectPlacementEditorWindow.Designer.cs">
-      <DependentUpon>ObjectPlacementEditorWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\RenameDialog.cs">
       <SubType>Form</SubType>
@@ -170,44 +136,38 @@
     <Compile Include="UI\ResizeRoomDialog.Designer.cs">
       <DependentUpon>ResizeRoomDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Rework\AreaEditorWindow.cs">
+    <Compile Include="UI\AreaEditorWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\Rework\AreaEditorWindow.Designer.cs">
+    <Compile Include="UI\AreaEditorWindow.Designer.cs">
       <DependentUpon>AreaEditorWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Rework\MainWindow.cs">
+    <Compile Include="UI\MainWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\Rework\MainWindow.Designer.cs">
+    <Compile Include="UI\MainWindow.Designer.cs">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Rework\MetaTileEditorWindow.cs">
+    <Compile Include="UI\MetaTileEditorWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\Rework\MetaTileEditorWindow.Designer.cs">
+    <Compile Include="UI\MetaTileEditorWindow.Designer.cs">
       <DependentUpon>MetaTileEditorWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Rework\ObjectPlacementEditorWindow.cs">
+    <Compile Include="UI\ObjectPlacementEditorWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\Rework\ObjectPlacementEditorWindow.Designer.cs">
+    <Compile Include="UI\ObjectPlacementEditorWindow.Designer.cs">
       <DependentUpon>ObjectPlacementEditorWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Rework\SubWindow.cs">
+    <Compile Include="UI\SubWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\Rework\TextEditorWindow.cs">
+    <Compile Include="UI\TextEditorWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\Rework\TextEditorWindow.Designer.cs">
+    <Compile Include="UI\TextEditorWindow.Designer.cs">
       <DependentUpon>TextEditorWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Include="UI\Rework\WarpEditorWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\Rework\WarpEditorWindow.Designer.cs">
-      <DependentUpon>WarpEditorWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\WarpEditorWindow.cs">
       <SubType>Form</SubType>
@@ -222,42 +182,32 @@
       <DependentUpon>NewProjectWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Utilities\DataHelper.cs" />
-    <Compile Include="Core\MapManager.cs" />
-    <Compile Include="Core\MetaTileSet.cs" />
-    <Compile Include="Core\PaletteSet.cs" />
     <Compile Include="Core\ROM.cs" />
-    <Compile Include="Core\Room.cs" />
-    <Compile Include="Core\RoomMetaData.cs" />
-    <Compile Include="Core\TileSet.cs" />
+    <Compile Include="Core\Tileset.cs" />
     <Compile Include="UI\AboutDialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="UI\AboutDialog.Designer.cs">
       <DependentUpon>AboutDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\MainWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UI\MainWindow.Designer.cs">
-      <DependentUpon>MainWindow.cs</DependentUpon>
-    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\Constants.cs" />
     <Compile Include="Utilities\ExtensionMethods.cs" />
     <Compile Include="Utilities\BitmapHandler.cs" />
+    <Compile Include="Utilities\PaletteSetManager.cs" />
     <Compile Include="Utilities\Reader.cs" />
-    <Compile Include="Utilities\Rework\ListFileParser.cs" />
-    <Compile Include="Utilities\Rework\DrawingUtil.cs" />
-    <Compile Include="Utilities\Rework\MapManager.cs" />
-    <Compile Include="Utilities\Rework\NumberUtil.cs" />
-    <Compile Include="Utilities\Rework\ObjectDefinitionParser.cs" />
-    <Compile Include="Utilities\Rework\UndoRedoEntry.cs" />
-    <Compile Include="Utilities\Rework\UndoRedoManager.cs" />
+    <Compile Include="Utilities\DrawingUtil.cs" />
+    <Compile Include="Utilities\MapManager.cs" />
+    <Compile Include="Utilities\NumberUtil.cs" />
+    <Compile Include="Utilities\ObjectDefinitionParser.cs" />
+    <Compile Include="Utilities\XMLHelper.cs" />
+    <Compile Include="Utilities\UndoRedoEntry.cs" />
+    <Compile Include="Utilities\UndoRedoManager.cs" />
     <Compile Include="Utilities\StringUtil.cs" />
     <Compile Include="Utilities\Writer.cs" />
-    <EmbeddedResource Include="UI\AreaEditorWindow.resx">
-      <DependentUpon>AreaEditorWindow.cs</DependentUpon>
+    <EmbeddedResource Include="UI\PaletteEditorWindow.resx">
+      <DependentUpon>PaletteEditorWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\GridBoxComponent.resx">
       <DependentUpon>GridBoxComponent.cs</DependentUpon>
@@ -275,9 +225,14 @@
     <EmbeddedResource Include="UI\AboutDialog.resx">
       <DependentUpon>AboutDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\ChestEditorWindow.resx">
-      <DependentUpon>ChestEditorWindow.cs</DependentUpon>
-      <SubType>Designer</SubType>
+    <EmbeddedResource Include="UI\RenameDialog.resx">
+      <DependentUpon>RenameDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\ResizeRoomDialog.resx">
+      <DependentUpon>ResizeRoomDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\AreaEditorWindow.resx">
+      <DependentUpon>AreaEditorWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
@@ -289,29 +244,8 @@
     <EmbeddedResource Include="UI\ObjectPlacementEditorWindow.resx">
       <DependentUpon>ObjectPlacementEditorWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\RenameDialog.resx">
-      <DependentUpon>RenameDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\ResizeRoomDialog.resx">
-      <DependentUpon>ResizeRoomDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\Rework\AreaEditorWindow.resx">
-      <DependentUpon>AreaEditorWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\Rework\MainWindow.resx">
-      <DependentUpon>MainWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\Rework\MetaTileEditorWindow.resx">
-      <DependentUpon>MetaTileEditorWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\Rework\ObjectPlacementEditorWindow.resx">
-      <DependentUpon>ObjectPlacementEditorWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\Rework\TextEditorWindow.resx">
+    <EmbeddedResource Include="UI\TextEditorWindow.resx">
       <DependentUpon>TextEditorWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UI\Rework\WarpEditorWindow.resx">
-      <DependentUpon>WarpEditorWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\WarpEditorWindow.resx">
       <DependentUpon>WarpEditorWindow.cs</DependentUpon>
@@ -341,13 +275,78 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\ObjectDefinitions\Items - 0xX6\ItemTypes.xml" />
-    <Content Include="Resources\ObjectDefinitions\NPCs - 0x07\NPCTypes.xml" />
-    <Content Include="Resources\ObjectDefinitions\ObjectCategories.xml" />
+    <EmbeddedResource Include="Resources\Hylian.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <Content Include="Resources\ObjectDefinitions\FunctionNames.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\ObjectDefinitions\Enemies - 0xX3\ElementSets.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\ObjectDefinitions\Enemies - 0xX3\EnemyTypes.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\ObjectDefinitions\Enemies - 0xX3\Filters.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\ObjectDefinitions\Events - 0xXX\ElementSets.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\ObjectDefinitions\Events - 0xXX\EventTypes.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\ObjectDefinitions\Events - 0xXX\Filters.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\ObjectDefinitions\NPCs - 0x07\ElementSets.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\ObjectDefinitions\Objects- 0xX6\ElementSets.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\ObjectDefinitions\Objects- 0xX6\Filters.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\ObjectDefinitions\Objects- 0xX6\ItemTypes.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\ObjectDefinitions\NPCs - 0x07\Filters.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\ObjectDefinitions\NPCs - 0x07\NPCTypes.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\ObjectDefinitions\DataCategories.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\ObjectDefinitions\Objects- 0xX6\NPCTypes.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\ObjectDefinitions\Objects- 0xX6\Object6Types.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\ObjectDefinitions\README.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\ObjectDefinitions\BaseFilter.xml" />
+    <Content Include="Resources\ObjectDefinitions\BaseFilters.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\ObjectDefinitions\ElementSets.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\ObjectDefinitions\TileTypes\ChestTypes.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\ObjectDefinitions\TileTypes\ElementSets.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\ObjectDefinitions\TileTypes\Filters.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <EmbeddedResource Include="Resources\TextConvert.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
     <Content Include="Resources\UserObjectDefinitions\README.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -370,9 +369,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\ObjectDefinitions\Enemies - 0x03\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy /y /d /s "$(ProjectDir)Vendor\Language Raws" "$(TargetDir)Language Raws\"</PostBuildEvent>

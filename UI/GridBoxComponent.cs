@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
+using static MinishMaker.Utilities.ObjectDefinitionParser;
 
 // Adapted from ZOLE's Grid Box by Lin22
 namespace MinishMaker.UI
@@ -30,7 +31,7 @@ namespace MinishMaker.UI
         public Point warpHighlightPoint = new Point(-1, -1);
         public Point listObjectHighlightPoint = new Point(-1,-1);
 
-        private Dictionary<int, Tuple<Point, Func<Tuple<Point[], Brush>>>> markers = new Dictionary<int, Tuple<Point, Func<Tuple<Point[], Brush>>>>();
+        private Dictionary<int, Tuple<Object, Func<Object, Tuple<Point[], Brush>>>> markerDrawers = new Dictionary<int, Tuple<Object, Func<Object, Tuple<Point[], Brush>>>>();
         private int scale = 1;
 
         public GridBoxComponent()
@@ -71,7 +72,7 @@ namespace MinishMaker.UI
         public int SelectedIndex
         {
             get { return selectedIndex; }
-            set { selectedIndex = value; selectionRectangle = new Rectangle((value % (canvas.Width / selectionSize.Width)), (value / (canvas.Height / selectionSize.Height)), 1, 1); Invalidate(); }
+            set { selectedIndex = value; selectionRectangle = new Rectangle((value % (canvas.Width / selectionSize.Width)), (value / (canvas.Width / selectionSize.Width)), 1, 1); Invalidate(); }
         }
 
         [Description("Determines whether or not items can be selected."), Browsable(true)]
@@ -136,28 +137,26 @@ namespace MinishMaker.UI
                         Point p = GetIndexPoint(selectedIndex);
                         e.Graphics.DrawRectangle(selectionPen, p.X, p.Y, selectionSize.Width, selectionSize.Height);
                     }
-                    //else
-                    //{
-                    //    Point p = GetIndexPoint(selectedIndex);
-                    //    e.Graphics.DrawRectangle(selectionPen, p.X, p.Y, selectionSize.Width * selectionRectangle.Width, selectionSize.Height * selectionRectangle.Height);
-                    //}
+                }
+                else
+                {
+                    //Point p = GetIndexPoint(selectedIndex);
+                    e.Graphics.DrawRectangle(selectionPen, selectionRectangle.X * selectionSize.Width, selectionRectangle.Y * selectionSize.Height, selectionSize.Width * selectionRectangle.Width, selectionSize.Height * selectionRectangle.Height);
+                }
 
-                    
-                    foreach (var set in markers)
+                foreach (var pair in markerDrawers)
+                {
+                    var drawInformation = pair.Value;
+                    var pixelFunc = drawInformation.Item2;
+
+                    var pointData = pixelFunc(drawInformation.Item1);
+                    if(pointData == null)
                     {
-                        var marker = set.Value;
-                        var pos = marker.Item1;
-                        var pixelFunc = marker.Item2;
-                        
-                        var pointData = pixelFunc();
-                        if(pointData == null)
-                        {
-                            continue;
-                        }
-                        foreach (var point in pointData.Item1)
-                        {
-                            e.Graphics.FillRectangle(pointData.Item2, pos.X + point.X * scale, pos.Y + point.Y * scale, 1 * scale, 1 * scale);
-                        }
+                        continue;
+                    }
+                    foreach (var point in pointData.Item1)
+                    {
+                        e.Graphics.FillRectangle(pointData.Item2, point.X * scale, point.Y * scale, scale, scale);
                     }
                 }
 
@@ -183,32 +182,6 @@ namespace MinishMaker.UI
 
         private void GridBox_MouseMove(object sender, MouseEventArgs e)
         {
-            int x;
-            int y;
-            int width;
-            int height;
-            if (allowMultiSelection && startSelection != -1)
-            {
-                x = e.X / selectionSize.Width;
-                y = e.Y / selectionSize.Height;
-                width = x - selectionRectangle.X + 1;
-                height = y - selectionRectangle.Y + 1;
-                if (width > 0)
-                    selectionRectangle.Width = width;
-                else
-                    selectionRectangle.Width = 1;
-                if (height > 0)
-                    selectionRectangle.Height = height;
-                else
-                    selectionRectangle.Height = 1;
-                if (selectionRectangle.X + selectionRectangle.Width > canvas.Width / selectionSize.Width)
-                    selectionRectangle.Width = (canvas.Width / selectionSize.Width) - selectionRectangle.X;
-                if (selectionRectangle.Y + selectionRectangle.Height > canvas.Height / selectionSize.Height)
-                    selectionRectangle.Height = (canvas.Height / selectionSize.Height) - selectionRectangle.Y;
-                Invalidate();
-                return;
-            }
-
             if (e.X < 0 || e.Y < 0 || e.X >= canvas.Width || e.Y >= canvas.Height)
             {
                 if (hoverIndex != -1)
@@ -220,11 +193,47 @@ namespace MinishMaker.UI
                 return;
             }
 
-            width = (canvas.Width / selectionSize.Width);
-            height = (canvas.Height / selectionSize.Height);
-            x = e.X / selectionSize.Width;
-            y = e.Y / selectionSize.Height;
+            int width = (canvas.Width / selectionSize.Width);
+            int height = (canvas.Height / selectionSize.Height);
+            int x = e.X / selectionSize.Width;
+            int y = e.Y / selectionSize.Height;
             hoverIndex = x + y * width;
+
+            if (allowMultiSelection && startSelection != -1)
+            {
+                var startX = startSelection % width;
+                var startY = (startSelection - startX) / width;
+                var sizeX = x - startX; // same tile = 0; tile left = -1; tile right = 1;
+                var sizeY = y - startY; // same tile = 0;
+                if(sizeX < 0)
+                {
+                    startX = x;
+                    sizeX *= -1;
+                }
+                if(sizeY < 0)
+                {
+                    startY = y;
+                    sizeY *= -1;
+                }
+                sizeX += 1;
+                sizeY += 1;
+
+                selectionRectangle.X = startX;
+                selectionRectangle.Y = startY;
+                selectionRectangle.Width = sizeX;
+                selectionRectangle.Height = sizeY;
+
+                /*if (canHover)
+                {
+                    if (lastHoverIndex != hoverIndex)
+                    {
+                        lastHoverIndex = hoverIndex;
+                        Invalidate();
+                    }
+                }*/
+                Invalidate();
+                return;
+            }
 
             if (canHover)
             {
@@ -252,6 +261,15 @@ namespace MinishMaker.UI
             {
                 if (canSelect && hoverIndex != -1)
                 {
+                    selectedIndex = hoverIndex;
+                    Invalidate();
+                }
+            }
+
+            if (e.Button == MouseButtons.Right)
+            {
+                if (canSelect && hoverIndex != -1)
+                {
                     startSelection = hoverIndex;
                     selectionRectangle = new Rectangle((e.X / selectionSize.Width), (e.Y / selectionSize.Height), 1, 1);
                     selectedIndex = hoverIndex;
@@ -275,14 +293,16 @@ namespace MinishMaker.UI
             }
         }
 
-        public void AddMarker(int id, Point position, Func<Tuple<Point[], Brush>> pixelFunc)
+        public void AddMarker(int id, Object data, Func<Object, Tuple<Point[], Brush>> pixelFunc)
         {
-            markers.Add(id, new Tuple<Point, Func<Tuple<Point[], Brush>>>(position, pixelFunc));
+            markerDrawers.Add(id, new Tuple<Object, Func<Object, Tuple<Point[], Brush>>>(data, pixelFunc));
+            Invalidate();
         }
 
         public void RemoveMarker(int id)
         {
-            markers.Remove(id);
+            markerDrawers.Remove(id);
+            Invalidate();
         }
 
         public void SetScale(int scale)
@@ -293,7 +313,12 @@ namespace MinishMaker.UI
             }
             this.scale = scale;
             this.selectionSize = new Size(16 * scale, 16 * scale);
-            this.Invalidate();
+            //this.Invalidate(getViewport());
+        }
+
+        public new void Invalidate()
+        {
+            base.Invalidate();
         }
     }
 }

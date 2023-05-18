@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<elementSets>
+		<eventBase>
+			<element>
+				<type>enum</type>
+				<enumType>eventTypes</enumType>
+				<valueType>Byte</valueType>
+				<valuePos>3</valuePos>
+				<label>Event type:</label>
+				<colspan>3</colspan>
+				<column>1</column>
+				<row>2</row>
+			</element>
+
+			<element>
+				<type>hexNumber</type>
+				<valueType>Byte</valueType>
+				<valuePos>3</valuePos>
+				<column>5</column>
+				<row>2</row>
+			</element>
+		</eventBase>
+	</elementSets>
+</root>

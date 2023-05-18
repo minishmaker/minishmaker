@@ -20,14 +20,14 @@
 			base.Dispose( disposing );
 		}
 
-		#region Windows Form Designer generated code
+        #region Windows Form Designer generated code
 
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WarpEditorWindow));
             this.removeButton = new System.Windows.Forms.Button();
             this.newButton = new System.Windows.Forms.Button();
@@ -84,7 +84,6 @@
             this.removeButton.TabIndex = 26;
             this.removeButton.Text = "-";
             this.removeButton.UseVisualStyleBackColor = true;
-            this.removeButton.Click += new System.EventHandler(this.removeButton_Click);
             // 
             // newButton
             // 
@@ -94,7 +93,6 @@
             this.newButton.TabIndex = 25;
             this.newButton.Text = "+";
             this.newButton.UseVisualStyleBackColor = true;
-            this.newButton.Click += new System.EventHandler(this.newButton_Click);
             // 
             // prevButton
             // 
@@ -104,7 +102,7 @@
             this.prevButton.TabIndex = 24;
             this.prevButton.Text = "<";
             this.prevButton.UseVisualStyleBackColor = true;
-            this.prevButton.Click += new System.EventHandler(this.prevButton_Click);
+            this.prevButton.Click += new System.EventHandler(this.PrevButton_Click);
             // 
             // nextButton
             // 
@@ -114,7 +112,7 @@
             this.nextButton.TabIndex = 23;
             this.nextButton.Text = ">";
             this.nextButton.UseVisualStyleBackColor = true;
-            this.nextButton.Click += new System.EventHandler(this.nextButton_Click);
+            this.nextButton.Click += new System.EventHandler(this.NextButton_Click);
             // 
             // indexLabel
             // 
@@ -142,7 +140,6 @@
             this.warpX.TabIndex = 28;
             this.warpX.Text = "FFFF";
             this.warpX.Visible = false;
-            this.warpX.TextChanged += new System.EventHandler(this.warpX_TextChanged);
             // 
             // warpTypeBox
             // 
@@ -151,7 +148,6 @@
             this.warpTypeBox.Name = "warpTypeBox";
             this.warpTypeBox.Size = new System.Drawing.Size(121, 21);
             this.warpTypeBox.TabIndex = 29;
-            this.warpTypeBox.SelectedIndexChanged += new System.EventHandler(this.warpTypeBox_SelectedIndexChanged);
             // 
             // label2
             // 
@@ -182,7 +178,6 @@
             this.warpY.TabIndex = 32;
             this.warpY.Text = "FFFF";
             this.warpY.Visible = false;
-            this.warpY.TextChanged += new System.EventHandler(this.warpY_TextChanged);
             // 
             // destY
             // 
@@ -192,7 +187,6 @@
             this.destY.Size = new System.Drawing.Size(30, 20);
             this.destY.TabIndex = 36;
             this.destY.Text = "FFFF";
-            this.destY.TextChanged += new System.EventHandler(this.destY_TextChanged);
             // 
             // label4
             // 
@@ -220,7 +214,6 @@
             this.destX.Size = new System.Drawing.Size(30, 20);
             this.destX.TabIndex = 33;
             this.destX.Text = "FFFF";
-            this.destX.TextChanged += new System.EventHandler(this.destX_TextChanged);
             // 
             // label7
             // 
@@ -241,7 +234,6 @@
             this.warpShape.TabIndex = 37;
             this.warpShape.Text = "FF";
             this.warpShape.Visible = false;
-            this.warpShape.TextChanged += new System.EventHandler(this.warpShape_TextChanged);
             // 
             // destArea
             // 
@@ -251,7 +243,6 @@
             this.destArea.Size = new System.Drawing.Size(20, 20);
             this.destArea.TabIndex = 40;
             this.destArea.Text = "FF";
-            this.destArea.TextChanged += new System.EventHandler(this.destArea_TextChanged);
             // 
             // label6
             // 
@@ -270,7 +261,6 @@
             this.destRoom.Size = new System.Drawing.Size(20, 20);
             this.destRoom.TabIndex = 42;
             this.destRoom.Text = "FF";
-            this.destRoom.TextChanged += new System.EventHandler(this.destRoom_TextChanged);
             // 
             // label8
             // 
@@ -289,7 +279,6 @@
             this.exitHeight.Size = new System.Drawing.Size(20, 20);
             this.exitHeight.TabIndex = 44;
             this.exitHeight.Text = "FF";
-            this.exitHeight.TextChanged += new System.EventHandler(this.exitHeight_TextChanged);
             // 
             // label9
             // 
@@ -307,7 +296,6 @@
             this.transitionTypeBox.Name = "transitionTypeBox";
             this.transitionTypeBox.Size = new System.Drawing.Size(121, 21);
             this.transitionTypeBox.TabIndex = 46;
-            this.transitionTypeBox.SelectedIndexChanged += new System.EventHandler(this.transitionTypeBox_SelectedIndexChanged);
             // 
             // label10
             // 
@@ -325,7 +313,6 @@
             this.facingBox.Name = "facingBox";
             this.facingBox.Size = new System.Drawing.Size(121, 21);
             this.facingBox.TabIndex = 48;
-            this.facingBox.SelectedIndexChanged += new System.EventHandler(this.facingBox_SelectedIndexChanged);
             // 
             // label11
             // 
@@ -344,7 +331,6 @@
             this.soundId.Size = new System.Drawing.Size(30, 20);
             this.soundId.TabIndex = 50;
             this.soundId.Text = "FFFF";
-            this.soundId.TextChanged += new System.EventHandler(this.soundId_TextChanged);
             // 
             // label12
             // 
@@ -363,7 +349,6 @@
             this.topLeftCheck.Size = new System.Drawing.Size(15, 14);
             this.topLeftCheck.TabIndex = 51;
             this.topLeftCheck.UseVisualStyleBackColor = true;
-            this.topLeftCheck.CheckedChanged += new System.EventHandler(this.CheckboxChanged);
             // 
             // topRightCheck
             // 
@@ -373,7 +358,6 @@
             this.topRightCheck.Size = new System.Drawing.Size(15, 14);
             this.topRightCheck.TabIndex = 52;
             this.topRightCheck.UseVisualStyleBackColor = true;
-            this.topRightCheck.CheckedChanged += new System.EventHandler(this.CheckboxChanged);
             // 
             // bottomRightCheck
             // 
@@ -383,7 +367,6 @@
             this.bottomRightCheck.Size = new System.Drawing.Size(15, 14);
             this.bottomRightCheck.TabIndex = 54;
             this.bottomRightCheck.UseVisualStyleBackColor = true;
-            this.bottomRightCheck.CheckedChanged += new System.EventHandler(this.CheckboxChanged);
             // 
             // bottomLeftCheck
             // 
@@ -393,7 +376,6 @@
             this.bottomLeftCheck.Size = new System.Drawing.Size(15, 14);
             this.bottomLeftCheck.TabIndex = 53;
             this.bottomLeftCheck.UseVisualStyleBackColor = true;
-            this.bottomLeftCheck.CheckedChanged += new System.EventHandler(this.CheckboxChanged);
             // 
             // leftTopCheck
             // 
@@ -403,7 +385,6 @@
             this.leftTopCheck.Size = new System.Drawing.Size(15, 14);
             this.leftTopCheck.TabIndex = 55;
             this.leftTopCheck.UseVisualStyleBackColor = true;
-            this.leftTopCheck.CheckedChanged += new System.EventHandler(this.CheckboxChanged);
             // 
             // leftBottomCheck
             // 
@@ -413,7 +394,6 @@
             this.leftBottomCheck.Size = new System.Drawing.Size(15, 14);
             this.leftBottomCheck.TabIndex = 56;
             this.leftBottomCheck.UseVisualStyleBackColor = true;
-            this.leftBottomCheck.CheckedChanged += new System.EventHandler(this.CheckboxChanged);
             // 
             // rightBottomCheck
             // 
@@ -423,7 +403,6 @@
             this.rightBottomCheck.Size = new System.Drawing.Size(15, 14);
             this.rightBottomCheck.TabIndex = 58;
             this.rightBottomCheck.UseVisualStyleBackColor = true;
-            this.rightBottomCheck.CheckedChanged += new System.EventHandler(this.CheckboxChanged);
             // 
             // rightTopCheck
             // 
@@ -433,7 +412,6 @@
             this.rightTopCheck.Size = new System.Drawing.Size(15, 14);
             this.rightTopCheck.TabIndex = 57;
             this.rightTopCheck.UseVisualStyleBackColor = true;
-            this.rightTopCheck.CheckedChanged += new System.EventHandler(this.CheckboxChanged);
             // 
             // borderPanel
             // 
@@ -490,7 +468,7 @@
             this.travelButton.TabIndex = 61;
             this.travelButton.Text = "To room";
             this.travelButton.UseVisualStyleBackColor = true;
-            this.travelButton.Click += new System.EventHandler(this.travelButton_Click);
+            this.travelButton.Click += new System.EventHandler(this.TravelButton_Click);
             // 
             // WarpEditor
             // 

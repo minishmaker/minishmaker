@@ -4,22 +4,17 @@ using MinishMaker.Utilities;
 
 namespace MinishMaker.Core.ChangeTypes
 {
-    public class AreaInfoChange : Change
+    public class AreaInfoChange : AreaChangeBase
     {
-        public AreaInfoChange(int areaId) : base(areaId, 0, DataType.areaInfo)
+        public AreaInfoChange(int areaId) : base(areaId, DataType.areaInfo)
         {
-        }
-
-        public override string GetFolderLocation()
-        {
-            return "/Area " + StringUtil.AsStringHex2(areaId);
         }
 
         public override string GetEAString(out byte[] binDat)
         {
             var infoLoc = ROM.Instance.headers.areaInformationTableLoc + (4 * areaId);
-            var sb = new StringBuilder();
-            var areaBytes = MapManager.Instance.MapAreas.Single(a => a.Index == this.areaId).areaInfo;
+            var sb = new StringBuilder(); 
+            var areaBytes = MapManager.Instance.GetArea(areaId).GetInfoBytes();
             sb.AppendLine("PUSH"); //save cursor location
             sb.AppendLine("ORG " + infoLoc); //go to the area info
             sb.AppendLine("#incbin \"./" + changeType.ToString() + "Dat.bin\"");
@@ -28,10 +23,14 @@ namespace MinishMaker.Core.ChangeTypes
             return sb.ToString();
         }
 
-
-        public override bool Compare(Change change)
+        public override void EnsureLoaded()
         {
-            return change.changeType == changeType && change.areaId == areaId;
+            MapManager.Instance.GetArea(areaId).LoadAreaInfo();
+        }
+
+        public override string GetJSONString()
+        {
+            return MapManager.Instance.GetArea(areaId).GetInfoJSON();
         }
     }
 }

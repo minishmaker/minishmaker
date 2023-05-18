@@ -1,0 +1,248 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<enums>
+		<enemyTypes>
+			<entry value="0x00" name="Octorok" />
+			<entry value="0x01" name="Chuchu" />
+			<entry value="0x02" name="Leever" />
+			<entry value="0x03" name="Peahat" />
+			<entry value="0x04" name="Rollobite" />
+			<entry value="0x05" name="Darknut" />
+			<entry value="0x06" name="Minish Village Nut" />
+			<entry value="0x07" name="Beetle" />
+			<entry value="0x08" name="Keese" />
+			<entry value="0x09" name="Door Mimic" />
+			<entry value="0x0A" name="Rock Chuchu" />
+			<entry value="0x0B" name="Spiny Chuchu" />
+			<entry value="0x0C" name="Chick" />
+			<entry value="0x0D" name="Moldorm" />
+			<!--<entry value="0x0E" name="-" />-->
+			<entry value="0x0F" name="Moldworm" />
+
+			<entry value="0x10" name="Sluggula" />
+			<entry value="0x11" name="Pesto" />
+			<entry value="0x12" name="Puffstool" />
+			<entry value="0x13" name="Big Green Chuchu" />
+			<entry value="0x14" name="Like Like" />
+			<entry value="0x15" name="Spear Moblin" />
+			<entry value="0x16" name="Business Scrub" />
+			<entry value="0x17" name="Rupee Like" />
+			<entry value="0x18" name="Madderpillar" />
+			<entry value="0x19" name="Minish Raindrop" />
+			<entry value="0x1A" name="Wallmaster" />
+			<entry value="0x1B" name="Bomb Peahat" />
+			<entry value="0x1C" name="Spark" />
+			<entry value="0x1D" name="Chaser" />
+			<entry value="0x1E" name="Spiked Beetle" />
+			<entry value="0x1F" name="Blue Trap" />
+
+			<entry value="0x20" name="Helmasaur" />
+			<entry value="0x21" name="Boulder" />
+			<entry value="0x22" name="Bob-omb" />
+			<entry value="0x23" name="Floormaster" />
+			<entry value="0x24" name="Gleerok" />
+			<entry value="0x25" name="Vaati Hand Eyes" />
+			<entry value="0x26" name="Tektite" />
+			<entry value="0x27" name="Wizzrobe" />
+			<entry value="0x28" name="Fire Wizzrobe" />
+			<entry value="0x29" name="Ice Wizzrobe" />
+			<entry value="0x2A" name="Armos" />
+			<entry value="0x2B" name="Eyegore" />
+			<entry value="0x2C" name="Rope" />
+			<entry value="0x2D" name="Small Pesto" />
+			<entry value="0x2E" name="Acro-Bandits" />
+			<entry value="0x2F" name="Green Trap" />
+
+			<entry value="0x30" name="Keaton" />
+			<entry value="0x31" name="Crow" />
+			<entry value="0x32" name="Mulldozer" />
+			<entry value="0x33" name="Bombarossa" />
+			<entry value="0x34" name="Bubble" />
+			<entry value="0x35" name="Spiny Beetle" />
+			<entry value="0x36" name="Mazaal" />
+			<entry value="0x37" name="Mazaal Pillars" />
+			<!--<entry value="0x38" name="-" />-->
+			<entry value="0x39" name="Big Octorok" />
+			<entry value="0x3A" name="Flying Pot" />
+			<entry value="0x3B" name="Gibdo" />
+			<entry value="0x3C" name="Golden Octorok" />
+			<entry value="0x3D" name="Golden Tektite" />
+			<entry value="0x3E" name="Golden Rope" />
+			<entry value="0x3F" name="Cloud Piranha" />
+
+			<entry value="0x40" name="Scissors Beetle" />
+			<entry value="0x41" name="Cucco" />
+			<entry value="0x42" name="Stalfos" />
+			<entry value="0x43" name="Skull" />
+			<!--<entry value="0x44" name="-" />-->
+			<entry value="0x45" name="Takkuri" />
+			<entry value="0x46" name="Bow Moblin" />
+			<entry value="0x47" name="Lakitu" />
+			<entry value="0x48" name="Lakitu Cloud?" />
+			<!--<entry value="0x49" name="-" />-->
+			<!--<entry value="0x4A" name="-" />-->
+			<entry value="0x4B" name="Mazaal Claw?" />
+			<entry value="0x4C" name="Ball and Chain Soldier" />
+			<entry value="0x4D" name="Ball and Chain Soldier?" />
+			<entry value="0x4E" name="Ghini" />
+			<entry value="0x4F" name="Vaati Transfigured" />
+
+			
+			<!--<entry value="0x50" name="Scissors Beetle" />-->
+			<entry value="0x51" name="Vaati's Wrath" />
+			<!--<entry value="0x52" name="-" />-->
+			<!--<entry value="0x53" name="-" />-->
+			<entry value="0x54" name="Vaati Reborn's Flying Eye?" />
+			<!--<entry value="0x55" name="-" />-->
+			<entry value="0x56" name="Zol" />
+			<entry value="0x57" name="Gel" />
+			<entry value="0x58" name="Podoboo" />
+			<entry value="0x59" name="Small Podoboo" />
+		</enemyTypes>
+
+		<octorokTypes>
+			<entry value="0" name="Red"/>
+			<entry value="1" name="Blue"/>
+		</octorokTypes>
+
+		<chuchuTypes>
+			<entry value="0" name="Green"/>
+			<entry value="1" name="Red"/>
+			<entry value="2" name="Blue"/>
+		</chuchuTypes>
+
+		<leeverTypes>
+			<entry value="0" name="Red"/>
+			<entry value="1" name="Blue"/>
+		</leeverTypes>
+
+		<peahatTypes>
+			<entry value="0" name="Full"/>
+			<entry value="1" name="Propelor only"/>
+		</peahatTypes>
+
+		<darknutTypes>
+			<entry value="0" name="Grey"/>
+			<entry value="1" name="Grey Red"/>
+			<entry value="2" name="Red"/>
+			<entry value="3" name="Black"/>
+		</darknutTypes>
+
+		<beetleTypes>
+			<entry value="0" name="Black"/>
+			<entry value="1" name="Red"/>
+		</beetleTypes>
+
+		<sluggulaTypes>
+			<entry value="0" name="Ceiling"/>
+			<entry value="1" name="Floor"/>
+		</sluggulaTypes>
+
+		<pestoTypes>
+			<entry value="0" name="Red"/>
+			<entry value="1" name="Blue"/>
+		</pestoTypes>
+
+		<bigChuchuTypes>
+			<entry value="0" name="Green"/>
+			<entry value="1" name="Blue"/>
+		</bigChuchuTypes>
+
+		<spearMoblinTypes>
+			<entry value="0" name="Normal"/>
+			<entry value="1" name="Dark"/>
+		</spearMoblinTypes>
+
+		<businessScrubTypes>
+			<entry value="0" name="Arrows 1"/>
+			<entry value="1" name="Arrows 2 (u)"/>
+			<entry value="2" name="Bombs"/>
+			<entry value="3" name="Grip ring"/>
+			<entry value="4" name="Kinstone 1 (u)"/>
+			<entry value="5" name="Bottle"/>
+			<entry value="6" name="Hint 1"/>
+			<entry value="7" name="Hint 2 (u)"/>
+			<entry value="8" name="Kinstone 2"/>
+		</businessScrubTypes>
+
+		<rupeeLikeTypes>
+			<entry value="0" name="Green"/>
+			<entry value="1" name="Blue"/>
+			<entry value="2" name="Red"/>
+		</rupeeLikeTypes>
+
+		<bombPeahatTypes>
+			<entry value="0" name="Bomb"/>
+			<entry value="1" name="Bob-omb"/>
+		</bombPeahatTypes>
+
+		<sparkTypes>
+			<entry value="0" name="Counter Clockwise"/>
+			<entry value="1" name="Clockwise"/>
+		</sparkTypes>
+
+		<tektiteTypes>
+			<entry value="0" name="Red"/>
+			<entry value="1" name="Blue"/>
+		</tektiteTypes>
+
+		<ropeTypes>
+			<entry value="0" name="Floor"/>
+			<entry value="1" name="Ceiling"/>
+		</ropeTypes>
+
+		<keatonTypes>
+			<entry value="0" name="Normal"/>
+			<entry value="1" name="Dark"/>
+		</keatonTypes>
+
+		<mulldozerTypes>
+			<entry value="0" name="Red"/>
+			<entry value="1" name="Blue"/>
+		</mulldozerTypes>
+
+		<bubbleTypes>
+			<entry value="0" name="Red"/>
+			<entry value="1" name="Blue"/>
+		</bubbleTypes>
+
+		<spinyBeetleTypes>
+			<entry value="0" name="Grass"/>
+			<entry value="1" name="Rock"/>
+		</spinyBeetleTypes>
+
+		<keatonTypes>
+			<entry value="0" name="Normal"/>
+			<entry value="1" name="Gold"/>
+		</keatonTypes>
+
+		<stalfosTypes>
+			<entry value="0" name="Blue"/>
+			<entry value="1" name="Red"/>
+		</stalfosTypes>
+
+		<skullTypes>
+			<entry value="0" name="Stationary"/>
+			<entry value="1" name="Flying"/>
+			<entry value="2" name="Blue Stalfos"/>
+			<entry value="3" name="Red Stalfos"/>
+		</skullTypes>
+
+		<bowMoblinTypes>
+			<entry value="0" name="Normal"/>
+			<entry value="1" name="Dark"/>
+		</bowMoblinTypes>
+
+		<zolTypes>
+			<entry value="0" name="Blue"/>
+			<entry value="1" name="Green"/>
+			<entry value="2" name="Red"/>
+		</zolTypes>
+
+		<gelTypes>
+			<entry value="0" name="Blue"/>
+			<entry value="1" name="Green"/>
+			<entry value="2" name="Red"/>
+		</gelTypes>
+	</enums>
+</root>

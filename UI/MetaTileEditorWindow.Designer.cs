@@ -1,6 +1,6 @@
 ﻿namespace MinishMaker.UI
 {
-    partial class MetaTileEditor
+    partial class MetaTileEditorWindow
     {
         /// <summary>
         /// Required designer variable.
@@ -28,11 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MetaTileEditor));
-            this.metaTileSetPanel = new System.Windows.Forms.Panel();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MetaTileEditorWindow));
+            this.metaTilesetPanel = new System.Windows.Forms.Panel();
             this.metaTileGridBox = new MinishMaker.UI.GridBoxComponent();
-            this.tileSetPanel = new System.Windows.Forms.Panel();
-            this.tileSetGridBox = new MinishMaker.UI.GridBoxComponent();
+            this.tilesetPanel = new System.Windows.Forms.Panel();
+            this.tilesetGridBox = new MinishMaker.UI.GridBoxComponent();
             this.selectedMetaTilePanel = new System.Windows.Forms.Panel();
             this.selectedMetaGridBox = new MinishMaker.UI.GridBoxComponent();
             this.selectedTilePanel = new System.Windows.Forms.Panel();
@@ -75,10 +75,10 @@
             this.commonToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.paletteToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.label6 = new System.Windows.Forms.Label();
-            this.metaTileSetPanel.SuspendLayout();
+            this.metaTilesetPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.metaTileGridBox)).BeginInit();
-            this.tileSetPanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.tileSetGridBox)).BeginInit();
+            this.tilesetPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tilesetGridBox)).BeginInit();
             this.selectedMetaTilePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.selectedMetaGridBox)).BeginInit();
             this.selectedTilePanel.SuspendLayout();
@@ -86,14 +86,15 @@
             this.menuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
-            // metaTileSetPanel
+            // metaTilesetPanel
             // 
-            this.metaTileSetPanel.AutoScroll = true;
-            this.metaTileSetPanel.Controls.Add(this.metaTileGridBox);
-            this.metaTileSetPanel.Location = new System.Drawing.Point(132, 42);
-            this.metaTileSetPanel.Name = "metaTileSetPanel";
-            this.metaTileSetPanel.Size = new System.Drawing.Size(275, 240);
-            this.metaTileSetPanel.TabIndex = 1;
+            this.metaTilesetPanel.AutoScroll = true;
+            this.metaTilesetPanel.Controls.Add(this.metaTileGridBox);
+            this.metaTilesetPanel.Location = new System.Drawing.Point(176, 52);
+            this.metaTilesetPanel.Margin = new System.Windows.Forms.Padding(4);
+            this.metaTilesetPanel.Name = "metaTilesetPanel";
+            this.metaTilesetPanel.Size = new System.Drawing.Size(367, 295);
+            this.metaTilesetPanel.TabIndex = 1;
             // 
             // metaTileGridBox
             // 
@@ -104,6 +105,7 @@
             this.metaTileGridBox.HoverColor = System.Drawing.Color.White;
             this.metaTileGridBox.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
             this.metaTileGridBox.Location = new System.Drawing.Point(0, 0);
+            this.metaTileGridBox.Margin = new System.Windows.Forms.Padding(4);
             this.metaTileGridBox.Name = "metaTileGridBox";
             this.metaTileGridBox.Selectable = false;
             this.metaTileGridBox.SelectedIndex = -1;
@@ -113,44 +115,47 @@
             this.metaTileGridBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.metaTileGridBox.TabIndex = 1;
             this.metaTileGridBox.TabStop = false;
-            this.metaTileGridBox.Click += new System.EventHandler(this.metaTileGridBox_Click);
+            this.metaTileGridBox.Click += new System.EventHandler(this.MetaTileGridBox_Click);
             // 
-            // tileSetPanel
+            // tilesetPanel
             // 
-            this.tileSetPanel.AutoScroll = true;
-            this.tileSetPanel.Controls.Add(this.tileSetGridBox);
-            this.tileSetPanel.Location = new System.Drawing.Point(413, 42);
-            this.tileSetPanel.Name = "tileSetPanel";
-            this.tileSetPanel.Size = new System.Drawing.Size(256, 256);
-            this.tileSetPanel.TabIndex = 2;
+            this.tilesetPanel.AutoScroll = true;
+            this.tilesetPanel.Controls.Add(this.tilesetGridBox);
+            this.tilesetPanel.Location = new System.Drawing.Point(551, 52);
+            this.tilesetPanel.Margin = new System.Windows.Forms.Padding(4);
+            this.tilesetPanel.Name = "tilesetPanel";
+            this.tilesetPanel.Size = new System.Drawing.Size(341, 315);
+            this.tilesetPanel.TabIndex = 2;
             // 
-            // tileSetGridBox
+            // tilesetGridBox
             // 
-            this.tileSetGridBox.AllowMultiSelection = false;
-            this.tileSetGridBox.BoxSize = new System.Drawing.Size(8, 8);
-            this.tileSetGridBox.CanvasSize = new System.Drawing.Size(128, 128);
-            this.tileSetGridBox.HoverBox = true;
-            this.tileSetGridBox.HoverColor = System.Drawing.Color.White;
-            this.tileSetGridBox.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
-            this.tileSetGridBox.Location = new System.Drawing.Point(0, 0);
-            this.tileSetGridBox.Name = "tileSetGridBox";
-            this.tileSetGridBox.Selectable = false;
-            this.tileSetGridBox.SelectedIndex = -1;
-            this.tileSetGridBox.SelectionColor = System.Drawing.Color.Red;
-            this.tileSetGridBox.SelectionRectangle = new System.Drawing.Rectangle(-1, 0, 1, 1);
-            this.tileSetGridBox.Size = new System.Drawing.Size(128, 128);
-            this.tileSetGridBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.tileSetGridBox.TabIndex = 1;
-            this.tileSetGridBox.TabStop = false;
-            this.tileSetGridBox.Click += new System.EventHandler(this.tileSetGridBox_Click);
+            this.tilesetGridBox.AllowMultiSelection = false;
+            this.tilesetGridBox.BoxSize = new System.Drawing.Size(8, 8);
+            this.tilesetGridBox.CanvasSize = new System.Drawing.Size(128, 128);
+            this.tilesetGridBox.HoverBox = true;
+            this.tilesetGridBox.HoverColor = System.Drawing.Color.White;
+            this.tilesetGridBox.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+            this.tilesetGridBox.Location = new System.Drawing.Point(0, 0);
+            this.tilesetGridBox.Margin = new System.Windows.Forms.Padding(4);
+            this.tilesetGridBox.Name = "tilesetGridBox";
+            this.tilesetGridBox.Selectable = false;
+            this.tilesetGridBox.SelectedIndex = -1;
+            this.tilesetGridBox.SelectionColor = System.Drawing.Color.Red;
+            this.tilesetGridBox.SelectionRectangle = new System.Drawing.Rectangle(-1, 0, 1, 1);
+            this.tilesetGridBox.Size = new System.Drawing.Size(128, 128);
+            this.tilesetGridBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.tilesetGridBox.TabIndex = 1;
+            this.tilesetGridBox.TabStop = false;
+            this.tilesetGridBox.Click += new System.EventHandler(this.TilesetGridBox_Click);
             // 
             // selectedMetaTilePanel
             // 
             this.selectedMetaTilePanel.AutoScroll = true;
             this.selectedMetaTilePanel.Controls.Add(this.selectedMetaGridBox);
-            this.selectedMetaTilePanel.Location = new System.Drawing.Point(31, 42);
+            this.selectedMetaTilePanel.Location = new System.Drawing.Point(41, 52);
+            this.selectedMetaTilePanel.Margin = new System.Windows.Forms.Padding(4);
             this.selectedMetaTilePanel.Name = "selectedMetaTilePanel";
-            this.selectedMetaTilePanel.Size = new System.Drawing.Size(64, 64);
+            this.selectedMetaTilePanel.Size = new System.Drawing.Size(85, 79);
             this.selectedMetaTilePanel.TabIndex = 2;
             // 
             // selectedMetaGridBox
@@ -162,27 +167,30 @@
             this.selectedMetaGridBox.HoverColor = System.Drawing.Color.White;
             this.selectedMetaGridBox.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
             this.selectedMetaGridBox.Location = new System.Drawing.Point(0, 0);
+            this.selectedMetaGridBox.Margin = new System.Windows.Forms.Padding(4);
             this.selectedMetaGridBox.Name = "selectedMetaGridBox";
             this.selectedMetaGridBox.Selectable = false;
             this.selectedMetaGridBox.SelectedIndex = -1;
             this.selectedMetaGridBox.SelectionColor = System.Drawing.Color.White;
-            this.selectedMetaGridBox.SelectionRectangle = new System.Drawing.Rectangle(-1, 0, 1, 1);
-            this.selectedMetaGridBox.Size = new System.Drawing.Size(64, 64);
-            this.selectedMetaGridBox.TabIndex = 2;
+            this.selectedMetaGridBox.SelectionRectangle = new System.Drawing.Rectangle(0, 0, 1, 1);
+            this.selectedMetaGridBox.Size = new System.Drawing.Size(85, 79);
+            this.selectedMetaGridBox.TabIndex = 31;
             this.selectedMetaGridBox.TabStop = false;
             // 
             // selectedTilePanel
             // 
             this.selectedTilePanel.AutoScroll = true;
             this.selectedTilePanel.Controls.Add(this.selectedTileBox);
-            this.selectedTilePanel.Location = new System.Drawing.Point(11, 132);
+            this.selectedTilePanel.Location = new System.Drawing.Point(15, 162);
+            this.selectedTilePanel.Margin = new System.Windows.Forms.Padding(4);
             this.selectedTilePanel.Name = "selectedTilePanel";
-            this.selectedTilePanel.Size = new System.Drawing.Size(32, 32);
+            this.selectedTilePanel.Size = new System.Drawing.Size(43, 39);
             this.selectedTilePanel.TabIndex = 3;
             // 
             // selectedTileBox
             // 
             this.selectedTileBox.Location = new System.Drawing.Point(0, 0);
+            this.selectedTileBox.Margin = new System.Windows.Forms.Padding(4);
             this.selectedTileBox.Name = "selectedTileBox";
             this.selectedTileBox.Size = new System.Drawing.Size(16, 16);
             this.selectedTileBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -192,251 +200,277 @@
             // label1
             // 
             this.label1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label1.Location = new System.Drawing.Point(-1, 128);
+            this.label1.Location = new System.Drawing.Point(-1, 158);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(130, 2);
+            this.label1.Size = new System.Drawing.Size(173, 2);
             this.label1.TabIndex = 4;
             // 
             // label2
             // 
             this.label2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label2.Location = new System.Drawing.Point(409, 15);
+            this.label2.Location = new System.Drawing.Point(545, 18);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(2, 300);
+            this.label2.Size = new System.Drawing.Size(3, 369);
             this.label2.TabIndex = 5;
             // 
             // label3
             // 
             this.label3.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label3.Location = new System.Drawing.Point(128, 15);
+            this.label3.Location = new System.Drawing.Point(171, 18);
+            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(2, 300);
+            this.label3.Size = new System.Drawing.Size(3, 369);
             this.label3.TabIndex = 6;
             // 
             // tLPalette
             // 
-            this.tLPalette.Location = new System.Drawing.Point(11, 30);
+            this.tLPalette.Location = new System.Drawing.Point(15, 37);
+            this.tLPalette.Margin = new System.Windows.Forms.Padding(4);
             this.tLPalette.MaxLength = 1;
             this.tLPalette.Name = "tLPalette";
-            this.tLPalette.Size = new System.Drawing.Size(13, 20);
+            this.tLPalette.Size = new System.Drawing.Size(16, 22);
             this.tLPalette.TabIndex = 7;
             this.tLPalette.Text = "0";
-            this.tLPalette.LostFocus += new System.EventHandler(this.tLPalette_LostFocus);
+            this.tLPalette.LostFocus += new System.EventHandler(this.TLPalette_LostFocus);
             // 
             // bLPalette
             // 
-            this.bLPalette.Location = new System.Drawing.Point(11, 102);
+            this.bLPalette.Location = new System.Drawing.Point(15, 126);
+            this.bLPalette.Margin = new System.Windows.Forms.Padding(4);
             this.bLPalette.MaxLength = 1;
             this.bLPalette.Name = "bLPalette";
-            this.bLPalette.Size = new System.Drawing.Size(13, 20);
+            this.bLPalette.Size = new System.Drawing.Size(16, 22);
             this.bLPalette.TabIndex = 8;
             this.bLPalette.Text = "0";
-            this.bLPalette.LostFocus += new System.EventHandler(this.bLPalette_LostFocus);
+            this.bLPalette.LostFocus += new System.EventHandler(this.BLPalette_LostFocus);
             // 
             // tRPalette
             // 
-            this.tRPalette.Location = new System.Drawing.Point(101, 30);
+            this.tRPalette.Location = new System.Drawing.Point(135, 37);
+            this.tRPalette.Margin = new System.Windows.Forms.Padding(4);
             this.tRPalette.MaxLength = 1;
             this.tRPalette.Name = "tRPalette";
-            this.tRPalette.Size = new System.Drawing.Size(13, 20);
+            this.tRPalette.Size = new System.Drawing.Size(16, 22);
             this.tRPalette.TabIndex = 9;
             this.tRPalette.Text = "0";
-            this.tRPalette.LostFocus += new System.EventHandler(this.tRPalette_LostFocus);
+            this.tRPalette.LostFocus += new System.EventHandler(this.TRPalette_LostFocus);
             // 
             // bRPalette
             // 
-            this.bRPalette.Location = new System.Drawing.Point(101, 102);
+            this.bRPalette.Location = new System.Drawing.Point(135, 126);
+            this.bRPalette.Margin = new System.Windows.Forms.Padding(4);
             this.bRPalette.MaxLength = 1;
             this.bRPalette.Name = "bRPalette";
-            this.bRPalette.Size = new System.Drawing.Size(13, 20);
+            this.bRPalette.Size = new System.Drawing.Size(16, 22);
             this.bRPalette.TabIndex = 10;
             this.bRPalette.Text = "0";
-            this.bRPalette.LostFocus += new System.EventHandler(this.bRPalette_LostFocus);
+            this.bRPalette.LostFocus += new System.EventHandler(this.BRPalette_LostFocus);
             // 
             // hFlipBox
             // 
             this.hFlipBox.AutoSize = true;
-            this.hFlipBox.Location = new System.Drawing.Point(11, 170);
+            this.hFlipBox.Location = new System.Drawing.Point(15, 209);
+            this.hFlipBox.Margin = new System.Windows.Forms.Padding(4);
             this.hFlipBox.Name = "hFlipBox";
-            this.hFlipBox.Size = new System.Drawing.Size(92, 17);
+            this.hFlipBox.Size = new System.Drawing.Size(120, 21);
             this.hFlipBox.TabIndex = 1;
             this.hFlipBox.Text = "Horizontal Flip";
             this.hFlipBox.UseVisualStyleBackColor = true;
-            this.hFlipBox.CheckedChanged += new System.EventHandler(this.hFlip_CheckedChanged);
+            this.hFlipBox.CheckedChanged += new System.EventHandler(this.HFlip_CheckedChanged);
             // 
             // vFlipBox
             // 
             this.vFlipBox.AutoSize = true;
-            this.vFlipBox.Location = new System.Drawing.Point(11, 193);
+            this.vFlipBox.Location = new System.Drawing.Point(15, 238);
+            this.vFlipBox.Margin = new System.Windows.Forms.Padding(4);
             this.vFlipBox.Name = "vFlipBox";
-            this.vFlipBox.Size = new System.Drawing.Size(80, 17);
+            this.vFlipBox.Size = new System.Drawing.Size(103, 21);
             this.vFlipBox.TabIndex = 11;
             this.vFlipBox.Text = "Vertical Flip";
             this.vFlipBox.UseVisualStyleBackColor = true;
-            this.vFlipBox.CheckedChanged += new System.EventHandler(this.vFlipBox_CheckedChanged);
+            this.vFlipBox.CheckedChanged += new System.EventHandler(this.VFlipBox_CheckedChanged);
             // 
             // prevButton
             // 
             this.prevButton.Enabled = false;
-            this.prevButton.Location = new System.Drawing.Point(10, 257);
+            this.prevButton.Location = new System.Drawing.Point(13, 316);
+            this.prevButton.Margin = new System.Windows.Forms.Padding(4);
             this.prevButton.Name = "prevButton";
-            this.prevButton.Size = new System.Drawing.Size(17, 23);
+            this.prevButton.Size = new System.Drawing.Size(23, 28);
             this.prevButton.TabIndex = 12;
             this.prevButton.Text = "<";
             this.prevButton.UseVisualStyleBackColor = true;
-            this.prevButton.Click += new System.EventHandler(this.prevButton_Click);
+            this.prevButton.Click += new System.EventHandler(this.PrevButton_Click);
             // 
             // nextButton
             // 
-            this.nextButton.Location = new System.Drawing.Point(52, 257);
+            this.nextButton.Location = new System.Drawing.Point(69, 316);
+            this.nextButton.Margin = new System.Windows.Forms.Padding(4);
             this.nextButton.Name = "nextButton";
-            this.nextButton.Size = new System.Drawing.Size(17, 23);
+            this.nextButton.Size = new System.Drawing.Size(23, 28);
             this.nextButton.TabIndex = 13;
             this.nextButton.Text = ">";
             this.nextButton.UseVisualStyleBackColor = true;
-            this.nextButton.Click += new System.EventHandler(this.nextButton_Click);
+            this.nextButton.Click += new System.EventHandler(this.NextButton_Click);
             // 
             // PaletteNum
             // 
-            this.PaletteNum.Location = new System.Drawing.Point(33, 262);
+            this.PaletteNum.Location = new System.Drawing.Point(44, 322);
+            this.PaletteNum.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.PaletteNum.Name = "PaletteNum";
-            this.PaletteNum.Size = new System.Drawing.Size(13, 13);
+            this.PaletteNum.Size = new System.Drawing.Size(17, 16);
             this.PaletteNum.TabIndex = 14;
             this.PaletteNum.Text = "0";
             // 
             // layer1Button
             // 
             this.layer1Button.Enabled = false;
-            this.layer1Button.Location = new System.Drawing.Point(75, 257);
+            this.layer1Button.Location = new System.Drawing.Point(100, 316);
+            this.layer1Button.Margin = new System.Windows.Forms.Padding(4);
             this.layer1Button.Name = "layer1Button";
-            this.layer1Button.Size = new System.Drawing.Size(17, 23);
+            this.layer1Button.Size = new System.Drawing.Size(23, 28);
             this.layer1Button.TabIndex = 15;
             this.layer1Button.Text = "1";
             this.layer1Button.UseVisualStyleBackColor = true;
-            this.layer1Button.Click += new System.EventHandler(this.layer1Button_Click);
+            this.layer1Button.Click += new System.EventHandler(this.Layer1Button_Click);
             // 
             // layer2Button
             // 
-            this.layer2Button.Location = new System.Drawing.Point(98, 257);
+            this.layer2Button.Location = new System.Drawing.Point(131, 316);
+            this.layer2Button.Margin = new System.Windows.Forms.Padding(4);
             this.layer2Button.Name = "layer2Button";
-            this.layer2Button.Size = new System.Drawing.Size(17, 23);
+            this.layer2Button.Size = new System.Drawing.Size(23, 28);
             this.layer2Button.TabIndex = 16;
             this.layer2Button.Text = "2";
             this.layer2Button.UseVisualStyleBackColor = true;
-            this.layer2Button.Click += new System.EventHandler(this.layer2Button_Click);
+            this.layer2Button.Click += new System.EventHandler(this.Layer2Button_Click);
             // 
             // label4
             // 
-            this.label4.Location = new System.Drawing.Point(12, 241);
+            this.label4.Location = new System.Drawing.Point(16, 297);
+            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(40, 13);
+            this.label4.Size = new System.Drawing.Size(53, 16);
             this.label4.TabIndex = 17;
             this.label4.Text = "Palette";
             // 
             // label5
             // 
-            this.label5.Location = new System.Drawing.Point(77, 241);
+            this.label5.Location = new System.Drawing.Point(103, 297);
+            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(40, 13);
+            this.label5.Size = new System.Drawing.Size(53, 16);
             this.label5.TabIndex = 18;
             this.label5.Text = "Layer";
             // 
             // tileChange
             // 
-            this.tileChange.Location = new System.Drawing.Point(10, 216);
+            this.tileChange.Location = new System.Drawing.Point(13, 266);
+            this.tileChange.Margin = new System.Windows.Forms.Padding(4);
             this.tileChange.Name = "tileChange";
-            this.tileChange.Size = new System.Drawing.Size(114, 22);
+            this.tileChange.Size = new System.Drawing.Size(152, 27);
             this.tileChange.TabIndex = 20;
             this.tileChange.Text = "Apply Tile Change";
             this.tileChange.UseVisualStyleBackColor = true;
-            this.tileChange.Click += new System.EventHandler(this.tileChange_Click);
+            this.tileChange.Click += new System.EventHandler(this.TileChange_Click);
             // 
             // tId1
             // 
             this.tId1.Enabled = false;
-            this.tId1.Location = new System.Drawing.Point(-1, 54);
+            this.tId1.Location = new System.Drawing.Point(-1, 66);
+            this.tId1.Margin = new System.Windows.Forms.Padding(4);
             this.tId1.MaxLength = 3;
             this.tId1.Name = "tId1";
-            this.tId1.Size = new System.Drawing.Size(25, 20);
+            this.tId1.Size = new System.Drawing.Size(32, 22);
             this.tId1.TabIndex = 21;
             this.tId1.Text = "FFF";
             // 
             // tId2
             // 
             this.tId2.Enabled = false;
-            this.tId2.Location = new System.Drawing.Point(101, 54);
+            this.tId2.Location = new System.Drawing.Point(135, 66);
+            this.tId2.Margin = new System.Windows.Forms.Padding(4);
             this.tId2.MaxLength = 3;
             this.tId2.Name = "tId2";
-            this.tId2.Size = new System.Drawing.Size(25, 20);
+            this.tId2.Size = new System.Drawing.Size(32, 22);
             this.tId2.TabIndex = 22;
             this.tId2.Text = "FFF";
             // 
             // tId3
             // 
             this.tId3.Enabled = false;
-            this.tId3.Location = new System.Drawing.Point(-1, 80);
+            this.tId3.Location = new System.Drawing.Point(-1, 98);
+            this.tId3.Margin = new System.Windows.Forms.Padding(4);
             this.tId3.MaxLength = 3;
             this.tId3.Name = "tId3";
-            this.tId3.Size = new System.Drawing.Size(25, 20);
+            this.tId3.Size = new System.Drawing.Size(32, 22);
             this.tId3.TabIndex = 23;
             this.tId3.Text = "FFF";
             // 
             // tId4
             // 
             this.tId4.Enabled = false;
-            this.tId4.Location = new System.Drawing.Point(101, 80);
+            this.tId4.Location = new System.Drawing.Point(135, 98);
+            this.tId4.Margin = new System.Windows.Forms.Padding(4);
             this.tId4.MaxLength = 3;
             this.tId4.Name = "tId4";
-            this.tId4.Size = new System.Drawing.Size(25, 20);
+            this.tId4.Size = new System.Drawing.Size(32, 22);
             this.tId4.TabIndex = 24;
             this.tId4.Text = "FFF";
             // 
             // sTId
             // 
             this.sTId.Enabled = false;
-            this.sTId.Location = new System.Drawing.Point(44, 141);
+            this.sTId.Location = new System.Drawing.Point(59, 174);
+            this.sTId.Margin = new System.Windows.Forms.Padding(4);
             this.sTId.MaxLength = 3;
             this.sTId.Name = "sTId";
-            this.sTId.Size = new System.Drawing.Size(25, 20);
+            this.sTId.Size = new System.Drawing.Size(32, 22);
             this.sTId.TabIndex = 25;
             this.sTId.Text = "FFF";
             // 
             // mTId
             // 
             this.mTId.Enabled = false;
-            this.mTId.Location = new System.Drawing.Point(34, 106);
+            this.mTId.Location = new System.Drawing.Point(45, 130);
+            this.mTId.Margin = new System.Windows.Forms.Padding(4);
             this.mTId.MaxLength = 3;
             this.mTId.Name = "mTId";
-            this.mTId.Size = new System.Drawing.Size(25, 20);
+            this.mTId.Size = new System.Drawing.Size(32, 22);
             this.mTId.TabIndex = 26;
             this.mTId.Text = "FFF";
             // 
             // HiddenLabel
             // 
             this.HiddenLabel.AutoSize = true;
-            this.HiddenLabel.Location = new System.Drawing.Point(77, 141);
+            this.HiddenLabel.Location = new System.Drawing.Point(103, 174);
+            this.HiddenLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.HiddenLabel.Name = "HiddenLabel";
-            this.HiddenLabel.Size = new System.Drawing.Size(0, 13);
+            this.HiddenLabel.Size = new System.Drawing.Size(0, 17);
             this.HiddenLabel.TabIndex = 27;
             // 
             // mTType
             // 
             this.mTType.Enabled = false;
-            this.mTType.Location = new System.Drawing.Point(67, 106);
+            this.mTType.Location = new System.Drawing.Point(89, 130);
+            this.mTType.Margin = new System.Windows.Forms.Padding(4);
             this.mTType.MaxLength = 3;
             this.mTType.Name = "mTType";
-            this.mTType.Size = new System.Drawing.Size(25, 20);
+            this.mTType.Size = new System.Drawing.Size(32, 22);
             this.mTType.TabIndex = 28;
             this.mTType.Text = "FFF";
-            this.mTType.LostFocus += new System.EventHandler(this.mTType_LostFocus);
+            this.mTType.LostFocus += new System.EventHandler(this.MTType_LostFocus);
             // 
             // menuStrip
             // 
+            this.menuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(675, 24);
+            this.menuStrip.Size = new System.Drawing.Size(900, 30);
             this.menuStrip.TabIndex = 29;
             this.menuStrip.Text = "mainMenuStrip";
             // 
@@ -446,7 +480,7 @@
             this.importToolStripMenuItem,
             this.exportToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(46, 26);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // importToolStripMenuItem
@@ -458,34 +492,34 @@
             this.paletteToolStripMenuItem});
             this.importToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("importToolStripMenuItem.Image")));
             this.importToolStripMenuItem.Name = "importToolStripMenuItem";
-            this.importToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.importToolStripMenuItem.Size = new System.Drawing.Size(137, 26);
             this.importToolStripMenuItem.Text = "Import";
             // 
             // bg1ToolStripMenuItem
             // 
             this.bg1ToolStripMenuItem.Name = "bg1ToolStripMenuItem";
-            this.bg1ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.bg1ToolStripMenuItem.Size = new System.Drawing.Size(153, 26);
             this.bg1ToolStripMenuItem.Text = "Bg1";
-            this.bg1ToolStripMenuItem.Click += new System.EventHandler(this.bg1ToolStripMenuItem_Click);
+            this.bg1ToolStripMenuItem.Click += new System.EventHandler(this.Bg1ToolStripMenuItem_Click);
             // 
             // bg2ToolStripMenuItem
             // 
             this.bg2ToolStripMenuItem.Name = "bg2ToolStripMenuItem";
-            this.bg2ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.bg2ToolStripMenuItem.Size = new System.Drawing.Size(153, 26);
             this.bg2ToolStripMenuItem.Text = "Bg2";
-            this.bg2ToolStripMenuItem.Click += new System.EventHandler(this.bg2ToolStripMenuItem_Click);
+            this.bg2ToolStripMenuItem.Click += new System.EventHandler(this.Bg2ToolStripMenuItem_Click);
             // 
             // commonToolStripMenuItem
             // 
             this.commonToolStripMenuItem.Name = "commonToolStripMenuItem";
-            this.commonToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.commonToolStripMenuItem.Size = new System.Drawing.Size(153, 26);
             this.commonToolStripMenuItem.Text = "Common";
-            this.commonToolStripMenuItem.Click += new System.EventHandler(this.commonToolStripMenuItem_Click);
+            this.commonToolStripMenuItem.Click += new System.EventHandler(this.CommonToolStripMenuItem_Click);
             // 
             // paletteToolStripMenuItem
             // 
             this.paletteToolStripMenuItem.Name = "paletteToolStripMenuItem";
-            this.paletteToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.paletteToolStripMenuItem.Size = new System.Drawing.Size(153, 26);
             this.paletteToolStripMenuItem.Text = "Palette";
             this.paletteToolStripMenuItem.Click += new System.EventHandler(this.paletteToolStripMenuItem_Click);
             // 
@@ -498,50 +532,51 @@
             this.paletteToolStripMenuItem1});
             this.exportToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("exportToolStripMenuItem.Image")));
             this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
-            this.exportToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exportToolStripMenuItem.Size = new System.Drawing.Size(137, 26);
             this.exportToolStripMenuItem.Text = "Export";
             // 
             // bg1ToolStripMenuItem1
             // 
             this.bg1ToolStripMenuItem1.Name = "bg1ToolStripMenuItem1";
-            this.bg1ToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.bg1ToolStripMenuItem1.Size = new System.Drawing.Size(153, 26);
             this.bg1ToolStripMenuItem1.Text = "Bg1";
-            this.bg1ToolStripMenuItem1.Click += new System.EventHandler(this.bg1ToolStripMenuItem1_Click);
+            this.bg1ToolStripMenuItem1.Click += new System.EventHandler(this.Bg1ToolStripMenuItem1_Click);
             // 
             // bg2ToolStripMenuItem1
             // 
             this.bg2ToolStripMenuItem1.Name = "bg2ToolStripMenuItem1";
-            this.bg2ToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.bg2ToolStripMenuItem1.Size = new System.Drawing.Size(153, 26);
             this.bg2ToolStripMenuItem1.Text = "Bg2";
-            this.bg2ToolStripMenuItem1.Click += new System.EventHandler(this.bg2ToolStripMenuItem1_Click);
+            this.bg2ToolStripMenuItem1.Click += new System.EventHandler(this.Bg2ToolStripMenuItem1_Click);
             // 
             // commonToolStripMenuItem1
             // 
             this.commonToolStripMenuItem1.Name = "commonToolStripMenuItem1";
-            this.commonToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.commonToolStripMenuItem1.Size = new System.Drawing.Size(153, 26);
             this.commonToolStripMenuItem1.Text = "Common";
-            this.commonToolStripMenuItem1.Click += new System.EventHandler(this.commonToolStripMenuItem1_Click);
+            this.commonToolStripMenuItem1.Click += new System.EventHandler(this.CommonToolStripMenuItem1_Click);
             // 
             // paletteToolStripMenuItem1
             // 
             this.paletteToolStripMenuItem1.Name = "paletteToolStripMenuItem1";
-            this.paletteToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.paletteToolStripMenuItem1.Size = new System.Drawing.Size(153, 26);
             this.paletteToolStripMenuItem1.Text = "Palette";
-            this.paletteToolStripMenuItem1.Click += new System.EventHandler(this.paletteToolStripMenuItem1_Click);
+            this.paletteToolStripMenuItem1.Click += new System.EventHandler(this.PaletteToolStripMenuItem1_Click);
             // 
             // label6
             // 
             this.label6.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label6.Location = new System.Drawing.Point(0, 21);
+            this.label6.Location = new System.Drawing.Point(0, 26);
+            this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(680, 2);
+            this.label6.Size = new System.Drawing.Size(907, 2);
             this.label6.TabIndex = 30;
             // 
-            // MetaTileEditor
+            // MetaTileEditorWindow
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(675, 305);
+            this.ClientSize = new System.Drawing.Size(900, 375);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.menuStrip);
             this.Controls.Add(this.mTType);
@@ -571,20 +606,21 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.selectedTilePanel);
             this.Controls.Add(this.selectedMetaTilePanel);
-            this.Controls.Add(this.tileSetPanel);
-            this.Controls.Add(this.metaTileSetPanel);
+            this.Controls.Add(this.tilesetPanel);
+            this.Controls.Add(this.metaTilesetPanel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "MetaTileEditor";
+            this.Name = "MetaTileEditorWindow";
             this.Text = "Metatile Editor";
-            this.metaTileSetPanel.ResumeLayout(false);
-            this.metaTileSetPanel.PerformLayout();
+            this.metaTilesetPanel.ResumeLayout(false);
+            this.metaTilesetPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.metaTileGridBox)).EndInit();
-            this.tileSetPanel.ResumeLayout(false);
-            this.tileSetPanel.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.tileSetGridBox)).EndInit();
+            this.tilesetPanel.ResumeLayout(false);
+            this.tilesetPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tilesetGridBox)).EndInit();
             this.selectedMetaTilePanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.selectedMetaGridBox)).EndInit();
             this.selectedTilePanel.ResumeLayout(false);
@@ -598,8 +634,8 @@
         }
 
         #endregion
-        private System.Windows.Forms.Panel metaTileSetPanel;
-        private System.Windows.Forms.Panel tileSetPanel;
+        private System.Windows.Forms.Panel metaTilesetPanel;
+        private System.Windows.Forms.Panel tilesetPanel;
         private System.Windows.Forms.Panel selectedMetaTilePanel;
         private System.Windows.Forms.Panel selectedTilePanel;
         private System.Windows.Forms.PictureBox selectedTileBox;
@@ -627,8 +663,7 @@
         private System.Windows.Forms.TextBox sTId;
         private System.Windows.Forms.TextBox mTId;
         private GridBoxComponent metaTileGridBox;
-        private GridBoxComponent tileSetGridBox;
-        private GridBoxComponent selectedMetaGridBox;
+        private GridBoxComponent tilesetGridBox;
         private System.Windows.Forms.Label HiddenLabel;
         private System.Windows.Forms.TextBox mTType;
         private System.Windows.Forms.MenuStrip menuStrip;
@@ -644,5 +679,6 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.ToolStripMenuItem paletteToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem paletteToolStripMenuItem1;
+        private GridBoxComponent selectedMetaGridBox;
     }
 }

@@ -48,8 +48,7 @@ namespace MinishMaker.Core
 
                 switch (type)
                 {
-                    case DataType.bg1Data:
-                    case DataType.bg2Data:
+                    case DataType.bgData:
                         newSource = (newSource - ROM.Instance.headers.gfxSourceBase);
                         w.SetPosition(pointerAddress);
                         w.WriteUInt32((uint)newSource | 0x80000000);//byte 1-4 is source, high bit was removed before

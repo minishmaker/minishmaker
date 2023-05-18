@@ -1,0 +1,136 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<!-- enums that can be used within filters, in this case itemTypes-->
+	<enums>
+		<itemTypes>
+		<!-- using values above 0x75 may cause game weirdness or crashes-->
+			<entry value="0x00" name="Empty / Unknown" />
+			<entry value="0x01" name="Smith's Sword" />
+			<entry value="0x02" name="White Sword (Green)" />
+			<entry value="0x03" name="White Sword (Red)" />
+			<entry value="0x04" name="White Sword (Blue)" />
+			<entry value="0x05" name="Unused [Lantern Icon]" />
+			<entry value="0x06" name="Four Sword" />
+			<entry value="0x07" name="Bomb" />
+			<entry value="0x08" name="Remote Bomb" />
+			<entry value="0x09" name="Bow" />
+			<entry value="0x0A" name="Light Arrow" />
+			<entry value="0x0B" name="Boomerang" />
+			<entry value="0x0C" name="Magic Boomerang" />
+			<entry value="0x0D" name="Shield" />
+			<entry value="0x0E" name="Mirror Shield" />
+			<entry value="0x0F" name="Lantern (Off)" />
+
+			<entry value="0x10" name="Lantern (On)" />
+			<entry value="0x11" name="Gust Jar" />
+			<entry value="0x12" name="Cane of Pacci" />
+			<entry value="0x13" name="Mole Mitts" />
+			<entry value="0x14" name="Roc's Cape" />
+			<entry value="0x15" name="Pegasus Boots" />
+			<entry value="0x16" name="Fire Rod" />
+			<entry value="0x17" name="Ocarina" />
+			<entry value="0x18" name="Book (Red)[DEBUG]" />
+			<entry value="0x19" name="Unknown [Mushroom Icon]" />
+			<entry value="0x1A" name="Unknown [Flippers Icon]" />
+			<entry value="0x1B" name="Unknown [Lanern Icon]" />
+			<entry value="0x1C" name="Bottle 1 (Empty)" />
+			<entry value="0x1D" name="Bottle 2 (Empty)" />
+			<entry value="0x1E" name="Bottle 3 (Empty)" />
+			<entry value="0x1F" name="Bottle 4 (Empty)" />
+
+			<entry value="0x20" name="Bottle (Empty)" />
+			<entry value="0x21" name="Bottle (Butter)" />
+			<entry value="0x22" name="Bottle (Lon Lon Milk)" />
+			<entry value="0x23" name="Bottle (1/2 Lon Lon Milk)" />
+			<entry value="0x24" name="Bottle (Red Potion)" />
+			<entry value="0x25" name="Bottle (Blue Potion)" />
+			<entry value="0x26" name="Bottle (Water)" />
+			<entry value="0x27" name="Bottle (Mineral Water)" />
+			<entry value="0x28" name="Bottle (Fairy)" />
+			<entry value="0x29" name="Bottle (Red Picolyte)" />
+			<entry value="0x2A" name="Bottle (Orange Picolyte)" />
+			<entry value="0x2B" name="Bottle (Yellow Picolyte)" />
+			<entry value="0x2C" name="Bottle (Green Picolyte)" />
+			<entry value="0x2D" name="Bottle (Blue Picolyte)" />
+			<entry value="0x2E" name="Bottle (White Picolyte)" />
+			<entry value="0x2F" name="Bottle (Nayru's Charm)" />
+
+			<entry value="0x30" name="Bottle (Farore's Charm)" />
+			<entry value="0x31" name="Bottle (Din's Charm)" />
+			<entry value="0x32" name="Unknown" />
+			<entry value="0x33" name="Unknown" />
+			<entry value="0x34" name="Smith's Sword (Quest)" />
+			<entry value="0x35" name="Broken Picori Blade" />
+			<entry value="0x36" name="Bottle (Dog Food)" />
+			<entry value="0x37" name="Lon Lon Ranch Key" />
+			<entry value="0x38" name="Wake-Up Mushroom" />
+			<entry value="0x39" name="Book (A Hyrulean Bestiary)" />
+			<entry value="0x3A" name="Book (Legend of the Picori)" />
+			<entry value="0x3B" name="Book (A History of Masks)" />
+			<entry value="0x3C" name="Graveyard Key" />
+			<entry value="0x3D" name="Tingle Trophy" />
+			<entry value="0x3E" name="Carlov Medal" />
+			<entry value="0x3F" name="Mysterious Shells" />
+
+			<entry value="0x40" name="Earth Element" />
+			<entry value="0x41" name="Fire Element" />
+			<entry value="0x42" name="Water Element" />
+			<entry value="0x43" name="Wind Element" />
+			<entry value="0x44" name="Grip Ring" />
+			<entry value="0x45" name="Power Bracelets" />
+			<entry value="0x46" name="Flippers" />
+			<entry value="0x47" name="Map of Hyrule" />
+			<entry value="0x48" name="Tiger Scroll (Spin Attack)" />
+			<entry value="0x49" name="Tiger Scroll (Roll Attack)" />
+			<entry value="0x4A" name="Tiger Scroll (Dash Attack)" />
+			<entry value="0x4B" name="Tiger Scroll (Rock Breaker)" />
+			<entry value="0x4C" name="Tiger Scroll (Sword Beam)" />
+			<entry value="0x4D" name="Tiger Scroll (Great Spin Attack)" />
+			<entry value="0x4E" name="Tiger Scroll (Down Thrust)" />
+			<entry value="0x4F" name="Tiger Scroll (Peril Beam)" />
+
+			<entry value="0x50" name="Dungeon Map" />
+			<entry value="0x51" name="Compass" />
+			<entry value="0x52" name="Big Key" />
+			<entry value="0x53" name="Small Key" />
+			<entry value="0x54" name="Rupee (1)" />
+			<entry value="0x55" name="Rupee (5)" />
+			<entry value="0x56" name="Rupee (20)" />
+			<entry value="0x57" name="Rupee (50)" />
+			<entry value="0x58" name="Rupee (100)" />
+			<entry value="0x59" name="Rupee (200)" />
+			<entry value="0x5A" name="Unknown [Lantern Icon]" />
+			<entry value="0x5B" name="Jabber Nut" />
+			<entry value="0x5C" name="Kinstone Piece" />
+			<entry value="0x5D" name="Bombs (5)" />
+			<entry value="0x5E" name="Arrows (5)" />
+			<entry value="0x5F" name="Heart (1)" />
+
+			<entry value="0x60" name="Fairy" />
+			<entry value="0x61" name="Mysterious Shells (30)" />
+			<entry value="0x62" name="Heart Container" />
+			<entry value="0x63" name="Piece of Heart" />
+			<entry value="0x64" name="Big Wallet" />
+			<entry value="0x65" name="Big Bomb Bag" />
+			<entry value="0x66" name="Large Quiver" />
+			<entry value="0x67" name="Kinstone Bag" />
+			<entry value="0x68" name="Brioche" />
+			<entry value="0x69" name="Croissant" />
+			<entry value="0x6A" name="Slice of Pie" />
+			<entry value="0x6B" name="Slice of Cake" />
+			<entry value="0x6C" name="Bombs (10)" />
+			<entry value="0x6D" name="Bombs (30)" />
+			<entry value="0x6E" name="Arrows (10)" />
+			<entry value="0x6F" name="Arrows (30)" />
+
+			<entry value="0x70" name="Joy Butterfly" />
+			<entry value="0x71" name="Joy Butterfly" />
+			<entry value="0x72" name="Joy Butterfly" />
+			<entry value="0x73" name="Spin Charge Boost" />
+			<entry value="0x74" name="Split Charge Boost" />
+			<entry value="0x75" name="Great Spin Time Boost" />
+			<entry value="0x76" name="CREDITS" />
+			<entry value="0x77" name="Swordsman Newsletter" />
+		</itemTypes>
+	</enums>
+</root>

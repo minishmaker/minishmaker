@@ -1,0 +1,1064 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<!--
+		mode tags mean that any text after {ModeName} will use those sets for conversion, use {Normal} to end a mode
+		command tags mean that {CommandName:value} will be used, if the value isnt found in the set and is a number, that number will be put in as a raw value
+		length is used for commands that cn have number values, if it is not found in the set it will write down the number in the command
+		config is only used for hylian as there is multiple ways to read it from the game, options are Any, Phonetic, Katakana, Hiragana, default is Any
+		a {Raw: value} is a command that can be used to put in an infinite number of raw number values
+		set 0x00 is seen as being single byte values
+	-->
+
+	<!-- for single byte values -->
+	<set value="0x00">
+		<data data="0x10" value='あ'/>
+		<data data="0x11" value='ア'/>
+		<data data="0x12" value='い'/>
+		<data data="0x13" value='イ'/>
+		<data data="0x14" value='う'/>
+		<data data="0x15" value='を'/> <!--doesnt follow the pattern-->
+		<data data="0x16" value='え'/>
+		<data data="0x17" value='エ'/>
+		<data data="0x18" value='お'/>
+		<data data="0x19" value='オ'/>
+		<data data="0x1A" value='ぁ'/>
+		<data data="0x1B" value='ァ'/>
+		<data data="0x1C" value='ぃ'/>
+		<data data="0x1D" value='ィ'/>
+		<data data="0x1E" value='ぅ'/>
+		<data data="0x1F" value='ゥ'/>
+
+		<data data="0x20" value=' '/>
+		<data data="0x21" value='!'/>
+		<data data="0x22" value='"'/>
+		<data data="0x23" value='わ'/>
+		<data data="0x24" value='ワ'/>
+		<data data="0x25" value='フ'/>
+		<data data="0x26" value='ッ'/>
+		<data data="0x27" value='&#x27;'/>
+		<data data="0x28" value='('/>
+		<data data="0x29" value=')'/>
+		<data data="0x2A" value='、'/>
+		<data data="0x2B" value='。'/>
+		<data data="0x2C" value=','/>
+		<data data="0x2D" value='-'/>
+		<data data="0x2E" value='.'/>
+		<data data="0x2F" value='ヲ'/>
+
+		<data data="0x30" value='0'/>
+		<data data="0x31" value='1'/>
+		<data data="0x32" value='2'/>
+		<data data="0x33" value='3'/>
+		<data data="0x34" value='4'/>
+		<data data="0x35" value='5'/>
+		<data data="0x36" value='6'/>
+		<data data="0x37" value='7'/>
+		<data data="0x38" value='8'/>
+		<data data="0x39" value='9'/>
+		<data data="0x3A" value=':'/> 
+		<data data="0x3B" value='ぇ'/>
+		<data data="0x3C" value='ェ'/>
+		<data data="0x3D" value='ぉ'/>
+		<data data="0x3E" value='ォ'/>
+		<data data="0x3F" value='?'/>
+
+		<data data="0x40" value='~'/> <!-- INFO: japanese valueacter here-->
+		<data data="0x41" value='A'/> <!-- INFO: 4A in bold = 9 ahead-->
+		<data data="0x42" value='B'/>
+		<data data="0x43" value='C'/>
+		<data data="0x44" value='D'/>
+		<data data="0x45" value='E'/>
+		<data data="0x46" value='F'/>
+		<data data="0x47" value='G'/>
+		<data data="0x48" value='H'/>
+		<data data="0x49" value='I'/>
+		<data data="0x4A" value='J'/>
+		<data data="0x4B" value='K'/>
+		<data data="0x4C" value='L'/>
+		<data data="0x4D" value='M'/>
+		<data data="0x4E" value='N'/>
+		<data data="0x4F" value='O'/>
+
+		<data data="0x50" value='P'/>
+		<data data="0x51" value='Q'/>
+		<data data="0x52" value='R'/>
+		<data data="0x53" value='S'/>
+		<data data="0x54" value='T'/>
+		<data data="0x55" value='U'/>
+		<data data="0x56" value='V'/>
+		<data data="0x57" value='W'/>
+		<data data="0x58" value='X'/>
+		<data data="0x59" value='Y'/>
+		<data data="0x5A" value='Z'/>
+		<data data="0x5B" value='ぬ'/>
+		<data data="0x5C" value='や'/>
+		<data data="0x5D" value='ヤ'/>
+		<data data="0x5E" value='ゆ'/>
+		<data data="0x5F" value='ユ'/>
+
+		<data data="0x60" value='`'/>
+		<data data="0x61" value='a'/><!-- INFO: 6A in bold = 9 ahead-->
+		<data data="0x62" value='b'/>
+		<data data="0x63" value='c'/>
+		<data data="0x64" value='d'/>
+		<data data="0x65" value='e'/>
+		<data data="0x66" value='f'/>
+		<data data="0x67" value='g'/>
+		<data data="0x68" value='h'/>
+		<data data="0x69" value='i'/>
+		<data data="0x6A" value='j'/>
+		<data data="0x6B" value='k'/>
+		<data data="0x6C" value='l'/>
+		<data data="0x6D" value='m'/>
+		<data data="0x6E" value='n'/>
+		<data data="0x6F" value='o'/>
+
+		<data data="0x70" value='p'/>
+		<data data="0x71" value='q'/>
+		<data data="0x72" value='r'/>
+		<data data="0x73" value='s'/>
+		<data data="0x74" value='t'/>
+		<data data="0x75" value='u'/>
+		<data data="0x76" value='v'/>
+		<data data="0x77" value='w'/>
+		<data data="0x78" value='x'/>
+		<data data="0x79" value='y'/>
+		<data data="0x7A" value='z'/>
+		<data data="0x7B" value='ヌ'/>
+		<data data="0x7C" value='よ'/>
+		<data data="0x7D" value='ヨ'/>
+		<data data="0x7E" value='ん'/>
+		<data data="0x7F" value='ン'/>
+
+		<data data='0x80' value=''/><!-- unused -->
+		<data data='0x81' value=''/><!-- unused -->
+		<data data='0x82' value='‚'/>
+		<data data='0x83' value=''/><!-- unused -->
+		<data data='0x84' value='❠'/>
+		<data data='0x85' value='…'/>
+		<data data='0x86' value=''/><!-- unused -->
+		<data data='0x87' value=''/><!-- unused -->
+		<data data='0x88' value=''/><!-- unused -->
+		<data data='0x89' value=''/><!-- unused -->
+		<data data='0x8A' value='Š'/>
+		<data data='0x8B' value='‹'/>
+		<data data='0x8C' value='Œ'/>
+		<data data='0x8D' value=''/><!-- unused -->
+		<data data='0x8E' value='Ž'/>
+		<data data='0x8F' value=''/><!-- unused -->
+
+		<data data='0x90' value=''/><!-- unused -->
+		<data data='0x91' value='‘'/>
+		<data data='0x92' value='’'/>
+		<data data='0x93' value='“'/>
+		<data data='0x94' value='”'/>
+		<data data='0x95' value='' redirect="0x00B7"/> <!-- duplicate · -->
+		<data data='0x96' value=''/><!-- unused -->
+		<data data='0x97' value=''/><!-- unused -->
+		<data data='0x98' value=''/><!-- unused -->
+		<data data='0x99' value='™'/>
+		<data data='0x9A' value='š'/>
+		<data data='0x9B' value='›'/>
+		<data data='0x9C' value='œ'/>
+		<data data='0x9D' value=''/><!-- unused -->
+		<data data='0x9E' value='ž'/>
+		<data data='0x9F' value='Ÿ'/>
+
+		<data data='0xA0' value=''/><!-- unused -->
+		<data data='0xA1' value='¡'/>
+		<data data='0xA2' value=''/><!-- unused -->
+		<data data='0xA3' value='♪'/><!-- duplicate ♪ -->
+		<data data='0xA4' value=''/><!-- unused -->
+		<data data='0xA5' value=''/><!-- unused -->
+		<data data='0xA6' value=''/><!-- unused -->
+		<data data='0xA7' value=''/><!-- unused -->
+		<data data='0xA8' value=''/><!-- unused -->
+		<data data='0xA9' value=''/><!-- unused -->
+		<data data='0xAA' value='ª'/>
+		<data data='0xAB' value='«'/>
+		<data data='0xAC' value=''/><!-- unused -->
+		<data data='0xAD' value=''/><!-- unused -->
+		<data data='0xAE' value=''/><!-- unused -->
+		<data data='0xAF' value=''/><!-- unused -->
+
+		<data data='0xB0' value='˚'/>
+		<data data='0xB1' value=''/><!-- unused -->
+		<data data='0xB2' value=''/><!-- unused -->
+		<data data='0xB3' value=''/><!-- unused -->
+		<data data='0xB4' value='´'/>
+		<data data='0xB5' value=''/><!-- unused -->
+		<data data='0xB6' value=''/><!-- unused -->
+		<data data='0xB7' value='·'/>
+		<data data='0xB8' value=''/><!-- unused -->
+		<data data='0xB9' value=''/><!-- unused -->
+		<data data='0xBA' value='º'/>
+		<data data='0xBB' value='»'/>
+		<data data='0xBC' value=''/><!-- unused -->
+		<data data='0xBD' value=''/><!-- unused -->
+		<data data='0xBE' value=''/><!-- unused -->
+		<data data='0xBF' value='¿'/>
+
+		<data data='0xC0' value='À'/>
+		<data data='0xC1' value='Á'/>
+		<data data='0xC2' value='Â'/>
+		<data data='0xC3' value='Ã'/>
+		<data data='0xC4' value='Ä'/>
+		<data data='0xC5' value='Å'/>
+		<data data='0xC6' value='Æ'/>
+		<data data='0xC7' value='Ç'/>
+		<data data='0xC8' value='È'/>
+		<data data='0xC9' value='É'/>
+		<data data='0xCA' value='Ê'/>
+		<data data='0xCB' value='Ë'/>
+		<data data='0xCC' value='Ì'/>
+		<data data='0xCD' value='Í'/>
+		<data data='0xCE' value='Î'/>
+		<data data='0xCF' value='Ï'/>
+
+		<data data='0xD0' value='Ð'/>
+		<data data='0xD1' value='Ñ'/>
+		<data data='0xD2' value='Ò'/>
+		<data data='0xD3' value='Ó'/>
+		<data data='0xD4' value='Ô'/>
+		<data data='0xD5' value='Õ'/>
+		<data data='0xD6' value='Ö'/>
+		<data data='0xD7' value='×'/>
+		<data data='0xD8' value='Ø'/>
+		<data data='0xD9' value='Ù'/>
+		<data data='0xDA' value='Ú'/>
+		<data data='0xDB' value='Û'/>
+		<data data='0xDC' value='Ü'/>
+		<data data='0xDD' value='Ý'/>
+		<data data='0xDE' value='Þ'/>
+		<data data='0xDF' value='ß'/>
+
+		<data data='0xE0' value='à'/>
+		<data data='0xE1' value='á'/>
+		<data data='0xE2' value='â'/>
+		<data data='0xE3' value='ã'/>
+		<data data='0xE4' value='ä'/>
+		<data data='0xE5' value='å'/>
+		<data data='0xE6' value='æ'/>
+		<data data='0xE7' value='ç'/>
+		<data data='0xE8' value='è'/>
+		<data data='0xE9' value='é'/>
+		<data data='0xEA' value='ê'/>
+		<data data='0xEB' value='ë'/>
+		<data data='0xEC' value='ì'/>
+		<data data='0xED' value='í'/>
+		<data data='0xEE' value='î'/>
+		<data data='0xEF' value='ï'/>
+		
+		<data data='0xF0' value='ð'/>
+		<data data='0xF1' value='ñ'/>
+		<data data='0xF2' value='ò'/>
+		<data data='0xF3' value='ó'/>
+		<data data='0xF4' value='ô'/>
+		<data data='0xF5' value='õ'/>
+		<data data='0xF6' value='ö'/>
+		<data data='0xF7' value='÷'/>
+		<data data='0xF8' value='ø'/>
+		<data data='0xF9' value='ù'/>
+		<data data='0xFA' value='ú'/>
+		<data data='0xFB' value='û'/>
+		<data data='0xFC' value='ü'/>
+		<data data='0xFD' value='ý'/>
+		<data data='0xFE' value='þ'/>
+		<data data='0xFF' value='ÿ'/>
+	</set>
+
+	<set value="0x01" command="EzloFacing">
+		<data data="0x00" value="Random"/>
+		<data data="0x01" value="SkyFront"/> <!--speak up -->
+		<data data="0x02" value="Screen"/> <!--facing screen-->
+		<data data="0x03" value="Center"/> <!--facing screen downish-->
+		<data data="0x04" value="Down"/> <!--link whisper-->
+		<data data="0x05" value="Face"/> <!--link front-->
+		<data data="0x06" value="Side"/> <!--speak low back-->
+		<data data="0x07" value="Back"/> <!--speak high back-->
+		<data data="0x08" value="SkySideways"/> <!--speak up back-->
+		<data data="0x0A" value="None"/>
+	</set>
+	
+	<set value="0x02" command="Color" length ="1">
+		<data data="0x00" value="White"/>
+		<data data="0x01" value="Red"/>
+		<data data="0x02" value="Green"/>
+		<data data="0x03" value="Cyan"/>
+		<data data="0x04" value="Black"/>
+		<data data="0x05" value="None"/>
+		<data data="0x06" value="RedWhite"/>
+		<data data="0x07" value="RedRed"/>
+	</set>
+
+	<set value="0x03" command="Sound" length="2">
+	</set> <!-- sounds are 2 bytes, list of values found at ???-->
+
+	<set value="0x04" command="Text" length="2">
+		<data data="0x12" value="Reopen"/>
+		<data data="0x13" value="Center"/>
+		<data data="0x14" value="Mono-stop"/>
+		<data data="0x15" value="Mono-start"/>
+	</set> <!-- BoxMove requires a 2nd value -->
+
+	<set value="0x05" command="Choice" length="2">
+		<data data="0xFF" value="FF"/>
+	</set>	<!-- bank - entry -->
+
+	<set value="0x06" command="Player">
+		<data data="0x00" value=""/>
+	</set>
+
+	<set value="0x06" command="Var" length="1">
+	</set>
+
+	<set value="0x07" command="TextJump" length="2">
+	</set>
+
+	<set value="0x0B" mode="Hylian">
+		<data data="0x48" value="ー"/>
+		<data data="0x4B" value="_"/>
+	</set>
+
+	<set value="0x0B" mode="Hylian" length="3" config="Phonetic">
+		<data data="0x00" value="a"/>
+		<data data="0x01" value="i"/>
+		<data data="0x02" value="u"/>
+		<data data="0x03" value="e"/>
+		<data data="0x04" value="o"/>
+		<data data="0x05" value="ka"/>
+		<data data="0x06" value="ki"/>
+		<data data="0x07" value="ku"/>
+		<data data="0x08" value="ke"/>
+		<data data="0x09" value="ko"/>
+		<data data="0x0A" value="sa"/>
+		<data data="0x0B" value="shi"/>
+		<data data="0x0C" value="su"/>
+		<data data="0x0D" value="se"/>
+		<data data="0x0E" value="so"/>
+		<data data="0x0F" value="ta"/>
+
+		<data data="0x10" value="chi"/>
+		<data data="0x11" value="tsu"/>
+		<data data="0x12" value="te"/>
+		<data data="0x13" value="to"/>
+		<data data="0x14" value="na"/>
+		<data data="0x15" value="ni"/>
+		<data data="0x16" value="nu"/>
+		<data data="0x17" value="ne"/>
+		<data data="0x18" value="no"/>
+		<data data="0x19" value="ha"/>
+		<data data="0x1A" value="hi"/>
+		<data data="0x1B" value="fu"/>
+		<data data="0x1C" value="he"/>
+		<data data="0x1D" value="ho"/>
+		<data data="0x1E" value="ma"/>
+		<data data="0x1F" value="mi"/>
+
+		<data data="0x20" value="mu"/>
+		<data data="0x21" value="me"/>
+		<data data="0x22" value="mo"/>
+		<data data="0x23" value="ya"/>
+		<data data="0x24" value="yu"/>
+		<data data="0x25" value="yo"/>
+		<data data="0x26" value="ra"/>
+		<data data="0x27" value="ri"/>
+		<data data="0x28" value="ru"/>
+		<data data="0x29" value="re"/>
+		<data data="0x2A" value="ro"/>
+		<data data="0x2B" value="wa"/>
+		<data data="0x2C" value="wo"/>
+		<data data="0x2D" value="n"/>
+		<data data="0x2E" value="ga"/>
+		<data data="0x2F" value="gi"/>
+
+		<data data="0x30" value="gu"/>
+		<data data="0x31" value="ge"/>
+		<data data="0x32" value="go"/>
+		<data data="0x33" value="za"/>
+		<data data="0x34" value="zi"/><!-- duplicate noise ji-->
+		<data data="0x35" value="zu"/><!-- duplicate noise zu-->
+		<data data="0x36" value="ze"/>
+		<data data="0x37" value="zo"/>
+		<data data="0x38" value="da"/>
+		<data data="0x39" value="di"/><!-- duplicate noise ji-->
+		<data data="0x3A" value="du"/><!-- duplicate noise zu-->
+		<data data="0x3B" value="de"/>
+		<data data="0x3C" value="do"/>
+		<data data="0x3D" value="ba"/>
+		<data data="0x3E" value="bi"/>
+		<data data="0x3F" value="bu"/>
+
+		<data data="0x40" value="be"/>
+		<data data="0x41" value="bo"/>
+		<data data="0x42" value="pa"/>
+		<data data="0x43" value="pi"/>
+		<data data="0x44" value="pu"/>
+		<data data="0x45" value="pe"/>
+		<data data="0x46" value="po"/>
+		<data data="0x47" value="."/>
+		<data data="0x49" value="“"/>
+		<data data="0x4A" value="”"/>
+		<data data="0x4C" value="1"/>
+		<data data="0x4D" value="2"/>
+		<data data="0x4E" value="3"/>
+		<data data="0x4F" value="4"/>
+
+		<data data="0x50" value="5"/>
+		<data data="0x51" value="6"/>
+		<data data="0x52" value="7"/>
+		<data data="0x53" value="8"/>
+		<data data="0x54" value="9"/>
+		<data data="0x55" value="0"/>
+	</set>
+
+	<set value="0x0B" mode="Hylian" config="Katakana">
+		<data data="0x00" value="ア"/>
+		<data data="0x01" value="イ"/>
+		<data data="0x02" value="ウ"/>
+		<data data="0x03" value="エ"/>
+		<data data="0x04" value="オ"/>
+		<data data="0x05" value="カ"/>
+		<data data="0x06" value="キ"/>
+		<data data="0x07" value="ク"/>
+		<data data="0x08" value="ケ"/>
+		<data data="0x09" value="コ"/>
+		<data data="0x0A" value="サ"/>
+		<data data="0x0B" value="シ"/>
+		<data data="0x0C" value="ス"/>
+		<data data="0x0D" value="セ"/>
+		<data data="0x0E" value="ソ"/>
+		<data data="0x0F" value="タ"/>
+
+		<data data="0x10" value="チ"/>
+		<data data="0x11" value="ツ"/>
+		<data data="0x12" value="テ"/>
+		<data data="0x13" value="ト"/>
+		<data data="0x14" value="ナ"/>
+		<data data="0x15" value="ニ"/>
+		<data data="0x16" value="ヌ"/>
+		<data data="0x17" value="ネ"/>
+		<data data="0x18" value="ノ"/>
+		<data data="0x19" value="ハ"/>
+		<data data="0x1A" value="ヒ"/>
+		<data data="0x1B" value="フ"/>
+		<data data="0x1C" value="ヘ"/>
+		<data data="0x1D" value="ホ"/>
+		<data data="0x1E" value="マ"/>
+		<data data="0x1F" value="ミ"/>
+
+		<data data="0x20" value="ム"/>
+		<data data="0x21" value="メ"/>
+		<data data="0x22" value="モ"/>
+		<data data="0x23" value="ヤ"/>
+		<data data="0x24" value="ユ"/>
+		<data data="0x25" value="ヨ"/>
+		<data data="0x26" value="ラ"/>
+		<data data="0x27" value="リ"/>
+		<data data="0x28" value="ル"/>
+		<data data="0x29" value="レ"/>
+		<data data="0x2A" value="ロ"/>
+		<data data="0x2B" value="ワ"/>
+		<data data="0x2C" value="ヲ"/>
+		<data data="0x2D" value="ン"/>
+		<data data="0x2E" value="ガ"/>
+		<data data="0x2F" value="ギ"/>
+
+		<data data="0x30" value="グ"/>
+		<data data="0x31" value="ゲ"/>
+		<data data="0x32" value="ゴ"/>
+		<data data="0x33" value="ザ"/>
+		<data data="0x34" value="ジ"/> <!-- duplicate noise ji-->
+		<data data="0x35" value="ズ"/> <!-- duplicate noise zu-->
+		<data data="0x36" value="ゼ"/>
+		<data data="0x37" value="ゾ"/>
+		<data data="0x38" value="ダ"/>
+		<data data="0x39" value="ヂ"/> <!-- duplicate noise ji-->
+		<data data="0x3A" value="ヅ"/> <!-- duplicate noise zu-->
+		<data data="0x3B" value="デ"/>
+		<data data="0x3C" value="ド"/>
+		<data data="0x3D" value="バ"/>
+		<data data="0x3E" value="ビ"/>
+		<data data="0x3F" value="ブ"/>
+
+		<data data="0x40" value="ベ"/>
+		<data data="0x41" value="ボ"/>
+		<data data="0x42" value="パ"/>
+		<data data="0x43" value="ピ"/>
+		<data data="0x44" value="プ"/>
+		<data data="0x45" value="ペ"/>
+		<data data="0x46" value="ポ"/>
+		<data data="0x47" value="。"/>
+		<data data="0x49" value="「"/>
+		<data data="0x4A" value="」"/>
+		<data data="0x4C" value="１"/>
+		<data data="0x4D" value="２"/>
+		<data data="0x4E" value="３"/>
+		<data data="0x4F" value="４"/>
+
+		<data data="0x50" value="５"/>
+		<data data="0x51" value="６"/>
+		<data data="0x52" value="７"/>
+		<data data="0x53" value="８"/>
+		<data data="0x54" value="９"/>
+		<data data="0x55" value="０"/>
+	</set>
+
+	<set value="0x0B" mode="Hylian" config="Hiragana">
+		<data data="0x00" value="あ"/>
+		<data data="0x01" value="い"/>
+		<data data="0x02" value="う"/>
+		<data data="0x03" value="え"/>
+		<data data="0x04" value="お"/>
+		<data data="0x05" value="か"/>
+		<data data="0x06" value="き"/>
+		<data data="0x07" value="く"/>
+		<data data="0x08" value="け"/>
+		<data data="0x09" value="こ"/>
+		<data data="0x0A" value="さ"/>
+		<data data="0x0B" value="し"/>
+		<data data="0x0C" value="す"/>
+		<data data="0x0D" value="せ"/>
+		<data data="0x0E" value="そ"/>
+		<data data="0x0F" value="た"/>
+
+		<data data="0x10" value="ち"/>
+		<data data="0x11" value="つ"/>
+		<data data="0x12" value="て"/>
+		<data data="0x13" value="と"/>
+		<data data="0x14" value="な"/>
+		<data data="0x15" value="に"/>
+		<data data="0x16" value="ぬ"/>
+		<data data="0x17" value="ね"/>
+		<data data="0x18" value="の"/>
+		<data data="0x19" value="は"/>
+		<data data="0x1A" value="ひ"/>
+		<data data="0x1B" value="ふ"/>
+		<data data="0x1C" value="へ"/>
+		<data data="0x1D" value="ほ"/>
+		<data data="0x1E" value="ま"/>
+		<data data="0x1F" value="み"/>
+
+		<data data="0x20" value="む"/>
+		<data data="0x21" value="め"/>
+		<data data="0x22" value="も"/>
+		<data data="0x23" value="や"/>
+		<data data="0x24" value="ゆ"/>
+		<data data="0x25" value="よ"/>
+		<data data="0x26" value="ら"/>
+		<data data="0x27" value="り"/>
+		<data data="0x28" value="る"/>
+		<data data="0x29" value="れ"/>
+		<data data="0x2A" value="ろ"/>
+		<data data="0x2B" value="わ"/>
+		<data data="0x2C" value="を"/>
+		<data data="0x2D" value="ん"/>
+		<data data="0x2E" value="が"/>
+		<data data="0x2F" value="ぎ"/>
+
+		<data data="0x30" value="ぐ"/>
+		<data data="0x31" value="げ"/>
+		<data data="0x32" value="ご"/>
+		<data data="0x33" value="ざ"/>
+		<data data="0x34" value="じ"/> <!-- duplicate noise ji-->
+		<data data="0x35" value="ず"/> <!-- duplicate noise zu-->
+		<data data="0x36" value="ぜ"/>
+		<data data="0x37" value="ぞ"/>
+		<data data="0x38" value="だ"/>
+		<data data="0x39" value="ぢ"/> <!-- duplicate noise ji-->
+		<data data="0x3A" value="づ"/> <!-- duplicate noise zu-->
+		<data data="0x3B" value="で"/>
+		<data data="0x3C" value="ど"/>
+		<data data="0x3D" value="ば"/>
+		<data data="0x3E" value="び"/>
+		<data data="0x3F" value="ぶ"/>
+
+		<data data="0x40" value="べ"/>
+		<data data="0x41" value="ぼ"/>
+		<data data="0x42" value="ぱ"/>
+		<data data="0x43" value="ぴ"/>
+		<data data="0x44" value="ぷ"/>
+		<data data="0x45" value="ぺ"/>
+		<data data="0x46" value="ぽ"/>
+		<data data="0x47" value="。"/>
+		<data data="0x49" value="「"/>
+		<data data="0x4A" value="」"/>
+		<data data="0x4C" value="１"/>
+		<data data="0x4D" value="２"/>
+		<data data="0x4E" value="３"/>
+		<data data="0x4F" value="４"/>
+
+		<data data="0x50" value="５"/>
+		<data data="0x51" value="６"/>
+		<data data="0x52" value="７"/>
+		<data data="0x53" value="８"/>
+		<data data="0x54" value="９"/>
+		<data data="0x55" value="０"/>
+	</set>
+
+	<set value="0x0C" command="Button">
+		<data data="0x00" value="A"/>
+		<data data="0x01" value="B"/>
+		<data data="0x02" value="L"/>
+		<data data="0x03" value="R"/>
+		<data data="0x04" value="Up"/>
+		<data data="0x05" value="Down"/>
+		<data data="0x06" value="Left"/>
+		<data data="0x07" value="Right"/>
+		<data data="0x08" value="Dpad"/>
+		<data data="0x09" value="Blank"/>
+	</set>
+
+	<set value="0x0C" command="Icon">
+		<data data="0x0A" value="Blue_swirl"/>
+		<data data="0x0B" value="Grey_swirl"/>
+	</set>
+
+	<set value='0x0C' mode='Bold'>
+		<data data="0x0C" value='ゴ'/>
+		<data data="0x0D" value='ン'/>
+		<data data="0x0E" value='グ'/>
+		<data data="0x0F" value='ル'/>
+
+		<data data="0x10" value='タ'/>
+		<data data="0x11" value='バ'/>
+		<data data="0x12" value='ベ'/>
+		<data data="0x13" value='ー'/>
+		<data data="0x14" value='レ'/>
+		<data data="0x15" value='ハ'/>
+		<data data="0x16" value='イ'/>
+		<data data="0x17" value='ラ'/>
+		<data data="0x18" value='セ'/>
+		<data data="0x19" value='ロ'/>
+		<data data="0x1A" value='リ'/>
+		<data data="0x1B" value='ア'/>
+		<data data="0x1C" value='チ'/>
+		<data data="0x1D" value='メ'/>
+		<data data="0x1E" value='ダ'/>
+		<data data="0x1F" value='ジ'/>
+
+		<data data="0x20" value='ョ'/>
+		<data data="0x21" value='ふ'/>
+		<data data="0x22" value='も'/>
+		<data data="0x23" value='と'/>
+		<data data="0x24" value='の'/>
+		<data data="0x25" value='い'/>
+		<data data="0x26" value='せ'/>
+		<data data="0x27" value='き'/>
+		<data data="0x28" value='こ'/>
+		<data data="0x29" value=' '/>
+		<data data="0x2A" value='！'/>
+		<data data="0x2B" value='”'/>
+		<data data="0x2C" value='う'/>
+		<data data="0x2D" value='ほ'/>
+		<data data="0x2E" value='ら'/>
+		<data data="0x2F" value='ど'/>
+
+		<data data="0x30" value='&#x27;'/>
+		<data data="0x31" value='('/>
+		<data data="0x32" value=')'/>
+		<data data="0x33" value='く'/>
+		<data data="0x34" value='つ'/>
+		<data data="0x35" value=','/>
+		<data data="0x36" value='-'/>
+		<data data="0x37" value='.'/>
+		<data data="0x38" value='り'/>
+		<data data="0x39" value='0'/>
+		<data data="0x3A" value='1'/>
+		<data data="0x3B" value='2'/>
+		<data data="0x3C" value='3'/>
+		<data data="0x3D" value='4'/>
+		<data data="0x3E" value='5'/>
+		<data data="0x3F" value='6'/>
+
+		<data data="0x40" value='7'/>
+		<data data="0x41" value='8'/>
+		<data data="0x42" value='9'/>
+		<data data="0x43" value=':'/>
+		<data data="0x44" value='で'/>
+		<data data="0x45" value='し'/>
+		<data data="0x46" value='ず'/>
+		<data data="0x47" value='は'/>
+		<data data="0x48" value='?'/>
+		<data data="0x49" value='か'/>
+		<data data="0x4A" value='A'/>
+		<data data="0x4B" value='B'/>
+		<data data="0x4C" value='C'/>
+		<data data="0x4D" value='D'/>
+		<data data="0x4E" value='E'/>
+		<data data="0x4F" value='F'/>
+
+		<data data="0x50" value='G'/>
+		<data data="0x51" value='H'/>
+		<data data="0x52" value='I'/>
+		<data data="0x53" value='J'/>
+		<data data="0x54" value='K'/>
+		<data data="0x55" value='L'/>
+		<data data="0x56" value='M'/>
+		<data data="0x57" value='N'/>
+		<data data="0x58" value='O'/>
+		<data data="0x59" value='P'/>
+		<data data="0x5A" value='Q'/>
+		<data data="0x5B" value='R'/>
+		<data data="0x5C" value='S'/>
+		<data data="0x5D" value='T'/>
+		<data data="0x5E" value='U'/>
+		<data data="0x5F" value='V'/>
+
+		<data data="0x60" value='W'/>
+		<data data="0x61" value='X'/>
+		<data data="0x62" value='Y'/>
+		<data data="0x63" value='Z'/>
+		<data data="0x64" value='や'/>
+		<data data="0x65" value='み'/>
+		<data data="0x66" value='山'/>
+		<data data="0x67" value='秘'/>
+		<data data="0x68" value='境'/>
+		<data data="0x69" value='`'/>
+		<data data="0x6A" value='a'/>
+		<data data="0x6B" value='b'/>
+		<data data="0x6C" value='c'/>
+		<data data="0x6D" value='d'/>
+		<data data="0x6E" value='e'/>
+		<data data="0x6F" value='f'/>
+
+		<data data="0x70" value='g'/>
+		<data data="0x71" value='h'/>
+		<data data="0x72" value='i'/>
+		<data data="0x73" value='j'/>
+		<data data="0x74" value='k'/>
+		<data data="0x75" value='l'/>
+		<data data="0x76" value='m'/>
+		<data data="0x77" value='n'/>
+		<data data="0x78" value='o'/>
+		<data data="0x79" value='p'/>
+		<data data="0x7A" value='q'/>
+		<data data="0x7B" value='r'/>
+		<data data="0x7C" value='s'/>
+		<data data="0x7D" value='t'/>
+		<data data="0x7E" value='u'/>
+		<data data="0x7F" value='v'/>
+
+		<data data="0x80" value='w'/>
+		<data data="0x81" value='x'/>
+		<data data="0x82" value='y'/>
+		<data data="0x83" value='z'/>
+		<data data="0x84" value='風'/>
+		<data data="0x85" value='王'/>
+		<data data="0x86" value='家'/>
+		<data data="0x87" value='谷'/>
+		<data data="0x88" value='・'/>
+		<data data="0x89" value='高'/>
+		<data data="0x8A" value='原'/>
+		<data data="0x8B" value='西'/>
+		<data data="0x8C" value='林'/>
+		<data data="0x8D" value='城'/>
+		<data data="0x8E" value='中'/>
+		<data data="0x8F" value='庭'/>
+
+		<data data="0x90" value='北'/>
+		<data data="0x91" value='平'/>
+		<data data="0x92" value='町'/>
+		<data data="0x93" value='Š'/>
+		<data data="0x94" value='南'/>
+		<data data="0x95" value='Œ'/>
+		<data data="0x96" value='水'/>
+		<data data="0x97" value='滝'/>
+		<data data="0x98" value='源'/>
+		<data data="0x99" value='牧'/>
+		<data data="0x9A" value='場'/>
+		<data data="0x9B" value='丘'/>
+		<data data="0x9C" value='“'/>
+		<data data="0x9D" value='東'/>
+		<data data="0x9E" value='雲'/>
+		<data data="0x9F" value='上'/>
+
+		<data data="0xA0" value='湖'/>
+		<data data="0xA1" value='森'/>
+		<data data="0xA2" value='聖'/>
+		<data data="0xA3" value='š'/>
+		<data data="0xA4" value='域'/>
+		<data data="0xA5" value='œ'/>
+		<data data="0xA6" value='里'/>
+		<data data="0xA7" value='炎'/>
+		<data data="0xA8" value='Ÿ'/>
+		<data data="0xA9" value='神'/>
+		<data data="0xAA" value='¡'/>
+		<data data="0xAB" value='殿'/>
+		<data data="0xAC" value='宮'/>
+		<data data="0xAD" value='コ'/>
+		<data data="0xAE" value='ビ'/>
+		<data data="0xAF" value='ッ'/>
+
+		<data data="0xB0" value='ト'/>
+		<data data="0xB1" value='墓'/>
+		<data data="0xB2" value='闇'/>
+		<data data="0xB3" value='ᵃ'/>
+		<data data="0xB4" value='ピ'/>
+		<data data="0xB5" value=''/> <!-- unused -->
+		<data data="0xB6" value=''/> <!-- unused -->
+		<data data="0xB7" value=''/> <!-- unused -->
+		<data data="0xB8" value=''/> <!-- unused -->
+		<data data="0xB9" value=''/> <!-- unused -->
+		<data data="0xBA" value=''/> <!-- unused -->
+		<data data="0xBB" value=''/> <!-- unused -->
+		<data data="0xBC" value=''/> <!-- unused -->
+		<data data="0xBD" value=''/> <!-- unused -->
+		<data data="0xBE" value=''/> <!-- unused -->
+		<data data="0xBF" value=''/> <!-- unused -->
+
+		<data data="0xC0" value=''/> <!-- unused -->
+		<data data="0xC1" value=''/> <!-- unused -->
+		<data data="0xC2" value=''/> <!-- unused -->
+		<data data="0xC3" value='ᵒ'/>
+		<data data="0xC4" value=''/> <!-- unused -->
+		<data data="0xC5" value=''/> <!-- unused -->
+		<data data="0xC6" value=''/> <!-- unused -->
+		<data data="0xC7" value=''/> <!-- unused -->
+		<data data="0xC8" value='¿'/>
+		<data data="0xC9" value='À'/>
+		<data data="0xCA" value='Á'/>
+		<data data="0xCB" value='Â'/>
+		<data data="0xCC" value='Ã'/>
+		<data data="0xCD" value='Ä'/>
+		<data data="0xCE" value='Å'/>
+		<data data="0xCF" value='Æ'/>
+
+		<data data="0xD0" value='Ç'/>
+		<data data="0xD1" value='È'/>
+		<data data="0xD2" value='É'/>
+		<data data="0xD3" value='Ê'/>
+		<data data="0xD4" value='Ë'/>
+		<data data="0xD5" value='Ì'/>
+		<data data="0xD6" value='Í'/>
+		<data data="0xD7" value='Î'/>
+		<data data="0xD8" value='Ï'/>
+		<data data="0xD9" value='Ð'/>
+		<data data="0xDA" value='Ñ'/>
+		<data data="0xDB" value='Ò'/>
+		<data data="0xDC" value='Ó'/>
+		<data data="0xDD" value='Ô'/>
+		<data data="0xDE" value='Õ'/>
+		<data data="0xDF" value='Ö'/>
+
+		<data data="0xE0" value='×'/>
+		<data data="0xE1" value='Ø'/>
+		<data data="0xE2" value='Ù'/>
+		<data data="0xE3" value='Ú'/>
+		<data data="0xE4" value='Û'/>
+		<data data="0xE5" value='Ü'/>
+		<data data="0xE6" value='Ý'/>
+		<data data="0xE7" value='Þ'/>
+		<data data="0xE8" value='ß'/>
+		<data data="0xE9" value='à'/>
+		<data data="0xEA" value='á'/>
+		<data data="0xEB" value='â'/>
+		<data data="0xEC" value='ã'/>
+		<data data="0xED" value='ä'/>
+		<data data="0xEE" value='å'/>
+		<data data="0xEF" value='æ'/>
+
+		<data data="0xF0" value='ç'/>
+		<data data="0xF1" value='è'/>
+		<data data="0xF2" value='é'/>
+		<data data="0xF3" value='ê'/>
+		<data data="0xF4" value='ë'/>
+		<data data="0xF5" value='ì'/>
+		<data data="0xF6" value='í'/>
+		<data data="0xF7" value='î'/>
+		<data data="0xF8" value='ï'/>
+		<data data="0xF9" value='ð'/>
+		<data data="0xFA" value='ñ'/>
+		<data data="0xFB" value='ò'/>
+		<data data="0xFC" value='ó'/>
+		<data data="0xFD" value='ô'/>
+		<data data="0xFE" value='õ'/>
+		<data data="0xFF" value='ö'/>
+	</set>
+
+	<set value='0x0D'>
+		<data data='0x00' value=''/> <!-- blank, same as 0f00, just twice -->
+		<data data='0x01' value='冒'/> <!-- unscannable 冒? -->
+		<data data='0x02' value='険'/> <!-- unscannable 険? -->
+		<data data='0x03' value='者'/>
+		<data data='0x04' value='洞'/>
+		<data data='0x05' value='行'/>
+		<data data='0x06' value='世'/>
+		<data data='0x07' value='界'/>
+		<data data='0x08' value='集'/>
+		<data data='0x09' value='必'/>
+		<data data='0x0A' value='要'/>
+		<data data='0x0B' value='教'/>
+		<data data='0x0C' value='覚'/>
+		<data data='0x0D' value='今'/>
+		<data data='0x0E' value='時'/>
+		<data data='0x0F' value='石'/>
+
+		<data data='0x10' value='持'/>
+		<data data='0x11' value='上'/>
+		<data data='0x12' value='全'/>
+		<data data='0x13' value='員'/>
+		<data data='0x14' value='見'/>
+		<data data='0x15' value='中'/>
+		<data data='0x16' value='自'/>
+		<data data='0x17' value='動'/>
+		<data data='0x18' value='的'/>
+		<data data='0x19' value='目'/>
+		<data data='0x1A' value='復'/>
+		<data data='0x1B' value='活'/>
+		<data data='0x1C' value='高'/>
+		<data data='0x1D' value='気'/>
+		<data data='0x1E' value='伝'/>
+		<data data='0x1F' value='蝕'/>
+
+		<data data='0x20' value='人'/>
+		<data data='0x21' value='勇'/>
+		<data data='0x22' value='出'/>
+		<data data='0x23' value='木'/>
+		<data data='0x24' value='実'/>
+		<data data='0x25' value='知'/>
+		<data data='0x26' value='赤'/>
+		<data data='0x27' value='力'/>
+		<data data='0x28' value='青'/>
+		<data data='0x29' value='守'/>
+		<data data='0x2A' value='緑'/>
+		<data data='0x2B' value='歩'/>
+		<data data='0x2C' value='速'/>
+		<data data='0x2D' value='段'/>
+		<data data='0x2E' value='階'/>
+		<data data='0x2F' value='押'/>
+
+		<data data='0x30' value='一'/>
+		<data data='0x31' value='度'/>
+		<data data='0x32' value='投'/>
+		<data data='0x33' value='使'/>
+		<data data='0x34' value='体'/>
+		<data data='0x35' value='別'/>
+		<data data='0x36' value='刻'/>
+		<data data='0x37' value='以'/>
+		<data data='0x38' value='説'/>
+		<data data='0x39' value='方'/>
+		<data data='0x3A' value='合'/>
+		<data data='0x3B' value='弓'/>
+		<data data='0x3C' value='矢'/>
+		<data data='0x3D' value='息'/>
+		<data data='0x3E' value='町'/>
+		<data data='0x3F' value='何'/>
+
+		<data data='0x40' value='道'/>
+		<data data='0x41' value='大'/>
+		<data data='0x42' value='弱'/>
+		<data data='0x43' value='話'/>
+		<data data='0x44' value='風'/>
+		<data data='0x45' value='魔'/>
+		<data data='0x46' value='封'/>
+		<data data='0x47' value='印'/>
+		<data data='0x48' value='最'/>
+		<data data='0x49' value='近'/>
+		<data data='0x4A' value='臣'/>
+		<data data='0x4B' value='变'/>
+		<data data='0x4C' value='感'/>
+		<data data='0x4D' value='心'/>
+		<data data='0x4E' value='配'/>
+		<data data='0x4F' value='言'/>
+
+		<data data='0x50' value='強'/>
+		<data data='0x51' value='暴'/>
+		<data data='0x52' value='々'/>
+		<data data='0x53' value='災'/>
+		<data data='0x54' value='身'/>
+		<data data='0x55' value='戦'/>
+		<data data='0x56' value='少'/>
+		<data data='0x57' value='離'/>
+		<data data='0x58' value='用'/>
+		<data data='0x59' value='王'/>
+		<data data='0x5A' value='断'/>
+		<data data='0x5B' value='無'/>
+		<data data='0x5C' value='礼'/>
+		<data data='0x5D' value='手'/>
+		<data data='0x5E' value='作'/>
+		<data data='0x5F' value='美'/>
+
+		<data data='0x60' value=''/> <!-- unknown -->
+		<data data='0x61' value='念'/>
+		<data data='0x62' value='分'/>
+		<data data='0x63' value='我'/>
+		<data data='0x64' value='名'/>
+		<data data='0x65' value='連'/>
+		<data data='0x66' value='思'/>
+		<data data='0x67' value='年'/>
+		<data data='0x68' value='良'/>
+		<data data='0x69' value='花'/>
+		<data data='0x6A' value='日'/>
+		<data data='0x6B' value='宮'/>
+		<data data='0x6C' value='殿'/>
+		<data data='0x6D' value='助'/>
+		<data data='0x6E' value='小'/>
+		<data data='0x6F' value='姫'/>
+
+		<data data='0x70' value=''/>
+		<data data='0x71' value=''/>
+		<data data='0x72' value=''/>
+		<data data='0x73' value=''/>
+		<data data='0x74' value=''/>
+		<data data='0x75' value=''/>
+		<data data='0x76' value=''/>
+		<data data='0x77' value=''/>
+		<data data='0x78' value='向'/>
+		<data data='0x79' value='借'/>
+		<data data='0x7A' value='抜'/>
+		<data data='0x7B' value='去'/>
+		<data data='0x7C' value='倒'/>
+		<data data='0x7D' value='先'/>
+		<data data='0x7E' value='住'/>
+		<data data='0x7F' value='妖'/>
+	</set>
+
+	<!--not started-->
+	<set value="0x0E">
+	</set>
+
+	<set value="0x0F">
+		<data data="0x00" value='　'/>
+		<data data="0x01" value='►'/>
+		<data data="0x02" value='┌'/>
+		<data data="0x03" value='┘'/>
+		<data data="0x04" value='✕'/>
+		<data data="0x05" value='❝'/>
+		<data data="0x06" value='•'/>
+		<data data="0x07" value='↑'/>
+		<data data="0x08" value='↓'/>
+		<data data="0x09" value='←'/>
+		<data data="0x0A" value='→'/>
+		<data data="0x0B" value='' redirect='0x00A3'/> <!-- duplicate ♪-->
+		<data data="0x0C" value='♥'/>
+		<data data="0x0D" value='&#38;'/>
+		<data data="0x0E" value='‟'/> <!-- find a nice symbol for this one-->
+		<data data="0x0F" value='°'/>
+
+		<data data='0x10' value='#'/>
+		<data data='0x11' value='$'/>
+		<data data='0x12' value='%'/>
+		<data data='0x13' value='*'/>
+		<data data='0x14' value='+'/>
+		<data data='0x15' value='/'/>
+		<data data='0x16' value=';'/>
+		<data data='0x17' value='&#60;'/>
+		<data data='0x18' value='='/>
+		<data data='0x19' value='>'/>
+		<data data='0x1A' value='@'/>
+		<data data='0x1B' value='['/>
+		<data data='0x1C' value='¥'/>
+		<data data='0x1D' value=']'/>
+		<data data='0x1E' value='^'/>
+		<data data='0x1F' value='_'/>
+
+		<data data='0x20' value='{'/>
+		<data data='0x21' value='|'/>
+		<data data='0x22' value='}'/>
+		<data data='0x23' value='¯'/>
+		<data data='0x24' value='⟦'/>
+		<data data='0x25' value='⟧'/>
+		<!-- do not add/edit past this, duplicate of 0x0080-0x00FF and half value versions of 0x0D00-0D2C  -->
+	</set>
+</root>

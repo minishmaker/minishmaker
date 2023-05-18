@@ -3,6 +3,7 @@ using System.IO;
 using MinishMaker.Utilities;
 using static MinishMaker.Core.RoomMetaData;
 using System.Linq;
+using System.Text;
 
 namespace MinishMaker.Core
 {
@@ -34,12 +35,155 @@ namespace MinishMaker.Core
                         using (MemoryStream ms = new MemoryStream(savedData))
                         {
                             Reader r = new Reader(ms);
-                            Lz77Decompress(r, os);
+                            var decompSize = Lz77Decompress(r, os);
+                            if (decompSize < size && decompSize < int.MaxValue) //TODO: check again
+                            {
+                                Array.Resize(ref data, (int)decompSize);
+                            }
                         }
                     }
                 }
             }
             return data;
+        }
+
+        public static byte[] GetByteArrayFromJSON(string path, int bytesPerValue)
+        {
+            if (!File.Exists(path))
+            {
+                return null;
+            }
+
+            if(bytesPerValue > 8)
+            {
+                throw new ArgumentException("Max bytesPerValue is 8, use GetByteArrayFromJSON2 for infinite");
+            }
+
+            var json = File.ReadAllText(path);
+            var stringArray = Newtonsoft.Json.JsonConvert.DeserializeObject<string[]>(json);
+            var byteArray = new byte[stringArray.Length * bytesPerValue];
+
+            for (int i = 0; i < stringArray.Length; i++)
+            {
+                var longVal = Convert.ToInt64(stringArray[i], 16);
+                for (int j = 0; j < bytesPerValue; j++)
+                {
+                    byteArray[i * bytesPerValue + j] = (byte)((longVal >> (8 * j)) & 0xff);
+                }
+            }
+
+            return byteArray;
+        }
+
+        public static byte[] GetByteArrayFromJSON2(string path, int bytesPerValue)
+        {
+            if (!File.Exists(path))
+            {
+                return null;
+            }
+
+            var json = File.ReadAllText(path);
+            var stringArray = Newtonsoft.Json.JsonConvert.DeserializeObject<string[]>(json);
+            var byteArray = new byte[stringArray.Length * bytesPerValue];
+
+            for (int i = 0; i < stringArray.Length; i++)
+            {
+                var stringVal = stringArray[i];
+                for (int j = 0; j < bytesPerValue; j++)
+                {
+                    var byteString = stringVal.Substring(2+2*j, 2); //skip first 2 chars as it should be 0x
+                    var byteVal = byte.Parse(byteString, System.Globalization.NumberStyles.HexNumber);
+                    byteArray[(i+1) * bytesPerValue - (j+1)] = byteVal; //count down instead as the largest value is in front
+                }
+            }
+
+            return byteArray;
+        }
+
+        public static string ByteArrayToFormattedJSON(byte[] data, int valuesPerRow, int bytesPerValue)
+        {
+            if (bytesPerValue > 8)
+            {
+                throw new ArgumentException("Max bytesPerValue is 8, use ByteArrayToFormattedJSON2 for infinite length");
+            }
+
+            if (data.Length % bytesPerValue != 0)
+            {
+                throw new ArgumentException("Data length is not divisible by bytesPerValue");
+            }
+
+            var s = new StringBuilder();
+            s.AppendLine("[");
+            for (var i = 0; i * valuesPerRow * bytesPerValue < data.Length; i++)
+            {
+                var lineStart = i * valuesPerRow * bytesPerValue;
+                s.Append("  ");
+                for (var j = 0; j < valuesPerRow; j++)
+                {
+                    var pos = lineStart + j * bytesPerValue;
+                    long value = 0;
+                    for(var k = 0; k < bytesPerValue; k++)
+                    { 
+                        value += (long)(data[pos + k]) << (8 * k) ;
+                    }
+
+                    Console.WriteLine((lineStart + (j * bytesPerValue)) + ": 0x" + value.Hex(bytesPerValue * 2));
+
+                    s.Append($"\"0x{value.Hex(bytesPerValue*2)}\"");
+                    //Console.WriteLine($"{i}:{j}:{pos + bytesPerValue} : {data.Length}");
+                    if (pos + bytesPerValue == data.Length) //Early out if it isnt a aligned to the valuesPerRow
+                    {
+                        s.AppendLine("");
+                        s.Append(']');
+                        return s.ToString();
+                    }
+                    s.Append(" ,");
+                }
+                s.AppendLine("");
+            }
+            s.Append(']');
+
+            return s.ToString();
+        }
+
+        public static string ByteArrayToFormattedJSON2(byte[] data, int valuesPerRow, int bytesPerValue)
+        {
+            Console.WriteLine(data.Length);
+            if (data.Length % bytesPerValue != 0)
+            {
+                throw new ArgumentException("Data length is not divisible by bytesPerValue");
+            }
+
+            var s = new StringBuilder();
+            s.AppendLine("[");
+            for (var i = 0; i * valuesPerRow * bytesPerValue < data.Length; i++)
+            {
+                var lineStart = i * valuesPerRow * bytesPerValue;
+                s.Append("  ");
+                for (var j = 0; j < valuesPerRow; j++)
+                {
+                    var pos = lineStart + j * bytesPerValue;
+                    
+                    s.Append("\"0x");
+                    for (var k = bytesPerValue - 1; k >= 0; k--) //count down instead as the largest number is in front
+                    {
+                        s.Append($"{data[pos + k].Hex(2)}");
+                    }
+                    s.Append("\"");
+                    Console.WriteLine($"{pos + bytesPerValue} : {data.Length}");
+                    if (pos + bytesPerValue == data.Length) //Early out if it isnt a aligned to the valuesPerRow
+                    {
+                        s.AppendLine("");
+                        s.Append(']');
+                        return s.ToString();
+                    }
+                    s.Append(" ,");
+                }
+                s.AppendLine("");
+            }
+            s.Append(']');
+
+            return s.ToString();
         }
 
         private static byte[] GetFromCompressed(int addr)

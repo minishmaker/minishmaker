@@ -1,0 +1,219 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<enums>
+		<object6Types>
+			<entry value="-1" name="Empty / Unknown" />
+			<entry value="0x00" name="Item" />
+			<entry value="0x01" name="Enemy death effect" />
+			<entry value="0x02" name="Sale item" />
+			<entry value="0x03" name="Pressure switch" />
+			<!--<entry value="0x04" name="" />-->
+			<entry value="0x05" name="Pot" />
+			<entry value="0x06" name="Ezlo shrink animation" />
+			<entry value="0x07" name="Pushable rock" />
+			<entry value="0x08" name="Dungeon door" />
+			<!--<entry value="0x09" name="" />-->
+			<entry value="0x0A" name="Key block" />
+			<!--<entry value="0x0B" name="" />-->
+			<entry value="0x0C" name="Secret animation" />
+			<entry value="0x0D" name="Skull" />
+			<entry value="0x0E" name="Falling tile" />
+			<entry value="0x0F" name="Special effect" />
+
+			<entry value="0x10" name="Warp effect" />
+			<entry value="0x11" name="Vanishing rock" />
+			<entry value="0x12" name="Big rock door" />
+			<entry value="0x13" name="Minecart track" />
+			<entry value="0x14" name="Lilypad" />
+			<entry value="0x15" name="Weird sprite" />
+			<entry value="0x16" name="Moving platform" />
+			<entry value="0x17" name="Tiny white puff" />
+			<entry value="0x18" name="Blue mask" />
+			<entry value="0x19" name="!CRASH!" />
+			<entry value="0x1A" name="Bouncing item" />
+			<entry value="0x1B" name="Great fairy wings" />
+			<entry value="0x1C" name="Mail sign" />
+			<!--<entry value="0x1D" name="Special effect" />-->
+			<entry value="0x1E" name="Digging dirt" />
+			<entry value="0x1F" name="Vanishing bush" />
+
+			<entry value="0x20" name="Explosion 2" />
+			<entry value="0x21" name="Yellow dust" />
+			<entry value="0x22" name="Gacha machines" />
+			<entry value="0x23" name="Arrow eye" />
+			<entry value="0x24" name="Clone pressure switch" />
+			<entry value="0x25" name="Rotating barrel" />
+			<entry value="0x26" name="Barrel background" />
+			<entry value="0x27" name="Pushable statue" />
+			<!--<entry value="0x28" name="" />-->
+			<entry value="0x29" name="Ambient clouds" />
+			<entry value="0x2A" name="Armos flame" />
+			<entry value="0x2B" name="Dot" />
+			<entry value="0x2C" name="Growing vine" />
+			<entry value="0x2D" name="Smith chimney" />
+			<entry value="0x2E" name="Pushable boulder" />
+			<entry value="0x2F" name="Lever" />
+
+			<entry value="0x30" name="Floating item" />
+			<entry value="0x31" name="Frozen decoration" />
+			<entry value="0x32" name="Mushroom" />
+			<entry value="0x33" name="Water barrier" />
+			<entry value="0x34" name="Warp tile" />
+			<entry value="0x35" name="Gacha animation" />
+			<!--<entry value="0x36" name="" />-->
+			<!--<entry value="0x37" name="" />-->
+			<entry value="0x38" name="Minish pot" />
+			<entry value="0x39" name="Big key door" />
+			<entry value="0x3A" name="Triangle transition" />
+			<entry value="0x3B" name="Minish portal sprites" />
+			<entry value="0x3C" name="Link falling" />
+			<entry value="0x3D" name="Dark transition" />
+			<entry value="0x3E" name="Minish town+ portal" />
+			<entry value="0x3F" name="Big leaf" />
+
+
+			<entry value="0x40" name="Flying fairy" />
+			<entry value="0x41" name="Ladder" />
+			<!--<entry value="0x42" name="" />-->
+			<!--<entry value="0x43" name="" />-->
+			<!--<entry value="0x44" name="" />-->
+			<!--<entry value="0x45" name="" />-->
+			<entry value="0x46" name="Book ladder" />
+			<entry value="0x47" name="Heart container" />
+			<!--<entry value="0x48" name="" />-->
+			<!--<entry value="0x49" name="" />-->
+			<entry value="0x4A" name="Background cloud" />
+			<entry value="0x4B" name="Chuchu animation" />
+			<entry value="0x4C" name="Pushable furniture" />
+			<entry value="0x4D" name="Non pushable furniture" />
+			<entry value="0x4E" name="Minish doors" />
+			<entry value="0x4F" name="Archways" />
+
+			<entry value="0x50" name="Big rock decoration" />
+			<entry value="0x51" name="Big rock" />
+			<!--<entry value="0x52" name="" />-->
+			<entry value="0x53" name="Bush thrown" />
+			<entry value="0x54" name="Pull handle" />
+			<entry value="0x55" name="Minecart" />
+			<entry value="0x56" name="Bubble?" />
+			<entry value="0x57" name="Hidden down ladder" />
+			<entry value="0x58" name="Gentari curtains" />
+			<entry value="0x59" name="Lava platform" />
+			<entry value="0x5A" name="Paper" />
+			<entry value="0x5B" name="Sleep sprites" />
+			<entry value="0x5C" name="Wall mask" />
+			<entry value="0x5D" name="Door" />
+			<entry value="0x5E" name="Whirlwind" />
+			<entry value="0x5F" name="Push staircase" />
+
+			<entry value="0x60" name="Swordsman newsletter" />
+			<!--<entry value="0x61" name="" />-->
+			<entry value="0x62" name="Twig" />
+			<entry value="0x63" name="Rupee/heart item drop" />
+			<entry value="0x64" name="Lightning" />
+			<entry value="0x65" name="Shelf ladder hole" />
+			<!--<entry value="0x66" name="" />-->
+			<entry value="0x67" name="Lava stuff" />
+			<entry value="0x68" name="Bottle spill" />
+			<entry value="0x69" name="Cutscene" />
+			<entry value="0x6A" name="Some items?" />
+			<entry value="0x6B" name="Crenel bean" />
+			<entry value="0x6C" name="Minecart door" />
+			<entry value="0x6D" name="Rock pillar" />
+			<entry value="0x6E" name="Mineral water source" />
+			<entry value="0x6F" name="Minish house door" />
+
+			<entry value="0x70" name="Swamp splash" />
+			<entry value="0x71" name="Tombstone" />
+			<entry value="0x72" name="Stone tablet" />
+			<entry value="0x73" name="Minish lilypad" />
+			<!--<entry value="0x74" name="" />-->
+			<entry value="0x75" name="Minish transform sprites" />
+			<!--<entry value="0x76" name="" />-->
+			<entry value="0x77" name="Bell" />
+			<entry value="0x78" name="Big flower" />
+			<entry value="0x79" name="Floating minish letters" />
+			<entry value="0x7A" name="Flames steam" />
+			<entry value="0x7B" name="Pushable lever" />
+			<entry value="0x7C" name="Big shoe" />
+			<entry value="0x7D" name="Breaking animation" />
+			<!--<entry value="0x7E" name="" />-->
+			<entry value="0x7F" name="Picobloom" />
+
+
+			<entry value="0x80" name="Board" />
+			<entry value="0x81" name="Small fence" />
+			<entry value="0x82" name="Big tornado" />
+			<entry value="0x83" name="Big pushable lever" />
+			<entry value="0x84" name="Small ice block" />
+			<entry value="0x85" name="Big ice block" />
+			<entry value="0x86" name="Clover trapdoor" />
+			<entry value="0x87" name="Fireball" />
+			<entry value="0x88" name="Giant book" />
+			<entry value="0x89" name="Mazaal base" />
+			<entry value="0x8A" name="Mayor lake furniture" />
+			<entry value="0x8B" name="Double bookshelf" />
+			<entry value="0x8C" name="Book" />
+			<entry value="0x8D" name="Fireplace" />
+			<entry value="0x8E" name="Black screen earthquake" />
+			<entry value="0x8F" name="Water element ice block" />
+
+			<entry value="0x90" name="Water element without ice" />
+			<!--<entry value="0x91" name="" />-->
+			<entry value="0x92" name="Bread furnace" />
+			<entry value="0x93" name="Lamp" />
+			<entry value="0x94" name="Windy sign" />
+			<entry value="0x95" name="Birds" />
+			<entry value="0x96" name="Gold key stuff" />
+			<entry value="0x97" name="Gold key stuff 2" />
+			<!--<entry value="0x98" name="" />-->
+			<!--<entry value="0x99" name="" />-->
+			<entry value="0x9A" name="Giant acorn" />
+			<!--<entry value="0x9B" name="" />-->
+			<entry value="0x9C" name="Pegasus tree" />
+			<entry value="0x9D" name="Toggle switch" />
+			<entry value="0x9E" name="Tree thorns" />
+			<entry value="0x9F" name="Small wind turbine" />
+
+			<entry value="0xA0" name="Angry statue" />
+			<entry value="0xA1" name="Door 2" />
+			<entry value="0xA2" name="Bounce noise" />
+			<entry value="0xA3" name="Secret opening" />
+			<entry value="0xA4" name="Glowing decor" />
+			<entry value="0xA5" name="Fireball chain" />
+			<!--<entry value="0xA6" name="" />-->
+			<entry value="0xA7" name="Clone switch 2?" />
+			<!--<entry value="0xA8" name="Giant book" />-->
+			<entry value="0xA9" name="Spawn animation" />
+			<entry value="0xAA" name="Waterfall cave opening" />
+			<entry value="0xAB" name="Vaati trapdoor" />
+			<entry value="0xAC" name="Four elements" />
+			<entry value="0xAD" name="BG3 stuff" />
+			<entry value="0xAE" name="Floating blocks" />
+			<!--<entry value="0xAF" name="" />-->
+
+			<entry value="0xB0" name="Elemental metal door" />
+			<entry value="0xB1" name="Jailbars" />
+			<!--<entry value="0xB2" name="" />-->
+			<entry value="0xB3" name="Kinstone shiny animation" />
+			<entry value="0xB4" name="Japanese titlescreen subs" />
+			<entry value="0xB5" name="Move screen to position" />
+			<!--<entry value="0xB6" name="" />-->
+			<entry value="0xB7" name="Well drop" />
+			<entry value="0xB8" name="Sky warp" />
+			<!--<entry value="0xB9" name="" />-->
+			<!--<entry value="0xBA" name="" />-->
+			<entry value="0xBB" name="Wind crest stone" />
+			<entry value="0xBC" name="Light in darkness" />
+			<entry value="0xBD" name="Title screen" />
+			<entry value="0xBE" name="Pinwheel" />
+			<!--<entry value="0xBF" name="" />-->
+
+			<entry value="0xC0" name="Enemy carry item" />
+			<entry value="0xC1" name="Link item get animation" />
+			<!--<entry value="0xC2" name="" />-->
+			<!--<entry value="0xC3" name="" />-->
+			<entry value="0xC4" name="Fog" />
+		</object6Types>
+	</enums>
+</root>

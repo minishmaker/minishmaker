@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<filters>
+		<!-- DEPTH 1 (inside baseFilter) - - - - - - - - -->
+		<tileType>
+			<defaultChildTargetType>Byte</defaultChildTargetType>
+			<defaultChildTargetPos>1</defaultChildTargetPos>
+			<!-- only take this filter if one of these values is in the parent's target (in this case if the current list is 3)-->
+			<targetValues>
+				<value>3</value>
+			</targetValues>
+			<!-- the name of a collection of form elements to display the information-->
+			<elementSetName>tileTypeBase</elementSetName>
+			<childrenNames>
+				<name>chest</name>
+				<name>unknownTileType</name>
+			</childrenNames>
+			<dataSize>8</dataSize>
+		</tileType>
+
+		<!-- DEPTH 2 (inside tileType) - - - - - - - - - -->
+		<chest>
+			<!-- Check byte 3 which is the type of item held -->
+			<defaultChildTargetType>Byte</defaultChildTargetType>
+			<defaultChildTargetPos>3</defaultChildTargetPos>
+			<targetValues>
+				<value>2</value>
+				<value>3</value>
+			</targetValues>
+			<elementSetName>chestBase</elementSetName>
+			<childrenNames>
+				<name>chestKinstone</name>
+				<name>chestDefault</name>
+			</childrenNames>
+		</chest>
+
+		<unknownTileType>
+			<elementSetName>halfRepresentation</elementSetName>
+		</unknownTileType>
+		
+		<!-- DEPTH 3 (inside chest) - - - - - - - - - - -->
+		<chestKinstone>
+			<targetValues>
+				<value>0x5C</value>
+			</targetValues>
+			<elementSetName>kinstoneChest</elementSetName>
+		</chestKinstone>
+
+		<chestDefault>
+			<elementSetName>defaultChest</elementSetName>
+		</chestDefault>
+
+	</filters>
+</root>

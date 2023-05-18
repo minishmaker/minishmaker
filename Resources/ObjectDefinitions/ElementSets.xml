@@ -1,0 +1,313 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<elements>
+		<data1>
+			<type>hexNumber</type>
+			<valueType>byte</valueType>
+			<valuePos>4</valuePos>
+			<label>Data 1:</label>
+			<column>1</column>
+			<row>4</row>
+		</data1>
+
+		<data2>
+			<type>hexNumber</type>
+			<valueType>byte</valueType>
+			<valuePos>5</valuePos>
+			<label>Data 2:</label>
+			<column>1</column>
+			<row>5</row>
+		</data2>
+
+		<data3>
+			<type>hexNumber</type>
+			<valueType>byte</valueType>
+			<valuePos>6</valuePos>
+			<label>Data 3:</label>
+			<column>1</column>
+			<row>6</row>
+		</data3>
+
+		<data4>
+			<type>hexNumber</type>
+			<valueType>byte</valueType>
+			<valuePos>7</valuePos>
+			<label>Data 4:</label>
+			<column>1</column>
+			<row>7</row>
+		</data4>
+
+		<data5>
+			<type>hexNumber</type>
+			<valueType>byte</valueType>
+			<valuePos>8</valuePos>
+			<label>Data 5:</label>
+			<column>1</column>
+			<row>8</row>
+		</data5>
+
+		<pixelX>
+			<type>hexNumber</type>
+			<valueType>short</valueType>
+			<valuePos>9</valuePos>
+			<label>Pos X (pixel):</label>
+			<column>3</column>
+			<row>4</row>
+		</pixelX>
+
+		<pixelY>
+			<type>hexNumber</type>
+			<valueType>short</valueType>
+			<valuePos>11</valuePos>
+			<label>Pos Y (pixel):</label>
+			<column>3</column>
+			<row>5</row>
+		</pixelY>
+
+		<flag1>
+			<type>hexNumber</type>
+			<valueType>short</valueType>
+			<valuePos>13</valuePos>
+			<label>Flag 1:</label>
+			<column>3</column>
+			<row>6</row>
+		</flag1>
+
+		<flag2>
+			<type>hexNumber</type>
+			<valueType>short</valueType>
+			<valuePos>15</valuePos>
+			<label>Flag 2:</label>
+			<column>3</column>
+			<row>7</row>
+		</flag2>
+
+		<pixelXR1>
+			<type>hexNumber</type>
+			<valueType>short</valueType>
+			<valuePos>9</valuePos>
+			<label>Pos X (pixel):</label>
+			<column>3</column>
+			<row>5</row>
+		</pixelXR1>
+
+		<pixelYR1>
+			<type>hexNumber</type>
+			<valueType>short</valueType>
+			<valuePos>11</valuePos>
+			<label>Pos Y (pixel):</label>
+			<column>3</column>
+			<row>6</row>
+		</pixelYR1>
+
+		<flag1R1>
+			<type>hexNumber</type>
+			<valueType>short</valueType>
+			<valuePos>13</valuePos>
+			<label>Flag 1:</label>
+			<column>3</column>
+			<row>7</row>
+		</flag1R1>
+
+		<flag2R1>
+			<type>hexNumber</type>
+			<valueType>short</valueType>
+			<valuePos>15</valuePos>
+			<label>Flag 2:</label>
+			<column>3</column>
+			<row>8</row>
+		</flag2R1>
+
+		<pointer>
+			<type>enum</type>
+			<enumType>functionNames</enumType>
+			<valueType>tablePointer</valueType>
+			<valuePos>1</valuePos>
+			<label>Function:</label>
+			<column>1</column>
+			<row>1</row>
+		</pointer>
+
+		<pointerHex>
+			<type>hexNumber</type>
+			<valueType>tablePointer</valueType>
+			<valuePos>1</valuePos>
+			<column>3</column>
+			<row>1</row>
+		</pointerHex>
+	</elements>
+
+
+
+	<elementSets>
+		<fullRepresentation>
+			<element>
+				<type>hexNumber</type>
+				<valueType>Byte</valueType>
+				<valuePos>1</valuePos>
+				<label>Bytes 1-4</label>
+				<column>1</column>
+				<row>3</row>
+			</element>
+
+			<element>
+				<type>hexNumber</type>
+				<valueType>Byte</valueType>
+				<valuePos>2</valuePos>
+				<column>3</column>
+				<row>3</row>
+			</element>
+
+			<element>
+				<type>hexNumber</type>
+				<valueType>Byte</valueType>
+				<valuePos>3</valuePos>
+				<column>4</column>
+				<row>3</row>
+			</element>
+
+			<element>
+				<type>hexNumber</type>
+				<valueType>Byte</valueType>
+				<valuePos>4</valuePos>
+				<column>5</column>
+				<row>3</row>
+			</element>
+
+			<element>
+				<type>hexNumber</type>
+				<valueType>Byte</valueType>
+				<valuePos>5</valuePos>
+				<label>Bytes 5-8</label>
+				<column>1</column>
+				<row>4</row>
+			</element>
+
+			<element>
+				<type>hexNumber</type>
+				<valueType>Byte</valueType>
+				<valuePos>6</valuePos>
+				<column>3</column>
+				<row>4</row>
+			</element>
+
+			<element>
+				<type>hexNumber</type>
+				<valueType>Byte</valueType>
+				<valuePos>7</valuePos>
+				<column>4</column>
+				<row>4</row>
+			</element>
+
+			<element>
+				<type>hexNumber</type>
+				<valueType>Byte</valueType>
+				<valuePos>8</valuePos>
+				<column>5</column>
+				<row>4</row>
+			</element>
+
+			<element>
+				<type>hexNumber</type>
+				<valueType>Byte</valueType>
+				<valuePos>9</valuePos>
+				<label>Bytes 9-12</label>
+				<column>1</column>
+				<row>5</row>
+			</element>
+
+			<element>
+				<type>hexNumber</type>
+				<valueType>Byte</valueType>
+				<valuePos>10</valuePos>
+				<column>3</column>
+				<row>5</row>
+			</element>
+
+			<element>
+				<type>hexNumber</type>
+				<valueType>Byte</valueType>
+				<valuePos>11</valuePos>
+				<column>4</column>
+				<row>5</row>
+			</element>
+
+			<element>
+				<type>hexNumber</type>
+				<valueType>Byte</valueType>
+				<valuePos>12</valuePos>
+				<column>5</column>
+				<row>5</row>
+			</element>
+
+			<element>
+				<type>hexNumber</type>
+				<valueType>Byte</valueType>
+				<valuePos>13</valuePos>
+				<label>Bytes 13-16</label>
+				<column>1</column>
+				<row>6</row>
+			</element>
+
+			<element>
+				<type>hexNumber</type>
+				<valueType>Byte</valueType>
+				<valuePos>14</valuePos>
+				<column>3</column>
+				<row>6</row>
+			</element>
+
+			<element>
+				<type>hexNumber</type>
+				<valueType>Byte</valueType>
+				<valuePos>15</valuePos>
+				<column>4</column>
+				<row>6</row>
+			</element>
+
+			<element>
+				<type>hexNumber</type>
+				<valueType>Byte</valueType>
+				<valuePos>16</valuePos>
+				<column>5</column>
+				<row>6</row>
+			</element>
+		</fullRepresentation>
+
+		<dataType>
+			<element>
+				<type>enum</type>
+				<enumType>dataCategories</enumType>
+				<valueType>Byte</valueType>
+				<valuePos>1</valuePos>
+				<colspan>3</colspan>
+				<label>Data category:</label>
+				<column>1</column>
+				<row>1</row>
+			</element>
+
+			<element>
+				<type>hexNumber</type>
+				<valueType>Byte</valueType>
+				<valuePos>1</valuePos>
+				<column>5</column>
+				<row>1</row>
+			</element>
+
+			<element>
+				<type>hexNumber</type>
+				<valueType>Byte</valueType>
+				<valuePos>2</valuePos>
+				<column>4</column>
+				<row>2</row>
+			</element>
+
+			<element>
+				<type>text</type>
+				<label>Data sub:</label>
+				<column>4</column>
+				<row>1</row>
+			</element>
+		</dataType>
+	</elementSets>
+</root>

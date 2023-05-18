@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<enums>
+		<tileEntityTypes>
+			<entry value="0x00" name="Untyped / Unknown"/>
+			<entry value="0x02" name="Small chest"/>
+			<entry value="0x03" name="Big chest"/>
+		</tileEntityTypes>
+
+		<kinstoneTypes>
+			<entry value="0x00" name="Untyped / Unknown"/>
+
+			<entry value="0x65" name="Yellow Tornado Prong" />
+			<entry value="0x66" name="Yellow Tornado Spike" />
+			<entry value="0x67" name="Yellow Tornado Chaotic" />
+			
+			<entry value="0x6A" name="Yellow Totem Prong" />
+			<entry value="0x6B" name="Yellow Totem Wave" />
+			<entry value="0x6C" name="Yellow Totem ZigZag" />
+			
+			<entry value="0x6D" name="Yellow Crown" />
+
+			<entry value="0x6E" name="Red Spike" />
+			<entry value="0x6F" name="Red Crack" />
+			<entry value="0x70" name="Red Prong" />
+
+			<entry value="0x71" name="Blue L" />
+			<entry value="0x72" name="Blue S" />
+
+			<entry value="0x73" name="Green Spike" />
+			<entry value="0x74" name="Green Square" />
+			<entry value="0x75" name="Green Split" />
+		</kinstoneTypes>
+	</enums>
+</root>

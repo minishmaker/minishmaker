@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<elementsets>
+		<npcBase>
+			<element>
+				<type>enum</type>
+				<enumType>npcTypes</enumType>
+				<valueType>Byte</valueType>
+				<valuePos>3</valuePos>
+				<label>NPC type:</label>
+				<column>1</column>
+				<row>2</row>
+			</element>
+
+			<element>
+				<type>hexNumber</type>
+				<valueType>Byte</valueType>
+				<valuePos>3</valuePos>
+				<column>3</column>
+				<row>2</row>
+			</element>
+		</npcBase>
+	</elementsets>
+</root>

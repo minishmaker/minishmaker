@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<enums>
+		<eventTypes>
+			<entry name="Empty / Unknown" value="-1"/>
+		</eventTypes>
+	</enums>
+</root>

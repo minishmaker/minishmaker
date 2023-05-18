@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<enums>
+		<dataCategories>
+			<entry value="0x00" name="Untyped / Unknown"/>
+			<entry value="0x03" name="Enemy"/>
+			<entry value="0x06" name="Object"/>
+			<entry value="0x07" name="NPC"/>
+			<entry value="0x13" name="Enemy2"/>
+			<entry value="0x16" name="Object2"/>
+			<entry value="0x26" name="Object3"/>
+		</dataCategories>
+	</enums>
+</root>

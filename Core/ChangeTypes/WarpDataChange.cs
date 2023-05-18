@@ -3,24 +3,26 @@ using MinishMaker.Utilities;
 
 namespace MinishMaker.Core.ChangeTypes
 {
-    public class WarpDataChange : Change
+    public class WarpDataChange : RoomChangeBase
     {
         public WarpDataChange(int areaId, int roomId) : base(areaId, roomId, DataType.warpData)
         {
         }
 
-        public override string GetFolderLocation()
-        {
-            return "/Area " + StringUtil.AsStringHex2(areaId) + "/Room " + StringUtil.AsStringHex2(roomId);
-        }
-
         public override string GetEAString(out byte[] binDat)
         {
             var sb = new StringBuilder();
-            var room = MapManager.Instance.FindRoom(areaId, roomId);
-            var pointerLoc = room.GetPointerLoc(changeType, areaId);
+            var r = ROM.Instance.reader;
+            var header = ROM.Instance.headers;
+
+            int areaWarpTableAddrLoc = header.WarpTableRoot + (areaId << 2);
+            int areaWarpTableAddr = r.ReadAddr(areaWarpTableAddrLoc);
+
+            int pointerLoc = areaWarpTableAddr + (roomId << 2);
+
+            var room = MapManager.Instance.GetRoom(areaId, roomId);
             byte[] data = null;
-            var size = room.GetSaveData(ref data, changeType);
+            var size = room.MetaData.BytifyWarpInformation(ref data);
 
             sb.AppendLine("PUSH");  //save cursor location
             sb.AppendLine("ORG " + pointerLoc); //go to pointer location
@@ -35,9 +37,10 @@ namespace MinishMaker.Core.ChangeTypes
             return sb.ToString();
         }
 
-        public override bool Compare(Change change)
+        public override string GetJSONString()
         {
-            return change.changeType == changeType && change.areaId == areaId && change.roomId == roomId;
+            var room = MapManager.Instance.GetRoom(areaId, roomId);
+            return room.MetaData.SerializeWarps();
         }
     }
 }

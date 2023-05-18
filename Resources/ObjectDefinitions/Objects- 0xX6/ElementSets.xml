@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<elementSets>
+		<objectBase>
+			<element>
+				<type>enum</type>
+				<enumType>object6Types</enumType>
+				<valueType>Byte</valueType>
+				<valuePos>3</valuePos>
+				<colspan>3</colspan>
+				<label>Object type:</label>
+				<column>1</column>
+				<row>2</row>
+			</element>
+
+			<element>
+				<type>hexNumber</type>
+				<valueType>Byte</valueType>
+				<valuePos>3</valuePos>
+				<column>5</column>
+				<row>2</row>
+			</element>
+		</objectBase>
+
+		<itemBase>
+			<element>
+				<type>enum</type>
+				<enumType>itemTypes</enumType>
+				<valueType>byte</valueType>
+				<valuePos>4</valuePos>
+				<label>Item type:</label>
+				<colspan>3</colspan>
+				<column>1</column>
+				<row>4</row>
+			</element>
+		
+			<element>
+				<type>hexNumber</type>
+				<valueType>Byte</valueType>
+				<valuePos>4</valuePos>
+				<column>5</column>
+				<row>4</row>
+			</element>
+		</itemBase>
+
+		<defaultItem>
+			<element>
+				<type>hexNumber</type>
+				<valueType>Byte</valueType>
+				<valuePos>5</valuePos>
+				<label>Object sub:</label>
+				<column>1</column>
+				<row>5</row>
+			</element>
+		</defaultItem>
+	</elementSets>
+</root>

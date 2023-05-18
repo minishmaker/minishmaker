@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<enums>
+		<functionNames>
+			<entry value="0x000000" name="Unknown"/>
+		</functionNames>
+	</enums>
+</root>

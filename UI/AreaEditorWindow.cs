@@ -10,15 +10,12 @@ using MinishMaker.Utilities;
 
 namespace MinishMaker.UI
 {
-    public partial class AreaEditorWindow : Form
+    public partial class AreaEditorWindow : SubWindow
     {
-        private int currentArea = -1;
         private int selectedRoomRect = -1;
+        private int currentAreaId = -1;
         private int biggestX = 0;
         private int biggestY = 0;
-        private byte unknown1 = 0;
-        private byte unknown2 = 0;
-        private byte flagOffset = 0;
         private bool loading = false;
 
         private Dictionary<int, Rectangle> roomRects = new Dictionary<int, Rectangle>();
@@ -29,15 +26,64 @@ namespace MinishMaker.UI
             mapX.KeyDown += EnterUnfocus;
             mapY.KeyDown += EnterUnfocus;
             areaSongId.KeyDown += EnterUnfocus;
+            areaNameId.KeyDown += EnterUnfocus;
+            //flagOffset.key
         }
 
-        public void LoadArea(int areaId)
+        public override void Setup()
         {
+            MainWindow mw = MainWindow.instance;
+
             loading = true;
-            areaLabel.Text = "Area: " + areaId.Hex();
+
+            biggestX = 1;
+            biggestY = 1;
+
+            if (mw.currentRoom == null)
+            {
+                areaLabel.Text = "Area: -";
+                mapX.Text = "FFF";
+                mapY.Text = "FFF";
+                roomLabel.Text = "Selected Room: -";
+
+                currentAreaId = -1;
+
+                mapX.Enabled = false;
+                mapY.Enabled = false;
+
+                canFlute.Enabled = false;
+                dungeonMap.Enabled = false;
+                moleCave.Enabled = false;
+                redName.Enabled = false;
+                keysShown.Enabled = false;
+                unknown1.Enabled = false;
+                unknown2.Enabled = false;
+
+                areaSongId.Enabled = false;
+
+                areaNameId.Enabled = false;
+                flagOffsetBox.Enabled = false;
+
+                roomRects.Clear();
+                DrawRects();
+                loading = false;
+                return;
+            }
+
+            var area = mw.currentRoom.Parent;
+
+            if (area.Id == currentAreaId)
+            {
+                return;
+            }
+
+            currentAreaId = area.Id;
+
+            areaLabel.Text = "Area: " + area.Id.Hex();
             mapX.Text = "FFF";
             mapY.Text = "FFF";
             roomLabel.Text = "Selected Room: -";
+
             mapX.Enabled = false;
             mapY.Enabled = false;
 
@@ -46,96 +92,66 @@ namespace MinishMaker.UI
             moleCave.Enabled = true;
             redName.Enabled = true;
             keysShown.Enabled = true;
+            
+            unknown1.Enabled = true;
+            unknown2.Enabled = true;
+
+            areaNameId.Enabled = true;
+            flagOffsetBox.Enabled = true;
 
             areaSongId.Enabled = true;
 
             roomRects.Clear();
 
-            currentArea = areaId;
-            var maps = MapManager.Instance.MapAreas;
-            MapManager.Area area = maps.Single(a => a.Index == currentArea);
-            var spot = maps.IndexOf(area);
+            area.LoadAreaInfo();
+            var areaInfo = area.areaInfo;
 
-            var data = new byte[4];
+            canFlute.Checked = areaInfo.canFlute;
+            keysShown.Checked = areaInfo.hasKeyCounter;
+            redName.Checked = areaInfo.hasRedName;
+            dungeonMap.Checked = areaInfo.usesDungeonMap;
+            moleCave.Checked = areaInfo.isMoleCave;
 
-            var areaPath = Project.Instance.projectPath + "/Areas/Area " + StringUtil.AsStringHex2(areaId);
-            string areaInfoPath = areaPath + "/" + DataType.areaInfo + "Dat.bin";
+            unknown1.Checked = areaInfo.usesUnknown1;
+            unknown2.Checked = areaInfo.usesUnknown2;
 
-            if (!area.areaInfo.SequenceEqual(new byte[] { 0, 0, 0, 0 }))//already a value loaded in 
+            areaNameId.Text = areaInfo.nameId.Hex();
+            areaSongId.Text = areaInfo.songId.Hex();
+
+            flagOffsetBox.Text = areaInfo.flagOffset.Hex();
+
+            foreach (var room in area.GetAllRooms())
             {
-                data = area.areaInfo;
-            }
-            if (File.Exists(areaInfoPath))
-            {
-                data = File.ReadAllBytes(areaInfoPath);
-                area.areaInfo = data;
-                maps[spot] = area;
-            }
-            else
-            {
-                var reader = ROM.Instance.reader;
-                var dataloc = ROM.Instance.headers.areaInformationTableLoc + areaId * 4;
-                reader.SetPosition(dataloc);
-                data = reader.ReadBytes(4);
-
-                area.areaInfo = data;
-                maps[spot] = area;
-
-                //Console.WriteLine(dataloc.Hex());
-                //Console.WriteLine(data[0]);
-            }
-
-            canFlute.Checked = (data[0] % 2 == 1);//bit 1
-
-            data[0] = (byte)(data[0] >> 1);
-            keysShown.Checked = (data[0] % 2 == 1);//bit 2
-
-            data[0] = (byte)(data[0] >> 1);
-            redName.Checked = (data[0] % 2 == 1);//bit 4
-
-            data[0] = (byte)(data[0] >> 1);
-            dungeonMap.Checked = (data[0] % 2 == 1);//bit 8
-
-            data[0] = (byte)(data[0] >> 1);
-            unknown1 = (byte)(data[0] % 2);//bit 10 //currently unknown use
-
-            data[0] = (byte)(data[0] >> 1);
-            moleCave.Checked = (data[0] % 2 == 1);//bit 20
-
-            data[0] = (byte)(data[0] >> 1);
-            unknown2 = (byte)(data[0] % 2);//bit 40 //unknown
-
-            data[0] = (byte)(data[0] >> 1);
-            canFlute.Checked = (data[0] % 2 == 1 || canFlute.Checked);//bit 80 //unused in eur, seems to be same as bit 1?
-
-            areaNameId.Text = data[1].Hex();
-
-            flagOffset = data[2];
-
-            areaSongId.Text = data[3].Hex();
-
-            biggestX = 0;
-            biggestY = 0;
-
-            foreach (var room in area.Rooms)
-            {
-                var rect = room.GetMapRect(areaId);
-                roomRects.Add(room.Index, rect);
-
-                if (rect.Bottom > biggestY)
+                try
                 {
-                    biggestY = rect.Bottom;
+                    var rect = room.MetaData.GetMapRect();
+                    roomRects.Add(room.Id, rect);
+
+                    if (rect.Bottom > biggestY)
+                    {
+                        biggestY = rect.Bottom;
+                    }
+
+                    if (rect.Right > biggestX)
+                    {
+                        biggestX = rect.Right;
+                    }
                 }
-
-                if (rect.Right > biggestX)
+                catch (RoomException ex) 
                 {
-                    biggestX = rect.Right;
+                    if(room.Bg1Exists || room.Bg2Exists) {
+                        throw (ex);
+                    } //otherwise its just an invalid room and should be ignored
                 }
             }
             DrawRects();
-            //modify text
 
             loading = false;
+        }
+
+        public override void Cleanup()
+        {
+            
         }
 
         public void DrawRects()
@@ -180,7 +196,7 @@ namespace MinishMaker.UI
 
         private void pictureBox1_Click(object sender, MouseEventArgs e)
         {
-            if (currentArea == -1) //nothing loaded
+            if (currentAreaId == -1) //nothing loaded
                 return;
 
             mapX.Enabled = true;
@@ -209,14 +225,6 @@ namespace MinishMaker.UI
             mapY.Text = clickedRect.Top.Hex();
         }
 
-        private void EnterUnfocus(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            {
-                HiddenLabel.Focus();
-            }
-        }
-
         private void mapBox_LostFocus(object sender, EventArgs e)
         {
             var x = Convert.ToInt16(mapX.Text, 16);
@@ -240,12 +248,23 @@ namespace MinishMaker.UI
                 roomRects[selectedRoomRect] = roomRect;
                 DrawRects();
 
-                var room = MapManager.Instance.FindRoom(currentArea, selectedRoomRect);
-                room.SetMapPosition(x, y);
+                var room = MapManager.Instance.GetRoom(currentAreaId, selectedRoomRect);
+                room.MetaData.SetMapPosition(x, y);
 
-                Project.Instance.AddPendingChange(new RoomMetadataChange(currentArea, selectedRoomRect));//TODO
+                Project.Instance.AddPendingChange(new RoomMetadataChange(currentAreaId, selectedRoomRect));//TODO
 
             }
+        }
+
+        private void TextboxChanged(object sender, EventArgs e)
+        {
+
+            var area = MapManager.Instance.GetArea(currentAreaId);
+            if (area.areaInfo.songId == Convert.ToByte(areaSongId.Text, 16)
+            && area.areaInfo.flagOffset == Convert.ToByte(flagOffsetBox.Text, 16)
+            && area.areaInfo.nameId == Convert.ToByte(areaNameId.Text, 16))
+                return;
+            AreaChanged(sender, e);
         }
 
         private void AreaChanged(object sender, EventArgs e)
@@ -253,31 +272,32 @@ namespace MinishMaker.UI
             if (loading)
                 return;
 
-            var byte1Data =
-                (canFlute.Checked ? 0x1 : 0) +
-                (keysShown.Checked ? 0x2 : 0) +
-                (redName.Checked ? 0x4 : 0) +
-                (dungeonMap.Checked ? 0x8 : 0) +
-                (unknown1 * 0x10) +
-                (moleCave.Checked ? 0x20 : 0) +
-                (unknown2 * 0x40) +
-                (canFlute.Checked && ROM.Instance.version != RegionVersion.EU ? 0x80 : 0);
+            if (currentAreaId == -1) //nothing loaded
+                return;
 
+            var area = MapManager.Instance.GetArea(currentAreaId);
+
+            var byte1Data =
+                (canFlute.Checked   ? 0x1 : 0) +
+                (keysShown.Checked  ? 0x2 : 0) +
+                (redName.Checked    ? 0x4 : 0) +
+                (dungeonMap.Checked ? 0x8 : 0) +
+                (unknown1.Checked   ? 0x10 : 0) +
+                (moleCave.Checked   ? 0x20 : 0) +
+                (unknown2.Checked   ? 0x40 : 0) +
+                (canFlute.Checked && ROM.Instance.version != RegionVersion.EU ? 0x80 : 0);
+            
             var byte2Data = Convert.ToByte(areaNameId.Text, 16);
 
-            //reserved for spoopy scary byte3 flag offset
+            var byte3Data = Convert.ToByte(flagOffsetBox.Text, 16);
+            //how long was this misnamed?
 
             var byte4Data = Convert.ToByte(areaSongId.Text, 16);
-            var rom = ROM.Instance;
-            var dataloc = ROM.Instance.headers.areaInformationTableLoc + currentArea * 4;
-            var data = new byte[4] { (byte)byte1Data, byte2Data, flagOffset, byte4Data };
+            var data = new byte[4] { (byte)byte1Data, byte2Data, byte3Data, byte4Data };
 
-            var maps = MapManager.Instance.MapAreas;
-            MapManager.Area ar = maps.Single(a => a.Index == currentArea);
-            var spot = maps.IndexOf(ar);
-            ar.areaInfo = data;
-            maps[spot] = ar;
-            Project.Instance.AddPendingChange(new AreaInfoChange(currentArea));
+            area.SetInfo(data);
+
+            Project.Instance.AddPendingChange(new AreaInfoChange(currentAreaId));
         }
     }
 }

@@ -1,0 +1,185 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<elementSets>
+		<tileTypeBase>
+			<element>
+				<type>enum</type>
+				<enumType>tileEntityTypes</enumType>
+				<valueType>Byte</valueType>
+				<valuePos>1</valuePos>
+				<label>Tile type:</label>
+				<column>1</column>
+				<row>1</row>
+			</element>
+
+			<element>
+				<type>hexNumber</type>
+				<valueType>Byte</valueType>
+				<valuePos>1</valuePos>
+				<column>3</column>
+				<row>1</row>
+			</element>
+		</tileTypeBase>
+
+		<chestBase>
+			<element>
+				<type>enum</type>
+				<enumType>itemTypes</enumType>
+				<valueType>Byte</valueType>
+				<valuePos>3</valuePos>
+				<label>Item:</label>
+				<column>1</column>
+				<row>2</row>
+			</element>
+
+			<element>
+				<type>hexNumber</type>
+				<valueType>Byte</valueType>
+				<valuePos>3</valuePos>
+				<column>3</column>
+				<row>2</row>
+			</element>
+
+			<element>
+				<type>hexNumber</type>
+				<valueType>Byte</valueType>
+				<valuePos>2</valuePos>
+				<label>Entity id:</label>
+				<column>1</column>
+				<row>5</row>
+			</element>
+
+			<element>
+				<type>hexNumber</type>
+				<valueType>Short</valueType>
+				<valuePos>7</valuePos>
+				<label>Extra:</label>
+				<column>3</column>
+				<row>5</row>
+			</element>
+
+			<element>
+				<type>hexNumber</type>
+				<valueType>Part</valueType>
+				<valuePos>33</valuePos>
+				<valueLength>6</valueLength>
+				<label>X:</label>
+				<column>1</column>
+				<row>6</row>
+			</element>
+
+			<element>
+				<type>hexNumber</type>
+				<valueType>Part</valueType>
+				<valuePos>39</valuePos>
+				<valueLength>6</valueLength>
+				<label>Y:</label>
+				<column>3</column>
+				<row>6</row>
+			</element>
+		</chestBase>
+
+		<kinstoneChest>
+			<element>
+				<type>enum</type>
+				<enumType>kinstoneTypes</enumType>
+				<valueType>Byte</valueType>
+				<valuePos>4</valuePos>
+				<label>Kinstone type:</label>
+				<column>1</column>
+				<row>3</row>
+			</element>
+
+			<element>
+				<type>hexNumber</type>
+				<valueType>Byte</valueType>
+				<valuePos>4</valuePos>
+				<column>3</column>
+				<row>3</row>
+			</element>
+		</kinstoneChest>
+
+		<defaultChest>
+			<element>
+				<type>hexNumber</type>
+				<valueType>Byte</valueType>
+				<valuePos>4</valuePos>
+				<label>Item sub number:</label>
+				<column>1</column>
+				<row>4</row>
+			</element>
+		</defaultChest>
+
+
+		<halfRepresentation>
+			<element>
+				<type>hexNumber</type>
+				<valueType>Byte</valueType>
+				<valuePos>1</valuePos>
+				<label>Bytes 1-4</label>
+				<column>1</column>
+				<row>3</row>
+			</element>
+
+			<element>
+				<type>hexNumber</type>
+				<valueType>Byte</valueType>
+				<valuePos>2</valuePos>
+				<column>3</column>
+				<row>3</row>
+			</element>
+
+			<element>
+				<type>hexNumber</type>
+				<valueType>Byte</valueType>
+				<valuePos>3</valuePos>
+				<column>4</column>
+				<row>3</row>
+			</element>
+
+			<element>
+				<type>hexNumber</type>
+				<valueType>Byte</valueType>
+				<valuePos>4</valuePos>
+				<column>5</column>
+				<row>3</row>
+			</element>
+
+			<element>
+				<type>hexNumber</type>
+				<valueType>Byte</valueType>
+				<valuePos>5</valuePos>
+				<label>Bytes 5-8</label>
+				<column>1</column>
+				<row>4</row>
+			</element>
+
+			<element>
+				<type>hexNumber</type>
+				<valueType>Byte</valueType>
+				<valuePos>6</valuePos>
+				<column>3</column>
+				<row>4</row>
+			</element>
+
+			<element>
+				<type>hexNumber</type>
+				<valueType>Byte</valueType>
+				<valuePos>7</valuePos>
+				<column>4</column>
+				<row>4</row>
+			</element>
+
+			<element>
+				<type>hexNumber</type>
+				<valueType>Byte</valueType>
+				<valuePos>8</valuePos>
+				<column>5</column>
+				<row>4</row>
+			</element>
+		</halfRepresentation>
+	</elementSets>
+
+	<elements>
+	</elements>
+</root>

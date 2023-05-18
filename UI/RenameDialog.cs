@@ -32,7 +32,7 @@ namespace MinishMaker.UI
         {
             var areaName = areaNameBox.Text;
             var roomName = roomNameBox.Text;
-            var p = Core.Rework.Project.Instance;
+            var p = Project.Instance;
             var areaKey = new Tuple<int, int>(areaId, -1);
             var roomKey = new Tuple<int, int>(areaId, roomId);
 
@@ -62,9 +62,9 @@ namespace MinishMaker.UI
                     p.customNames.Add(roomKey, roomName);
                 }
             }
-            ((MainWindow)Application.OpenForms[0]).ChangeNodeName(areaId.Hex(), areaName, roomId.Hex(), roomName);
+            MainWindow.instance.ChangeNodeName(areaId.Hex(), areaName, roomId.Hex(), roomName);
 
-            this.Close();
+            this.Hide();
         }
     }
 }

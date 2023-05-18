@@ -1,311 +1,262 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
+using System.Linq;
+using MinishMaker.Core.ChangeTypes;
+using MinishMaker.UI;
 using MinishMaker.Utilities;
 
 namespace MinishMaker.Core
 {
-    public struct AddrData
-    {
-        public int src;
-        public int dest;
-        public int size; // in words (2x bytes)
-        public bool compressed;
-
-        public AddrData(int src, int dest, int size, bool compressed)
-        {
-            this.src = src;
-            this.dest = dest;
-            this.size = size;
-            this.compressed = compressed;
-        }
-    }
-
-    public struct ChestData
-    {
-        public byte type;
-        public byte chestId;
-        public byte itemId;
-        public byte itemSubNumber;
-        public ushort chestLocation;
-        public ushort unknown;
-
-        public ChestData(byte type, byte chestId, byte itemId, byte itemSubNumber, ushort chestLocation, ushort other)
-        {
-            this.type = type;
-            this.chestId = chestId;
-            this.itemId = itemId;
-            this.itemSubNumber = itemSubNumber;
-            this.chestLocation = chestLocation;
-            this.unknown = other;
-        }
-    }
-
-    public struct ObjectData
-    {
-        public byte objectType;
-        public byte objectSub;
-        public byte objectId;
-        public byte d1item;
-        public byte d2itemSub;
-        public byte d3;
-        public byte d4;
-        public byte d5;
-        public ushort pixelX;
-        public ushort pixelY;
-        public ushort flag1;
-        public ushort flag2;
-
-        public ObjectData(byte[] data, int index)
-        {
-            objectType = data[index + 0];
-            objectSub = data[index + 1];
-            objectId = data[index + 2];
-            d1item = data[index + 3];
-            d2itemSub = data[index + 4];
-            d3 = data[index + 5];
-            d4 = data[index + 6];
-            d5 = data[index + 7];
-            pixelX = (ushort)(data[index + 8] + (data[index + 9] << 8));
-            pixelY = (ushort)(data[index + 10] + (data[index + 11] << 8));
-            flag1 = (ushort)(data[index + 12] + (data[index + 13] << 8));
-            flag2 = (ushort)(data[index + 14] + (data[index + 15] << 8));
-        }
-    }
-
-    public struct WarpData
-    {
-        public ushort warpType; //2
-        public ushort warpXPixel;//4
-        public ushort warpYPixel;//6
-        public ushort destXPixel;//8
-        public ushort destYPixel;//10 A
-        public byte warpVar;//11 B
-        public byte destArea;//12 C
-        public byte destRoom;//13 D
-        public byte exitHeight;//14 E
-        public byte transitionType;//15 F
-        public byte facing;//16 10
-        public ushort soundId;//18 12
-                              //2 byte padding 20 14
-        public WarpData(byte[] data, int offset)
-        {
-            warpType = (ushort)(data[0 + offset] + (data[1 + offset] << 8));
-            warpXPixel = (ushort)(data[2 + offset] + (data[3 + offset] << 8));
-            warpYPixel = (ushort)(data[4 + offset] + (data[5 + offset] << 8));
-            destXPixel = (ushort)(data[6 + offset] + (data[7 + offset] << 8));
-            destYPixel = (ushort)(data[8 + offset] + (data[9 + offset] << 8));
-            warpVar = data[10 + offset];
-            destArea = data[11 + offset];
-            destRoom = data[12 + offset];
-            exitHeight = data[13 + offset];
-            transitionType = data[14 + offset];
-            facing = data[15 + offset];
-            soundId = (ushort)(data[16 + offset] + (data[17 + offset] << 8));
-
-        }
-    }
-
+    //TODO: remove tile and metatile related things
     public class RoomMetaData
     {
-        private int width, height;
-        public int mapPosX, mapPosY, tileSetOffset;
+        public Room Parent { get; private set; }
+        public int PixelWidth { get; private set; }
+        public int PixelHeight { get; private set; }
+        public int TileWidth { get { return PixelWidth / 0x10; } }
+        public int TileHeight { get { return PixelHeight / 0x10; } }
 
-        public int PixelWidth
-        {
+        public int MapPosX { get; private set; }
+        public int MapPosY { get; private set; }
+
+        public int tilesetId;
+
+        private Core.AddrData? bg2RoomDataAddr;
+
+        private Core.AddrData? bg1RoomDataAddr;
+
+        public bool Bg1Use20344B0 { get; private set; }
+
+        public int PaletteSetID { get; private set; }
+        public bool hasPalette = false;
+        //private PaletteSet paletteSet;
+        /*public PaletteSet PaletteSet {
             get
             {
-                return width;
+                var id = Parent.Parent.Tilesets[tilesetId].paletteSetId;
+                if(hasPalette)
+                {
+                    id = PaletteSetID;
+                }
+                
+                return PaletteSetManager.Get().GetSet(id);
             }
-        }
+        }*/
 
-        public int PixelHeight
-        {
-            get
-            {
-                return height;
-            }
-        }
-
-        public int TileWidth
-        {
-            get
-            {
-                return width / 16;
-            }
-        }
-
-        public int TileHeight
-        {
-            get
-            {
-                return height / 16;
-            }
-        }
-
-        private string roomPath;
-        private string areaPath;
-
-        private int paletteSetID;
-        private List<AddrData> tileSetAddrs = new List<AddrData>();
-
-        private List<ChestData> chestInformation = new List<ChestData>();
-        public List<ChestData> ChestInfo
-        {
-            get { return chestInformation; }
-        }
-
+        //private List<ChestData> chestInformation = new List<ChestData>();
         private List<WarpData> warpInformation = new List<WarpData>();
-        public List<WarpData> WarpInformation
+        private Dictionary<int, List<List<byte>>> listInformation = new Dictionary<int, List<List<byte>>>();
+//        private List<AddrData> tilesetAddrs = new List<AddrData>();
+        private Dictionary<int, byte> usedAdresses = new Dictionary<int, byte>();
+        private Dictionary<byte, int> usedLists = new Dictionary<byte, int>();
+        private List<byte> listLinks = new List<byte>();
+
+        private bool isCreated = false;
+
+        public RoomMetaData(Room parent, bool isCreated = false)
         {
-            get { return warpInformation; }
+            this.isCreated = isCreated;
+            this.Parent = parent;
+            LoadBase();
         }
 
-        private List<ObjectData> list1Information = new List<ObjectData>();
-        public List<ObjectData> List1Information
+        byte G_listLoopVar; //used in listbinding as there is a variable amount of lists per room
+        public void LoadBase()
         {
-            get { return list1Information; }
-        }
+            var areaId = Parent.Parent.Id;
+            var roomId = Parent.Id;
 
-        private List<ObjectData> list2Information = new List<ObjectData>();
-        public List<ObjectData> List2Information
-        {
-            get { return list2Information; }
-        }
-
-        private List<ObjectData> list3Information = new List<ObjectData>();
-        public List<ObjectData> List3Information
-        {
-            get { return list3Information; }
-        }
-
-        private AddrData? bg2RoomDataAddr;
-        private AddrData bg2MetaTilesAddr;
-
-        private AddrData? bg1RoomDataAddr;
-        private AddrData bg1MetaTilesAddr;
-
-        private AddrData metaTileTypeAddr1;
-        private AddrData metaTileTypeAddr2;
-
-        private bool chestDataLarger = false;
-        public bool ChestDataLarger
-        {
-            get { return chestDataLarger; }
-        }
-
-        private bool bg1Use20344B0 = false;
-        public bool Bg1Use20344B0
-        {
-            get
-            {
-                return bg1Use20344B0;
-            }
-        }
-
-        public RoomMetaData(int areaIndex, int roomIndex)
-        {
-            LoadMetaData(areaIndex, roomIndex);
-        }
-
-        private void LoadMetaData(int areaIndex, int roomIndex)
-        {
-            areaPath = Project.Instance.projectPath + "/Areas/Area " + StringUtil.AsStringHex2(areaIndex);
-            roomPath = areaPath + "/Room " + StringUtil.AsStringHex2(roomIndex);
+            var path = Parent.Path;
 
             var r = ROM.Instance.reader;
             var header = ROM.Instance.headers;
 
-            int areaRMDTableLoc = r.ReadAddr(header.MapHeaderBase + (areaIndex << 2));
-            int roomMetaDataTableLoc = areaRMDTableLoc + (roomIndex * 0x0A);
+            int mapInfoArea = r.ReadAddr(header.MapInfoRoot + (areaId << 2));
+            int mapInfoRoomLoc = mapInfoArea + (roomId * 0x0A);
 
-            if (File.Exists(roomPath + "/" + DataType.roomMetaData + "Dat.bin"))
+            if (File.Exists(path + "/" + DataType.roomMetaData + ".json"))
             {
-                var data = File.ReadAllBytes(roomPath + "/" + DataType.roomMetaData + "Dat.bin");
-                this.mapPosX = (data[0] + (data[1] << 8)) >> 4;
-                this.mapPosY = (data[2] + (data[3] << 8)) >> 4;
+                string metaDataJson = File.ReadAllText(path + "/" + DataType.roomMetaData + ".json");
+                RoomMetaDataStruct rmds = (RoomMetaDataStruct)Newtonsoft.Json.JsonConvert.DeserializeObject(metaDataJson);
+                this.MapPosX = rmds.mapX;
+                this.MapPosY = rmds.mapY;
+                this.PixelWidth = rmds.sizeX;
+                this.PixelHeight = rmds.sizeY;
+                this.tilesetId = rmds.tilesetId;
+                /*var data = File.ReadAllBytes(path + "/" + DataType.roomMetaData + "Dat.bin");
+                this.MapPosX = (data[0] + (data[1] << 8)) >> 4; //do we want it in tiles? used in not tiles anywhere else?
+                this.MapPosY = (data[2] + (data[3] << 8)) >> 4;
 
                 if (data.Length == 4) //backwards compatibility because WHY DIDNT I SAVE IT ALL AT FIRST
                 {
-                    this.width = r.ReadUInt16();
-                    this.height = r.ReadUInt16();
-                    tileSetOffset = r.ReadUInt16();
+                    r.SetPosition(mapInfoRoomLoc + 4);
+                    this.PixelWidth = r.ReadUInt16();
+                    this.PixelHeight = r.ReadUInt16();
+                    this.tilesetOffset = r.ReadUInt16();
                 }
                 else
                 {
-                    this.width = (data[4] + (data[5] << 8));
-                    this.height = (data[6] + (data[7] << 8));
-                    tileSetOffset = (data[8] + (data[9] << 8));
-                }
-                r.SetPosition(roomMetaDataTableLoc + 8);
+                    this.PixelWidth = (data[4] + (data[5] << 8));
+                    this.PixelHeight = (data[6] + (data[7] << 8));
+                    this.tilesetOffset = (data[8] + (data[9] << 8));
+                }*/
             }
             else
             {
-                this.mapPosX = r.ReadUInt16(roomMetaDataTableLoc) >> 4;
-                this.mapPosY = r.ReadUInt16() >> 4;
-                this.width = r.ReadUInt16();
-                this.height = r.ReadUInt16();
-                tileSetOffset = r.ReadUInt16();
+                this.MapPosX = r.ReadUInt16(mapInfoRoomLoc);
+                this.MapPosY = r.ReadUInt16();
+                this.PixelWidth = r.ReadUInt16();
+                this.PixelHeight = r.ReadUInt16();
+                this.tilesetId = r.ReadUInt16();
             }
 
-            //get addr of TPA data
+            /*//get addr of TPA data
+            if (tilesetOffset != 0) {
+                int a = 0; //DEBUG
+            }
+            int tilesetArea = r.ReadAddr(header.TilesetRoot + (areaId << 2));
+            int tilesetRoom = r.ReadAddr(tilesetArea + (tilesetOffset << 2));
 
-            int areaTileSetTableLoc = r.ReadAddr(header.globalTileSetTableLoc + (areaIndex << 2));
-            int roomTileSetLoc = r.ReadAddr(areaTileSetTableLoc + (tileSetOffset << 2));
+            r.SetPosition(tilesetRoom);
 
-            r.SetPosition(roomTileSetLoc);
-
-            ParseData(r, Set1);
-
-            //metatiles
-            int metaTileSetsLoc = r.ReadAddr(header.globalMetaTileSetTableLoc + (areaIndex << 2));
-
-            r.SetPosition(metaTileSetsLoc);
-
-            ParseData(r, Set2);
+            ParseData(r, ValidateTileset);*/
 
             //get addr of room data 
-            int areaTileDataTableLoc = r.ReadAddr(header.globalTileDataTableLoc + (areaIndex << 2));
-            int tileDataLoc = r.ReadAddr(areaTileDataTableLoc + (roomIndex << 2));
-            r.SetPosition(tileDataLoc);
+            int tileDataArea = r.ReadAddr(header.TileDataRoot + (areaId << 2));
+            int tileDataRoom = r.ReadAddr(tileDataArea + (roomId << 2));
+            r.SetPosition(tileDataRoom);
 
-            ParseData(r, Set3);
+            ParseData(r, ValidateRoomData);
 
             //attempt at obtaining chest data (+various)
-            int areaEntityTableAddrLoc = header.AreaMetadataBase + (areaIndex << 2);
-            int areaEntityTableAddr = r.ReadAddr(areaEntityTableAddrLoc);
+            int listTableArea = r.ReadAddr(header.ListTableRoot + (areaId << 2));
+            int listTableRoom = r.ReadAddr(listTableArea + (roomId << 2));
 
-            int roomEntityTableAddrLoc = areaEntityTableAddr + (roomIndex << 2);
-            int roomEntityTableAddr = r.ReadAddr(roomEntityTableAddrLoc);
+            int warpTableArea = r.ReadAddr(header.WarpTableRoot + (areaId << 2));
+            int warpTableRoom = warpTableArea + (roomId << 2);
 
-            int areaWarpTableAddrLoc = header.warpInformationTableLoc + (areaIndex << 2);
-            int areaWarpTableAddr = r.ReadAddr(areaWarpTableAddrLoc);
+            G_listLoopVar = 0;
+            bool hasMoreLists = true;
+            while (hasMoreLists)
+            {
+                byte terminator = 0xFF;
+                if (G_listLoopVar == 3)
+                {
+                    terminator = 0x0;
+                }
+                hasMoreLists = LoadGroupWithLinks(r, listTableRoom, terminator, Constants._listData, G_listLoopVar, 0x20, ListBinding); //listData1-X
+                //Console.WriteLine("loaded: 0x" + (listTableRoom + 4 * G_listLoopVar).Hex() + " for list id " + G_listLoopVar);
+                G_listLoopVar += 1;
+            }
 
-            int roomWarpTableAddrLoc = areaWarpTableAddr + (roomIndex << 2);
-
-            LoadGroup(r, roomEntityTableAddr, 0xFF, DataType.list1Data, 0x10, List1Binding);
-            LoadGroup(r, roomEntityTableAddr + 4, 0xFF, DataType.list2Data, 0x10, List2Binding);
-            LoadGroup(r, roomEntityTableAddr + 8, 0xFF, DataType.list3Data, 0x10, List3Binding);
-
-            LoadGroup(r, roomEntityTableAddr + 12, 0x0, DataType.chestData, 0x08, ChestBinding);
+            //LoadGroup(r, listTableRoom + 12, 0x0, DataType.chestData.ToString(), 0x08, ChestBinding);
             //technically not a group but should work with the function
-            LoadGroup(r, roomWarpTableAddrLoc, 0xFF, DataType.warpData, 20, WarpBinding);
+            LoadGroup(r, warpTableRoom, 0xFF, DataType.warpData.ToString(), 20, WarpBinding);
         }
 
-        public void LoadGroup(Reader r, int addr, byte terminator, DataType dataType, int size, Action<byte[], int> bindingFunc)
+        public bool LoadBGData(ref byte[] bgRoomData, bool isBg1)
         {
-            string dataPath = roomPath + "/" + dataType + "Dat.bin";
+            AddrData? bgRoomDataAddr;
+            //AddrData metaTilesetAddr;
+            //AddrData metaTileTypeAddr;
+            //Area area = Parent.Parent;
+
+            if (isBg1)
+            {
+                bgRoomDataAddr = bg1RoomDataAddr;
+                //metaTilesetAddr = area.Bg1MetaTilesetAddr.Value;
+                //metaTileTypeAddr = area.Bg1MetaTileTypeAddr.Value;
+            }
+            else
+            {
+                bgRoomDataAddr = bg2RoomDataAddr;
+                //metaTilesetAddr = area.Bg2MetaTilesetAddr.Value;
+                //metaTileTypeAddr = area.Bg2MetaTileTypeAddr.Value;
+            }
+
+
+            if (bgRoomDataAddr == null) {
+                return false;
+            }
+
+            //string bgPath = Parent.Path + "/" + DataType.bgData + (isBg1 ? 1 : 2) + "Dat.bin";
+            string bgPath = Parent.Path + "/" + DataType.bgData + (isBg1 ? "01" : "02") + ".json";
+            byte[] data = DataHelper.GetByteArrayFromJSON(bgPath, 2);
+            //byte[] data = DataHelper.GetFromSavedData(bgPath, true);
+
+            if (data == null) //no saved data, get from original source
+            {
+                data = DataHelper.GetData(bgRoomDataAddr.Value);
+            }
+
+            //not sure what this will break
+            /*if (!(isBg1 && Bg1Use20344B0))
+            {
+                bgMetaTiles = new MetaTileset(metaTilesetAddr, metaTileTypeAddr, isBg1, area.Path);
+            }*/
+
+            data.CopyTo(bgRoomData, 0);
+            return !(isBg1 && Bg1Use20344B0);
+        }
+
+        private bool LoadGroupWithLinks(Reader r, int addr, byte terminator, string dataType, int index, int size, Func<byte[], int, int> bindingFunc)
+        {
+            var tableAddr = r.ReadAddr(addr + 4 * index);
+            if (usedAdresses.ContainsKey(tableAddr))
+            {
+                if (File.Exists($"{Parent.Path}/{dataType}{index.Hex(2)}.json"))
+                {
+                    listLinks.Add(0xFF);
+                }
+                else
+                {
+                    var listId = usedAdresses[tableAddr];
+                    if (File.Exists($"{Parent.Path}/{dataType}{listId.Hex(2)}.json"))
+                    {
+                        //create change to always link to this list
+                        Project.Instance.AddPendingChange(new ListDataChange(Parent.Parent.Id, Parent.Id, index));
+                    }
+
+                    listLinks.Add(listId);
+                }
+            }
+            else
+            {
+                usedAdresses.Add(tableAddr, (byte)index);
+                usedLists.Add((byte)index, tableAddr);
+                listLinks.Add(0xFF);
+            }
+
+            return LoadGroup(r, addr + 4 * index, terminator, dataType + index.Hex(2), size, bindingFunc);
+        }
+
+        private bool LoadGroup(Reader r, int addr, byte terminator, string dataType, int size, Func<byte[], int, int> bindingFunc)
+        {
+            string dataPath = $"{Parent.Path}/{dataType}.json";
+
             if (File.Exists(dataPath))
             {
-                byte[] data = File.ReadAllBytes(dataPath);
-                int index = 0;
+                string json = File.ReadAllText(dataPath);
 
-                while (index < data.Length && data[index] != terminator)
+                if (dataType.Contains(Constants._listData))
                 {
-                    bindingFunc(data, index);
-                    index += size;
+                    ListStruct data = Newtonsoft.Json.JsonConvert.DeserializeObject<ListStruct>(json);
+                    listInformation[G_listLoopVar] = data.list;
+                    if (data.link != 0xff)
+                    {
+                        listLinks[G_listLoopVar] = (byte)data.link;
+                    }
                 }
+                else if (dataType.Contains(DataType.warpData.ToString()))
+                {
+                    warpInformation = Newtonsoft.Json.JsonConvert.DeserializeObject<List<WarpData>>(json);
+                }
+
+                
+                return true;
             }
             else
             {
@@ -313,94 +264,45 @@ namespace MinishMaker.Core
 
                 if (tableAddr == 0)
                 {
-                    return;
+                    return true;
+                }
+
+                if (tableAddr == 0xFF)
+                {
+                    return false;
                 }
 
                 var data = r.ReadBytes(size, tableAddr);
 
                 while (data[0] != terminator)
                 {
-                    bindingFunc(data, 0);
+                    var readData = bindingFunc(data, 0);
+                    if (readData == 0) break; //escape value for table pointers
+                    r.SetPosition(r.Position - (size - readData)); //ex, only needed 8 bytes but read 16, jump back 8
                     data = r.ReadBytes(size);
                 }
-            }
-        }
-
-        public TileSet GetTileSet()
-        {
-            return new TileSet(tileSetAddrs, roomPath);
-        }
-
-        public PaletteSet GetPaletteSet()
-        {
-            return new PaletteSet(paletteSetID);
-        }
-
-        public int GetPaletteSetID()
-        {
-            return paletteSetID;
-        }
-
-        public bool GetBG2Data(ref byte[] bg2RoomData, ref MetaTileSet bg2MetaTiles)
-        {
-            if (bg2RoomDataAddr != null)
-            {
-                bg2MetaTiles = new MetaTileSet(bg2MetaTilesAddr, metaTileTypeAddr2, false, areaPath, 2);
-
-                byte[] data = null;
-                string bg2Path = roomPath + "/" + DataType.bg2Data + "Dat.bin";
-
-                data = Project.Instance.GetSavedData(bg2Path, true);
-                if (data == null)
-                {
-                    data = DataHelper.GetData((AddrData)bg2RoomDataAddr);
-                }
-                data.CopyTo(bg2RoomData, 0);
 
                 return true;
             }
-            return false;
         }
 
-        public bool GetBG1Data(ref byte[] bg1RoomData, ref MetaTileSet bg1MetaTiles)
-        {
-            if (bg1RoomDataAddr != null)
-            {
-                byte[] data = null;
-                string bg1Path = roomPath + "/" + DataType.bg1Data + "Dat.bin";
-
-                data = Project.Instance.GetSavedData(bg1Path, true);
-                if (data == null)
-                {
-                    data = DataHelper.GetData((AddrData)bg1RoomDataAddr);
-                }
-
-                if (!bg1Use20344B0)
-                {
-                    bg1MetaTiles = new MetaTileSet(bg1MetaTilesAddr, metaTileTypeAddr1, true, areaPath, 1);
-                }
-
-                data.CopyTo(bg1RoomData, 0);
-                return !bg1Use20344B0;
-            }
-            return false;
-        }
-
-        private void ParseData(Reader r, Func<AddrData, bool> postFunc)
+        private void ParseData(Reader r, Func<Core.AddrData, bool> postFunc)
         {
             var header = ROM.Instance.headers;
             bool cont = true;
             while (cont)
             {
-                UInt32 data = r.ReadUInt32();
-                UInt32 data2 = r.ReadUInt32();
-                UInt32 data3 = r.ReadUInt32();
+                uint data = r.ReadUInt32();
+                uint data2 = r.ReadUInt32();
+                uint data3 = r.ReadUInt32();
 
 
 
                 if (data2 == 0)
                 { //palette
-                    this.paletteSetID = (int)(data & 0x7FFFFFFF); //mask off high bit
+                    this.PaletteSetID = (int)(data & 0x7FFFFFFF); //mask off high bit
+                    this.hasPalette = true;
+                    Console.WriteLine($"Optional paletteset {Parent.Parent.Id.Hex(2)}-{Parent.Id.Hex(2)} : {PaletteSetID.Hex(2)}");
                 }
                 else
                 {
@@ -409,7 +311,7 @@ namespace MinishMaker.Core
                     bool compressed = (data3 & 0x80000000) != 0; //high bit of size determines LZ or DMA
                     int size = (int)(data3 & 0x7FFFFFFF);
 
-                    cont = postFunc(new AddrData(source, dest, size, compressed));
+                    cont = postFunc(new Core.AddrData(source, dest, size, compressed));
                 }
                 if (cont == true)
                 {
@@ -418,126 +320,339 @@ namespace MinishMaker.Core
             }
         }
 
-        public long CompressBG1(ref byte[] outdata, byte[] bg1data)
+        public void SetMapPosition(int x, int y)
         {
-            var compressed = new byte[bg1data.Length];
-            long totalSize = 0;
-            MemoryStream ous = new MemoryStream(compressed);
-            totalSize = DataHelper.Compress(bg1data, ous, false);
-
-            outdata = new byte[totalSize];
-            Array.Copy(compressed, outdata, totalSize);
-            //var sizeDifference = totalSize - bg1RoomDataAddr.Value.size;
-
-            totalSize |= 0x80000000;
-
-            return totalSize;
-        }
-
-        public long CompressBG2(ref byte[] outdata, byte[] bg2data)
-        {
-            var compressed = new byte[bg2data.Length];
-            long totalSize = 0;
-            MemoryStream ous = new MemoryStream(compressed);
-            totalSize = DataHelper.Compress(bg2data, ous, false);
-
-            outdata = new byte[totalSize];
-            Array.Copy(compressed, outdata, totalSize);
-            //var sizeDifference = totalSize - bg2RoomDataAddr.Value.size;
-
-            totalSize |= 0x80000000;
-
-            return totalSize;
-        }
-
-        public long GetChestData(ref byte[] outdata)
-        {
-            outdata = new byte[chestInformation.Count * 8 + 8];
-
-            for (int i = 0; i < chestInformation.Count; i++)
+            if (x > 0 && y > 0 && x < 0x10000 && y < 0x10000)
             {
-                var index = i * 8;
-                var data = chestInformation[i];
-                outdata[index] = data.type;
-                outdata[index + 1] = data.chestId;
-                outdata[index + 2] = data.itemId;
-                outdata[index + 3] = data.itemSubNumber;
-                byte high = (byte)(data.chestLocation >> 8);
-                byte low = (byte)(data.chestLocation - (high << 8));
-                outdata[index + 4] = low;
-                outdata[index + 5] = high;
-                high = (byte)(data.unknown >> 8);
-                low = (byte)(data.unknown - (high << 8));
-                outdata[index + 6] = low;
-                outdata[index + 7] = high;
+                MapPosX = x;
+                MapPosY = y;
             }
 
-            for (int j = 0; j < 8; j++)
-                outdata[outdata.Length - 8 + j] = 0;
-
-            return outdata.Length;
+            Project.Instance.AddPendingChange(new RoomMetadataChange(this.Parent.Parent.Id, this.Parent.Id));
         }
 
-        public void AddChestData(ChestData data)
+        public Rectangle GetMapRect()
         {
-            chestDataLarger = true; //larger so should be moved
-            chestInformation.Add(data);
+            return new Rectangle(new Point(MapPosX >> 4, MapPosY >> 4), new Size(TileWidth, TileHeight));
         }
 
-        public void RemoveChestData(ChestData data)
+        #region list add/remove/get sets
+        public void AddNewWarpInformation(int position)
         {
-            chestInformation.Remove(data);
+            if (position > warpInformation.Count)
+            {
+                throw new RoomMetaDataException("Position is outside of the list");
+            }
+
+            warpInformation.Insert(position + 1, new WarpData());
         }
 
-        public long GetList1Data(ref byte[] data)
+        public int GetWarpInformationSize()
         {
-            return GetListData(ref data, list1Information);
+            return warpInformation.Count();
         }
 
-        public long GetList2Data(ref byte[] data)
+        public void RemoveWarpInformation(int position)
         {
-            return GetListData(ref data, list2Information);
+            if (position > warpInformation.Count)
+            {
+                throw new RoomMetaDataException("Position is outside of the list");
+            }
+
+            warpInformation.RemoveAt(position);
         }
 
-        public long GetList3Data(ref byte[] data)
+        public WarpData GetWarpInformationEntry(int position)
         {
-            return GetListData(ref data, list3Information);
+            if (warpInformation.Count <= position || position < 0)
+            {
+                throw new RoomMetaDataException("Position is outside of the list");
+            }
+
+            return warpInformation[position];
         }
 
-        public long GetListData(ref byte[] data, List<ObjectData> list)
-        {
-            var outdata = new byte[list.Count * 16 + 1];
 
+        public void AddNewListInformation(int listId, int position)
+        {
+            if (!listInformation.ContainsKey(listId))
+            {
+                if (position != 0)
+                {
+                    throw new RoomMetaDataException("Adding to a non-existant list requires a position of 0");
+                }
+                listInformation.Add(listId, new List<List<byte>>());
+                listInformation[listId].Add(new List<byte>(new byte[16]));
+                return;
+            }
+
+            if (position > listInformation[listId].Count)
+            {
+                throw new RoomMetaDataException("Position is outside of the list");
+            }
+
+            listInformation[listId].Insert(position + 1, new List<byte>(new byte[16]));
+        }
+
+        public void RemoveListInformation(int listId, int position)
+        {
+            if (!listInformation.ContainsKey(listId))
+            {
+                throw new RoomMetaDataException($"List {listId} does not exist");
+            }
+
+            if (position > listInformation[listId].Count)
+            {
+                throw new RoomMetaDataException("Position is outside of the list");
+            }
+
+            listInformation[listId].RemoveAt(position);
+        }
+
+        public List<byte> GetListInformationEntry(int listId, int position)
+        {
+            if (!listInformation.ContainsKey(listId))
+            {
+                throw new RoomMetaDataException($"List {listId} does not exist");
+            }
+
+            if (position > listInformation[listId].Count)
+            {
+                throw new RoomMetaDataException("Position is outside of the list");
+            }
+
+            return listInformation[listId][position];
+        }
+
+        public int GetListEntryAmount(int listId)
+        {
+            return listInformation[listId].Count();
+        }
+
+        public int[] GetListInformationKeys()
+        {
+            return listInformation.Keys.ToArray();
+        }
+
+        #endregion
+
+        #region data binding methods
+
+        /*private int ChestBinding(byte[] data, int startIndex)
+        {
+            chestInformation.Add(new ChestData(data, startIndex));
+            return 8;
+        }*/
+
+        private int WarpBinding(byte[] data, int startIndex)
+        {
+            warpInformation.Add(new WarpData(data, startIndex));
+            return 20;
+        }
+
+        private int ListBinding(byte[] data, int startIndex)
+        {
+            List<byte> dataList = data.ToList();
+            int dataSize;
+            ObjectDefinitionParser.Filter f = ObjectDefinitionParser.FilterData(out dataSize, dataList, G_listLoopVar);
+            List<List<byte>> list;
+
+            if (listInformation.ContainsKey(G_listLoopVar))
+            {
+                list = listInformation[G_listLoopVar];
+            }
+            else
+            {
+                list = new List<List<byte>>();
+            }
+
+            if (f.elements.Count() != 0 && list.Count == 0)
+            {
+                foreach (var el in f.elements)
+                {
+                    if(el.valueType == ObjectDefinitionParser.ObjectValueType.TABLEPOINTER)
+                    {
+                        //ugly? yes, duplicate outside func? yes, avoids editing bindings to take another argument? yes
+                        var header = ROM.Instance.headers;
+                        var r = ROM.Instance.reader;
+                        var roomId = Parent.Id;
+                        var areaId = Parent.Parent.Id;
+                        int listTableArea = r.ReadAddr(header.ListTableRoot + (areaId << 2));
+                        int listTableRoom = r.ReadAddr(listTableArea + (roomId << 2));
+
+                        var fullAddr = r.ReadInt(listTableRoom + 4 * G_listLoopVar);
+                        var entry = new List<byte>();
+
+                        entry.Add((byte)(fullAddr & 0xFF));
+                        entry.Add((byte)((fullAddr >> 8) & 0xFF));
+                        entry.Add((byte)((fullAddr >> 16) & 0xFF));
+                        entry.Add((byte)((fullAddr >> 24) & 0xFF));
+                        list.Add(entry);
+                        listInformation[G_listLoopVar] = list;
+                        return 0;
+                    }
+                }
+            }
+
+            var dat = new List<byte>(data.Skip(startIndex).Take(dataSize).ToArray());
+            list.Add(dat);
+            listInformation[G_listLoopVar] = list;
+            return dataSize;
+        }
+
+        #endregion
+
+        #region ParseData Func's
+        //dont have any good names for these 3
+        /*private bool ValidateTileset(AddrData data)
+        {
+            if ((data.dest & 0xF000000) != 0x6000000)
+            { //not valid tile data addr
+                Console.WriteLine("Unhandled tile data destination address: " + data.dest.Hex() + " Source:" + data.src.Hex() + " Compressed:" + data.compressed + " Size:" + data.size.Hex());
+                return false;
+            }
+
+            data.dest = data.dest & 0xFFFFFF;
+            this.tilesetAddrs.Add(data);
+            return true;
+        }*/
+
+        private bool ValidateRoomData(AddrData data)
+        {
+            switch (data.dest)
+            {
+                case 0x02025EB4:
+                    this.bg2RoomDataAddr = data;
+                    //Debug.WriteLine("bg2 " + data.src.Hex());
+                    break;
+                case 0x0200B654:
+                    this.bg1RoomDataAddr = data;
+                    //Debug.WriteLine("bg1 " + data.src.Hex());
+                    break;
+                case 0x02002F00:
+                    this.bg1RoomDataAddr = data;
+                    //Debug.WriteLine("bg1 spec" + data.src.Hex());
+                    this.Bg1Use20344B0 = true;
+                    break;
+                default:
+                    //Debug.Write("Unhandled room data addr: ");
+                    //Debug.Write(data.src.Hex() + "->" + data.dest.Hex());
+                    //Debug.WriteLine(data.compressed ? " (compressed)" : "");
+                    break;
+            }
+            return true;
+        }
+
+        #endregion
+
+        #region bytify methods
+
+        public long BytifyListInformation(out byte[] data, out byte linkId, int listId)
+        {
+            var list = listInformation[listId];
+            var outdata = new byte[list.Count * 16 + 2];
+            var loc = 0;
             for (int i = 0; i < list.Count; i++)
             {
-                var index = i * 16;
-                var currentData = list[i];
-
-                outdata[index++] = currentData.objectType;
-                outdata[index++] = currentData.objectSub;
-                outdata[index++] = currentData.objectId;
-                outdata[index++] = currentData.d1item;
-                outdata[index++] = currentData.d2itemSub;
-                outdata[index++] = currentData.d3;
-                outdata[index++] = currentData.d4;
-                outdata[index++] = currentData.d5;
-                outdata[index++] = (byte)(currentData.pixelX & 0xff);
-                outdata[index++] = (byte)(currentData.pixelX >> 8);
-                outdata[index++] = (byte)(currentData.pixelY & 0xff);
-                outdata[index++] = (byte)(currentData.pixelY >> 8);
-                outdata[index++] = (byte)(currentData.flag1 & 0xff);
-                outdata[index++] = (byte)(currentData.flag1 >> 8);
-                outdata[index++] = (byte)(currentData.flag2 & 0xff);
-                outdata[index++] = (byte)(currentData.flag2 >> 8);
+                //list[i].CopyTo(outdata, i * 0x10);
+                list[i].CopyTo(outdata, loc);
+                loc += list[i].Count();
             }
 
-            outdata[outdata.Length - 1] = 0xFF;
+            var link = listLinks[listId];
 
-            data = outdata;
-            return outdata.Length;
+            data = outdata.Take(loc + 1).ToArray();
+
+            if (listId != 3)
+            {
+                data[data.Length - 1] = 0xFF;
+            }
+
+            long addr = -1;
+            var depth = 0;
+            while (link != 0xFF && !usedLists.ContainsKey(link))
+            {
+                if (depth >= 10)
+                {
+                    MainWindow.Notify($"List link likely stuck in a loop for area:0x{Parent.Parent.Id.Hex()} room:0x{Parent.Id.Hex()} on a chain containing list:{link}", "Save failed");
+                    break;
+                }
+                link = listLinks[link]; //in case of links to links
+                depth++;
+            }
+
+            if (depth < 10 && link != 0xFF)
+            {
+                addr = (usedLists[link]);
+            }
+            linkId = link;
+            return addr;
         }
 
-        public long GetWarpData(ref byte[] data)
+        public string SerializeList(Change change)
+        {
+            var list = listInformation[change.identifier];
+            return Newtonsoft.Json.JsonConvert.SerializeObject(new ListStruct(list, GetLinkFor(change.identifier)));
+        }
+        public string SerializeWarps()
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(warpInformation);
+        }
+
+        public string SerializeMetaData()
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(new RoomMetaDataStruct(PixelWidth, PixelHeight, MapPosX, MapPosY, tilesetId));
+        }
+
+        public byte[] GetMetadataBytes()
+        {
+            var data = new byte[] {
+                (byte)(MapPosX&0xff),
+                (byte)(MapPosX>>8),
+                (byte)(MapPosY&0xff),
+                (byte)(MapPosY>>8),
+                (byte)(PixelWidth&0xff),
+                (byte)(PixelWidth>>8),
+                (byte)(PixelHeight&0xff),
+                (byte)(PixelHeight>>8),
+                (byte)(tilesetId&0xff),
+                (byte)(tilesetId>>8)
+            };
+
+            return data;
+        }
+
+
+        public struct ListStruct
+        {
+            public List<List<byte>> list;
+            public int link;
+            public ListStruct(List<List<byte>> list, int link)
+            {
+                this.list = list;
+                this.link = link;
+            }
+        }
+
+        public struct RoomMetaDataStruct
+        {
+            public int sizeX;
+            public int sizeY;
+            public int mapX;
+            public int mapY;
+            public int tilesetId;
+
+            public RoomMetaDataStruct(int sizeX, int sizeY, int mapX, int mapY, int tilesetId)
+            {
+                this.sizeX = sizeX;
+                this.sizeY = sizeY;
+                this.mapX = mapX;
+                this.mapY = mapY;
+                this.tilesetId = tilesetId;
+            }
+        }
+
+        public long BytifyWarpInformation(ref byte[] data)
         {
             var outdata = new byte[warpInformation.Count * 20 + 20];
 
@@ -576,230 +691,67 @@ namespace MinishMaker.Core
             return outdata.Length;
         }
 
+        #endregion
 
-        //To be changed as actual data gets changed and tested
-        public int GetPointerLoc(DataType type, int areaIndex, int roomIndex)
+        public void SetRoomSize(int xdim, int ydim)
         {
+            this.PixelHeight = xdim << 4;
+            this.PixelWidth = ydim << 4;
+        }
+
+        //To be changed as actual data gets added, changed and tested
+        public int GetBGPointerLoc(BgDataChange change)
+        {
+            if (isCreated) {
+                return -1;
+            }
+
             var r = ROM.Instance.reader;
             var header = ROM.Instance.headers;
-            int retAddr = 0;
-            int areaRMDTableLoc = r.ReadAddr(header.MapHeaderBase + (areaIndex << 2));
-            int roomMetaDataTableLoc = areaRMDTableLoc + (roomIndex * 0x0A);
+            var roomId = Parent.Id;
+            var areaId = Parent.Parent.Id;
 
-            switch (type)
+            int areaTileDataTableLoc = r.ReadAddr(header.TileDataRoot + (areaId << 2));
+            int tileDataLoc = r.ReadAddr(areaTileDataTableLoc + (roomId << 2));
+            r.SetPosition(tileDataLoc);
+
+            if (change.identifier == 1)
             {
-                case DataType.roomMetaData:
-                    retAddr = roomMetaDataTableLoc;
-                    break;
-
-                case DataType.bg1TileSet:
-                case DataType.bg2TileSet:
-                case DataType.commonTileSet:
-                    //get addr of TPA data
-
-                    int areaTileSetTableLoc = r.ReadAddr(header.globalTileSetTableLoc + (areaIndex << 2));
-                    int roomTileSetLoc = r.ReadAddr(areaTileSetTableLoc + (tileSetOffset << 2));
-
-                    r.SetPosition(roomTileSetLoc);
-
-                    if (type == DataType.bg1TileSet)
-                    {
-                        ParseData(r, Tile1Check);
-                    }
-                    if (type == DataType.bg2TileSet)
-                    {
-                        ParseData(r, Tile2Check);
-                    }
-                    if (type == DataType.commonTileSet)
-                    {
-                        ParseData(r, TileCommonCheck);
-                    }
-                    retAddr = (int)r.Position - 12;
-                    break;
-
-                case DataType.bg1MetaTileSet:
-                case DataType.bg2MetaTileSet:
-                case DataType.bg1MetaTileType:
-                case DataType.bg2MetaTileType:
-                    int metaTileSetsAddrLoc = r.ReadAddr(header.globalMetaTileSetTableLoc + (areaIndex << 2));
-                    //retAddr = metaTileSetsAddrLoc;
-                    r.SetPosition(metaTileSetsAddrLoc);
-                    if (type == DataType.bg1MetaTileSet)
-                    {
-                        ParseData(r, Meta1Check);
-                    }
-                    if (type == DataType.bg2MetaTileSet)
-                    {
-                        ParseData(r, Meta2Check);
-                    }
-                    if (type == DataType.bg1MetaTileType)
-                    {
-                        ParseData(r, Type1Check);
-                    }
-                    if (type == DataType.bg2MetaTileType)
-                    {
-                        ParseData(r, Type2Check);
-                    }
-                    retAddr = (int)r.Position - 12; //step back 12 bytes as the bg was found after reading
-                    break;
-
-                case DataType.bg1Data:
-                case DataType.bg2Data:
-                    int areaTileDataTableLoc = r.ReadAddr(header.globalTileDataTableLoc + (areaIndex << 2));
-                    int tileDataLoc = r.ReadAddr(areaTileDataTableLoc + (roomIndex << 2));
-                    r.SetPosition(tileDataLoc);
-
-                    if (type == DataType.bg1Data)
-                    {
-                        ParseData(r, Bg1Check);
-                    }
-                    else //not bg1 so has to be bg2
-                    {
-                        ParseData(r, Bg2Check);
-                    }
-                    retAddr = (int)r.Position - 12; //step back 12 bytes as the bg was found after reading
-                    break;
-
-                case DataType.chestData:
-                case DataType.list1Data:
-                case DataType.list2Data:
-                case DataType.list3Data:
-                    int areaEntityTableAddrLoc = header.AreaMetadataBase + (areaIndex << 2);
-                    int areaEntityTableAddr = r.ReadAddr(areaEntityTableAddrLoc);
-
-                    int roomEntityTableAddrLoc = areaEntityTableAddr + (roomIndex << 2);
-                    int roomEntityTableAddr = r.ReadAddr(roomEntityTableAddrLoc);
-
-                    //4 byte chunks, 1-3 are unknown use, 4th seems to be chests
-                    var offset = 0;
-                    if (type == DataType.list1Data)
-                        offset = 0x00;
-                    if (type == DataType.list2Data)
-                        offset = 0x04;
-                    if (type == DataType.list3Data)
-                        offset = 0x08;
-                    if (type == DataType.chestData)
-                        offset = 0x0C;
-                    retAddr = roomEntityTableAddr + offset;
-
-                    Console.WriteLine(retAddr);
-                    break;
-
-                case DataType.warpData:
-                    int areaWarpTableAddrLoc = header.warpInformationTableLoc + (areaIndex << 2);
-                    int areaWarpTableAddr = r.ReadAddr(areaWarpTableAddrLoc);
-
-                    int roomWarpTableAddrLoc = areaWarpTableAddr + (roomIndex << 2);
-                    retAddr = roomWarpTableAddrLoc;
-                    break;
-
-                default:
-                    break;
+                ParseData(r, Bg1Check);
             }
-
-            return retAddr;
-        }
-
-        //bindings for data to usable structs
-        private void ChestBinding(byte[] data, int startIndex)
-        {
-            var type = data[startIndex];
-            var id = data[startIndex + 1];
-            var item = data[startIndex + 2];
-            var subNum = data[startIndex + 3];
-            ushort loc = (ushort)(data[startIndex + 4] | (data[startIndex + 5] << 8));
-            ushort other = (ushort)(data[startIndex + 6] | (data[startIndex + 7] << 8));
-            chestInformation.Add(new ChestData(type, id, item, subNum, loc, other));
-        }
-
-        private void List1Binding(byte[] data, int startIndex)
-        {
-            list1Information.Add(new ObjectData(data, startIndex));
-        }
-
-        private void List2Binding(byte[] data, int startIndex)
-        {
-            list2Information.Add(new ObjectData(data, startIndex));
-        }
-
-        private void List3Binding(byte[] data, int startIndex)
-        {
-            list3Information.Add(new ObjectData(data, startIndex));
-        }
-
-        private void WarpBinding(byte[] data, int startIndex)
-        {
-            warpInformation.Add(new WarpData(data, startIndex));
-        }
-
-        //dont have any good names for these 3
-        private bool Set1(AddrData data)
-        {
-            if ((data.dest & 0xF000000) != 0x6000000)
-            { //not valid tile data addr
-                Console.WriteLine("Unhandled tile data destination address: " + data.dest.Hex() + " Source:" + data.src.Hex() + " Compressed:" + data.compressed + " Size:" + data.size.Hex());
-                return false;
-            }
-
-            data.dest = data.dest & 0xFFFFFF;
-            this.tileSetAddrs.Add(data);
-            return true;
-        }
-
-        private bool Set2(AddrData data)
-        {
-            //use a switch in case this data is out of order
-            switch (data.dest)
+            else if (change.identifier == 2)
             {
-                case 0x0202CEB4:
-                    this.bg2MetaTilesAddr = data;
-                    Debug.WriteLine(data.src.Hex() + " bg2");
-                    break;
-                case 0x02012654:
-                    this.bg1MetaTilesAddr = data;
-                    Debug.WriteLine(data.src.Hex() + " bg1");
-                    break;
-                case 0x0202AEB4:
-                    this.metaTileTypeAddr2 = data;
-                    Debug.WriteLine(data.src.Hex() + " type2");
-                    break;
-                case 0x02010654:
-                    this.metaTileTypeAddr1 = data;
-                    Debug.WriteLine(data.src.Hex() + " type1");
-                    break;
-                default:
-                    Debug.Write("Unhandled metatile addr: ");
-                    Debug.Write(data.src.Hex() + "->" + data.dest.Hex());
-                    Debug.WriteLine(data.compressed ? " (compressed)" : "");
-                    break;
+                ParseData(r, Bg2Check);
             }
-            return true;
+            return (int)r.Position - 12; //step back 12 bytes as the bg was found after reading
         }
 
-        private bool Set3(AddrData data)
+        public List<byte> GetAllLinkedTo(int listId)
         {
-            switch (data.dest)
+            var linkedListIds = new List<byte>();
+            //crawl
+            for (int i = 0; i < listLinks.Count; i++)
             {
-                case 0x02025EB4:
-                    this.bg2RoomDataAddr = data;
-                    break;
-                case 0x0200B654:
-                    this.bg1RoomDataAddr = data;
-                    break;
-                case 0x02002F00:
-                    this.bg1RoomDataAddr = data;
-                    this.bg1Use20344B0 = true;
-                    break;
-                default:
-                    Debug.Write("Unhandled room data addr: ");
-                    Debug.Write(data.src.Hex() + "->" + data.dest.Hex());
-                    Debug.WriteLine(data.compressed ? " (compressed)" : "");
-                    break;
+                if (listLinks[i] == listId)
+                {
+                    linkedListIds.Add((byte)i);
+                }
             }
-            return true;
+            return linkedListIds;
         }
 
-        private bool Bg1Check(AddrData data)
+        public byte GetLinkFor(int listId)
+        {
+            return listLinks[listId];
+        }
+
+        public void SetLinkFor(int listId, byte value)
+        {
+            listLinks[listId] = value;
+        }
+
+        #region check methods for GetPointerLoc
+        private bool Bg1Check(Core.AddrData data)
         {
             switch (data.dest)
             {
@@ -813,7 +765,7 @@ namespace MinishMaker.Core
             return true;
         }
 
-        private bool Bg2Check(AddrData data)
+        private bool Bg2Check(Core.AddrData data)
         {
             switch (data.dest)
             {
@@ -825,73 +777,95 @@ namespace MinishMaker.Core
             return true;
         }
 
-        private bool Meta1Check(AddrData data)
-        {
-            switch (data.dest)
-            {
-                case 0x02012654:
-                    return false;
-                default:
-                    break;
-            }
-            return true;
-        }
+        #endregion
 
-        private bool Type1Check(AddrData data)
+        public class RoomMetaDataException : Exception
         {
-            switch (data.dest)
-            {
-                case 0x02010654:
-                    return false;
-                default:
-                    break;
-            }
-            return true;
-        }
-
-        private bool Meta2Check(AddrData data)
-        {
-            switch (data.dest)
-            {
-                case 0x0202CEB4:
-                    return false;
-                default:
-                    break;
-            }
-            return true;
-        }
-
-        private bool Type2Check(AddrData data)
-        {
-            switch (data.dest)
-            {
-                case 0x0202AEB4:
-                    return false;
-                default:
-                    break;
-            }
-            return true;
-        }
-
-        private bool Tile1Check(AddrData data)
-        {
-            return data.dest != 0;
-        }
-
-        private bool Tile2Check(AddrData data)
-        {
-            return data.dest != 0x8000;
-        }
-
-        private bool TileCommonCheck(AddrData data)
-        {
-            return data.dest != 0x4000;
-        }
-
-        public void SetRoomSize(int xdim, int ydim)
-        {
-            this.width = xdim << 4;
-            this.height = ydim << 4;
+            public RoomMetaDataException() { }
+            public RoomMetaDataException(string message) : base(message) { }
+            public RoomMetaDataException(string message, Exception inner) : base(message, inner) { }
         }
     }
+
+    #region datatypes
+    public struct AddrData
+    {
+        public int src;
+        public int dest;
+        public int size; // in words (2x bytes)
+        public bool compressed;
+
+        public AddrData(int src, int dest, int size, bool compressed)
+        {
+            this.src = src;
+            this.dest = dest;
+            this.size = size;
+            this.compressed = compressed;
+        }
+    }
+
+    public class ChestData
+    {
+        public byte type;
+        public byte chestId;
+        public byte itemId;
+        public byte itemSubNumber;
+        public ushort chestLocation;
+        public ushort unknown;
+
+        public ChestData(byte[] data, int pos)
+        {
+            this.type = data[pos];
+            this.chestId = data[pos + 1];
+            this.itemId = data[pos + 2];
+            this.itemSubNumber = data[pos + 3];
+            this.chestLocation = (ushort)(data[pos + 4] | (data[pos + 5] << 8));
+            this.unknown = (ushort)(data[pos + 6] | (data[pos + 7] << 8));
+        }
+        public ChestData()
+        {
+            this.type = 2;
+            this.chestId = 0;
+            this.itemId = 0;
+            this.itemSubNumber = 0;
+            this.chestLocation = 0;
+            this.unknown = 0;
+        }
+    }
+
+    public class WarpData
+    {
+        public ushort warpType = 0;     //2
+        public ushort warpXPixel = 0;   //4
+        public ushort warpYPixel = 0;   //6
+        public ushort destXPixel = 0;   //8
+        public ushort destYPixel = 0;   //10 A
+        public byte warpVar = 0;        //11 B
+        public byte destArea = 0;       //12 C
+        public byte destRoom = 0;       //13 D
+        public byte exitHeight = 0;     //14 E
+        public byte transitionType = 0; //15 F
+        public byte facing = 0;         //16 10
+        public ushort soundId = 0;      //18 12
+                                        //20 14  2 byte padding
+        public WarpData(byte[] data, int offset)
+        {
+            warpType = (ushort)(data[0 + offset] + (data[1 + offset] << 8));
+            warpXPixel = (ushort)(data[2 + offset] + (data[3 + offset] << 8));
+            warpYPixel = (ushort)(data[4 + offset] + (data[5 + offset] << 8));
+            destXPixel = (ushort)(data[6 + offset] + (data[7 + offset] << 8));
+            destYPixel = (ushort)(data[8 + offset] + (data[9 + offset] << 8));
+            warpVar = data[10 + offset];
+            destArea = data[11 + offset];
+            destRoom = data[12 + offset];
+            exitHeight = data[13 + offset];
+            transitionType = data[14 + offset];
+            facing = data[15 + offset];
+            soundId = (ushort)(data[16 + offset] + (data[17 + offset] << 8));
+        }
+        public WarpData()
+        {
+        }
+    }
+    #endregion
 }
