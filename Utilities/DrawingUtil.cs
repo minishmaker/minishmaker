@@ -111,7 +111,7 @@ namespace MinishMaker.Utilities
             return layer;
         }
 
-        public static Bitmap[] DrawTilesetImages(Room room, int pnum)
+        public static Bitmap[] DrawTilesetImages(Area area, int tsetnum, int pnum)
         {
             var images = new Bitmap[2];
             images[0] = new Bitmap(256, 0x100); //0x200 * 8 /16 = 0x200 * 0.5
@@ -124,8 +124,8 @@ namespace MinishMaker.Utilities
                 ypos *= 8; //pixels
                 xpos *= 8; //pixels
                 var point = new Point(xpos, ypos);
-                DrawQuarterTile(ref images[0], point, tnum + 0x200, room, pnum, false, false, true);
-                DrawQuarterTile(ref images[1], point, tnum        , room, pnum, false, false, true);
+                DrawQuarterTile(ref images[0], point, tnum + 0x200, area, tsetnum, pnum, false, false, true);
+                DrawQuarterTile(ref images[1], point, tnum        , area, tsetnum, pnum, false, false, true);
             }
 
             return images;
@@ -133,7 +133,11 @@ namespace MinishMaker.Utilities
 
         public static Bitmap[] DrawMetatileImages(Room room, int tilesPerRow)
         {
-            var tset = room.Parent.Tilesets[room.MetaData.tilesetId];
+            return DrawMetatileImages(room.Parent, room.MetaData.tilesetId, tilesPerRow);
+        }
+        public static Bitmap[] DrawMetatileImages(Area area, int tsetnum, int tilesPerRow)
+        { 
+            var tset = area.Tilesets[tsetnum];
             var pset = PaletteSetManager.Get().GetSet(tset.paletteSetId);
             var totalValues = 0x100;// amount different low values (00-FF)
             var tileSize = 16;// 0x10 pixels
@@ -161,8 +165,8 @@ namespace MinishMaker.Utilities
             bool bg1ended = false;
             bool bg2ended = false;
 
-            var bg1MetaTiles = room.Parent.Bg1MetaTileset;
-            var bg2MetaTiles = room.Parent.Bg2MetaTileset;
+            var bg1MetaTiles = area.Bg1MetaTileset;
+            var bg2MetaTiles = area.Bg2MetaTileset;
             for (int j = 0; j < rowsRequired; j++)
             {
                 if (bg1ended && bg2ended)
@@ -176,7 +180,7 @@ namespace MinishMaker.Utilities
                     var point = new Point(i * 16, j * 16);
                     if (tileId != 0xFFFF)
                     {
-                        if (room.Bg1Exists && !bg1ended)
+                        if (bg1MetaTiles != null && !bg1ended)
                         {
                             DrawMetaTileData(ref bg1, bg1MetaTiles.GetMetaTileData(tileId), tset, point, pset.Colors, true, false);
                             if ((tileId + 1) * 8 >= bg1MetaTiles.dataSize)
@@ -187,7 +191,7 @@ namespace MinishMaker.Utilities
                             }
                         }
 
-                        if (room.Bg2Exists && !bg2ended)
+                        if (bg2MetaTiles != null && !bg2ended)
                         {
                             DrawMetaTileData(ref bg2, bg2MetaTiles.GetMetaTileData(tileId), tset, point, pset.Colors, false, false);
                             if ((tileId + 1) * 8 >= bg2MetaTiles.dataSize)
@@ -664,18 +668,17 @@ namespace MinishMaker.Utilities
                     bool vflip = ((data >> 11) & 1) == 1;//is bit 12 set
                     int pnum = data >> 12;//last 4 bits
 
-                    DrawQuarterTile(ref image, new Point(p.X + (x * 8), p.Y + (y * 8)), tnum, in room, pnum, hflip, vflip, overwrite);
+                    DrawQuarterTile(ref image, new Point(p.X + (x * 8), p.Y + (y * 8)), tnum, room.Parent, room.MetaData.tilesetId, pnum, hflip, vflip, overwrite);
                 }
             }
         }
 
-        public static void DrawQuarterTile(ref Bitmap image, Point p, int tnum, in Room room, int pnum, bool hflip, bool vflip, bool overwrite)
+        public static void DrawQuarterTile(ref Bitmap image, Point p, int tnum, in Area area, int tsetNum, int pnum, bool hflip, bool vflip, bool overwrite)
         {
-            var mtset = room.Parent.Tilesets[room.MetaData.tilesetId];
-            var tset = room.Parent.Tilesets[room.MetaData.tilesetId];
+            var tset = area.Tilesets[tsetNum];
             var pal = PaletteSetManager.Get().GetSet(tset.paletteSetId).Colors;
             //var pal = room.MetaData.PaletteSet.Colors;
-            byte[] data = mtset.GetTile(tnum);
+            byte[] data = tset.GetTile(tnum);
             BitmapData bd = image.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.WriteOnly, image.PixelFormat);
 
             unsafe

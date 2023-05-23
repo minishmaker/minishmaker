@@ -48,7 +48,7 @@
             this.vFlipBox = new System.Windows.Forms.CheckBox();
             this.prevButton = new System.Windows.Forms.Button();
             this.nextButton = new System.Windows.Forms.Button();
-            this.PaletteNum = new System.Windows.Forms.Label();
+            this.paletteNumLabel = new System.Windows.Forms.Label();
             this.layer1Button = new System.Windows.Forms.Button();
             this.layer2Button = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
@@ -60,7 +60,7 @@
             this.tId4 = new System.Windows.Forms.TextBox();
             this.sTId = new System.Windows.Forms.TextBox();
             this.mTId = new System.Windows.Forms.TextBox();
-            this.HiddenLabel = new System.Windows.Forms.Label();
+            this.hiddenLabel = new System.Windows.Forms.Label();
             this.mTType = new System.Windows.Forms.TextBox();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -75,6 +75,10 @@
             this.commonToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.paletteToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.label6 = new System.Windows.Forms.Label();
+            this.prevTSButton = new System.Windows.Forms.Button();
+            this.label7 = new System.Windows.Forms.Label();
+            this.nextTSButton = new System.Windows.Forms.Button();
+            this.tilesetNumLabel = new System.Windows.Forms.Label();
             this.metaTilesetPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.metaTileGridBox)).BeginInit();
             this.tilesetPanel.SuspendLayout();
@@ -274,7 +278,7 @@
             this.hFlipBox.Location = new System.Drawing.Point(15, 209);
             this.hFlipBox.Margin = new System.Windows.Forms.Padding(4);
             this.hFlipBox.Name = "hFlipBox";
-            this.hFlipBox.Size = new System.Drawing.Size(120, 21);
+            this.hFlipBox.Size = new System.Drawing.Size(114, 20);
             this.hFlipBox.TabIndex = 1;
             this.hFlipBox.Text = "Horizontal Flip";
             this.hFlipBox.UseVisualStyleBackColor = true;
@@ -286,7 +290,7 @@
             this.vFlipBox.Location = new System.Drawing.Point(15, 238);
             this.vFlipBox.Margin = new System.Windows.Forms.Padding(4);
             this.vFlipBox.Name = "vFlipBox";
-            this.vFlipBox.Size = new System.Drawing.Size(103, 21);
+            this.vFlipBox.Size = new System.Drawing.Size(99, 20);
             this.vFlipBox.TabIndex = 11;
             this.vFlipBox.Text = "Vertical Flip";
             this.vFlipBox.UseVisualStyleBackColor = true;
@@ -315,14 +319,14 @@
             this.nextButton.UseVisualStyleBackColor = true;
             this.nextButton.Click += new System.EventHandler(this.NextButton_Click);
             // 
-            // PaletteNum
+            // paletteNumLabel
             // 
-            this.PaletteNum.Location = new System.Drawing.Point(44, 322);
-            this.PaletteNum.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.PaletteNum.Name = "PaletteNum";
-            this.PaletteNum.Size = new System.Drawing.Size(17, 16);
-            this.PaletteNum.TabIndex = 14;
-            this.PaletteNum.Text = "0";
+            this.paletteNumLabel.Location = new System.Drawing.Point(38, 322);
+            this.paletteNumLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.paletteNumLabel.Name = "paletteNumLabel";
+            this.paletteNumLabel.Size = new System.Drawing.Size(33, 16);
+            this.paletteNumLabel.TabIndex = 14;
+            this.paletteNumLabel.Text = "0x0";
             // 
             // layer1Button
             // 
@@ -442,14 +446,14 @@
             this.mTId.TabIndex = 26;
             this.mTId.Text = "FFF";
             // 
-            // HiddenLabel
+            // hiddenLabel
             // 
-            this.HiddenLabel.AutoSize = true;
-            this.HiddenLabel.Location = new System.Drawing.Point(103, 174);
-            this.HiddenLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.HiddenLabel.Name = "HiddenLabel";
-            this.HiddenLabel.Size = new System.Drawing.Size(0, 17);
-            this.HiddenLabel.TabIndex = 27;
+            this.hiddenLabel.AutoSize = true;
+            this.hiddenLabel.Location = new System.Drawing.Point(103, 174);
+            this.hiddenLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.hiddenLabel.Name = "hiddenLabel";
+            this.hiddenLabel.Size = new System.Drawing.Size(0, 16);
+            this.hiddenLabel.TabIndex = 27;
             // 
             // mTType
             // 
@@ -470,7 +474,7 @@
             this.fileToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(900, 30);
+            this.menuStrip.Size = new System.Drawing.Size(900, 28);
             this.menuStrip.TabIndex = 29;
             this.menuStrip.Text = "mainMenuStrip";
             // 
@@ -480,7 +484,7 @@
             this.importToolStripMenuItem,
             this.exportToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(46, 26);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(46, 24);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // importToolStripMenuItem
@@ -572,15 +576,60 @@
             this.label6.Size = new System.Drawing.Size(907, 2);
             this.label6.TabIndex = 30;
             // 
+            // prevTSButton
+            // 
+            this.prevTSButton.Enabled = false;
+            this.prevTSButton.Location = new System.Drawing.Point(13, 368);
+            this.prevTSButton.Margin = new System.Windows.Forms.Padding(4);
+            this.prevTSButton.Name = "prevTSButton";
+            this.prevTSButton.Size = new System.Drawing.Size(23, 28);
+            this.prevTSButton.TabIndex = 31;
+            this.prevTSButton.Text = "<";
+            this.prevTSButton.UseVisualStyleBackColor = true;
+            this.prevTSButton.Click += new System.EventHandler(this.prevTSButton_Click);
+            // 
+            // label7
+            // 
+            this.label7.Location = new System.Drawing.Point(16, 348);
+            this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(53, 16);
+            this.label7.TabIndex = 32;
+            this.label7.Text = "Tileset";
+            // 
+            // nextTSButton
+            // 
+            this.nextTSButton.Location = new System.Drawing.Point(68, 368);
+            this.nextTSButton.Margin = new System.Windows.Forms.Padding(4);
+            this.nextTSButton.Name = "nextTSButton";
+            this.nextTSButton.Size = new System.Drawing.Size(23, 28);
+            this.nextTSButton.TabIndex = 33;
+            this.nextTSButton.Text = ">";
+            this.nextTSButton.UseVisualStyleBackColor = true;
+            this.nextTSButton.Click += new System.EventHandler(this.nextTSButton_Click);
+            // 
+            // tilesetNumLabel
+            // 
+            this.tilesetNumLabel.Location = new System.Drawing.Point(38, 374);
+            this.tilesetNumLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.tilesetNumLabel.Name = "tilesetNumLabel";
+            this.tilesetNumLabel.Size = new System.Drawing.Size(31, 16);
+            this.tilesetNumLabel.TabIndex = 34;
+            this.tilesetNumLabel.Text = "0";
+            // 
             // MetaTileEditorWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(900, 375);
+            this.ClientSize = new System.Drawing.Size(900, 419);
+            this.Controls.Add(this.tilesetNumLabel);
+            this.Controls.Add(this.nextTSButton);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.prevTSButton);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.menuStrip);
             this.Controls.Add(this.mTType);
-            this.Controls.Add(this.HiddenLabel);
+            this.Controls.Add(this.hiddenLabel);
             this.Controls.Add(this.mTId);
             this.Controls.Add(this.sTId);
             this.Controls.Add(this.tId4);
@@ -592,7 +641,7 @@
             this.Controls.Add(this.label4);
             this.Controls.Add(this.layer2Button);
             this.Controls.Add(this.layer1Button);
-            this.Controls.Add(this.PaletteNum);
+            this.Controls.Add(this.paletteNumLabel);
             this.Controls.Add(this.nextButton);
             this.Controls.Add(this.prevButton);
             this.Controls.Add(this.vFlipBox);
@@ -650,7 +699,7 @@
         private System.Windows.Forms.CheckBox vFlipBox;
         private System.Windows.Forms.Button prevButton;
         private System.Windows.Forms.Button nextButton;
-        private System.Windows.Forms.Label PaletteNum;
+        private System.Windows.Forms.Label paletteNumLabel;
         private System.Windows.Forms.Button layer1Button;
         private System.Windows.Forms.Button layer2Button;
         private System.Windows.Forms.Label label4;
@@ -664,7 +713,7 @@
         private System.Windows.Forms.TextBox mTId;
         private GridBoxComponent metaTileGridBox;
         private GridBoxComponent tilesetGridBox;
-        private System.Windows.Forms.Label HiddenLabel;
+        private System.Windows.Forms.Label hiddenLabel;
         private System.Windows.Forms.TextBox mTType;
         private System.Windows.Forms.MenuStrip menuStrip;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
@@ -680,5 +729,9 @@
         private System.Windows.Forms.ToolStripMenuItem paletteToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem paletteToolStripMenuItem1;
         private GridBoxComponent selectedMetaGridBox;
+        private System.Windows.Forms.Button prevTSButton;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Button nextTSButton;
+        private System.Windows.Forms.Label tilesetNumLabel;
     }
 }

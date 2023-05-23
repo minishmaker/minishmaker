@@ -20,7 +20,7 @@ namespace MinishMaker.UI
         int tsetnum = 0;
         int pnum = 0;
         int currentLayer = 1;
-        private Room currentRoom;
+        private Area currentArea;
         bool vFlip = false;
         bool hFlip = false;
         byte[] pre = new byte[0x4000];
@@ -40,7 +40,10 @@ namespace MinishMaker.UI
         public override void Setup()
         {
             MainWindow mw = MainWindow.instance;
-            currentRoom = mw.currentRoom;
+            currentArea = mw.currentArea;
+            tsetnum = mw.currentRoom.MetaData.tilesetId;
+            prevTSButton.Enabled = tsetnum != 0;
+            nextTSButton.Enabled = tsetnum != currentArea.Tilesets.Count - 1;
             if (mw.currentRoom != null)
             {
                 RedrawTiles();
@@ -68,6 +71,14 @@ namespace MinishMaker.UI
 
         private void MetaTileGridBox_Click(object sender, EventArgs e)
         {
+            if (currentLayer == 1 && currentArea.Bg1MetaTileset == null)
+            {
+                return;
+            }
+            if (currentLayer == 2 && currentArea.Bg2MetaTileset == null)
+            {
+                return;
+            }
             if (metaTileGridBox.Image == null)
                 return;
 
@@ -82,7 +93,7 @@ namespace MinishMaker.UI
             var enlarged = DrawingUtil.ResizeBitmap(small, 4);
             //var enlarged = new Bitmap(small, 64, 64);
 
-            currentTileInfo = currentRoom.Parent.GetMetaTileData(ref currentTileType, metaTileGridBox.SelectedIndex, currentLayer);
+            currentTileInfo = currentArea.GetMetaTileData(ref currentTileType, metaTileGridBox.SelectedIndex, currentLayer);
 
             if (currentTileInfo == null)
                 return;
@@ -222,27 +233,27 @@ namespace MinishMaker.UI
                 return;
 
             byte[] metatypes = new byte[2];
-            var metadata = currentRoom.Parent.GetMetaTileData(ref metatypes, metaTileGridBox.SelectedIndex, currentLayer);
+            var metadata = currentArea.GetMetaTileData(ref metatypes, metaTileGridBox.SelectedIndex, currentLayer);
             var hasTypeChange = !metatypes.SequenceEqual(currentTileType);
             var hasInfoChange = !metadata.SequenceEqual(currentTileInfo);
 
 
             if (hasInfoChange)
             {
-                currentRoom.Parent.SetMetaTileData(currentTileInfo, metaTileGridBox.SelectedIndex, currentLayer);
+                currentArea.SetMetaTileData(currentTileInfo, metaTileGridBox.SelectedIndex, currentLayer);
                 MainWindow.instance.RedrawRoom();
-                Project.Instance.AddPendingChange(new MetaTilesetChange(currentRoom.Parent.Id, currentLayer));
+                Project.Instance.AddPendingChange(new MetaTilesetChange(currentArea.Id, currentLayer));
             }
             if (hasTypeChange)
             {
-                currentRoom.Parent.SetMetaTileTypeInfo(currentTileType, metaTileGridBox.SelectedIndex, currentLayer);
-                Project.Instance.AddPendingChange(new MetaTileTypeChange(currentRoom.Parent.Id, currentLayer));
+                currentArea.SetMetaTileTypeInfo(currentTileType, metaTileGridBox.SelectedIndex, currentLayer);
+                Project.Instance.AddPendingChange(new MetaTileTypeChange(currentArea.Id, currentLayer));
             }
 
             var image = metaTiles[currentLayer - 1];
             int x = metaTileGridBox.SelectedIndex % 16;
             int y = metaTileGridBox.SelectedIndex / 16;
-            var tileset = currentRoom.Parent.Tilesets[tsetnum];
+            var tileset = currentArea.Tilesets[tsetnum];
             var paletteSet = PaletteSetManager.Get().GetSet(tileset.paletteSetId);
             DrawingUtil.DrawMetaTileData(ref image, currentTileInfo, tileset, new Point(x * 16, y * 16), paletteSet.Colors, currentLayer == 1, true);
             metaTileGridBox.Image = image;
@@ -306,7 +317,7 @@ namespace MinishMaker.UI
                 }
                 
                 //TODO:
-                //Project.Instance.AddPendingChange(new PaletteChange(-1, currentRoom.Parent.PaletteSetId));
+                //Project.Instance.AddPendingChange(new PaletteChange(-1, currentArea.PaletteSetId));
             }
         }
 
@@ -332,14 +343,14 @@ namespace MinishMaker.UI
             {
                 sfd.Filter = "Palette files|*.pal|All Files|*.*";
                 sfd.Title = "Save palette file";
-                sfd.FileName = "palette_" + currentRoom.Parent.Id.Hex() + ".pal";
+                sfd.FileName = "palette_" + currentArea.Id.Hex() + ".pal";
 
                 if (sfd.ShowDialog() != DialogResult.OK)
                 {
                     return;
                 }
-                var area = currentRoom.Parent;
-                var tset = area.Tilesets[currentRoom.MetaData.tilesetId];
+                var area = currentArea;
+                var tset = area.Tilesets[tsetnum];
                 var palette = PaletteSetManager.Get().GetSet(tset.paletteSetId);
                 var palString = palette.ToPaletteString();
 
@@ -397,8 +408,8 @@ namespace MinishMaker.UI
             tRPalette.Enabled = false;
             bLPalette.Enabled = false;
             bRPalette.Enabled = false;
-            metaTiles = DrawingUtil.DrawMetatileImages(currentRoom, 16); //areaindex currently unused because what even is swaptiles
-            tilesets = DrawingUtil.DrawTilesetImages(currentRoom, pnum);
+            metaTiles = DrawingUtil.DrawMetatileImages(currentArea, tsetnum, 16); //areaindex currently unused because what even is swaptiles
+            tilesets = DrawingUtil.DrawTilesetImages(currentArea, tsetnum, pnum);
             metaTileGridBox.Image = metaTiles[currentLayer - 1];
             tilesetGridBox.Image = tilesets[currentLayer - 1];
 
@@ -410,9 +421,9 @@ namespace MinishMaker.UI
 
         private void RedrawTilesets()
         {
-            tilesets = DrawingUtil.DrawTilesetImages(currentRoom, pnum);
+            tilesets = DrawingUtil.DrawTilesetImages(currentArea, tsetnum, pnum);
             tilesetGridBox.Image = tilesets[currentLayer - 1];
-            PaletteNum.Text = pnum.Hex();
+            paletteNumLabel.Text = "0x" + pnum.Hex();
         }
 
         private Bitmap DrawLargeMetaTile(byte[] tiledata)
@@ -425,7 +436,7 @@ namespace MinishMaker.UI
                 int y = i >= 2 ? 8 : 0;
                 bdata = DrawLargeQuarterTile(bdata, new byte[] { tiledata[i * 2], tiledata[i * 2 + 1] }, x, y);
             }
-            //var tset = currentRoom.Parent.Tilesets[tsetnum];
+            //var tset = currentArea.Tilesets[tsetnum];
             //var paletteSet = PaletteSetManager.Get().GetSet(tset.paletteSetId);
 
             //DrawingUtil.DrawMetaTileData(ref b, tiledata, tset, new Point(0,0), paletteSet.Colors, true, true)
@@ -449,7 +460,7 @@ namespace MinishMaker.UI
             {
                 tnum += 0x200;
             }
-            var tset = currentRoom.Parent.Tilesets[tsetnum];
+            var tset = currentArea.Tilesets[tsetnum];
             var tileData = tset.GetTile(tnum);
             return DrawingUtil.DrawTileFromPalette(bdata, new Point(x, y), tileData, PaletteSetManager.Get().GetSet(tset.paletteSetId).Colors, palnum, hflip, vflip, true, 4);
         }
@@ -463,7 +474,7 @@ namespace MinishMaker.UI
             {
                 tnum += 0x200;
             }
-            var tset = currentRoom.Parent.Tilesets[tsetnum];
+            var tset = currentArea.Tilesets[tsetnum];
             var tileData = tset.GetTile(tnum);
             var colors = PaletteSetManager.Get().GetSet(tset.paletteSetId).Colors;
             BitmapData bdata = b.LockBits(new Rectangle(Point.Empty, b.Size), ImageLockMode.ReadWrite, b.PixelFormat);
@@ -518,10 +529,10 @@ namespace MinishMaker.UI
                 byte[] tsetData = DecodeIndices(inImage);
 
 
-                currentRoom.Parent.Tilesets[tsetnum].SetTilesetData(tsetType, tsetData);
+                currentArea.Tilesets[tsetnum].SetTilesetData(tsetType, tsetData);
                 RedrawTiles();
 
-                Project.Instance.AddPendingChange(new TilesetChange(currentRoom.Parent.Id, (int)tsetType + (tsetnum*10)));
+                Project.Instance.AddPendingChange(new TilesetChange(currentArea.Id, (int)tsetType + (tsetnum*10)));
             }
         }
 
@@ -531,14 +542,14 @@ namespace MinishMaker.UI
             {
                 sfd.Filter = "Bitmap files|*.png|All Files|*.*";
                 sfd.Title = "Save " + tsetType + " tileset file";
-                sfd.FileName = tsetType + "_" + currentRoom.Parent.Id.Hex() + ".png";
+                sfd.FileName = tsetType + "_" + currentArea.Id.Hex() + ".png";
 
                 if (sfd.ShowDialog() != DialogResult.OK)
                 {
                     return;
                 }
 
-                var fileData = currentRoom.Parent.Tilesets[tsetnum].GetTilesetData(tsetType);
+                var fileData = currentArea.Tilesets[tsetnum].GetTilesetData(tsetType);
                 var bmap = new Bitmap(0x100, 0x80, PixelFormat.Format8bppIndexed);
 
                 EncodeIndices(ref bmap, fileData);
@@ -641,6 +652,34 @@ namespace MinishMaker.UI
             Marshal.Copy(data.Scan0, bytes, 0, length);
 
             bmp.UnlockBits(data);
+        }
+
+        private void prevTSButton_Click(object sender, EventArgs e)
+        {
+            nextTSButton.Enabled = true;
+
+            tsetnum -= 1;
+
+            if (tsetnum == 0)
+            {
+                prevTSButton.Enabled = false;
+            }
+            tilesetNumLabel.Text = tsetnum.ToString();
+            RedrawTiles();
+        }
+
+        private void nextTSButton_Click(object sender, EventArgs e)
+        {
+            prevTSButton.Enabled = true;
+
+            tsetnum += 1;
+
+            if (tsetnum == currentArea.Tilesets.Count - 1)
+            {
+                nextTSButton.Enabled = false;
+            }
+            tilesetNumLabel.Text = tsetnum.ToString();
+            RedrawTiles();
         }
     }
 
