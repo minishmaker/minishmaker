@@ -3,6 +3,7 @@
 	<enums>
 		<eventTypes>
 			<entry name="Empty / Unknown" value="-1"/>
+			<entry name="Minish portal" value="0x03"/>
 		</eventTypes>
 	</enums>
 </root>

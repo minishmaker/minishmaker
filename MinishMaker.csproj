@@ -320,9 +320,6 @@
     <Content Include="Resources\ObjectDefinitions\DataCategories.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\ObjectDefinitions\Objects- 0xX6\NPCTypes.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Resources\ObjectDefinitions\Objects- 0xX6\Object6Types.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

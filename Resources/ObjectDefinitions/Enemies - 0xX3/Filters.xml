@@ -9,6 +9,19 @@
 				<value>0x3</value>
 				<value>0x13</value>
 			</targetValues>
+			<markers>
+				<marker>
+					<type>cross</type>
+					<data>
+						<XValueType>Short</XValueType>
+						<XValuePos>9</XValuePos>
+						<XValueLength>1</XValueLength>
+						<YValueType>Short</YValueType>
+						<YValuePos>11</YValuePos>
+						<YValueLength>1</YValueLength>
+					</data>
+				</marker>
+			</markers>
 			<childrenNames>
 				<name>defaultEnemy</name>
 			</childrenNames>

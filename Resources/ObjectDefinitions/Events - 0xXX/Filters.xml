@@ -3,15 +3,48 @@
 	<filters>
 		<eventBase>
 			<defaultChildTargetType>Byte</defaultChildTargetType>
-			<defaultChildTargetPos>2</defaultChildTargetPos>
+			<defaultChildTargetPos>3</defaultChildTargetPos>
 			<targetValues>
 				<value>0x9</value>
 			</targetValues>
 			<elementSetName>eventBase</elementSetName>
 			<childrenNames>
-				<name>defaultEvent</name>
+				<name>eventCrossMarkable</name>
+				<name>eventMerge</name>
 			</childrenNames>
 		</eventBase>
+
+		<!-- MARKER BRANCHES-->
+		<eventCrossMarkable>
+			<targetValues>
+				<value>3</value>
+			</targetValues>
+			<markers>
+				<marker>
+					<type>cross</type>
+					<data>
+						<XValueType>Short</XValueType>
+						<XValuePos>9</XValuePos>
+						<XValueLength>1</XValueLength>
+						<YValueType>Short</YValueType>
+						<YValuePos>11</YValuePos>
+						<YValueLength>1</YValueLength>
+					</data>
+				</marker>
+			</markers>
+			<childrenNames>
+				<name>eventMerge</name>
+			</childrenNames>
+		</eventCrossMarkable>
+
+		<!-- BRANCH MERGE -->
+		<eventMerge>
+			<defaultChildTargetType>Byte</defaultChildTargetType>
+			<defaultChildTargetPos>3</defaultChildTargetPos>
+			<childrenNames>
+				<name>defaultEvent</name>
+			</childrenNames>
+		</eventMerge>
 
 		<defaultEvent>
 			<elementNames>

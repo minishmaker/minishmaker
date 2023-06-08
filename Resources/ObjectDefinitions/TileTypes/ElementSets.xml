@@ -7,6 +7,7 @@
 				<enumType>tileEntityTypes</enumType>
 				<valueType>Byte</valueType>
 				<valuePos>1</valuePos>
+				<colspan>3</colspan>
 				<label>Tile type:</label>
 				<column>1</column>
 				<row>1</row>
@@ -16,7 +17,7 @@
 				<type>hexNumber</type>
 				<valueType>Byte</valueType>
 				<valuePos>1</valuePos>
-				<column>3</column>
+				<column>5</column>
 				<row>1</row>
 			</element>
 		</tileTypeBase>

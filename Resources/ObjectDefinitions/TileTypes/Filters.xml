@@ -5,18 +5,52 @@
 		<tileType>
 			<defaultChildTargetType>Byte</defaultChildTargetType>
 			<defaultChildTargetPos>1</defaultChildTargetPos>
-			<!-- only take this filter if one of these values is in the parent's target (in this case if the current list is 3)-->
+			
 			<targetValues>
 				<value>3</value>
 			</targetValues>
-			<!-- the name of a collection of form elements to display the information-->
+			
 			<elementSetName>tileTypeBase</elementSetName>
+			<childrenNames>
+				<name>tileCrossMarkable</name>
+				<name>tileMerge</name>
+			</childrenNames>
+			<dataSize>8</dataSize>
+		</tileType>
+
+		<!-- MARKER BRANCHES -->
+		<tileCrossMarkable>
+			<targetValues>
+				<value>2</value>
+				<value>3</value>
+			</targetValues>
+			<markers>
+				<marker>
+					<type>cross</type>
+					<data>
+						<XValueType>Part</XValueType>
+						<XValuePos>33</XValuePos>
+						<XValueLength>6</XValueLength>
+						<YValueType>Part</YValueType>
+						<YValuePos>39</YValuePos>
+						<YValueLength>6</YValueLength>
+					</data>
+				</marker>
+			</markers>
+			<childrenNames>
+				<name>tileMerge</name>
+			</childrenNames>
+		</tileCrossMarkable>
+
+		<!-- BRANCH MERGE-->
+		<tileMerge>
+			<defaultChildTargetType>Byte</defaultChildTargetType>
+			<defaultChildTargetPos>1</defaultChildTargetPos>
 			<childrenNames>
 				<name>chest</name>
 				<name>unknownTileType</name>
 			</childrenNames>
-			<dataSize>8</dataSize>
-		</tileType>
+		</tileMerge>
 
 		<!-- DEPTH 2 (inside tileType) - - - - - - - - - -->
 		<chest>
