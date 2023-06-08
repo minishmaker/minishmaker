@@ -493,6 +493,13 @@ namespace MinishMaker.UI
                 if (selectedTileData.Length == 0) //no selected tile, nothing to paste
                     return;
 
+                var currentTileType = new byte[2];
+                currentArea.GetMetaTileData(ref currentTileType, selectedTileData[0], selectedLayer);
+                if (currentTileType == null) //the selected tile is "nothing" 
+                {
+                    return;
+                }
+
                 mapGridBox.SelectedIndex = mapGridBox.HoverIndex;
                 WriteMultiTile();
             }
@@ -569,8 +576,8 @@ namespace MinishMaker.UI
 
             var xspot = mapGridBox.HoverIndex % currentRoom.RoomSize.X;
             var yspot = mapGridBox.HoverIndex / currentRoom.RoomSize.X;
-            XPosLabel.Text = "X: 0x" + xspot.Hex(2);
-            YPosLabel.Text = "Y: 0x" + yspot.Hex(2);
+            XPosLabel.Text = $"X: {xspot} (0x{xspot.Hex(2)})";
+            YPosLabel.Text = $"Y: {yspot} (0x{yspot.Hex(2)})";
 
             if (e.Button == MouseButtons.Left)
             {
@@ -580,6 +587,11 @@ namespace MinishMaker.UI
                     return;
                     
                 if (selectedTileData.Length == 0) //no selected tile, nothing to paste
+                    return;
+
+                var currentTileType = new byte[2];
+                currentArea.GetMetaTileData(ref currentTileType, selectedTileData[0], selectedLayer);
+                if (currentTileType == null) //the selected tile is "nothing" 
                     return;
 
                 lastTilePos = currentPos;
@@ -626,12 +638,12 @@ namespace MinishMaker.UI
 
         private void SetBottomValues(string prefix, int x = -1, int y = -1)
         {
-            RoomIdLabel.Text = "Room Id: 0x" + currentRoom.Id.Hex(2);
-            AreaIdLabel.Text = "Area Id: 0x" + currentRoom.Parent.Id.Hex(2);
-            SelectedXPosLabel.Text = $"Selected X: 0x--";
-            SelectedYPosLabel.Text = $"Selected Y: 0x--";
+            RoomIdLabel.Text = $"Room Id: {currentRoom.Id} (0x{currentRoom.Id.Hex(2)})";
+            AreaIdLabel.Text = $"Area Id: {currentRoom.Parent.Id} (0x{currentRoom.Parent.Id.Hex(2)})";
+            SelectedXPosLabel.Text = "Selected X:-- (0x--)";
+            SelectedYPosLabel.Text = "Selected Y: -- (0x--)";
             SelectedSizeLabel.Text = "Selected Size: --- x ---";
-            SelectedBehaviourLabel.Text = $"Selected Behaviour: 0x--";
+            SelectedBehaviourLabel.Text = $"Selected Behaviour: --- (0x---)";
             if (x == -1 || y == -1)
             {
                 return;
@@ -639,11 +651,17 @@ namespace MinishMaker.UI
 
             if (boxSize.X == 1 && boxSize.Y == 1)
             {
-                SelectedXPosLabel.Text = $"Selected X: {prefix}0x{x.Hex(2)}";
-                SelectedYPosLabel.Text = $"Selected Y: {prefix}0x{y.Hex(2)}";
                 var currentTileType = new byte[2];
                 currentArea.GetMetaTileData(ref currentTileType, selectedTileData[0], selectedLayer);
-                SelectedBehaviourLabel.Text = $"Selected Behaviour: {prefix}0x{(currentTileType[0] + (currentTileType[1] << 8) & 0x3ff).Hex(3)}";
+                if (currentTileType == null)
+                {
+                    return;
+                }
+
+                SelectedXPosLabel.Text = $"Selected X: {prefix}{x} (0x{x.Hex(2)})";
+                SelectedYPosLabel.Text = $"Selected Y: {prefix}{y} (0x{y.Hex(2)})";
+                var selectedBehaviour = (currentTileType[0] + (currentTileType[1] << 8) & 0x3ff);
+                SelectedBehaviourLabel.Text = $"Selected Behaviour: {prefix}{selectedBehaviour} (0x{selectedBehaviour.Hex(3)})";
             }
             else
             {

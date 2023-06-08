@@ -533,7 +533,7 @@ namespace MinishMaker.UI
             this.roomPanel.Controls.Add(this.roomTreeView);
             this.roomPanel.Dock = System.Windows.Forms.DockStyle.Left;
             this.roomPanel.Location = new System.Drawing.Point(0, 55);
-            this.roomPanel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.roomPanel.Margin = new System.Windows.Forms.Padding(4);
             this.roomPanel.Name = "roomPanel";
             this.roomPanel.Size = new System.Drawing.Size(200, 735);
             this.roomPanel.TabIndex = 8;
@@ -542,7 +542,7 @@ namespace MinishMaker.UI
             // 
             this.roomTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.roomTreeView.Location = new System.Drawing.Point(0, 0);
-            this.roomTreeView.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.roomTreeView.Margin = new System.Windows.Forms.Padding(4);
             this.roomTreeView.Name = "roomTreeView";
             this.roomTreeView.Size = new System.Drawing.Size(200, 735);
             this.roomTreeView.TabIndex = 0;
@@ -555,7 +555,7 @@ namespace MinishMaker.UI
             this.tilePanel.Controls.Add(this.tileTabControl);
             this.tilePanel.Dock = System.Windows.Forms.DockStyle.Right;
             this.tilePanel.Location = new System.Drawing.Point(1165, 55);
-            this.tilePanel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tilePanel.Margin = new System.Windows.Forms.Padding(4);
             this.tilePanel.Name = "tilePanel";
             this.tilePanel.Size = new System.Drawing.Size(375, 735);
             this.tilePanel.TabIndex = 9;
@@ -566,7 +566,7 @@ namespace MinishMaker.UI
             this.tileTabControl.Controls.Add(this.bottomTileTab);
             this.tileTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tileTabControl.Location = new System.Drawing.Point(0, 0);
-            this.tileTabControl.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.tileTabControl.Margin = new System.Windows.Forms.Padding(4);
             this.tileTabControl.Name = "tileTabControl";
             this.tileTabControl.SelectedIndex = 0;
             this.tileTabControl.Size = new System.Drawing.Size(375, 735);
@@ -578,9 +578,9 @@ namespace MinishMaker.UI
             this.topTileTab.AutoScroll = true;
             this.topTileTab.Controls.Add(this.topTileGridBox);
             this.topTileTab.Location = new System.Drawing.Point(4, 25);
-            this.topTileTab.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.topTileTab.Margin = new System.Windows.Forms.Padding(4);
             this.topTileTab.Name = "topTileTab";
-            this.topTileTab.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.topTileTab.Padding = new System.Windows.Forms.Padding(4);
             this.topTileTab.Size = new System.Drawing.Size(367, 706);
             this.topTileTab.TabIndex = 1;
             this.topTileTab.Text = "Top Tiles";
@@ -595,7 +595,7 @@ namespace MinishMaker.UI
             this.topTileGridBox.HoverColor = System.Drawing.Color.White;
             this.topTileGridBox.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
             this.topTileGridBox.Location = new System.Drawing.Point(0, 0);
-            this.topTileGridBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.topTileGridBox.Margin = new System.Windows.Forms.Padding(4);
             this.topTileGridBox.Name = "topTileGridBox";
             this.topTileGridBox.Selectable = false;
             this.topTileGridBox.SelectedIndex = -1;
@@ -612,9 +612,9 @@ namespace MinishMaker.UI
             this.bottomTileTab.AutoScroll = true;
             this.bottomTileTab.Controls.Add(this.bottomTileGridBox);
             this.bottomTileTab.Location = new System.Drawing.Point(4, 25);
-            this.bottomTileTab.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.bottomTileTab.Margin = new System.Windows.Forms.Padding(4);
             this.bottomTileTab.Name = "bottomTileTab";
-            this.bottomTileTab.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.bottomTileTab.Padding = new System.Windows.Forms.Padding(4);
             this.bottomTileTab.Size = new System.Drawing.Size(367, 706);
             this.bottomTileTab.TabIndex = 0;
             this.bottomTileTab.Text = "Bottom Tiles";
@@ -629,7 +629,7 @@ namespace MinishMaker.UI
             this.bottomTileGridBox.HoverColor = System.Drawing.Color.White;
             this.bottomTileGridBox.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
             this.bottomTileGridBox.Location = new System.Drawing.Point(0, 0);
-            this.bottomTileGridBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.bottomTileGridBox.Margin = new System.Windows.Forms.Padding(4);
             this.bottomTileGridBox.Name = "bottomTileGridBox";
             this.bottomTileGridBox.Selectable = false;
             this.bottomTileGridBox.SelectedIndex = -1;
@@ -650,7 +650,7 @@ namespace MinishMaker.UI
             this.mapPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.mapPanel.Controls.Add(this.mapGridBox);
             this.mapPanel.Location = new System.Drawing.Point(200, 60);
-            this.mapPanel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.mapPanel.Margin = new System.Windows.Forms.Padding(4);
             this.mapPanel.Name = "mapPanel";
             this.mapPanel.Size = new System.Drawing.Size(1137, 727);
             this.mapPanel.TabIndex = 10;
@@ -664,7 +664,7 @@ namespace MinishMaker.UI
             this.mapGridBox.HoverColor = System.Drawing.Color.White;
             this.mapGridBox.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
             this.mapGridBox.Location = new System.Drawing.Point(0, -1);
-            this.mapGridBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.mapGridBox.Margin = new System.Windows.Forms.Padding(4);
             this.mapGridBox.Name = "mapGridBox";
             this.mapGridBox.Selectable = false;
             this.mapGridBox.SelectedIndex = -1;
@@ -699,75 +699,75 @@ namespace MinishMaker.UI
             this.XPosLabel.AutoSize = true;
             this.XPosLabel.Location = new System.Drawing.Point(0, 791);
             this.XPosLabel.Name = "XPosLabel";
-            this.XPosLabel.Size = new System.Drawing.Size(42, 16);
+            this.XPosLabel.Size = new System.Drawing.Size(61, 16);
             this.XPosLabel.TabIndex = 11;
-            this.XPosLabel.Text = "X: 0x--";
+            this.XPosLabel.Text = "X: -- (0x--)";
             // 
             // YPosLabel
             // 
             this.YPosLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.YPosLabel.AutoSize = true;
-            this.YPosLabel.Location = new System.Drawing.Point(61, 791);
+            this.YPosLabel.Location = new System.Drawing.Point(104, 791);
             this.YPosLabel.Name = "YPosLabel";
-            this.YPosLabel.Size = new System.Drawing.Size(43, 16);
+            this.YPosLabel.Size = new System.Drawing.Size(62, 16);
             this.YPosLabel.TabIndex = 12;
-            this.YPosLabel.Text = "Y: 0x--";
+            this.YPosLabel.Text = "Y: -- (0x--)";
             // 
             // AreaIdLabel
             // 
             this.AreaIdLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.AreaIdLabel.AutoSize = true;
-            this.AreaIdLabel.Location = new System.Drawing.Point(123, 791);
+            this.AreaIdLabel.Location = new System.Drawing.Point(220, 791);
             this.AreaIdLabel.Name = "AreaIdLabel";
-            this.AreaIdLabel.Size = new System.Drawing.Size(77, 16);
+            this.AreaIdLabel.Size = new System.Drawing.Size(96, 16);
             this.AreaIdLabel.TabIndex = 13;
-            this.AreaIdLabel.Text = "Area Id: 0x--";
+            this.AreaIdLabel.Text = "Area Id: -- (0x--)";
             // 
             // RoomIdLabel
             // 
             this.RoomIdLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.RoomIdLabel.AutoSize = true;
-            this.RoomIdLabel.Location = new System.Drawing.Point(225, 791);
+            this.RoomIdLabel.Location = new System.Drawing.Point(363, 791);
             this.RoomIdLabel.Name = "RoomIdLabel";
-            this.RoomIdLabel.Size = new System.Drawing.Size(85, 16);
+            this.RoomIdLabel.Size = new System.Drawing.Size(104, 16);
             this.RoomIdLabel.TabIndex = 14;
-            this.RoomIdLabel.Text = "Room Id: 0x--";
+            this.RoomIdLabel.Text = "Room Id: -- (0x--)";
             // 
             // SelectedXPosLabel
             // 
             this.SelectedXPosLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.SelectedXPosLabel.AutoSize = true;
-            this.SelectedXPosLabel.Location = new System.Drawing.Point(329, 791);
+            this.SelectedXPosLabel.Location = new System.Drawing.Point(512, 791);
             this.SelectedXPosLabel.Name = "SelectedXPosLabel";
-            this.SelectedXPosLabel.Size = new System.Drawing.Size(99, 16);
+            this.SelectedXPosLabel.Size = new System.Drawing.Size(118, 16);
             this.SelectedXPosLabel.TabIndex = 15;
-            this.SelectedXPosLabel.Text = "Selected X: 0x--";
+            this.SelectedXPosLabel.Text = "Selected X: -- (0x--)";
             // 
             // SelectedYPosLabel
             // 
             this.SelectedYPosLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.SelectedYPosLabel.AutoSize = true;
-            this.SelectedYPosLabel.Location = new System.Drawing.Point(456, 791);
+            this.SelectedYPosLabel.Location = new System.Drawing.Point(700, 791);
             this.SelectedYPosLabel.Name = "SelectedYPosLabel";
-            this.SelectedYPosLabel.Size = new System.Drawing.Size(100, 16);
+            this.SelectedYPosLabel.Size = new System.Drawing.Size(119, 16);
             this.SelectedYPosLabel.TabIndex = 16;
-            this.SelectedYPosLabel.Text = "Selected Y: 0x--";
+            this.SelectedYPosLabel.Text = "Selected Y: -- (0x--)";
             // 
             // SelectedBehaviourLabel
             // 
             this.SelectedBehaviourLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.SelectedBehaviourLabel.AutoSize = true;
-            this.SelectedBehaviourLabel.Location = new System.Drawing.Point(583, 791);
+            this.SelectedBehaviourLabel.Location = new System.Drawing.Point(901, 791);
             this.SelectedBehaviourLabel.Name = "SelectedBehaviourLabel";
-            this.SelectedBehaviourLabel.Size = new System.Drawing.Size(152, 16);
+            this.SelectedBehaviourLabel.Size = new System.Drawing.Size(171, 16);
             this.SelectedBehaviourLabel.TabIndex = 17;
-            this.SelectedBehaviourLabel.Text = "Selected Behaviour: 0x--";
+            this.SelectedBehaviourLabel.Text = "Selected Behaviour: -- (0x--)";
             // 
             // SelectedSizeLabel
             // 
             this.SelectedSizeLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.SelectedSizeLabel.AutoSize = true;
-            this.SelectedSizeLabel.Location = new System.Drawing.Point(773, 791);
+            this.SelectedSizeLabel.Location = new System.Drawing.Point(1162, 791);
             this.SelectedSizeLabel.Name = "SelectedSizeLabel";
             this.SelectedSizeLabel.Size = new System.Drawing.Size(132, 16);
             this.SelectedSizeLabel.TabIndex = 18;
@@ -795,7 +795,7 @@ namespace MinishMaker.UI
             this.Controls.Add(this.menuStrip);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip;
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.MinimumSize = new System.Drawing.Size(794, 479);
             this.Name = "MainWindow";
             this.Text = "Minish Maker";
