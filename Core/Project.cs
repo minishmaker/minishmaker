@@ -77,7 +77,7 @@ namespace MinishMaker.Core
 
             LoadProject(); //load first so rom is loaded
 
-            BaseRomPath = $"{Directory.GetParent(ProjectPath).FullName}/baserom_{ROM.Instance.version}.gba";
+            BaseRomPath = $"..\\baseroms\\TMC_{ROM.Instance.version}.gba";
 
             // Create project file data
             var sb = new StringBuilder();
@@ -117,7 +117,7 @@ namespace MinishMaker.Core
 
             LoadRoomNames(baseNames, true);
 
-            File.WriteAllText(ProjectPath + "/" + ProjectName + ".mmproj", sb.ToString());
+            File.WriteAllText($"{ProjectPath}\\{ProjectName}.mmproj", sb.ToString());
         }
 
         public void CreateProjectFile()
@@ -152,6 +152,8 @@ namespace MinishMaker.Core
                 throw new FileNotFoundException("Project file not found.");
 
             Instance = this;
+
+            ProjectPath = Path.GetDirectoryName(projectFile);
             var settings = new Dictionary<string, string>();
             var settingLines = File.ReadLines(projectFile).ToList();
             //do projectversion the old way to check the need for the below
@@ -161,8 +163,7 @@ namespace MinishMaker.Core
                 ProjectVersion = int.Parse(versionString.Split('=')[1]);
             }
             settingLines = ProjectFileCheck(settingLines);
-            
-            
+
             var seperator = new char[] { '=' };
             foreach (var line in settingLines)
             {
@@ -174,7 +175,6 @@ namespace MinishMaker.Core
 
             ProjectName = settings["projectName"];
             BaseRomPath = settings["baseROM"];
-            ProjectPath = Path.GetDirectoryName(projectFile);
 
             roomNames = new Dictionary<Tuple<int, int>, string>();
 
@@ -198,7 +198,7 @@ namespace MinishMaker.Core
             foreach (var line in lines)
             {
                 if (line.Length == 0) continue;
-
+                settingLines.RemoveAll(l => String.Equals(l, line, StringComparison.InvariantCultureIgnoreCase));
                 var kvArray = line.Split(seperator, 2);
                 baseNames.Add(kvArray[0], kvArray[1]);
                 i++;
@@ -209,14 +209,20 @@ namespace MinishMaker.Core
             writtenChanges = new List<Change>();
             storedChanges = new List<Change>();
             pendingRomChanges = new List<Change>();
-            //VersionCheck();
+            var sb = new StringBuilder();
+            foreach (var line in settingLines)
+            {
+                if (line.Length == 0) continue;
+                sb.AppendLine(line);
+            }
+            VersionCheck(sb);
             LoadProject();
         }
 
         public void LoadProject()
         {
             storedChanges.Clear();
-            var rom = new ROM(BaseRomPath); //sets instance
+            var rom = new ROM($"{ProjectPath}\\{BaseRomPath}"); //sets instance
             var pos = rom.romData.Length - 1;
 
             while (rom.romData[pos] == 0xFF)
@@ -251,111 +257,9 @@ namespace MinishMaker.Core
             File.WriteAllLines(ProjectPath + "/Main.event", mainSets);
             mainSets.RemoveAt(0);
             mainSets.RemoveAt(0); //2nd time to remove 2 lines
-            //StartSave();
-
-            //mainSets = mainSets.Select(s => s.Substring(11).TrimEnd('\"').Replace('/', '\\')).ToList();
 
             LoadGlobalChanges(); //palettes, text
             LoadChanges(ProjectPath + "\\Areas", -1);
-            #region comment
-            /*
-            if (Directory.Exists(ProjectPath + "\\Areas"))
-            {
-                string[] areaDirectories = Directory.GetDirectories(ProjectPath + "\\Areas");
-
-                foreach (string areaDirectory in areaDirectories)
-                {
-                    int areaIndex = Convert.ToInt32(areaDirectory.Substring(areaDirectory.Length - 2), 16);
-
-                    string[] areaFiles = Directory.GetFiles(areaDirectory, "*.json");
-                    foreach (var file in areaFiles)
-                    {
-                        DataType type;
-                        var fileName = Path.GetFileNameWithoutExtension(file);
-                        var fileNumbers = new String(fileName.Where(char.IsDigit).ToArray());
-                        var fileNumberless = new String(fileName.Where(c => !char.IsDigit(c)).ToArray());
-                        var success = Enum.TryParse(fileNumberless, out type);
-
-                        var identifier = -1;
-                        if (fileNumbers.Length != 0)
-                        {
-                            identifier = int.Parse(fileNumbers);
-                        }
-
-
-                        if (success)
-                        {
-                            var change = CreateChange(type, areaIndex, 0, identifier);
-                            var entry = mainSets.SingleOrDefault(x => file.Contains(x));
-                            var changeNameBase = change.changeType.ToString() + (change.identifier != -1 ? change.identifier + "" : "");
-                            if (entry != null)
-                            {
-                                mainSets.Remove(entry);
-                            }
-                            else
-                            {
-                                mainWriter.WriteLine("#include \"./Areas" + change.GetFolderLocation() + "/" + changeNameBase + ".event\"");
-                            }
-                            loadedChanges.Add(change);
-                        }
-                        else
-                        {
-                            Debug.WriteLine("unknown file found: " + file);
-                        }
-                    }
-
-                    string[] roomDirectories = Directory.GetDirectories(areaDirectory);
-
-                    foreach (string roomDirectory in roomDirectories)
-                    {
-                        int roomIndex = Convert.ToInt32(roomDirectory.Substring(roomDirectory.Length - 2), 16);
-
-                        string[] roomFiles = Directory.GetFiles(roomDirectory, "*.event");
-                        foreach (var file in roomFiles)
-                        {
-                            DataType type;
-                            var fileName = Path.GetFileNameWithoutExtension(file);
-                            var fileNumbers = new String(fileName.Where(char.IsDigit).ToArray());
-                            var fileNumberless = new String(fileName.Where(c => !char.IsDigit(c)).ToArray());
-                            var success = Enum.TryParse(Path.GetFileNameWithoutExtension(fileNumberless), out type);
-
-                            var identifier = -1;
-                            if (fileNumbers.Length != 0)
-                            {
-                                identifier = int.Parse(fileNumbers);
-                            }
-
-                            if (success)
-                            {
-                                var change = CreateChange(type, areaIndex, roomIndex, identifier);
-                                var entry = mainSets.SingleOrDefault(x => file.Contains(x));
-                                var changeNameBase = change.changeType.ToString() + (change.identifier != -1 ? change.identifier + "" : "");
-                                if (entry != null)
-                                {
-                                    mainSets.Remove(entry);
-                                }
-                                else
-                                {
-                                    mainWriter.WriteLine("#include \"./Areas" + change.GetFolderLocation() + "/" + changeNameBase + ".event\"");
-                                }
-                                loadedChanges.Add(change);
-                            }
-                            else
-                            {
-                                Debug.WriteLine("unknown file found: " + file);
-                            }
-                        }
-                    }
-                }
-            }
-            EndSave();
-
-            if (mainSets.Count != 0)
-            {
-                CleanIncludes(mainSets);
-            }
-            */
-            #endregion
             MainWindow.instance.RunTests();
         }
 
@@ -414,7 +318,11 @@ namespace MinishMaker.Core
 
             foreach (string directory in directories)
             {
-                //TODO: looks fishy
+                if (directory.EndsWith("backup"))
+                {
+                    continue;
+                }
+
                 int currentIndex = Convert.ToInt32(directory.Substring(directory.Length - 2), 16);
                 
                 if (originalAreaIndex == -1)
@@ -524,76 +432,7 @@ namespace MinishMaker.Core
             }
         }
 
-        private void LoadRoomNames(string[] nameSets, bool ignoreDuplicate)
-        {
-            foreach (string nameSet in nameSets)
-            {
-                var parts = nameSet.Split('=');
-                var areaId = -1;
-                var roomId = -1;
-                var roomName = "";
-                var valParts = parts[1].Split(',');
-
-                if (parts.Length != 2)
-                {
-                    throw new Exception("Invalid line: " + nameSet);
-                }
-
-                if (valParts.Length == 3)
-                {
-                    var success = false;
-
-                    success = Int32.TryParse(valParts[0].TrimStart(' ').TrimEnd(' '), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out areaId);
-                    if (!success)
-                    {
-                        throw new Exception("Invalid area value on line: " + nameSet);
-                    }
-                    var roomval = valParts[1].TrimStart(' ').TrimEnd(' ');
-                    var neg = false;
-
-                    if (roomval.Contains('-')) //because none of the parsers can do negatives on hex value conversion
-                    {
-                        neg = true;
-                        roomval = roomval.TrimStart('-');
-                    }
-
-                    success = Int32.TryParse(roomval, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out roomId);
-                    if (!success)
-                    {
-                        throw new Exception("Invalid room value on line: " + nameSet);
-                    }
-
-                    if (neg)
-                    {
-                        roomId *= -1;
-                    }
-                    roomName = valParts[2].TrimStart(' ').TrimEnd(' ');
-                }
-                else if (valParts.Length > 3)
-                {
-                    throw new Exception("Too many values on line: " + nameSet);
-                }
-                else
-                {
-                    throw new Exception("Too few values on line: " + nameSet);
-                }
-
-                var keyTuple = new Tuple<int, int>(areaId, roomId);
-
-                if (roomNames.ContainsKey(keyTuple))
-                {
-                    if (ignoreDuplicate)
-                    {
-                        continue;
-                    }
-                    throw new Exception("A name for this room already exists: 1:" + roomNames[keyTuple] + " | 2:" + roomName);
-                }
-                else
-                {
-                    roomNames.Add(keyTuple, roomName);
-                }
-            }
-        }
+        #endregion
 
         private Change CreateChange(DataType type, int area, int room, int identifier)
         {
@@ -625,29 +464,6 @@ namespace MinishMaker.Core
             }
         }
 
-        //TODO: might rebuild the file on build
-        private void CleanIncludes(List<string> remaining)
-        {
-            var text = File.ReadAllText(ProjectPath + "/Main.event");
-
-            foreach (var line in remaining)
-            {
-                var newline = line.Replace("\\", "/");
-                var pos = text.IndexOf(newline);
-                if (pos == -1)
-                {
-                    Debug.WriteLine("Didnt find include line: " + line);
-                }
-                else
-                {
-                    var length = newline.Length + 14; //#include(8) + space(1) + ""(2) + \r\n(4)
-                    text = text.Remove(pos - 13, length);
-                }
-
-                File.WriteAllText(ProjectPath + "/Main.event", text);
-            }
-        }
-        #endregion
 
         public void AddPendingChange(Change change)
         {
@@ -760,22 +576,37 @@ namespace MinishMaker.Core
                 for (int i = 0; i < lines.Count; i++)
                 {
                     var line = lines[i];
-                    if (!line.StartsWith("roomname="))
+                    if (line.SequenceEqual("baseROM=baserom.gba"))
                     {
+                        var oldFile = $"{ProjectPath}\\baserom.gba";
+                        var ROM = new ROM(oldFile);
+                        var newFile = $"..\\baseroms\\TMC_{ROM.Instance.version}.gba";
+                        lines[i] = $"baseROM={newFile}";
+                        if (!File.Exists($"{ProjectPath}\\{newFile}"))
+                        {
+                            Directory.CreateDirectory($"{ProjectPath}\\..\\baseroms");
+                            File.Move(oldFile, $"{ProjectPath}\\{newFile}");
+                        } else {
+                            File.Delete(oldFile);
+                        }
                         continue;
                     }
-                    //roomname=1,1,name
-                    var parts = line.Substring(9).Split(',');
-                    if (parts[1] == "FFFFFFFF")
+
+                    if (line.StartsWith("roomName="))
                     {
-                        parts[1] = "-1";
+                        //roomname=1,1,name
+                        var parts = line.Substring(9).Split(',');
+                        if (parts[1] == "FFFFFFFF")
+                        {
+                            parts[1] = "-1";
+                        }
+                        lines[i] = $"roomname[{parts[0]},{parts[1]}]={parts[2]}";
                     }
-                    lines[i] = $"roomname[{parts[0]},{parts[1]}]={parts[2]}";
                 }
             }
             return lines;
         }
-        private void VersionCheck()
+        private void VersionCheck(StringBuilder settingsLines)
         {
             if (ProjectVersion == LatestVersion)
             {
@@ -788,6 +619,8 @@ namespace MinishMaker.Core
             }
             
             ProjectVersion = LatestVersion;
+            settingsLines.AppendLine($"version={ProjectVersion}");
+            File.WriteAllText($"{ProjectPath}\\{ProjectName}.mmproj", settingsLines.ToString());
         }
 
         private void V1Update()
@@ -803,7 +636,6 @@ namespace MinishMaker.Core
             }
 
             string[] areaDirectories = Directory.GetDirectories(ProjectPath + "\\Areas");
-            //TODO: JSONIFY
             foreach (string areaDirectory in areaDirectories)
             {
                 int areaIndex = Convert.ToInt32(areaDirectory.Substring(areaDirectory.Length - 2), 16);
@@ -812,7 +644,7 @@ namespace MinishMaker.Core
                 {
                     OldEnum type;
                     var fileName = Path.GetFileNameWithoutExtension(file);
-                    var fileNumbers = new String(fileName.Where(char.IsDigit).ToArray());
+                    var fileNumbers = new string(fileName.Where(char.IsDigit).ToArray());
                     var success = Enum.TryParse(fileName, out type); //get the old type
 
                     var identifier = -1;
@@ -823,11 +655,12 @@ namespace MinishMaker.Core
 
                     if (!success)
                     {
+                        Debug.WriteLine($"Failed area parse for {fileName} value {fileNumbers}");
                         continue;
                     }
 
                     string json = "";
-                    var dataPath = fileName + "Dat.bin";
+                    var dataPath = file.Substring(0, file.Length -6) + "Dat.bin";
                     byte[] data = File.ReadAllBytes(dataPath);
 
                     DataType newType;
@@ -840,48 +673,42 @@ namespace MinishMaker.Core
                             {
                                 identifier = 1; //common is 1 but has no number in its filename
                             }
-                            if (identifier == 1)
+                            else if (identifier == 1)
                             {
                                 identifier = 0; //bg1 is 0 but has a 1 in its filename
                             }
                             data = DataHelper.GetFromSavedData(dataPath, true, 0x4000);
+                            json = DataHelper.ByteArrayToFormattedJSON2(data, 32, 32);
                             newType = DataType.tileset;
                             break;
-                            //room only
-                        /*case (OldEnum.bg1Data):
-                        case (OldEnum.bg2Data):
-                            newType = DataType.bgData;
-                            break;
+
                         case (OldEnum.bg1MetaTileSet):
                         case (OldEnum.bg2MetaTileSet):
-                            newType = DataType.bgMetaTileSet;
+                            data = DataHelper.GetFromSavedData(dataPath, true, 0x4000);
+                            json = DataHelper.ByteArrayToFormattedJSON(data, 16, 8);
+                            newType = DataType.metaTileset;
                             break;
                         case (OldEnum.bg1MetaTileType):
                         case (OldEnum.bg2MetaTileType):
-                            newType = DataType.bgMetaTileType;
+                            data = DataHelper.GetFromSavedData(dataPath, true, 0x1000);
+                            json = DataHelper.ByteArrayToFormattedJSON(data, 16, 2);
+                            newType = DataType.metaTileType;
                             break;
-                        case (OldEnum.list1Data):
-                        case (OldEnum.list2Data):
-                        case (OldEnum.list3Data):
-                        case (OldEnum.chestData):
-                            identifier -= 1;
-                            newType = DataType.listData;
-                            if (identifier <= -1)
-                            {
-                                identifier = 3;
-                            }
-
-                            json = Newtonsoft.Json.JsonConvert.SerializeObject(new RoomMetaData.ListStruct(list, GetLinkFor(identifier)));
-                            break;*/
+                        case (OldEnum.areaInfo):
+                            Area area = new Area(-1, "");
+                            area.SetInfo(data);
+                            json = area.GetInfoJSON();
+                            newType = DataType.areaInfo;
+                            break;
                         default:
-                            throw new NotImplementedException("you forgot to check for this dum dum");
+                            throw new NotImplementedException($"area: you forgot to check for {fileName} types");
                     }
 
-                    string idString = identifier != -1 ? "" + identifier : "";
-                    File.Move(file, "build\\" + areaDirectory + "\\" + newType + idString + ".event");
-                    //TODO: LOAD DATA
-                    Change tempChange = CreateChange(newType, areaIndex, 0, identifier);
-                    File.WriteAllText(areaDirectory + "\\" + newType + idString + ".json", tempChange.GetJSONString());
+                    string idString = identifier != -1 ? identifier.Hex(2) : "";
+                    Directory.CreateDirectory($"{ProjectPath}\\backup\\Area {areaIndex.Hex(2)}");
+                    File.Move(file, $"{ProjectPath}\\backup\\Area {areaIndex.Hex(2)}\\{type}.event");
+                    File.Move($"{file.Substring(0, file.Length - 6)}dat.bin", $"{ProjectPath}\\backup\\Area {areaIndex.Hex(2)}\\{type}dat.bin");
+                    File.WriteAllText($"{areaDirectory}\\{newType}{idString}.json", json);
                 }
 
                 string[] roomDirectories = Directory.GetDirectories(areaDirectory);
@@ -906,29 +733,17 @@ namespace MinishMaker.Core
 
                         if (!success)
                         {
+                            Debug.WriteLine($"Failed room parse for {fileName} value {fileNumbers}");
                             continue;
                         }
 
                         string json = "";
-                        var dataPath = fileName + "Dat.bin";
+                        var dataPath = file.Substring(0, file.Length - 6) + "Dat.bin";
                         byte[] data = File.ReadAllBytes(dataPath);
 
                         DataType newType;
                         switch (type)
                         {
-                            case (OldEnum.bg1TileSet):
-                            case (OldEnum.bg2TileSet):
-                            case (OldEnum.commonTileSet):
-                                if (identifier == -1)
-                                {
-                                    identifier = 1; //common is 1 but has no number in its filename
-                                }
-                                if (identifier == 1)
-                                {
-                                    identifier = 0; //bg1 is 0 but has a 1 in its filename
-                                }
-                                newType = DataType.tileset;
-                                break;
                             case (OldEnum.bg1Data):
                             case (OldEnum.bg2Data):
                                 newType = DataType.bgData;
@@ -947,37 +762,27 @@ namespace MinishMaker.Core
                                 
                                 json = DataHelper.ByteArrayToFormattedJSON(data, tileTotal/possibleHeight, 2);
                                 break;
-                            case (OldEnum.bg1MetaTileSet):
-                            case (OldEnum.bg2MetaTileSet):
-                                newType = DataType.metaTileset;
-                                data = DataHelper.GetFromSavedData(dataPath, true, 0x8000);
-                                json = DataHelper.ByteArrayToFormattedJSON(data, 16, 8);
-                                break;
-                            case (OldEnum.bg1MetaTileType):
-                            case (OldEnum.bg2MetaTileType):
-                                newType = DataType.metaTileType;
-                                data = DataHelper.GetFromSavedData(dataPath, true, 0x8000);
-                                json = DataHelper.ByteArrayToFormattedJSON(data, 16, 2);
-                                break;
                             case (OldEnum.list1Data):
                             case (OldEnum.list2Data):
                             case (OldEnum.list3Data):
                             case (OldEnum.chestData):
+                                identifier -= 1;
                                 newType = DataType.listData;
-                                if (identifier == -1)
+                                if (identifier <= -1)
                                 {
-                                    identifier = 4;
+                                    identifier = 3;
                                 }
 
                                 List<byte> dataList = data.ToList();
                                 var dataPos = 0;
                                 var list = new List<List<byte>>();
                                 int dataSize;
-                                while (dataPos < dataList.Count)
+                                while (dataPos < dataList.Count - 1)
                                 {
                                     ObjectDefinitionParser.FilterData(out dataSize, dataList, identifier);
                                     var dat = new List<byte>(data.Skip(dataPos).Take(dataSize).ToArray());
                                     list.Add(dat);
+                                    dataPos += dataSize;
                                 }
                                 json = Newtonsoft.Json.JsonConvert.SerializeObject(new RoomMetaData.ListStruct(list, 0xFF));
                                 break;
@@ -1008,13 +813,32 @@ namespace MinishMaker.Core
                                 }
                                 json = Newtonsoft.Json.JsonConvert.SerializeObject(new RoomMetaData.RoomMetaDataStruct(sizeX, sizeY, mapX, mapY, tilesetOffset));
                                 break;
+                            case (OldEnum.warpData):
+                                newType = DataType.warpData;
+                                var warpInformation = new List<WarpData>();
+                                int startIndex = 0;
+
+                                while (startIndex < data.Length && data[startIndex] != 0xFF)
+                                {
+                                    warpInformation.Add(new WarpData(data, startIndex));
+                                    startIndex += 20;
+                                }
+                                
+                                json = Newtonsoft.Json.JsonConvert.SerializeObject(warpInformation);
+                                break;
+                            case (OldEnum.palette):
+                                newType = DataType.palette;
+                                break;
                             default:
-                                throw new NotImplementedException("you forgot to check for this dum dum");
+                                throw new NotImplementedException($"room: you forgot to check for {fileName} types");
                         }
-                        string idString = identifier != -1 ? "" + identifier : "";
-                        File.Move(file, "build\\" + roomDirectory + "\\" + newType + idString + ".event");
-                        //TODO: LOAD DATA
-                        File.WriteAllText(areaDirectory + "\\" + newType + idString + ".json", json);
+
+                        string idString = identifier != -1 ? identifier.Hex(2) : "";
+
+                        Directory.CreateDirectory($"{ProjectPath}\\backup\\Area {areaIndex.Hex(2)}\\Room {roomIndex.Hex(2)}");
+                        File.Move(file, $"{ProjectPath}\\backup\\Area {areaIndex.Hex(2)}\\Room {roomIndex.Hex(2)}\\{type}.event");
+                        File.Move($"{file.Substring(0,file.Length-6)}dat.bin", $"{ProjectPath}\\backup\\Area {areaIndex.Hex(2)}\\Room {roomIndex.Hex(2)}\\{type}dat.bin");
+                        File.WriteAllText($"{roomDirectory}\\{newType}{idString}.json", json);
                     }
                 }
             }
@@ -1022,21 +846,24 @@ namespace MinishMaker.Core
         
         private enum OldEnum
         {
-            bg1Data,
-            bg2Data,
-            bg1TileSet,
-            bg2TileSet,
-            commonTileSet,
-            bg1MetaTileSet,
-            bg2MetaTileSet,
-            chestData,
-            list1Data,
-            list2Data,
-            list3Data,
-            bg1MetaTileType,
-            bg2MetaTileType,
-            roomMetaData,
+            bg1Data, //
+            bg2Data, //
+            bg1TileSet, //
+            bg2TileSet, //
+            commonTileSet, //
+            bg1MetaTileSet, //
+            bg2MetaTileSet, //
+            chestData, //
+            list1Data, //
+            list2Data, //
+            list3Data, //
+            bg1MetaTileType, //
+            bg2MetaTileType, //
+            roomMetaData, //
 
+            areaInfo, //
+            warpData,
+            palette,
         }
     }
 }

@@ -49,6 +49,10 @@ namespace MinishMaker.Core
         {
             this.Id = areaId;
             this.NiceName = niceName;
+            if (areaId == -1) //for conversion purposes
+            { 
+                return;
+            }
             Tilesets = new List<Tileset>();
             var r = ROM.Instance.reader;
             var header = ROM.Instance.headers;

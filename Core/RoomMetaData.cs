@@ -80,7 +80,8 @@ namespace MinishMaker.Core
             if (File.Exists(path + "/" + DataType.roomMetaData + ".json"))
             {
                 string metaDataJson = File.ReadAllText(path + "/" + DataType.roomMetaData + ".json");
-                RoomMetaDataStruct rmds = (RoomMetaDataStruct)Newtonsoft.Json.JsonConvert.DeserializeObject(metaDataJson);
+
+                RoomMetaDataStruct rmds = Newtonsoft.Json.JsonConvert.DeserializeObject<RoomMetaDataStruct>(metaDataJson);
                 this.MapPosX = rmds.mapX;
                 this.MapPosY = rmds.mapY;
                 this.PixelWidth = rmds.sizeX;
@@ -641,6 +642,15 @@ namespace MinishMaker.Core
             public int mapX;
             public int mapY;
             public int tilesetId;
+
+            public RoomMetaDataStruct()
+            {
+                this.sizeX = 0;
+                this.sizeY = 0;
+                this.mapX = 0;
+                this.mapY = 0;
+                this.tilesetId = 0;
+            }
 
             public RoomMetaDataStruct(int sizeX, int sizeY, int mapX, int mapY, int tilesetId)
             {
