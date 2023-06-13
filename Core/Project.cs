@@ -59,7 +59,10 @@ namespace MinishMaker.Core
 
             ProjectName = name;
             ProjectPath = projectFolder;
-            BaseRomPath = baseRom;
+            Uri projectUri = new Uri(projectFolder+"\\");
+            Uri baseromUri = new Uri(baseRom);
+            BaseRomPath = projectUri.MakeRelativeUri(baseromUri).ToString();
+
             ProjectVersion = LatestVersion;
             customNames = new Dictionary<Tuple<int, int>, string>();
             roomNames = new Dictionary<Tuple<int, int>, string>();
@@ -86,10 +89,10 @@ namespace MinishMaker.Core
             sb.AppendLine($"baseROM={BaseRomPath}");
 
             // Copy ROM
-            if (!File.Exists(BaseRomPath))
+            if (!File.Exists(ProjectPath + "\\" + BaseRomPath))
             {
                 byte[] copy = File.ReadAllBytes(baseRom);
-                File.WriteAllBytes(BaseRomPath, copy);
+                File.WriteAllBytes(ProjectPath + "\\" + BaseRomPath, copy);
             }
 
             Assembly assembly = Assembly.GetExecutingAssembly();

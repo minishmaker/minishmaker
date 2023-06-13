@@ -77,6 +77,7 @@ namespace MinishMaker.UI
             this.textToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.paletteEditorToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.highlightSameToolStripButton = new System.Windows.Forms.ToolStripButton();
+            this.enableTileSwapToolStripButton = new System.Windows.Forms.ToolStripButton();
             this.roomPanel = new System.Windows.Forms.Panel();
             this.roomTreeView = new System.Windows.Forms.TreeView();
             this.tilePanel = new System.Windows.Forms.Panel();
@@ -124,7 +125,7 @@ namespace MinishMaker.UI
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
             this.menuStrip.Padding = new System.Windows.Forms.Padding(5, 2, 0, 2);
-            this.menuStrip.Size = new System.Drawing.Size(1540, 28);
+            this.menuStrip.Size = new System.Drawing.Size(1540, 30);
             this.menuStrip.TabIndex = 0;
             this.menuStrip.Text = "mainMenuStrip";
             // 
@@ -138,7 +139,7 @@ namespace MinishMaker.UI
             this.toolStripSeparator3,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(46, 24);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(46, 26);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // newProjectToolStripMenuItem
@@ -198,7 +199,7 @@ namespace MinishMaker.UI
             this.undoToolStripMenuItem,
             this.redoToolStripMenuItem});
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
-            this.editToolStripMenuItem.Size = new System.Drawing.Size(49, 24);
+            this.editToolStripMenuItem.Size = new System.Drawing.Size(49, 26);
             this.editToolStripMenuItem.Text = "Edit";
             // 
             // resizeRoomToolStripMenuItem
@@ -233,7 +234,7 @@ namespace MinishMaker.UI
             this.zoomInToolStripMenuItem,
             this.zoomOutToolStripMenuItem});
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
-            this.viewToolStripMenuItem.Size = new System.Drawing.Size(55, 24);
+            this.viewToolStripMenuItem.Size = new System.Drawing.Size(55, 26);
             this.viewToolStripMenuItem.Text = "View";
             // 
             // topLayerToolStripMenuItem
@@ -288,7 +289,7 @@ namespace MinishMaker.UI
             this.textEditorToolStripMenuItem,
             this.paletteEditorToolStripMenuItem});
             this.windowToolStripMenuItem.Name = "windowToolStripMenuItem";
-            this.windowToolStripMenuItem.Size = new System.Drawing.Size(78, 24);
+            this.windowToolStripMenuItem.Size = new System.Drawing.Size(78, 26);
             this.windowToolStripMenuItem.Text = "Window";
             // 
             // metatileEditorToolStripMenuItem
@@ -338,7 +339,7 @@ namespace MinishMaker.UI
             this.toolStripSeparator2,
             this.aboutToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(55, 24);
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(55, 26);
             this.helpToolStripMenuItem.Text = "Help";
             // 
             // documentationToolStripMenuItem
@@ -404,11 +405,12 @@ namespace MinishMaker.UI
             this.warpToolStripButton,
             this.textToolStripButton,
             this.paletteEditorToolStripButton,
-            this.highlightSameToolStripButton});
-            this.toolStrip.Location = new System.Drawing.Point(0, 28);
+            this.highlightSameToolStripButton,
+            this.enableTileSwapToolStripButton});
+            this.toolStrip.Location = new System.Drawing.Point(0, 30);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.toolStrip.Size = new System.Drawing.Size(1540, 27);
+            this.toolStrip.Size = new System.Drawing.Size(1540, 31);
             this.toolStrip.TabIndex = 1;
             this.toolStrip.Text = "toolStrip";
             // 
@@ -418,7 +420,7 @@ namespace MinishMaker.UI
             this.newToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("newToolStripButton.Image")));
             this.newToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.newToolStripButton.Name = "newToolStripButton";
-            this.newToolStripButton.Size = new System.Drawing.Size(29, 24);
+            this.newToolStripButton.Size = new System.Drawing.Size(29, 28);
             this.newToolStripButton.Text = "newToolStripButton";
             this.newToolStripButton.ToolTipText = "Create a project.";
             this.newToolStripButton.Click += new System.EventHandler(this.NewToolStripButton_Click);
@@ -429,7 +431,7 @@ namespace MinishMaker.UI
             this.openToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("openToolStripButton.Image")));
             this.openToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.openToolStripButton.Name = "openToolStripButton";
-            this.openToolStripButton.Size = new System.Drawing.Size(29, 24);
+            this.openToolStripButton.Size = new System.Drawing.Size(29, 28);
             this.openToolStripButton.Text = "toolStripButton1";
             this.openToolStripButton.ToolTipText = "Open a project.";
             this.openToolStripButton.Click += new System.EventHandler(this.OpenToolStripButton_Click);
@@ -440,7 +442,7 @@ namespace MinishMaker.UI
             this.saveToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("saveToolStripButton.Image")));
             this.saveToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.saveToolStripButton.Name = "saveToolStripButton";
-            this.saveToolStripButton.Size = new System.Drawing.Size(29, 24);
+            this.saveToolStripButton.Size = new System.Drawing.Size(29, 28);
             this.saveToolStripButton.Text = "toolStripButton1";
             this.saveToolStripButton.ToolTipText = "Save all changes.";
             this.saveToolStripButton.Click += new System.EventHandler(this.SaveToolStripButton_Click);
@@ -451,7 +453,7 @@ namespace MinishMaker.UI
             this.buildToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("buildToolStripButton.Image")));
             this.buildToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.buildToolStripButton.Name = "buildToolStripButton";
-            this.buildToolStripButton.Size = new System.Drawing.Size(29, 24);
+            this.buildToolStripButton.Size = new System.Drawing.Size(29, 28);
             this.buildToolStripButton.Text = "buildToolStripButton";
             this.buildToolStripButton.ToolTipText = "Build project.";
             this.buildToolStripButton.Click += new System.EventHandler(this.BuildToolStripButton_Click);
@@ -459,7 +461,7 @@ namespace MinishMaker.UI
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 27);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 31);
             // 
             // metatileToolStripButton
             // 
@@ -467,7 +469,7 @@ namespace MinishMaker.UI
             this.metatileToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("metatileToolStripButton.Image")));
             this.metatileToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.metatileToolStripButton.Name = "metatileToolStripButton";
-            this.metatileToolStripButton.Size = new System.Drawing.Size(29, 24);
+            this.metatileToolStripButton.Size = new System.Drawing.Size(29, 28);
             this.metatileToolStripButton.Text = "Metatile Editor";
             // 
             // areaToolStripButton
@@ -476,7 +478,7 @@ namespace MinishMaker.UI
             this.areaToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("areaToolStripButton.Image")));
             this.areaToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.areaToolStripButton.Name = "areaToolStripButton";
-            this.areaToolStripButton.Size = new System.Drawing.Size(29, 24);
+            this.areaToolStripButton.Size = new System.Drawing.Size(29, 28);
             this.areaToolStripButton.Text = "Area Editor";
             // 
             // objectPlacementToolStripButton
@@ -485,7 +487,7 @@ namespace MinishMaker.UI
             this.objectPlacementToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("objectPlacementToolStripButton.Image")));
             this.objectPlacementToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.objectPlacementToolStripButton.Name = "objectPlacementToolStripButton";
-            this.objectPlacementToolStripButton.Size = new System.Drawing.Size(29, 24);
+            this.objectPlacementToolStripButton.Size = new System.Drawing.Size(29, 28);
             this.objectPlacementToolStripButton.Text = "Object Placement Editor";
             this.objectPlacementToolStripButton.ToolTipText = "Object Placement Editor";
             // 
@@ -495,7 +497,7 @@ namespace MinishMaker.UI
             this.warpToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("warpToolStripButton.Image")));
             this.warpToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.warpToolStripButton.Name = "warpToolStripButton";
-            this.warpToolStripButton.Size = new System.Drawing.Size(29, 24);
+            this.warpToolStripButton.Size = new System.Drawing.Size(29, 28);
             this.warpToolStripButton.Text = "Warp Editor";
             this.warpToolStripButton.ToolTipText = "Warp Editor";
             // 
@@ -505,7 +507,7 @@ namespace MinishMaker.UI
             this.textToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("textToolStripButton.Image")));
             this.textToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.textToolStripButton.Name = "textToolStripButton";
-            this.textToolStripButton.Size = new System.Drawing.Size(29, 24);
+            this.textToolStripButton.Size = new System.Drawing.Size(29, 28);
             this.textToolStripButton.Text = "Text Editor";
             // 
             // paletteEditorToolStripButton
@@ -514,7 +516,7 @@ namespace MinishMaker.UI
             this.paletteEditorToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("paletteEditorToolStripButton.Image")));
             this.paletteEditorToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.paletteEditorToolStripButton.Name = "paletteEditorToolStripButton";
-            this.paletteEditorToolStripButton.Size = new System.Drawing.Size(29, 24);
+            this.paletteEditorToolStripButton.Size = new System.Drawing.Size(29, 28);
             this.paletteEditorToolStripButton.Text = "Palette Editor";
             this.paletteEditorToolStripButton.ToolTipText = "Palette Editor";
             // 
@@ -524,18 +526,31 @@ namespace MinishMaker.UI
             this.highlightSameToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("highlightSameToolStripButton.Image")));
             this.highlightSameToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.highlightSameToolStripButton.Name = "highlightSameToolStripButton";
-            this.highlightSameToolStripButton.Size = new System.Drawing.Size(29, 24);
+            this.highlightSameToolStripButton.Size = new System.Drawing.Size(29, 28);
             this.highlightSameToolStripButton.Text = "Highlight all tiles of same type";
             this.highlightSameToolStripButton.Click += new System.EventHandler(this.highlightSameToolStripButton_Click);
+            // 
+            // enableTileSwapToolStripButton
+            // 
+            this.enableTileSwapToolStripButton.Checked = true;
+            this.enableTileSwapToolStripButton.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.enableTileSwapToolStripButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.enableTileSwapToolStripButton.Image = ((System.Drawing.Image)(resources.GetObject("enableTileSwapToolStripButton.Image")));
+            this.enableTileSwapToolStripButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.enableTileSwapToolStripButton.Name = "enableTileSwapToolStripButton";
+            this.enableTileSwapToolStripButton.Size = new System.Drawing.Size(29, 28);
+            this.enableTileSwapToolStripButton.Text = "Enable tileswapping for rooms that use multiple tilesets";
+            this.enableTileSwapToolStripButton.ToolTipText = "Enable tileswapping for rooms that use multiple tilesets";
+            this.enableTileSwapToolStripButton.Click += new System.EventHandler(this.enableTileSwapToolStripButton_Click);
             // 
             // roomPanel
             // 
             this.roomPanel.Controls.Add(this.roomTreeView);
             this.roomPanel.Dock = System.Windows.Forms.DockStyle.Left;
-            this.roomPanel.Location = new System.Drawing.Point(0, 55);
+            this.roomPanel.Location = new System.Drawing.Point(0, 61);
             this.roomPanel.Margin = new System.Windows.Forms.Padding(4);
             this.roomPanel.Name = "roomPanel";
-            this.roomPanel.Size = new System.Drawing.Size(200, 735);
+            this.roomPanel.Size = new System.Drawing.Size(200, 729);
             this.roomPanel.TabIndex = 8;
             // 
             // roomTreeView
@@ -544,7 +559,7 @@ namespace MinishMaker.UI
             this.roomTreeView.Location = new System.Drawing.Point(0, 0);
             this.roomTreeView.Margin = new System.Windows.Forms.Padding(4);
             this.roomTreeView.Name = "roomTreeView";
-            this.roomTreeView.Size = new System.Drawing.Size(200, 735);
+            this.roomTreeView.Size = new System.Drawing.Size(200, 729);
             this.roomTreeView.TabIndex = 0;
             this.roomTreeView.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.roomTreeView_NodeMouseDoubleClick);
             this.roomTreeView.MouseUp += new System.Windows.Forms.MouseEventHandler(this.roomTreeView_NodeMouseClick);
@@ -554,10 +569,10 @@ namespace MinishMaker.UI
             this.tilePanel.AutoScroll = true;
             this.tilePanel.Controls.Add(this.tileTabControl);
             this.tilePanel.Dock = System.Windows.Forms.DockStyle.Right;
-            this.tilePanel.Location = new System.Drawing.Point(1165, 55);
+            this.tilePanel.Location = new System.Drawing.Point(1165, 61);
             this.tilePanel.Margin = new System.Windows.Forms.Padding(4);
             this.tilePanel.Name = "tilePanel";
-            this.tilePanel.Size = new System.Drawing.Size(375, 735);
+            this.tilePanel.Size = new System.Drawing.Size(375, 729);
             this.tilePanel.TabIndex = 9;
             // 
             // tileTabControl
@@ -569,7 +584,7 @@ namespace MinishMaker.UI
             this.tileTabControl.Margin = new System.Windows.Forms.Padding(4);
             this.tileTabControl.Name = "tileTabControl";
             this.tileTabControl.SelectedIndex = 0;
-            this.tileTabControl.Size = new System.Drawing.Size(375, 735);
+            this.tileTabControl.Size = new System.Drawing.Size(375, 729);
             this.tileTabControl.TabIndex = 11;
             this.tileTabControl.SelectedIndexChanged += new System.EventHandler(this.tileTabControl_SelectedIndexChanged);
             // 
@@ -581,7 +596,7 @@ namespace MinishMaker.UI
             this.topTileTab.Margin = new System.Windows.Forms.Padding(4);
             this.topTileTab.Name = "topTileTab";
             this.topTileTab.Padding = new System.Windows.Forms.Padding(4);
-            this.topTileTab.Size = new System.Drawing.Size(367, 706);
+            this.topTileTab.Size = new System.Drawing.Size(367, 700);
             this.topTileTab.TabIndex = 1;
             this.topTileTab.Text = "Top Tiles";
             this.topTileTab.UseVisualStyleBackColor = true;
@@ -615,7 +630,7 @@ namespace MinishMaker.UI
             this.bottomTileTab.Margin = new System.Windows.Forms.Padding(4);
             this.bottomTileTab.Name = "bottomTileTab";
             this.bottomTileTab.Padding = new System.Windows.Forms.Padding(4);
-            this.bottomTileTab.Size = new System.Drawing.Size(367, 706);
+            this.bottomTileTab.Size = new System.Drawing.Size(367, 700);
             this.bottomTileTab.TabIndex = 0;
             this.bottomTileTab.Text = "Bottom Tiles";
             this.bottomTileTab.UseVisualStyleBackColor = true;
@@ -890,6 +905,7 @@ namespace MinishMaker.UI
         private System.Windows.Forms.ToolStripMenuItem zoomOutToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton paletteEditorToolStripButton;
         private System.Windows.Forms.ToolStripMenuItem paletteEditorToolStripMenuItem;
+        private System.Windows.Forms.ToolStripButton enableTileSwapToolStripButton;
     }
 }
 

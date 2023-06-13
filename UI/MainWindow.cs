@@ -416,6 +416,7 @@ namespace MinishMaker.UI
         {
             if (currentRoom == null)
                 return;
+
             Bitmap overlayedImage;
             switch (viewLayer)
             {
@@ -606,9 +607,8 @@ namespace MinishMaker.UI
         private void bottomTileGridBox_MouseDown(object sender, MouseEventArgs e)
         {
             if (currentRoom == null)
-            {
                 return;
-            }
+
             var index = bottomTileGridBox.HoverIndex;
             bottomTileGridBox.SelectedIndex = index;
             selectedLayer = 2;
@@ -622,9 +622,7 @@ namespace MinishMaker.UI
         private void topTileGridBox_MouseDown(object sender, MouseEventArgs e)
         {
             if (currentRoom == null)
-            {
                 return;
-            }
 
             var index = topTileGridBox.HoverIndex;
             topTileGridBox.SelectedIndex = index;
@@ -1009,9 +1007,8 @@ namespace MinishMaker.UI
             currentScale += 1;
             mapGridBox.SetScale(currentScale);
             if (currentRoom == null)
-            {
                 return;
-            }
+
             UpdateViewLayer();
             //mapPanel.HorizontalScroll.Value = mapPanel.HorizontalScroll.Value / (currentScale - 1) * currentScale;
             //mapPanel.VerticalScroll.Value = mapPanel.VerticalScroll.Value / (currentScale - 1) * currentScale;
@@ -1026,9 +1023,8 @@ namespace MinishMaker.UI
             currentScale -= 1;
             mapGridBox.SetScale(currentScale);
             if (currentRoom == null)
-            {
                 return;
-            }
+
             UpdateViewLayer();
             //mapPanel.HorizontalScroll.Value = mapPanel.HorizontalScroll.Value / (currentScale + 1) * currentScale;
             //mapPanel.VerticalScroll.Value = mapPanel.VerticalScroll.Value / (currentScale + 1) * currentScale;
@@ -1038,6 +1034,9 @@ namespace MinishMaker.UI
 
         public void RedrawRoom()
         {
+            if (currentRoom == null) 
+                return;
+
             tileMaps = DrawingUtil.DrawMetatileImages(currentRoom, 16);
             bottomTileGridBox.Image = tileMaps[1];
             topTileGridBox.Image = tileMaps[0];
@@ -1102,6 +1101,13 @@ namespace MinishMaker.UI
             }
             var a = 0;
 
+        }
+
+        private void enableTileSwapToolStripButton_Click(object sender, EventArgs e)
+        {
+            DrawingUtil.enableTileSwap = !DrawingUtil.enableTileSwap;
+            enableTileSwapToolStripButton.Checked = DrawingUtil.enableTileSwap;
+            RedrawRoom();
         }
     }
 }

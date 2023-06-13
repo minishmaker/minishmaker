@@ -30,6 +30,7 @@ namespace MinishMaker.UI
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PaletteEditorWindow));
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.Row1Label = new System.Windows.Forms.Label();
             this.Row2Label = new System.Windows.Forms.Label();
@@ -472,6 +473,7 @@ namespace MinishMaker.UI
             this.Controls.Add(this.SetIdValue);
             this.Controls.Add(this.SetIdLabel);
             this.Controls.Add(this.tableLayoutPanel1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "PaletteEditorWindow";
             this.Text = "Palette Editor";
             this.tableLayoutPanel1.ResumeLayout(false);

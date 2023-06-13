@@ -8,6 +8,7 @@ namespace MinishMaker.Utilities
 {
     public class DrawingUtil
     {
+        public static bool enableTileSwap = true;
 
         #region various draw functions
         public static Bitmap[] DrawRoom(Room room)
@@ -50,8 +51,9 @@ namespace MinishMaker.Utilities
             {
                 for (int i = 0; i < room.MetaData.TileWidth; i++)
                 {
+                     
                     //hardcoded because there is no easy way to determine which areas use tileswapping yet
-                    if (room.Id == 00 && areaIndex == 01 || areaIndex == 02 || areaIndex == 0x15)
+                    if (enableTileSwap && (room.Id == 00 && areaIndex == 01 || areaIndex == 02 || areaIndex == 0x15))
                     {
                         oldchunks = chunks;
                         chunks = GetChunks(room.Parent.Id, (ushort)(i * 16), (ushort)(j * 16));
