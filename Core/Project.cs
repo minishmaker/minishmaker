@@ -89,10 +89,11 @@ namespace MinishMaker.Core
             sb.AppendLine($"baseROM={BaseRomPath}");
 
             // Copy ROM
-            if (!File.Exists(ProjectPath + "\\" + BaseRomPath))
+            if (!File.Exists($"{ProjectPath}\\{BaseRomPath}"))
             {
                 byte[] copy = File.ReadAllBytes(baseRom);
                 File.WriteAllBytes(ProjectPath + "\\" + BaseRomPath, copy);
+                File.WriteAllBytes($"{ProjectPath}\\{BaseRomPath}", copy);
             }
 
             Assembly assembly = Assembly.GetExecutingAssembly();
@@ -263,7 +264,6 @@ namespace MinishMaker.Core
 
             LoadGlobalChanges(); //palettes, text
             LoadChanges(ProjectPath + "\\Areas", -1);
-            MainWindow.instance.RunTests();
         }
 
         private void LoadGlobalChanges()
@@ -540,7 +540,7 @@ namespace MinishMaker.Core
         public bool BuildProject()
         {
             // Double check
-            if (!File.Exists(BaseRomPath) || !Directory.Exists(ProjectPath))
+            if (!File.Exists($"{ProjectPath}\\{BaseRomPath}") || !Directory.Exists(ProjectPath))
                 return false;
 
             mainWriter = File.AppendText(ProjectPath + "/Main.event");
@@ -556,7 +556,7 @@ namespace MinishMaker.Core
             string outputROM = $"{Directory.GetParent(ProjectPath).FullName}/Builds/{ProjectName}.gba";
 
             // Set up new copy of ROM
-            byte[] copy = File.ReadAllBytes(BaseRomPath);
+            byte[] copy = File.ReadAllBytes($"{ProjectPath}\\{BaseRomPath}");
             File.WriteAllBytes(outputROM, copy);
 
 
