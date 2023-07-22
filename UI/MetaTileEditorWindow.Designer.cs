@@ -46,8 +46,8 @@
             this.bRPalette = new System.Windows.Forms.TextBox();
             this.hFlipBox = new System.Windows.Forms.CheckBox();
             this.vFlipBox = new System.Windows.Forms.CheckBox();
-            this.prevButton = new System.Windows.Forms.Button();
-            this.nextButton = new System.Windows.Forms.Button();
+            this.prevPButton = new System.Windows.Forms.Button();
+            this.nextPButton = new System.Windows.Forms.Button();
             this.paletteNumLabel = new System.Windows.Forms.Label();
             this.layer1Button = new System.Windows.Forms.Button();
             this.layer2Button = new System.Windows.Forms.Button();
@@ -296,28 +296,28 @@
             this.vFlipBox.UseVisualStyleBackColor = true;
             this.vFlipBox.CheckedChanged += new System.EventHandler(this.VFlipBox_CheckedChanged);
             // 
-            // prevButton
+            // prevPButton
             // 
-            this.prevButton.Enabled = false;
-            this.prevButton.Location = new System.Drawing.Point(13, 316);
-            this.prevButton.Margin = new System.Windows.Forms.Padding(4);
-            this.prevButton.Name = "prevButton";
-            this.prevButton.Size = new System.Drawing.Size(23, 28);
-            this.prevButton.TabIndex = 12;
-            this.prevButton.Text = "<";
-            this.prevButton.UseVisualStyleBackColor = true;
-            this.prevButton.Click += new System.EventHandler(this.PrevButton_Click);
+            this.prevPButton.Enabled = false;
+            this.prevPButton.Location = new System.Drawing.Point(13, 316);
+            this.prevPButton.Margin = new System.Windows.Forms.Padding(4);
+            this.prevPButton.Name = "prevPButton";
+            this.prevPButton.Size = new System.Drawing.Size(23, 28);
+            this.prevPButton.TabIndex = 12;
+            this.prevPButton.Text = "<";
+            this.prevPButton.UseVisualStyleBackColor = true;
+            this.prevPButton.Click += new System.EventHandler(this.PrevButton_Click);
             // 
-            // nextButton
+            // nextPButton
             // 
-            this.nextButton.Location = new System.Drawing.Point(69, 316);
-            this.nextButton.Margin = new System.Windows.Forms.Padding(4);
-            this.nextButton.Name = "nextButton";
-            this.nextButton.Size = new System.Drawing.Size(23, 28);
-            this.nextButton.TabIndex = 13;
-            this.nextButton.Text = ">";
-            this.nextButton.UseVisualStyleBackColor = true;
-            this.nextButton.Click += new System.EventHandler(this.NextButton_Click);
+            this.nextPButton.Location = new System.Drawing.Point(69, 316);
+            this.nextPButton.Margin = new System.Windows.Forms.Padding(4);
+            this.nextPButton.Name = "nextPButton";
+            this.nextPButton.Size = new System.Drawing.Size(23, 28);
+            this.nextPButton.TabIndex = 13;
+            this.nextPButton.Text = ">";
+            this.nextPButton.UseVisualStyleBackColor = true;
+            this.nextPButton.Click += new System.EventHandler(this.NextButton_Click);
             // 
             // paletteNumLabel
             // 
@@ -642,8 +642,8 @@
             this.Controls.Add(this.layer2Button);
             this.Controls.Add(this.layer1Button);
             this.Controls.Add(this.paletteNumLabel);
-            this.Controls.Add(this.nextButton);
-            this.Controls.Add(this.prevButton);
+            this.Controls.Add(this.nextPButton);
+            this.Controls.Add(this.prevPButton);
             this.Controls.Add(this.vFlipBox);
             this.Controls.Add(this.hFlipBox);
             this.Controls.Add(this.bRPalette);
@@ -697,8 +697,8 @@
         private System.Windows.Forms.TextBox bRPalette;
         private System.Windows.Forms.CheckBox hFlipBox;
         private System.Windows.Forms.CheckBox vFlipBox;
-        private System.Windows.Forms.Button prevButton;
-        private System.Windows.Forms.Button nextButton;
+        private System.Windows.Forms.Button prevPButton;
+        private System.Windows.Forms.Button nextPButton;
         private System.Windows.Forms.Label paletteNumLabel;
         private System.Windows.Forms.Button layer1Button;
         private System.Windows.Forms.Button layer2Button;

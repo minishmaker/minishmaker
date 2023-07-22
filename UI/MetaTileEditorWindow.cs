@@ -40,10 +40,19 @@ namespace MinishMaker.UI
         public override void Setup()
         {
             MainWindow mw = MainWindow.instance;
+            if (mw.currentArea == null) {
+                prevTSButton.Enabled = false;
+                nextTSButton.Enabled = false;
+                nextPButton.Enabled = false;
+                prevPButton.Enabled = false;
+                return;
+            }
             currentArea = mw.currentArea;
             tsetnum = mw.currentRoom.MetaData.tilesetId;
             prevTSButton.Enabled = tsetnum != 0;
             nextTSButton.Enabled = tsetnum != currentArea.Tilesets.Count - 1;
+            prevPButton.Enabled = pnum != 0;
+            nextPButton.Enabled = pnum != 15;
             if (mw.currentRoom != null)
             {
                 RedrawTiles();
@@ -202,13 +211,13 @@ namespace MinishMaker.UI
 
         private void PrevButton_Click(object sender, EventArgs e)
         {
-            nextButton.Enabled = true;
+            nextPButton.Enabled = true;
 
             pnum -= 1;
 
             if (pnum == 0)
             {
-                prevButton.Enabled = false;
+                prevPButton.Enabled = false;
             }
 
             RedrawTilesets();
@@ -216,13 +225,13 @@ namespace MinishMaker.UI
 
         private void NextButton_Click(object sender, EventArgs e)
         {
-            prevButton.Enabled = true;
+            prevPButton.Enabled = true;
 
             pnum += 1;
 
             if (pnum == 15)
             {
-                nextButton.Enabled = false;
+                nextPButton.Enabled = false;
             }
             RedrawTilesets();
         }
@@ -485,6 +494,7 @@ namespace MinishMaker.UI
 
         private void ChangePalette(int id, TextBox box)
         {
+            if(currentArea == null) { return; }
             try
             {
                 byte palette = Convert.ToByte(box.Text, 16);
