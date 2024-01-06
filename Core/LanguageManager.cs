@@ -21,6 +21,7 @@ namespace MinishMaker.Core
         private static Dictionary<string, byte[]> stringToDataSets = new Dictionary<string, byte[]>();
         private static Dictionary<string, Tuple<byte, Dictionary<string, byte>>> commandToDataSets = new Dictionary<string, Tuple<byte, Dictionary<string, byte>>>(StringComparer.InvariantCultureIgnoreCase);
         private static Dictionary<string, Dictionary<string, byte[]>> modeToDataSets = new Dictionary<string, Dictionary<string, byte[]>>(StringComparer.InvariantCultureIgnoreCase);
+        private static Dictionary<RegionVersion, Dictionary<string, byte[]>> regionToDataSets = new Dictionary<RegionVersion, Dictionary<string, byte[]>>();
         private static Dictionary<short, short> dataRedirects = new Dictionary<short, short>();
 
         private static int bankCount = 0;
@@ -51,13 +52,15 @@ namespace MinishMaker.Core
             public string mode;
             public string command;
             public int length;
+            public RegionVersion region;
             public Dictionary<byte, string> entries;
 
-            public SetData(string mode, string command, int length)
+            public SetData(string mode, string command, int length, RegionVersion region)
             {
                 this.mode = mode;
                 this.command = command;
                 this.length = length;
+                this.region = region;
                 this.entries = new Dictionary<byte, string>();
             }
         }
@@ -136,12 +139,15 @@ namespace MinishMaker.Core
 
                     var command = ""; //used when writing to game
                     var mode = ""; //used when writing to game
+                    var region = RegionVersion.None;    //used for seprate Japanese and other 0x00 table.
+
                     var length = 0; //used when writing to and reading from game
                     var config = TranslationType.ANY; //used when reading from game
 
                     XMLHelper.GetEnumAttribute(set, "config", ref config, $"set {setValue}", "TranslationType");
                     XMLHelper.GetStringAttribute(set, "command", ref command, $"{config} set {setValue}");
                     XMLHelper.GetStringAttribute(set, "mode", ref mode, $"{config} set {setValue}");
+                    XMLHelper.GetEnumAttribute(set, "region", ref region, $"set {setValue}", "RegionVersion");
                     XMLHelper.GetIntAttribute(set, "length", ref length, 1, $"{config} set {setValue}");
                     var setKey = new SetKey(config, (byte)setValue);
 
@@ -153,7 +159,7 @@ namespace MinishMaker.Core
                     {
                         targetSetList = new List<SetData>();
                     }
-                    var setData = new SetData(mode, command, length);
+                    var setData = new SetData(mode, command, length, region);
                     targetSetList.Add(setData);
 
                     if (command != "" && !commandToDataSets.ContainsKey(command))
@@ -165,6 +171,12 @@ namespace MinishMaker.Core
                     {
                         modeToDataSets.Add(mode, new Dictionary<string, byte[]>());
                     }
+
+                    if (region != RegionVersion.None && !regionToDataSets.ContainsKey(region))
+                    {
+                        regionToDataSets.Add(region, new Dictionary<string, byte[]>());
+                    }
+
 
                     foreach (XmlNode value in set)
                     {
@@ -180,6 +192,9 @@ namespace MinishMaker.Core
                         XMLHelper.GetIntAttribute(value, "redirect", ref redirect, 0, $"{config} {setValue.Hex(2)} {dataValue} entry");
                         if (redirect != -1) //specifically added because of duplicate ♪
                         {
+                            /*TODO: This is a hack, should use a better way to handle redirects.*/
+                            if (dataRedirects.ContainsKey((short)(setValue * 0x100 + dataValue)))
+                                continue;
                             dataRedirects.Add((short)(setValue * 0x100 + dataValue), (short)redirect);
                             continue;
                         }
@@ -210,6 +225,18 @@ namespace MinishMaker.Core
                             if (!dict.ContainsKey(replacement))
                             {
                                 modeToDataSets[mode].Add(replacement, new byte[] { (byte)setValue, (byte)dataValue });
+                            }
+                        }
+                        else if (region != RegionVersion.None)
+                        {
+                            var dict = regionToDataSets[region];
+                            if (dict.ContainsKey(replacement) && dict[replacement][1] != (byte)dataValue)
+                            {
+                                throw new ArgumentException($"{replacement} already exists in modeset {region} with the value 0x{dict[replacement][1].Hex(2)}, trying to add 0x{dataValue.Hex(2)}");
+                            }
+                            if (!dict.ContainsKey(replacement))
+                            {
+                                regionToDataSets[region].Add(replacement, new byte[] { (byte)setValue, (byte)dataValue });
                             }
                         }
                         else
@@ -404,6 +431,8 @@ namespace MinishMaker.Core
 
             foreach (SetData set in sets)
             {
+                if (set.region != RegionVersion.None && set.region != ROM.Instance.version)
+                    continue;
                 if (set.length != 0)
                 {
                     defaultSet = set;
