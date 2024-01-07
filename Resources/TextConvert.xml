@@ -1408,316 +1408,316 @@
 
 	<set value='0x0D'>
 		<data data='0x00' value=''/> <!-- blank, same as 0f00, just twice -->
-		<data data='0x01' value='冒'/> <!-- unscannable 冒? -->
-		<data data='0x02' value='険'/> <!-- unscannable 険? -->
-		<data data='0x03' value='者'/>
-		<data data='0x04' value='洞'/>
-		<data data='0x05' value='行'/>
-		<data data='0x06' value='世'/>
-		<data data='0x07' value='界'/>
-		<data data='0x08' value='集'/>
-		<data data='0x09' value='必'/>
-		<data data='0x0A' value='要'/>
-		<data data='0x0B' value='教'/>
-		<data data='0x0C' value='覚'/>
-		<data data='0x0D' value='今'/>
-		<data data='0x0E' value='時'/>
-		<data data='0x0F' value='石'/>
+		<data data='0x01' value='冒'/>	<!-- 冒 -->
+		<data data='0x02' value='険'/>	<!-- 険 -->
+		<data data='0x03' value='者'/>	<!-- 者 -->
+		<data data='0x04' value='洞'/>	<!-- 洞 -->
+		<data data='0x05' value='行'/>	<!-- 行 -->
+		<data data='0x06' value='世'/>	<!-- 世 -->
+		<data data='0x07' value='界'/>	<!-- 界 -->
+		<data data='0x08' value='集'/>	<!-- 集 -->
+		<data data='0x09' value='必'/>	<!-- 必 -->
+		<data data='0x0A' value='要'/>	<!-- 要 -->
+		<data data='0x0B' value='教'/>	<!-- 教 -->
+		<data data='0x0C' value='覚'/>	<!-- 覚 -->
+		<data data='0x0D' value='今'/>	<!-- 今 -->
+		<data data='0x0E' value='時'/>	<!-- 時 -->
+		<data data='0x0F' value='石'/>	<!-- 石 -->
 
-		<data data='0x10' value='持'/>
-		<data data='0x11' value='上'/>
-		<data data='0x12' value='全'/>
-		<data data='0x13' value='員'/>
-		<data data='0x14' value='見'/>
-		<data data='0x15' value='中'/>
-		<data data='0x16' value='自'/>
-		<data data='0x17' value='動'/>
-		<data data='0x18' value='的'/>
-		<data data='0x19' value='目'/>
-		<data data='0x1A' value='復'/>
-		<data data='0x1B' value='活'/>
-		<data data='0x1C' value='高'/>
-		<data data='0x1D' value='気'/>
-		<data data='0x1E' value='伝'/>
-		<data data='0x1F' value='蝕'/>
+		<data data='0x10' value='持'/>	<!-- 持 -->
+		<data data='0x11' value='上'/>	<!-- 上 -->
+		<data data='0x12' value='全'/>	<!-- 全 -->
+		<data data='0x13' value='員'/>	<!-- 員 -->
+		<data data='0x14' value='見'/>	<!-- 見 -->
+		<data data='0x15' value='中'/>	<!-- 中 -->
+		<data data='0x16' value='自'/>	<!-- 自 -->
+		<data data='0x17' value='動'/>	<!-- 動 -->
+		<data data='0x18' value='的'/>	<!-- 的 -->
+		<data data='0x19' value='目'/>	<!-- 目 -->
+		<data data='0x1A' value='復'/>	<!-- 復 -->
+		<data data='0x1B' value='活'/>	<!-- 活 -->
+		<data data='0x1C' value='高'/>	<!-- 高 -->
+		<data data='0x1D' value='気'/>	<!-- 気 -->
+		<data data='0x1E' value='伝'/>	<!-- 伝 -->
+		<data data='0x1F' value='蝕'/>	<!-- 蝕 -->
 
-		<data data='0x20' value='人'/>
-		<data data='0x21' value='勇'/>
-		<data data='0x22' value='出'/>
-		<data data='0x23' value='木'/>
-		<data data='0x24' value='実'/>
-		<data data='0x25' value='知'/>
-		<data data='0x26' value='赤'/>
+		<data data='0x20' value='人'/>	<!-- 人 -->
+		<data data='0x21' value='勇'/>	<!-- 勇 -->
+		<data data='0x22' value='出'/>	<!-- 出 -->
+		<data data='0x23' value='木'/>	<!-- 木 -->
+		<data data='0x24' value='実'/>	<!-- 実 -->
+		<data data='0x25' value='知'/>	<!-- 知 -->
+		<data data='0x26' value='赤'/>  <!-- 赤 -->
 		
-		<data data='0x27' value='力'/>
-		<data data='0x28' value='青'/>
-		<data data='0x29' value='守'/>
-		<data data='0x2A' value='緑'/>
-		<data data='0x2B' value='歩'/>
-		<data data='0x2C' value='速'/>
-		<data data='0x2D' value='段'/>
-		<data data='0x2E' value='階'/>
-		<data data='0x2F' value='押'/>
+		<data data='0x27' value='力'/>	<!-- 力 -->
+		<data data='0x28' value='青'/>	<!-- 青 -->
+		<data data='0x29' value='守'/>	<!-- 守 -->
+		<data data='0x2A' value='緑'/>	<!-- 緑 -->
+		<data data='0x2B' value='歩'/>	<!-- 歩 -->
+		<data data='0x2C' value='速'/>	<!-- 速 -->
+		<data data='0x2D' value='段'/>	<!-- 段 -->
+		<data data='0x2E' value='階'/>	<!-- 階 -->
+		<data data='0x2F' value='押'/>	<!-- 押 -->
 
-		<data data='0x30' value='一'/>
-		<data data='0x31' value='度'/>
-		<data data='0x32' value='投'/>
-		<data data='0x33' value='使'/>
-		<data data='0x34' value='体'/>
-		<data data='0x35' value='別'/>
-		<data data='0x36' value='剣'/>
-		<data data='0x37' value='以'/>
-		<data data='0x38' value='説'/>
-		<data data='0x39' value='方'/>
-		<data data='0x3A' value='合'/>
-		<data data='0x3B' value='弓'/>
-		<data data='0x3C' value='矢'/>
-		<data data='0x3D' value='息'/>
-		<data data='0x3E' value='町'/>
-		<data data='0x3F' value='何'/>
+		<data data='0x30' value='一'/>	<!-- 一 -->
+		<data data='0x31' value='度'/>	<!-- 度 -->
+		<data data='0x32' value='投'/>	<!-- 投 -->
+		<data data='0x33' value='使'/>	<!-- 使 -->
+		<data data='0x34' value='体'/>	<!-- 体 -->
+		<data data='0x35' value='別'/>	<!-- 別 -->
+		<data data='0x36' value='剣'/>	<!-- 剣 -->
+		<data data='0x37' value='以'/>	<!-- 以 -->
+		<data data='0x38' value='説'/>	<!-- 説 -->
+		<data data='0x39' value='方'/>	<!-- 方 -->
+		<data data='0x3A' value='合'/>	<!-- 合 -->
+		<data data='0x3B' value='弓'/>	<!-- 弓 -->
+		<data data='0x3C' value='矢'/>	<!-- 矢 -->
+		<data data='0x3D' value='息'/>	<!-- 息 -->
+		<data data='0x3E' value='町'/>	<!-- 町 -->
+		<data data='0x3F' value='何'/>	<!-- 何 -->
 
-		<data data='0x40' value='道'/>
-		<data data='0x41' value='大'/>
-		<data data='0x42' value='弱'/>
-		<data data='0x43' value='話'/>
-		<data data='0x44' value='風'/>
-		<data data='0x45' value='魔'/>
-		<data data='0x46' value='封'/>
-		<data data='0x47' value='印'/>
-		<data data='0x48' value='最'/>
-		<data data='0x49' value='近'/>
-		<data data='0x4A' value='臣'/>
-		<data data='0x4B' value='变'/>
-		<data data='0x4C' value='感'/>
-		<data data='0x4D' value='心'/>
-		<data data='0x4E' value='配'/>
-		<data data='0x4F' value='言'/>
+		<data data='0x40' value='道'/>	<!-- 道 -->
+		<data data='0x41' value='大'/>	<!-- 大 -->
+		<data data='0x42' value='弱'/>	<!-- 弱 -->
+		<data data='0x43' value='話'/>	<!-- 話 -->
+		<data data='0x44' value='風'/>	<!-- 風 -->
+		<data data='0x45' value='魔'/>	<!-- 魔 -->
+		<data data='0x46' value='封'/>	<!-- 封 -->
+		<data data='0x47' value='印'/>	<!-- 印 -->
+		<data data='0x48' value='最'/>	<!-- 最 -->
+		<data data='0x49' value='近'/>	<!-- 近 -->
+		<data data='0x4A' value='臣'/>	<!-- 臣 -->
+		<data data='0x4B' value='变'/>	<!-- 変 -->
+		<data data='0x4C' value='感'/>	<!-- 感 -->
+		<data data='0x4D' value='心'/>	<!-- 心 -->
+		<data data='0x4E' value='配'/>	<!-- 配 -->
+		<data data='0x4F' value='言'/>	<!-- 言 -->
 
-		<data data='0x50' value='強'/>
-		<data data='0x51' value='暴'/>
-		<data data='0x52' value='々'/>
-		<data data='0x53' value='災'/>
-		<data data='0x54' value='身'/>
-		<data data='0x55' value='戦'/>
-		<data data='0x56' value='少'/>
-		<data data='0x57' value='離'/>
-		<data data='0x58' value='用'/>
-		<data data='0x59' value='王'/>
-		<data data='0x5A' value='断'/>
-		<data data='0x5B' value='無'/>
-		<data data='0x5C' value='礼'/>
-		<data data='0x5D' value='手'/>
-		<data data='0x5E' value='作'/>
-		<data data='0x5F' value='美'/>
+		<data data='0x50' value='強'/>	<!-- 強 -->
+		<data data='0x51' value='暴'/>	<!-- 暴 -->
+		<data data='0x52' value='々'/>	<!-- 々 -->
+		<data data='0x53' value='災'/>	<!-- 災 -->
+		<data data='0x54' value='身'/>	<!-- 身 -->
+		<data data='0x55' value='戦'/>	<!-- 戦 -->
+		<data data='0x56' value='少'/>	<!-- 少 -->
+		<data data='0x57' value='離'/>	<!-- 離 -->
+		<data data='0x58' value='用'/>  <!-- 用 -->
+		<data data='0x59' value='王'/>	<!-- 王 -->
+		<data data='0x5A' value='断'/>	<!-- 断 -->
+		<data data='0x5B' value='無'/>	<!-- 無 -->
+		<data data='0x5C' value='礼'/>	<!-- 近 -->
+		<data data='0x5D' value='手'/>	<!-- 手 -->
+		<data data='0x5E' value='作'/>	<!-- 作 -->
+		<data data='0x5F' value='美'/>	<!-- 美 -->
 
-		<data data='0x60' value='殘'/>
-		<data data='0x61' value='念'/>
-		<data data='0x62' value='分'/>
-		<data data='0x63' value='我'/>
-		<data data='0x64' value='名'/>
-		<data data='0x65' value='連'/>
-		<data data='0x66' value='思'/>
-		<data data='0x67' value='年'/>
-		<data data='0x68' value='良'/>
-		<data data='0x69' value='花'/>
-		<data data='0x6A' value='日'/>
-		<data data='0x6B' value='宮'/>
-		<data data='0x6C' value='殿'/>
-		<data data='0x6D' value='助'/>
-		<data data='0x6E' value='小'/>
-		<data data='0x6F' value='姫'/>
+		<data data='0x60' value='殘'/>	<!-- 残 -->
+		<data data='0x61' value='念'/>	<!-- 念 -->
+		<data data='0x62' value='分'/>	<!-- 分 -->
+		<data data='0x63' value='我'/>	<!-- 我 -->
+		<data data='0x64' value='名'/>	<!-- 名 -->
+		<data data='0x65' value='連'/>	<!-- 連 -->
+		<data data='0x66' value='思'/>	<!-- 思 -->
+		<data data='0x67' value='年'/>	<!-- 年 -->
+		<data data='0x68' value='良'/>	<!-- 良 -->
+		<data data='0x69' value='花'/>	<!-- 花 -->
+		<data data='0x6A' value='日'/>	<!-- 日 -->
+		<data data='0x6B' value='宮'/>	<!-- 宮 -->
+		<data data='0x6C' value='殿'/>	<!-- 殿 -->
+		<data data='0x6D' value='助'/>	<!-- 助 -->
+		<data data='0x6E' value='小'/>	<!-- 小 -->
+		<data data='0x6F' value='姫'/>	<!-- 姫 -->
 
-		<data data='0x70' value='向'/>
-		<data data='0x71' value='借'/>
-		<data data='0x72' value='抜'/>
-		<data data='0x73' value='去'/>
-		<data data='0x74' value='倒'/>
-		<data data='0x75' value='先'/>
-		<data data='0x76' value='住'/>
-		<data data='0x77' value='妖'/>
-		<data data='0x78' value='精'/>
-		<data data='0x79' value='呪'/>
-		<data data='0x7A' value='示'/>
-		<data data='0x7B' value='会'/>
-		<data data='0x7C' value='刻'/>
-		<data data='0x7D' value='入'/>
-		<data data='0x7E' value='真'/>
-		<data data='0x7F' value='開'/>
+		<data data='0x70' value='向'/>	<!-- 向 -->
+		<data data='0x71' value='借'/>	<!-- 借 -->
+		<data data='0x72' value='抜'/>	<!-- 抜 -->
+		<data data='0x73' value='去'/>	<!-- 去 -->
+		<data data='0x74' value='倒'/>	<!-- 倒 -->
+		<data data='0x75' value='先'/>	<!-- 先 -->
+		<data data='0x76' value='住'/>	<!-- 住 -->
+		<data data='0x77' value='妖'/>	<!-- 妖 -->
+		<data data='0x78' value='精'/>	<!-- 精 -->
+		<data data='0x79' value='呪'/>	<!-- 呪 -->
+		<data data='0x7A' value='示'/>	<!-- 示 -->
+		<data data='0x7B' value='会'/>	<!-- 会 -->
+		<data data='0x7C' value='刻'/>	<!-- 刻 -->
+		<data data='0x7D' value='入'/>	<!-- 入 -->
+		<data data='0x7E' value='真'/>	<!-- 真 -->
+		<data data='0x7F' value='開'/>	<!-- 開 -->
 		
-		<data data='0x80' value='画'/>
-		<data data='0x81' value='面'/>
-		<data data='0x82' value='右'/>
-		<data data='0x83' value='下'/>
-		<data data='0x84' value='早'/>
-		<data data='0x85' value='立'/>
-		<data data='0x86' value='進'/>
-		<data data='0x87' value='前'/>
-		<data data='0x88' value='受'/>
-		<data data='0x89' value='落'/>
-		<data data='0x8A' value='長'/>
-		<data data='0x8B' value='羽'/>
-		<data data='0x8C' value='越'/>
-		<data data='0x8D' value='果'/>
-		<data data='0x8E' value='火'/>
-		<data data='0x8F' value='解'/>
+		<data data='0x80' value='画'/>	<!-- 画 -->
+		<data data='0x81' value='面'/>	<!-- 面 -->
+		<data data='0x82' value='右'/>	<!-- 右 -->
+		<data data='0x83' value='下'/>	<!-- 下 -->
+		<data data='0x84' value='早'/>	<!-- 早 -->
+		<data data='0x85' value='立'/>	<!-- 立 -->
+		<data data='0x86' value='進'/>	<!-- 進 -->
+		<data data='0x87' value='前'/>	<!-- 前 -->
+		<data data='0x88' value='受'/>	<!-- 受 -->
+		<data data='0x89' value='落'/>	<!-- 落 -->
+		<data data='0x8A' value='長'/>	<!-- 長 -->
+		<data data='0x8B' value='羽'/>	<!-- 羽 -->
+		<data data='0x8C' value='越'/>	<!-- 越 -->
+		<data data='0x8D' value='果'/>	<!-- 果 -->
+		<data data='0x8E' value='火'/>	<!-- 火 -->
+		<data data='0x8F' value='解'/>	<!-- 解 -->
 		
-		<data data='0x90' value='回'/>
-		<data data='0x91' value='歸'/>	<!--Not exists in Traditional Chinese characters-->
-		<data data='0x92' value='救'/>
-		<data data='0x93' value='老'/>
-		<data data='0x94' value='古'/>
-		<data data='0x95' value='後'/>
-		<data data='0x96' value='光'/>
-		<data data='0x97' value='攻'/>
-		<data data='0x98' value='根'/>
-		<data data='0x99' value='再'/>
-		<data data='0x9A' value='指'/>
-		<data data='0x9B' value='事'/>
-		<data data='0x9C' value='取'/>
-		<data data='0x9D' value='盾'/>
-		<data data='0x9E' value='域'/>
-		<data data='0x9F' value='乘'/>
+		<data data='0x90' value='回'/>	<!-- 回 -->
+		<data data='0x91' value='帰'/>	<!-- ＊＊訂正 帰-->
+		<data data='0x92' value='救'/>	<!-- 救 -->
+		<data data='0x93' value='老'/>	<!-- 老 -->
+		<data data='0x94' value='古'/>	<!-- 古 -->
+		<data data='0x95' value='後'/>	<!-- 後 -->
+		<data data='0x96' value='光'/>	<!-- 光 -->
+		<data data='0x97' value='攻'/>	<!-- 攻 -->
+		<data data='0x98' value='根'/>	<!-- 根 -->
+		<data data='0x99' value='再'/>	<!-- 再 -->
+		<data data='0x9A' value='指'/>	<!-- 指 -->
+		<data data='0x9B' value='事'/>	<!-- 事 -->
+		<data data='0x9C' value='取'/>	<!-- 取 -->
+		<data data='0x9D' value='盾'/>	<!-- 盾 -->
+		<data data='0x9E' value='域'/>	<!-- 域 -->
+		<data data='0x9F' value='乗'/>	<!-- ＊＊訂正 乗 -->
 		
-		<data data='0xA0' value='森'/>
-		<data data='0xA1' value='聖'/>
-		<data data='0xA2' value='昔'/>
-		<data data='0xA3' value='足'/>
-		<data data='0xA4' value='待'/>
-		<data data='0xA5' value='達'/>
-		<data data='0xA6' value='誰'/>
-		<data data='0xA7' value='彈'/> 	<!--Not exists in Traditional Chinese characters-->
-		<data data='0xA8' value='追'/>
-		<data data='0xA9' value='敵'/>
-		<data data='0xAA' value='当'/>
-		<data data='0xAB' value='湖'/>
-		<data data='0xAC' value='特'/>
-		<data data='0xAD' value='倍'/>
-		<data data='0xAE' value='物'/>
-		<data data='0xAF' value='壁'/>
+		<data data='0xA0' value='森'/>	<!-- 森 -->
+		<data data='0xA1' value='聖'/>	<!-- 聖 -->
+		<data data='0xA2' value='昔'/>	<!-- 昔 -->
+		<data data='0xA3' value='足'/>	<!-- 足 -->
+		<data data='0xA4' value='待'/>	<!-- 待 -->
+		<data data='0xA5' value='達'/>	<!-- 達 -->
+		<data data='0xA6' value='誰'/>	<!-- 誰 -->
+		<data data='0xA7' value='弾'/> 	<!-- ＊＊訂正 弾 -->
+		<data data='0xA8' value='追'/>	<!-- 追 -->
+		<data data='0xA9' value='敵'/>	<!-- 敵 -->
+		<data data='0xAA' value='当'/>	<!-- 当 -->
+		<data data='0xAB' value='湖'/>	<!-- 湖 -->
+		<data data='0xAC' value='特'/>	<!-- 特 -->
+		<data data='0xAD' value='倍'/>	<!-- 倍 -->
+		<data data='0xAE' value='物'/>	<!-- 物 -->
+		<data data='0xAF' value='壁'/>	<!-- 壁 -->
 		
-		<data data='0xB0' value='返'/>
-		<data data='0xB1' value='本'/>
-		<data data='0xB2' value='滿'/> 	<!--Not exists in Traditional Chinese characters-->
-		<data data='0xB3' value='戻'/>
-		<data data='0xB4' value='役'/>		
-		<data data='0xB5' value='神'/>
-		<data data='0xB6' value='數'/> 	<!--Not exists in Traditional Chinese characters-->
-		<data data='0xB7' value='應'/> 	<!--Not exists in Traditional Chinese characters-->	
-		<data data='0xB8' value='圖'/> 	<!--Not exists in Traditional Chinese characters-->	
-		<data data='0xB9' value='專'/>
-		<data data='0xBA' value='湯'/>
-		<data data='0xBB' value='民'/>
-		<data data='0xBC' value='電'/>
-		<data data='0xBD' value='源'/>
-		<data data='0xBE' value='次'/>
-		<data data='0xBF' value='弟'/>
+		<data data='0xB0' value='返'/>	<!-- 返 -->
+		<data data='0xB1' value='本'/>	<!-- 本 -->
+		<data data='0xB2' value='満'/> 	<!-- ＊＊訂正 満 -->
+		<data data='0xB3' value='戻'/>	<!-- 戻 -->
+		<data data='0xB4' value='役'/>	<!-- 役 -->
+		<data data='0xB5' value='神'/>	<!-- 神 -->
+		<data data='0xB6' value='数'/>	<!-- ＊＊訂正 数 -->
+		<data data='0xB7' value='応'/>	<!-- ＊＊訂正 応 -->
+		<data data='0xB8' value='図'/>	<!-- ＊＊訂正 図 -->
+		<data data='0xB9' value='専'/>	<!-- 専 -->
+		<data data='0xBA' value='湯'/>	<!-- 湯 -->
+		<data data='0xBB' value='民'/>	<!-- 民 -->
+		<data data='0xBC' value='電'/>	<!-- 電 -->
+		<data data='0xBD' value='源'/>	<!-- 源 -->
+		<data data='0xBE' value='次'/>	<!-- 次 -->
+		<data data='0xBF' value='弟'/>	<!-- 弟 -->
 		
-		<data data='0xC0' value='子'/>
-		<data data='0xC1' value='確'/>
-		<data data='0xC2' value='他'/>
-		<data data='0xC3' value='遊'/>
-		<data data='0xC4' value='消'/>
-		<data data='0xC5' value='冰'/>
-		<data data='0xC6' value='炎'/>
-		<data data='0xC7' value='多'/>
-		<data data='0xC8' value='探'/>
+		<data data='0xC0' value='子'/>	<!-- 子 -->
+		<data data='0xC1' value='確'/>	<!-- 確 -->
+		<data data='0xC2' value='他'/>	<!-- 他 -->
+		<data data='0xC3' value='遊'/>	<!-- 遊 -->
+		<data data='0xC4' value='消'/>	<!-- 消 -->
+		<data data='0xC5' value='氷'/>	<!-- ＊＊訂正 氷 -->
+		<data data='0xC6' value='炎'/>	<!-- 炎 -->
+		<data data='0xC7' value='多'/>	<!-- 多 -->
+		<data data='0xC8' value='探'/>	<!-- 探 -->
 		<data data='0xC9' value='©'/>
 		<data data='0xCA' value='®'/>
-		<data data='0xCB' value='左'/>
-		<data data='0xCC' value='地'/>
-		<data data='0xCD' value='惡'/>
-		<data data='0xCE' value='善'/>
-		<data data='0xCF' value='遠'/>
+		<data data='0xCB' value='左'/>	<!-- 左 -->
+		<data data='0xCC' value='地'/>	<!-- 地 -->
+		<data data='0xCD' value='悪'/>	<!-- ＊＊訂正 悪 -->
+		<data data='0xCE' value='善'/>	<!-- 善 -->
+		<data data='0xCF' value='遠'/>	<!-- 遠 -->
 		
-		<data data='0xD0' value='低'/>
-		<data data='0xD1' value='水'/>
-		<data data='0xD2' value='東'/>
-		<data data='0xD3' value='西'/>
-		<data data='0xD4' value='南'/>
-		<data data='0xD5' value='北'/>
-		<data data='0xD6' value='紫'/>
-		<data data='0xD7' value='黃'/>
-		<data data='0xD8' value='白'/>
-		<data data='0xD9' value='黑'/>
-		<data data='0xDA' value='岩'/>
-		<data data='0xDB' value='山'/>
-		<data data='0xDC' value='窟'/>
-		<data data='0xDD' value='銀'/>
-		<data data='0xDE' value='金'/>
-		<data data='0xDF' value='川'/>
+		<data data='0xD0' value='低'/>	<!-- 低 -->
+		<data data='0xD1' value='水'/>	<!-- 水 -->
+		<data data='0xD2' value='東'/>	<!-- 東 -->
+		<data data='0xD3' value='西'/>	<!-- 西 -->
+		<data data='0xD4' value='南'/>	<!-- 南 -->
+		<data data='0xD5' value='北'/>	<!-- 北 -->
+		<data data='0xD6' value='紫'/>	<!-- 紫 -->
+		<data data='0xD7' value='黄'/>	<!-- 黄 -->
+		<data data='0xD8' value='白'/>	<!-- 白 -->
+		<data data='0xD9' value='黒'/>	<!-- 黒 -->
+		<data data='0xDA' value='岩'/>	<!-- 岩 -->
+		<data data='0xDB' value='山'/>	<!-- 山 -->
+		<data data='0xDC' value='窟'/>	<!-- 窟 -->
+		<data data='0xDD' value='銀'/>	<!-- 銀 -->
+		<data data='0xDE' value='金'/>	<!-- 金 -->
+		<data data='0xDF' value='川'/>	<!-- 川 -->
 		
-		<data data='0xE0' value='空'/>
-		<data data='0xE1' value='海'/>
-		<data data='0xE2' value='城'/>
-		<data data='0xE3' value='色'/>
-		<data data='0xE4' value='同'/>
-		<data data='0xE5' value='部'/>
-		<data data='0xE6' value='引'/>
-		<data data='0xE7' value='両'/>
-		<data data='0xE8' value='点'/>
-		<data data='0xE9' value='法'/>
-		<data data='0xEA' value='穴'/>
-		<data data='0xEB' value='場'/>
-		<data data='0xEC' value='所'/>
-		<data data='0xED' value='台'/>
-		<data data='0xEE' value='音'/>
-		<data data='0xEF' value='轉'/> 	<!--Not exists in Traditional Chinese characters-->
+		<data data='0xE0' value='空'/>	<!-- 空 -->
+		<data data='0xE1' value='海'/>	<!-- 海 -->
+		<data data='0xE2' value='城'/>	<!-- 城 -->
+		<data data='0xE3' value='色'/>	<!-- 色 -->
+		<data data='0xE4' value='同'/>	<!-- 同 -->
+		<data data='0xE5' value='部'/>	<!-- 部 -->
+		<data data='0xE6' value='引'/>	<!-- 引 -->
+		<data data='0xE7' value='両'/>	<!-- 両 -->
+		<data data='0xE8' value='点'/>	<!-- 点 -->
+		<data data='0xE9' value='法'/>	<!-- 法 -->
+		<data data='0xEA' value='穴'/>	<!-- 穴 -->
+		<data data='0xEB' value='場'/>	<!-- 場 -->
+		<data data='0xEC' value='所'/>	<!-- 所 -->
+		<data data='0xED' value='台'/>	<!-- 台 -->
+		<data data='0xEE' value='音'/>	<!-- 音 -->
+		<data data='0xEF' value='転'/> 	<!-- ＊＊訂正 転 -->
 		
-		<data data='0xF0' value='斬'/>
-		<data data='0xF1' value='宝'/>
-		<data data='0xF2' value='箱'/>
-		<data data='0xF3' value='家'/>
-		<data data='0xF4' value='草'/>
-		<data data='0xF5' value='間'/>
-		<data data='0xF6' value='彼'/>
-		<data data='0xF7' value='式'/>
-		<data data='0xF8' value='庭'/>
-		<data data='0xF9' value='国'/>
-		<data data='0xFA' value='武'/>
-		<data data='0xFB' value='術'/>
-		<data data='0xFC' value='賢'/>
-		<data data='0xFD' value='平'/>
-		<data data='0xFE' value='苦'/>
-		<data data='0xFF' value='和'/>
+		<data data='0xF0' value='斬'/>  <!-- 斬 -->
+		<data data='0xF1' value='宝'/>	<!-- 宝 -->
+		<data data='0xF2' value='箱'/>  <!-- 箱 -->
+		<data data='0xF3' value='家'/>	<!-- 家 -->
+		<data data='0xF4' value='草'/>	<!-- 草 -->
+		<data data='0xF5' value='間'/>	<!-- 間 -->
+		<data data='0xF6' value='彼'/>	<!-- 彼 -->
+		<data data='0xF7' value='式'/>	<!-- 式 -->
+		<data data='0xF8' value='庭'/>	<!-- 庭 -->
+		<data data='0xF9' value='国'/>	<!-- ＊＊選択可能 国(新) 國(旧) -->
+		<data data='0xFA' value='武'/>	<!-- 武 -->
+		<data data='0xFB' value='術'/>	<!-- 術 -->
+		<data data='0xFC' value='賢'/>	<!-- 賢 -->
+		<data data='0xFD' value='平'/>	<!-- 平 -->
+		<data data='0xFE' value='苦'/>	<!-- 苦 -->
+		<data data='0xFF' value='和'/>	<!-- 和 -->
 
 	</set>
 
 	<set value="0x0E">
-		<data data='0x00' value='聞'/>
-		<data data='0x01' value='工'/>
-		<data data='0x02' value='口'/>
-		<data data='0x03' value='里'/>
-		<data data='0x04' value='折'/>
-		<data data='0x05' value='秘'/>
-		<data data='0x06' value='技'/>
-		<data data='0x07' value='優'/>
-		<data data='0x08' value='勝'/>
-		<data data='0x09' value='邪'/>
-		<data data='0x0A' value='突'/>
-		<data data='0x0B' value='屋'/>
-		<data data='0x0C' value='原'/>
-		<data data='0x0D' value='店'/>
-		<data data='0x0E' value='主'/>
-		<data data='0x0F' value='現'/>
-		<data data='0x10' value='女'/>
-		<data data='0x11' value='牧'/>
-		<data data='0x12' value='墓'/>
-		<data data='0x13' value='流'/>
-		<data data='0x14' value='谷'/>
-		<data data='0x15' value='闇'/>
-		<data data='0x16' value='雲'/>
-		<data data='0x17' value='滝'/>
-		<data data='0x18' value='娘'/>
-		<data data='0x19' value='擊'/>
-		<data data='0x1A' value='通'/>
-		<data data='0x1B' value='信'/>
-		<data data='0x1C' value='滅'/>
-		<data data='0x1D' value='續'/> 	<!--Not exists in Traditional Chinese characters-->
-		<data data='0x1E' value='兵'/>
-		<data data='0x1F' value='士'/>
-		<data data='0x20' value='境'/>
-		<data data='0x21' value='丘'/>
-		<data data='0x22' value='林'/>
+		<data data='0x00' value='聞'/>	<!-- 聞 -->
+		<data data='0x01' value='工'/>	<!-- エ -->
+		<data data='0x02' value='口'/>	<!-- ロ -->
+		<data data='0x03' value='里'/>	<!-- 里 -->
+		<data data='0x04' value='折'/>	<!-- 折 -->
+		<data data='0x05' value='秘'/>	<!-- 秘 -->
+		<data data='0x06' value='技'/>	<!-- 技 -->
+		<data data='0x07' value='優'/>	<!-- 優 -->
+		<data data='0x08' value='勝'/>	<!-- 勝 -->
+		<data data='0x09' value='邪'/>	<!-- 邪 -->
+		<data data='0x0A' value='突'/>	<!-- 突 -->
+		<data data='0x0B' value='屋'/>	<!-- 屋 -->
+		<data data='0x0C' value='原'/>	<!-- 原 -->
+		<data data='0x0D' value='店'/>	<!-- 店 -->
+		<data data='0x0E' value='主'/>	<!-- 主 -->
+		<data data='0x0F' value='現'/>	<!-- 現 -->
+		<data data='0x10' value='女'/>	<!-- 女 -->
+		<data data='0x11' value='牧'/>	<!-- 牧 -->
+		<data data='0x12' value='墓'/>	<!-- 墓 -->
+		<data data='0x13' value='流'/>	<!-- 流 -->
+		<data data='0x14' value='谷'/>	<!-- 谷 -->
+		<data data='0x15' value='闇'/>	<!-- 闇 -->
+		<data data='0x16' value='雲'/>	<!-- 雲 -->
+		<data data='0x17' value='滝'/>	<!-- 滝 -->
+		<data data='0x18' value='娘'/>	<!-- 娘 -->
+		<data data='0x19' value='撃'/>	<!-- 撃 -->
+		<data data='0x1A' value='通'/>	<!-- 通 -->
+		<data data='0x1B' value='信'/>	<!-- 信 -->
+		<data data='0x1C' value='滅'/>	<!-- 滅 -->
+		<data data='0x1D' value='続'/>	<!-- ＊＊訂正 続 -->
+		<data data='0x1E' value='兵'/>	<!-- 兵 -->
+		<data data='0x1F' value='士'/>	<!-- 士 -->
+		<data data='0x20' value='境'/>	<!-- 境 -->
+		<data data='0x21' value='丘'/>	<!-- 丘 -->
+		<data data='0x22' value='林'/>	<!-- 林 -->
 	</set>
 
 	<set value="0x0F">
